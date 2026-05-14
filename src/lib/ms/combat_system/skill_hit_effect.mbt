@@ -107,7 +107,7 @@ pub impl @json.FromJson for NxCharLevelHit with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expect object"))
   }
-  let levels = Map::new()
+  let levels = Map([])
   for level, value in obj {
     let entry : NxHitEntry = @json.from_json(value, path=path.add_key(level))
     let parsed_level = @string.parse_int(level) catch {
@@ -127,7 +127,7 @@ pub impl @json.FromJson for NxSkillLevelHit with from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expect object"))
   }
-  let levels = Map::new()
+  let levels = Map([])
   for level, value in obj {
     let entry : NxHitEntry = @json.from_json(value, path=path.add_key(level))
     let parsed_level = @string.parse_int(level) catch {
@@ -300,7 +300,7 @@ pub async fn new_by_skill_level_hit_effect(
   skill_loader : @resource.AsyncLoader,
   base_path : String,
 ) -> ((@combat_proto.AttackUser, @monster.Mob) -> Unit) raise Error {
-  let effects = Map::new()
+  let effects = Map([])
   let by_level : NxSkillLevelHit = @json.from_json(
     hit_effect_get_path(src, ["level"]),
   )

@@ -5,7 +5,7 @@
     "moonbitlang/x": "0.4.38",
     "Milky2018/selene": "0.33.1",
     "Milky2018/selene_webgpu": "0.33.1",
-    "moonbitlang/async": "0.16.8",
+    "moonbitlang/async": "0.19.0",
     "Yoorkin/ArgParser": "0.2.0"
   },
   "readme": "README.md",

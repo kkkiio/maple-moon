@@ -5,11 +5,11 @@ struct Cache[K, V] {
 }
 
 ///|
-pub fn[K, V] Cache::new(capacity : Int) -> Cache[K, V] {
+pub fn[K : Eq + Hash, V] Cache::new(capacity : Int) -> Cache[K, V] {
   if capacity <= 0 {
     abort("capacity must be positive")
   }
-  { map: Map::new(), capacity }
+  { map: Map([]), capacity }
 }
 
 ///|

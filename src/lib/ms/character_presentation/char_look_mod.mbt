@@ -31,18 +31,18 @@ pub fn CharacterPresentationResource::new(
   draw_info : @types.BodyDrawInfo,
 ) -> CharacterPresentationResource {
   {
-    hair_cache: Map::new(),
+    hair_cache: Map([]),
     draw_info,
     stance_bodys_map,
     stance_heads_map,
-    face_types: Map::new(),
-    body_cache: Map::new(),
+    face_types: Map([]),
+    body_cache: Map([]),
   }
 }
 
 ///|
-let resources_by_world : Ref[Map[UInt, CharacterPresentationResource]] = Ref::new(
-  Map::new(),
+let resources_by_world : Ref[Map[UInt, CharacterPresentationResource]] = Ref(
+  Map([]),
 )
 
 ///|

@@ -83,7 +83,7 @@ fn tick_look_until_frame(
 
 ///|
 test "AfterImage display logic" {
-  let host = @entity.Entity::new()
+  let host = @entity.Entity()
   let entity = host.spawn_child()
   let resource = create_test_resource(0)
   let look = load_test_look(host) catch { _ => panic() }
@@ -104,7 +104,7 @@ test "AfterImage display logic" {
 
 ///|
 test "AfterImage with first_frame > 0" {
-  let host = @entity.Entity::new()
+  let host = @entity.Entity()
   let entity = host.spawn_child()
   let look = load_test_look(host) catch { _ => panic() }
   look.set_stance(@char_stance.StanceId::STAND1)

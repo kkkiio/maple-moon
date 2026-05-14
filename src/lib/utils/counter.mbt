@@ -2,8 +2,8 @@
 pub(all) struct Counter[K, V](Map[K, V])
 
 ///|
-pub fn[K, V] Counter::new() -> Counter[K, V] {
-  Map::new()
+pub fn[K : Eq + Hash, V] Counter::new() -> Counter[K, V] {
+  Map([])
 }
 
 ///|

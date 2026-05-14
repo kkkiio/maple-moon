@@ -22,7 +22,7 @@ pub(all) enum Action {
 pub type Keymap = Map[@inputs.Code, Action]
 
 ///|
-let current_keymap_ref : Ref[Keymap?] = Ref::new(None)
+let current_keymap_ref : Ref[Keymap?] = Ref(None)
 
 ///|
 /// 设置当前按键映射。
@@ -53,13 +53,13 @@ pub fn get_action(mapping : Keymap, key : @inputs.Code) -> Action? {
 ///|
 /// 当前按键映射下，本帧刚触发的动作列表（去重）。
 pub fn just_pressed_actions() -> Array[Action] {
-  just_pressed_actions_in(get_keymap().unwrap_or(Map::new()))
+  just_pressed_actions_in(get_keymap().unwrap_or(Map([])))
 }
 
 ///|
 /// 当前按键映射下，正在按住的动作列表（去重）。
 pub fn pressed_actions() -> Array[Action] {
-  pressed_actions_in(get_keymap().unwrap_or(Map::new()))
+  pressed_actions_in(get_keymap().unwrap_or(Map([])))
 }
 
 ///|
@@ -114,7 +114,7 @@ fn collect_actions_in(
   is_triggered : (@inputs.Code) -> Bool,
 ) -> Array[Action] {
   let actions = []
-  let seen : Map[Action, Bool] = Map::new()
+  let seen : Map[Action, Bool] = Map([])
   for code, action in mapping {
     if is_triggered(code) && !seen.contains(action) {
       seen[action] = true

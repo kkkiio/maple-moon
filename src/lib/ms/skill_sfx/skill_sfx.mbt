@@ -27,7 +27,7 @@ pub fn SkillSfxEvent::path(self : SkillSfxEvent) -> String {
 }
 
 ///|
-pub let skill_sfx_event_bus : @event.Events[SkillSfxEvent] = @event.Events::new()
+pub let skill_sfx_event_bus : @event.Events[SkillSfxEvent] = @event.Events()
 
 ///|
 fn init {
@@ -63,7 +63,7 @@ fn play_skill_sfx(skill_id : Int, stage : SkillSfxStage) -> Unit {
   }
   let path = skill_sfx_path(skill_id, stage)
   push_event({ skill_id, stage, path })
-  let entity = @entity.Entity::new()
+  let entity = @entity.Entity()
   @audio.attach_audio(
     entity,
     @audio.AudioPlayer::from_path(path),

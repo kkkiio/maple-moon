@@ -63,7 +63,8 @@ pub impl @json.FromJson for NxAfterImage with from_json(json, path) -> NxAfterIm
 
 ///|
 /// Cache stores: Name -> Level -> Stance -> Resource
-let nx_after_image_resources : Map[String, Map[Int, Map[String, NxAfterImage]]] = Map::new()
+let nx_after_image_resources : Map[String, Map[Int, Map[String, NxAfterImage]]] = Map([],
+)
 
 ///|
 struct NxAfterImages {
@@ -75,11 +76,11 @@ pub impl @json.FromJson for NxAfterImages with from_json(json, path) -> NxAfterI
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expect object"))
   }
-  let level_map = Map::new()
+  let level_map = Map([])
   for level_key, level_val in obj {
     guard level_val is Object(level_val) else { continue }
     let level = @string.parse_int(level_key) catch { _ => continue }
-    let stance_map = Map::new()
+    let stance_map = Map([])
     for stance_key, stance_val in level_val {
       let stance = stance_key
       let resource : NxAfterImage = @json.from_json(stance_val)
@@ -101,7 +102,7 @@ pub fn AfterImage::get_collection(
   name : String,
   level : Int,
 ) -> Map[String, NxAfterImage] {
-  let res_map = Map::new()
+  let res_map = Map([])
   guard nx_after_image_resources.get(name) is Some(levels) else {
     return res_map
   }
@@ -172,7 +173,7 @@ pub fn AfterImage::update(
       let transform = if self.facing_right {
         @selene_math.Transform::from_scale(-1.0, 1.0)
       } else {
-        @selene_math.Transform::new()
+        @selene_math.Transform()
       }
       // Attach sprite and play
       // Use CHAR_LOOK_ZINDEX to align with character rendering layer
@@ -199,12 +200,13 @@ priv struct AfterImageEntry {
 
 ///|
 /// Per-world active after-images keyed by host entity.
-let after_images_by_world : Map[UInt, Map[@entity.Entity, AfterImageEntry]] = Map::new()
+let after_images_by_world : Map[UInt, Map[@entity.Entity, AfterImageEntry]] = Map([],
+)
 
 ///|
 fn after_images() -> Map[@entity.Entity, AfterImageEntry] {
   let world_id = @ecs.require_current_world().id()
-  after_images_by_world.get_or_init(world_id, fn() { Map::new() })
+  after_images_by_world.get_or_init(world_id, fn() { Map([]) })
 }
 
 ///|

@@ -58,7 +58,7 @@ fn parse_body_animations_by_stance(
   head_nx_resource : Array[NxMultiPartFrame],
   drawinfo : @types.BodyDrawInfo,
 ) -> Map[String, (Array[NxFrame], Array[@types.BodyLayer])] {
-  let part_frames_map = Map::new()
+  let part_frames_map = Map([])
   let body_frame_delays = []
   for frame, framenode in stance_nx_resource {
     guard framenode is NxStanceBody::MultiPartFrame(layer_textures) else {

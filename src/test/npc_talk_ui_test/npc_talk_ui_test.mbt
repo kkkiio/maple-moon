@@ -41,7 +41,7 @@ async fn setup_npc_talk_resource_cache() -> Unit {
 
 ///|
 async fn setup_scene() -> Unit {
-  let app = @app.App::new()
+  let app = @app.App()
     .with_viewport_width(800.0)
     .with_viewport_height(540.0)
     .add_plugin(@plugins.default_plugin)
@@ -67,7 +67,7 @@ async fn setup_scene() -> Unit {
     )
   @capture_app.init_app(app)
   @game_state.init_state(@game_state.GamePhase::GameSetup)
-  let camera_anchor = @entity.Entity::new()
+  let camera_anchor = @entity.Entity()
   @ms_camera.setup_camera_entity(camera_anchor, center=@math.Vec2(0.0, 0.0))
   @ms_camera.set_follow_target(camera_anchor)
 

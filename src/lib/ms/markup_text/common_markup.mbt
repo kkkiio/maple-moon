@@ -72,7 +72,7 @@ priv struct ReferenceData {
 }
 
 ///|
-let reference_data_ref : Ref[ReferenceData?] = Ref::new(None)
+let reference_data_ref : Ref[ReferenceData?] = Ref(None)
 
 ///|
 pub(all) suberror ResolveReferenceError {
@@ -188,7 +188,7 @@ fn get_name_by_path(
   let value = get_json_by_path(root, path, label)
   match value {
     String(name) => name
-    _ => raise NameNotFound("name not found: \{label}, path=\{path}")
+    _ => raise NameNotFound("name not found: \{label}, path=\{to_repr(path)}")
   }
 }
 

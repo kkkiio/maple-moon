@@ -14,11 +14,11 @@ pub let all_bullet_ids : Array[String] = [
 ]
 
 ///|
-let module_ref : Ref[Module?] = Ref::new(None)
+let module_ref : Ref[Module?] = Ref(None)
 
 ///|
 pub async fn Module::load() -> Module {
-  let bullet_data = Map::new()
+  let bullet_data = Map([])
   for id in all_bullet_ids {
     let data = BulletData::load(id)
     let int_id = id.trim_start(chars="0").to_owned() |> @string.parse_int

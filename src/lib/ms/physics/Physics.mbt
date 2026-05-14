@@ -87,7 +87,7 @@ pub fn Physics::from_resource(src : NxFootholdTree) -> Physics raise {
 pub fn empty_physics() -> Physics {
   {
     fh_tree: {
-      footholds: Map::new(),
+      footholds: Map([]),
       seg_tree: { xs: [], nodes: [], root: -1 },
       null_fh: Foothold::default(),
       walls: @struct.Range::new(-100000, 100000),

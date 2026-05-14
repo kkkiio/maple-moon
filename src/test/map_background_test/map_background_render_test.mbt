@@ -1,7 +1,7 @@
 ///|
 async fn setup_tiled_background_scene_101010102() -> Unit {
   @local_loader.install_resource_env_for_test()
-  let app = @app.App::new()
+  let app = @app.App()
     .with_viewport_width(800.0)
     .with_viewport_height(600.0)
     .add_plugin(@plugins.default_plugin)
@@ -22,7 +22,7 @@ async fn setup_tiled_background_scene_101010102() -> Unit {
     raw.tiled_map,
     background_animations=raw.background_animations,
   )
-  let camera_anchor = @entity.Entity::new()
+  let camera_anchor = @entity.Entity()
   @transform2d.set_xy(camera_anchor, @math.Vec2(0.0, 0.0))
   @ms_camera.setup_camera_entity(
     camera_anchor,

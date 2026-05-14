@@ -29,7 +29,7 @@ pub fn from_tiled_foothold_tree(
   guard map.object_layer("foothold") is Some(layer) else {
     fail("missing `foothold` layer in map.tmj")
   }
-  let tree : Map[Int, Map[Int, Map[Int, @physics.NxFoothold]]] = Map::new()
+  let tree : Map[Int, Map[Int, Map[Int, @physics.NxFoothold]]] = Map([])
   for obj in layer.objects {
     guard obj.polyline.length() >= 2 else {
       fail("foothold object must contain polyline with 2 points, id=\{obj.id}")
@@ -48,8 +48,8 @@ pub fn from_tiled_foothold_tree(
     let y1 = (obj.y + p1.y).to_int()
     let x2 = (obj.x + p2.x).to_int()
     let y2 = (obj.y + p2.y).to_int()
-    let groups = tree.get_or_init(layer_id, fn() { Map::new() })
-    let footholds = groups.get_or_init(group_id, fn() { Map::new() })
+    let groups = tree.get_or_init(layer_id, fn() { Map([]) })
+    let footholds = groups.get_or_init(group_id, fn() { Map([]) })
     if footholds.contains(foothold_id) {
       fail("duplicate foothold id=\{foothold_id}")
     }
@@ -63,7 +63,7 @@ pub fn from_tiled_foothold_tree(
 fn validate_foothold_refs(
   tree : Map[Int, Map[Int, Map[Int, @physics.NxFoothold]]],
 ) -> Unit raise {
-  let ids = Set::new()
+  let ids = Set([])
   for _, groups in tree {
     for _, footholds in groups {
       for id, _ in footholds {
@@ -86,17 +86,17 @@ fn validate_foothold_refs(
 }
 
 ///|
-let tiled_root_world_stores : Map[UInt, @entity.Entity] = Map::new()
+let tiled_root_world_stores : Map[UInt, @entity.Entity] = Map([])
 
 ///|
 let tiled_object_spawn_reader : Ref[
   @event.EventReader[@tiled.TiledObjectSpawnedEvent],
-] = Ref::new(@event.EventReader::new())
+] = Ref(@event.EventReader())
 
 ///|
 let tiled_image_layer_spawn_reader : Ref[
   @event.EventReader[@tiled.TiledImageLayerSpawnedEvent],
-] = Ref::new(@event.EventReader::new())
+] = Ref(@event.EventReader())
 
 ///|
 fn tiled_object_int_optional_soft(
@@ -140,7 +140,7 @@ fn set_entity_z(entity : @entity.Entity, z : Int) -> Unit {
     Some(current) =>
       @transform.transforms().set(entity, {
         ..current,
-        translation: @selene_math.Vec3::new(
+        translation: @selene_math.Vec3(
           current.translation.x,
           current.translation.y,
           z.to_double(),
@@ -197,7 +197,7 @@ pub fn set_tiled_map(
   background_animations? : Map[String, @resource.SeleneClip] = {},
 ) -> Unit raise {
   let root = tiled_root_world_stores.get_or_init(world.id, fn() {
-    @entity.Entity::new()
+    @entity.Entity()
   })
   let spawn_settings = {
     ..@tiled.default_tiled_spawn_settings(),

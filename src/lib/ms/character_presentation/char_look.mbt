@@ -60,24 +60,24 @@ priv struct LocalAnimationState {
 let dynamic_layer_tracks_by_world : Map[
   UInt,
   Map[@entity.Entity, DynamicLayerTrack],
-] = Map::new()
+] = Map([])
 
 ///|
 let local_animation_states_by_world : Map[
   UInt,
   Map[@entity.Entity, LocalAnimationState],
-] = Map::new()
+] = Map([])
 
 ///|
 fn dynamic_layer_tracks() -> Map[@entity.Entity, DynamicLayerTrack] {
   let world_id = @ecs.require_current_world().id()
-  dynamic_layer_tracks_by_world.get_or_init(world_id, fn() { Map::new() })
+  dynamic_layer_tracks_by_world.get_or_init(world_id, fn() { Map([]) })
 }
 
 ///|
 fn local_animation_states() -> Map[@entity.Entity, LocalAnimationState] {
   let world_id = @ecs.require_current_world().id()
-  local_animation_states_by_world.get_or_init(world_id, fn() { Map::new() })
+  local_animation_states_by_world.get_or_init(world_id, fn() { Map([]) })
 }
 
 ///|
@@ -117,7 +117,7 @@ fn current_z_by_frame(z_layers : Array[Int], frame : Int) -> Int {
 ///|
 fn update_dynamic_layer_tracks(_world : @ecs.World) -> Unit {
   let tracks = dynamic_layer_tracks_by_world.get_or_init(_world.id(), fn() {
-    Map::new()
+    Map([])
   })
   let dead_entities : Array[@entity.Entity] = []
   for entity, track in tracks {
@@ -221,7 +221,7 @@ fn local_is_finished(entity : @entity.Entity) -> Bool {
 ///|
 pub fn char_look_animation_tick_system(_world : @ecs.World) -> Unit {
   let states = local_animation_states_by_world.get_or_init(_world.id(), fn() {
-    Map::new()
+    Map([])
   })
   let delta = @time.delta()
   let dead_entities : Array[@entity.Entity] = []
@@ -303,7 +303,7 @@ fn apply_local_frame(
     None =>
       @sprite.sprites().set(
         entity,
-        @sprite.Sprite::new(
+        @sprite.Sprite(
           image=Some(image),
           rect=Some(rect),
           custom_size=Some(size),
@@ -375,12 +375,12 @@ pub fn CharLook::new(
     equips,
     randomizer: @random.Rand::new(),
     draw_info,
-    body_entities: Map::new(),
-    hair_entities: Map::new(),
-    weapon_entities: Map::new(),
-    equip_entities: Map::new(),
+    body_entities: Map([]),
+    hair_entities: Map([]),
+    weapon_entities: Map([]),
+    equip_entities: Map([]),
     face_entity: None,
-    tracked_layer_entities: Map::new(),
+    tracked_layer_entities: Map([]),
   }
 }
 
@@ -1099,7 +1099,7 @@ fn facing_transform(flip_x : Bool) -> @selene_math.Transform {
   if flip_x {
     @selene_math.Transform::from_scale(-1.0, 1.0)
   } else {
-    @selene_math.Transform::new()
+    @selene_math.Transform()
   }
 }
 
@@ -1109,7 +1109,7 @@ fn set_entity_z(entity : @entity.Entity, z : Int) -> Unit {
     Some(t) =>
       @transform.transforms().set(entity, {
         ..t,
-        translation: @selene_math.Vec3::new(
+        translation: @selene_math.Vec3(
           t.translation.x,
           t.translation.y,
           z.to_double(),

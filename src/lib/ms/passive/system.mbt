@@ -4,14 +4,14 @@ pub let sword_fa_fighter_passive : SwordFaFighterPassive = SwordFaFighterPassive
 
 ///|
 /// Shared randomizer for passive skill probability checks.
-let passive_randomizer_ref : Ref[@random.Rand] = Ref::new(@random.Rand::new())
+let passive_randomizer_ref : Ref[@random.Rand] = Ref(@random.Rand::new())
 
 ///|
 /// Global registry of passive skills
 let passive_skills : Array[&PassiveSkill] = []
 
 ///|
-let passive_reader : Ref[@event.EventReader[@combat_system.HitEvent]?] = Ref::new(
+let passive_reader : Ref[@event.EventReader[@combat_system.HitEvent]?] = Ref(
   None,
 )
 
@@ -60,7 +60,7 @@ fn get_passive_reader() -> @event.EventReader[@combat_system.HitEvent] {
   match passive_reader.val {
     Some(reader) => reader
     None => {
-      let reader : @event.EventReader[@combat_system.HitEvent] = @event.EventReader::new()
+      let reader : @event.EventReader[@combat_system.HitEvent] = @event.EventReader()
       passive_reader.val = Some(reader)
       reader
     }

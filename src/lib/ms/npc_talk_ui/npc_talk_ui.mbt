@@ -177,18 +177,18 @@ const CONTENT_RIGHT_PADDING = 36
 const TEXT_LINE_HEIGHT = 1.25
 
 ///|
-let npc_talk_ui_ref : Ref[UINpcTalk?] = Ref::new(None)
+let npc_talk_ui_ref : Ref[UINpcTalk?] = Ref(None)
 
 ///|
-let npc_talk_resource_ref : Ref[NpcTalkResource?] = Ref::new(None)
+let npc_talk_resource_ref : Ref[NpcTalkResource?] = Ref(None)
 
 ///|
-let npc_talk_loading_ref : Ref[@utils.Future[Result[NpcTalkResource, Error]]?] = Ref::new(
+let npc_talk_loading_ref : Ref[@utils.Future[Result[NpcTalkResource, Error]]?] = Ref(
   None,
 )
 
 ///|
-let npc_talk_pending_args_ref : Ref[TalkArgs?] = Ref::new(None)
+let npc_talk_pending_args_ref : Ref[TalkArgs?] = Ref(None)
 
 ///|
 fn current_player_name() -> String {
@@ -392,7 +392,7 @@ fn UINpcTalk::new(
     entities: [],
     buttons: [],
     selection_buttons: [],
-    click_reader: @event.EventReader::new(),
+    click_reader: @event.EventReader(),
     window_pos: Point::default(),
     body_height: FIXED_BODY_HEIGHT,
   }
@@ -619,7 +619,7 @@ fn ui_image_from_texture(
   fit? : @selene_ui.ImageFit = @selene_ui.ImageFit::None,
 ) -> @selene_ui.UiImage {
   let source = ui_image_source_from_texture(texture)
-  @selene_ui.UiImage::new(
+  @selene_ui.UiImage(
     @selene_math.Vec2(texture.w.to_double(), texture.h.to_double()),
     texture.i,
     fit~,
@@ -662,7 +662,7 @@ fn UINpcTalk::spawn_image_node(
   width? : Int = texture.w,
   height? : Int = texture.h,
 ) -> @entity.Entity {
-  let entity = @entity.Entity::new()
+  let entity = @entity.Entity()
   self.entities.push(entity)
   @selene_ui.nodes().set(
     entity,
@@ -671,7 +671,7 @@ fn UINpcTalk::spawn_image_node(
       size=@selene_math.Vec2(width.to_double(), height.to_double()),
     ),
   )
-  @selene_ui.z_indexes().set(entity, @selene_ui.ZIndex::new(z))
+  @selene_ui.z_indexes().set(entity, @selene_ui.ZIndex(z))
   self.set_image_texture(entity, texture, fit~)
   entity
 }
@@ -686,7 +686,7 @@ fn UINpcTalk::spawn_material_node(
   height : Int,
   z : Int,
 ) -> @entity.Entity {
-  let entity = @entity.Entity::new()
+  let entity = @entity.Entity()
   self.entities.push(entity)
   @selene_ui.nodes().set(
     entity,
@@ -695,11 +695,8 @@ fn UINpcTalk::spawn_material_node(
       size=@selene_math.Vec2(width.to_double(), height.to_double()),
     ),
   )
-  @selene_ui.z_indexes().set(entity, @selene_ui.ZIndex::new(z))
-  @selene_ui.material_nodes().set(
-    entity,
-    @selene_ui.MaterialNode::new(material),
-  )
+  @selene_ui.z_indexes().set(entity, @selene_ui.ZIndex(z))
+  @selene_ui.material_nodes().set(entity, @selene_ui.MaterialNode(material))
   entity
 }
 
@@ -712,7 +709,7 @@ fn UINpcTalk::spawn_action_button(
   on_click : () -> Unit,
 ) -> Unit {
   let entity = self.spawn_image_node(resource.normal, x, y, NPC_TALK_Z + 8)
-  @selene_ui.buttons().set(entity, @selene_ui.Button::new())
+  @selene_ui.buttons().set(entity, @selene_ui.Button())
   self.buttons.push({ resource, entity, enabled: true, on_click })
 }
 
@@ -799,7 +796,7 @@ fn flatten_text_lines(lines : Array[Array[TextRun]]) -> Array[TextRun] {
 fn set_text_style(entity : @entity.Entity, run : TextRun) -> Unit {
   @selene_ui.text_fonts().set(
     entity,
-    @selene_ui.TextFont::new(family="Menlo", size=13.0, bold=run.bold),
+    @selene_ui.TextFont(family="Menlo", size=13.0, bold=run.bold),
   )
   @selene_ui.text_colors().set(
     entity,
@@ -818,7 +815,7 @@ fn UINpcTalk::spawn_rich_text_block(
   z : Int,
   clickable? : Bool = false,
 ) -> @entity.Entity {
-  let entity = @entity.Entity::new()
+  let entity = @entity.Entity()
   self.entities.push(entity)
   @selene_ui.nodes().set(
     entity,
@@ -829,10 +826,10 @@ fn UINpcTalk::spawn_rich_text_block(
       overflow_y=@selene_ui.Overflow::Clip,
     ),
   )
-  @selene_ui.z_indexes().set(entity, @selene_ui.ZIndex::new(z))
+  @selene_ui.z_indexes().set(entity, @selene_ui.ZIndex(z))
   @selene_ui.text_layouts().set(
     entity,
-    @selene_ui.TextLayout::new(
+    @selene_ui.TextLayout(
       align=@selene_math.Left,
       baseline=@selene_math.Top,
       line_height=TEXT_LINE_HEIGHT,
@@ -841,14 +838,12 @@ fn UINpcTalk::spawn_rich_text_block(
     ),
   )
   if clickable {
-    @selene_ui.buttons().set(entity, @selene_ui.Button::new())
+    @selene_ui.buttons().set(entity, @selene_ui.Button())
   }
   let spans : Array[@selene_ui.TextSpan] = runs.map(fn(run) {
-    @selene_ui.TextSpan::new(
+    @selene_ui.TextSpan(
       run.text,
-      font=Some(
-        @selene_ui.TextFont::new(family="Menlo", size=13.0, bold=run.bold),
-      ),
+      font=Some(@selene_ui.TextFont(family="Menlo", size=13.0, bold=run.bold)),
       color=Some(@selene_ui.TextColor::from_css(run.color.css_name())),
       bold=run.bold,
       underline=run.underline,

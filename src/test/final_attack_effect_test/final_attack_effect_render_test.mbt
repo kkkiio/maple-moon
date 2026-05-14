@@ -16,7 +16,7 @@ async fn load_test_mob() -> @monster.Mob {
 async test "final attack hit effect with EFFECT_ZINDEX stays visible" {
   @local_loader.install_resource_env_for_test()
   let previous_world = @ecs.current_world()
-  let world = @ecs.World::new()
+  let world = @ecs.World()
   @ecs.set_current_world(world)
   defer (match previous_world {
     Some(previous) => @ecs.set_current_world(previous)
@@ -42,7 +42,7 @@ async test "final attack hit effect with EFFECT_ZINDEX stays visible" {
   }
 
   @capture_app.init_app(
-    @app.App::new()
+    @app.App()
     .with_world(world)
     .with_viewport_width(220.0)
     .with_viewport_height(160.0)
@@ -60,7 +60,7 @@ async test "final attack hit effect with EFFECT_ZINDEX stays visible" {
     ),
   )
 
-  let camera_anchor = @entity.Entity::new()
+  let camera_anchor = @entity.Entity()
   @transform2d.set_xy(camera_anchor, @math.Vec2(110.0, 80.0))
   @ms_camera.setup_camera_entity(camera_anchor, center=@math.Vec2(110.0, 80.0))
   @ms_camera.set_follow_target(camera_anchor)

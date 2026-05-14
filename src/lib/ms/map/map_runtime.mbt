@@ -1,5 +1,5 @@
 ///|
-let runtime_context_ref : Ref[(MapInfo, @physics.Physics)?] = Ref::new(None)
+let runtime_context_ref : Ref[(MapInfo, @physics.Physics)?] = Ref(None)
 
 ///|
 /// Set current map runtime context for systems that need map info and physics.

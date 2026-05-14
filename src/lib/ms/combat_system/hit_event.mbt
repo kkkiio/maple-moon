@@ -52,7 +52,7 @@ pub fn HitEvent::is_user_input(self : HitEvent) -> Bool {
 
 ///|
 /// Global event bus for hit events, consumed by passive skill system.
-pub let hit_event_bus : @event.Events[HitEvent] = @event.Events::new()
+pub let hit_event_bus : @event.Events[HitEvent] = @event.Events()
 
 ///|
 fn init {
@@ -68,7 +68,7 @@ pub fn push_event(event : HitEvent) -> Unit {
 ///|
 /// Check if the global event bus has buffered events in the current window.
 pub fn is_empty() -> Bool {
-  let reader : @event.EventReader[HitEvent] = @event.EventReader::new()
+  let reader : @event.EventReader[HitEvent] = @event.EventReader()
   hit_event_bus.read(reader).is_empty()
 }
 

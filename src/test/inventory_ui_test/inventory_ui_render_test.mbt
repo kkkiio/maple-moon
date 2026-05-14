@@ -39,7 +39,7 @@ fn make_inventory_entry() -> InventoryEntry {
 
 ///|
 async fn setup_inventory_ui_test_scene() -> Unit {
-  let app = @app.App::new()
+  let app = @app.App()
     .with_viewport_width(800.0)
     .with_viewport_height(540.0)
     .add_plugin(@plugins.default_plugin)

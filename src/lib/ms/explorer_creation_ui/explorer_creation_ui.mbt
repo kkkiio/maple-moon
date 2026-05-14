@@ -47,7 +47,7 @@ priv enum UiAction {
 }
 
 ///|
-let creation_ui_ref : Ref[ExplorerCreationUI?] = Ref::new(None)
+let creation_ui_ref : Ref[ExplorerCreationUI?] = Ref(None)
 
 ///|
 let creation_ui_loading_future : Ref[
@@ -57,12 +57,12 @@ let creation_ui_loading_future : Ref[
       Error,
     ],
   ]?,
-] = Ref::new(None)
+] = Ref(None)
 
 ///|
 let opening_char_presentation_resource_ref : Ref[
   @char_look.CharacterPresentationResource?,
-] = Ref::new(None)
+] = Ref(None)
 
 ///|
 /// Open explorer creation UI.
@@ -171,7 +171,7 @@ fn new_ui(
     preview: { loading: None, loaded: None },
     entities: [],
     click_bindings: [],
-    click_reader: @event.EventReader::new(),
+    click_reader: @event.EventReader(),
     dirty: true,
     cloud_x: 200.0,
     debug_click_event_total: 0,
@@ -187,7 +187,7 @@ fn ExplorerCreationUI::spawn_entity(
   x : Int,
   y : Int,
 ) -> Unit {
-  let entity = @entity.Entity::new()
+  let entity = @entity.Entity()
   self.entities.push(entity)
   @sprite.sprites().set(entity, sprite)
   @transform2d.set_xy(entity, @selene_math.Vec2(x.to_double(), y.to_double()))
@@ -202,7 +202,7 @@ fn ExplorerCreationUI::spawn_text(
   z : Int,
   align? : @selene_math.HAlign = @selene_math.Left,
 ) -> Unit {
-  let entity = @entity.Entity::new()
+  let entity = @entity.Entity()
   self.entities.push(entity)
   @selene_ui.nodes().set(
     entity,
@@ -211,8 +211,8 @@ fn ExplorerCreationUI::spawn_text(
       size=@selene_math.Vec2(220.0, 20.0),
     ),
   )
-  @selene_ui.z_indexes().set(entity, @selene_ui.ZIndex::new(z))
-  @selene_ui.texts().set(entity, @selene_ui.Text::new(text))
+  @selene_ui.z_indexes().set(entity, @selene_ui.ZIndex(z))
+  @selene_ui.texts().set(entity, @selene_ui.Text(text))
   @selene_ui.text_fonts().set(
     entity,
     @selene_ui.TextFont::from_css("12px Menlo"),
@@ -220,7 +220,7 @@ fn ExplorerCreationUI::spawn_text(
   @selene_ui.text_colors().set(entity, @selene_ui.TextColor::from_css("black"))
   @selene_ui.text_layouts().set(
     entity,
-    @selene_ui.TextLayout::new(align~, baseline=@selene_math.Top),
+    @selene_ui.TextLayout(align~, baseline=@selene_math.Top),
   )
 }
 
@@ -233,7 +233,7 @@ fn ExplorerCreationUI::spawn_click_button(
   action : UiAction,
   debug_name : String,
 ) -> Unit {
-  let button_entity = @entity.Entity::new()
+  let button_entity = @entity.Entity()
   self.entities.push(button_entity)
   @transform2d.set_xy(
     button_entity,
@@ -247,7 +247,7 @@ fn ExplorerCreationUI::spawn_click_button(
     ),
   )
 
-  let click_entity = @entity.Entity::new()
+  let click_entity = @entity.Entity()
   self.entities.push(click_entity)
   @selene_ui.nodes().set(
     click_entity,
@@ -259,8 +259,8 @@ fn ExplorerCreationUI::spawn_click_button(
       ),
     ),
   )
-  @selene_ui.z_indexes().set(click_entity, @selene_ui.ZIndex::new(3000))
-  @selene_ui.buttons().set(click_entity, @selene_ui.Button::new())
+  @selene_ui.z_indexes().set(click_entity, @selene_ui.ZIndex(3000))
+  @selene_ui.buttons().set(click_entity, @selene_ui.Button())
   self.click_bindings.push((click_entity, action))
   @console.register_ui_entity("explorer_creation", debug_name, click_entity)
 }
@@ -326,7 +326,7 @@ fn ExplorerCreationUI::request_preview_if_needed(
           let face = resource.load_face_by_id(
             config_to_look_entry(config, self.resource).faceid,
           )
-          let entity = @entity.Entity::new()
+          let entity = @entity.Entity()
           let look = @char_look.CharLook::load(
             entity,
             config_to_look_entry(config, self.resource),

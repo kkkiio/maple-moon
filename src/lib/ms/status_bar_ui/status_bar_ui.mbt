@@ -5,10 +5,7 @@ priv struct StatusBarState {
 }
 
 ///|
-let state_ref : Ref[StatusBarState] = Ref::new({
-  entities: [],
-  last_snapshot: "",
-})
+let state_ref : Ref[StatusBarState] = Ref({ entities: [], last_snapshot: "" })
 
 ///|
 const STATUS_BAR_Z : Int = @graphics.UI_ZINDEX + 40
@@ -42,14 +39,14 @@ fn spawn_text(
   z : Int,
   align? : @selene_math.HAlign = @selene_math.Left,
 ) -> Unit {
-  let entity = @entity.Entity::new()
+  let entity = @entity.Entity()
   entities.push(entity)
   @transform.transforms().set(
     entity,
     @transform.Transform::from_xyz(x.to_double(), y.to_double(), z.to_double()),
   )
-  @text2d.text2ds().set(entity, @text2d.Text2d::new())
-  @selene_ui.texts().set(entity, @selene_ui.Text::new(text))
+  @text2d.text2ds().set(entity, @text2d.Text2d())
+  @selene_ui.texts().set(entity, @selene_ui.Text(text))
   @selene_ui.text_fonts().set(
     entity,
     @selene_ui.TextFont::from_css(STATUS_FONT),
@@ -60,7 +57,7 @@ fn spawn_text(
   )
   @selene_ui.text_layouts().set(
     entity,
-    @selene_ui.TextLayout::new(align~, baseline=@selene_math.Top),
+    @selene_ui.TextLayout(align~, baseline=@selene_math.Top),
   )
 }
 

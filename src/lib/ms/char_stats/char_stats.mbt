@@ -49,7 +49,7 @@ pub struct CharStatsChangedEvent {
 
 ///|
 /// Global char-stats change event bus.
-pub let char_stats_changed_event_bus : @event.Events[CharStatsChangedEvent] = @event.Events::new()
+pub let char_stats_changed_event_bus : @event.Events[CharStatsChangedEvent] = @event.Events()
 
 ///|
 fn init {
@@ -78,7 +78,7 @@ pub fn CharStats::new(
     base_i64stats: s.i64stats.0,
     total_stats: @utils.Counter::new(),
     buff_deltas: @utils.Counter::new(),
-    percentages: Map::new(),
+    percentages: Map([]),
     attack_speed: 0,
     projectile_range: 400,
     critical: 0.05,

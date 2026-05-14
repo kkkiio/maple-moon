@@ -29,7 +29,7 @@ pub(all) struct NpcAnchor {
 }
 
 ///|
-let map_npcs_ctx : Ref[MapNpcsContext?] = Ref::new(None)
+let map_npcs_ctx : Ref[MapNpcsContext?] = Ref(None)
 
 ///|
 pub fn set_npcs(ctx : MapNpcsContext) -> Unit {
@@ -152,12 +152,12 @@ pub fn MapNpcs::new(
   {
     open_npc_talk_ui,
     is_npc_talk_ui_open,
-    npcs: Map::new(),
+    npcs: Map([]),
     loading_npcs: Array::new(),
-    spawns: @queue.new(),
+    spawns: @queue.Queue([]),
     npc_loader,
     string_loader,
-    pointer_reader: @event.EventReader::new(),
+    pointer_reader: @event.EventReader(),
   }
 }
 
@@ -375,7 +375,7 @@ pub async fn Npc::load(
   f : Int,
   position : @struct.Point[Int],
 ) -> Npc {
-  let entity = @entity.Entity::new()
+  let entity = @entity.Entity()
   let phobj = @physics.PhysicsObject::new(on_pos_change=fn(pos) {
     @transform2d.set_xy(entity, pos)
   })
@@ -530,7 +530,7 @@ fn Npc::sync_sprite(self : Npc) -> Unit {
   let transform = if self.flip {
     @selene_math.Transform::from_scale(-1.0, 1.0)
   } else {
-    @selene_math.Transform::new()
+    @selene_math.Transform()
   }
   if @sprite.sprites().get(self.entity) is None ||
     self.last_synced_stance != Some(self.stance) {
@@ -543,7 +543,7 @@ fn Npc::sync_sprite(self : Npc) -> Unit {
       Some(current) =>
         @transform.transforms().set(self.entity, {
           ..current,
-          translation: @selene_math.Vec3::new(
+          translation: @selene_math.Vec3(
             current.translation.x,
             current.translation.y,
             z.to_double(),
@@ -566,15 +566,15 @@ fn play_aseprite_clip(
 ) -> Unit {
   @selene_animation.animation_target_ids().set(
     entity,
-    @selene_animation.AnimationTargetId::new("self"),
+    @selene_animation.AnimationTargetId("self"),
   )
   @selene_animation.animated_bys().set(
     entity,
-    @selene_animation.AnimatedBy::new(entity),
+    @selene_animation.AnimatedBy(entity),
   )
   @selene_animation.animation_graph_handles().set(entity, clip.graph)
   let player = @selene_animation.animation_players().get_or_init(entity, fn() {
-    @selene_animation.AnimationPlayer::new()
+    @selene_animation.AnimationPlayer()
   })
   ignore(
     player.play(clip.node, repeat=@selene_animation.RepeatAnimation::Forever),
@@ -586,16 +586,16 @@ fn play_aseprite_clip(
       @sprite.sprites().set(entity, {
         ..sprite,
         image: Some(clip.image),
-        texture_atlas: Some(@sprite.TextureAtlas::new(clip.layout)),
+        texture_atlas: Some(@sprite.TextureAtlas(clip.layout)),
         anchor,
         flip_x,
       })
     None =>
       @sprite.sprites().set(
         entity,
-        @sprite.Sprite::new(
+        @sprite.Sprite(
           image=Some(clip.image),
-          texture_atlas=Some(@sprite.TextureAtlas::new(clip.layout)),
+          texture_atlas=Some(@sprite.TextureAtlas(clip.layout)),
           anchor~,
           flip_x~,
         ),
@@ -624,7 +624,9 @@ fn Npc::sync_pickable(self : Npc) -> Unit {
   guard self.entity.is_alive() else { return }
   guard self.click_rect() is Some((size, offset)) else { return }
   if @physics2d.pickables().get(self.entity) is None {
-    @physics2d.pickables().set(self.entity, @physics2d.Pickable::new())
+    @physics2d.pickables().set(self.entity, @physics2d.Pickable::{
+      active: true,
+    })
   } else if @physics2d.pickables().get(self.entity) is Some(pickable) {
     pickable.active = true
   }

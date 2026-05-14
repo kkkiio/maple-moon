@@ -7,7 +7,7 @@ struct MapDrops {
 
 ///|
 fn MapDrops::new(src : Json) -> MapDrops raise @json.JsonDecodeError {
-  let meso_icons : Map[MesoIcon, @resource.NxAnimation] = Map::new()
+  let meso_icons : Map[MesoIcon, @resource.NxAnimation] = Map([])
   meso_icons[MesoIcon::BRONZE] = nx_node_to_animation(
     get_icon_raw(src, "09000000"),
   )
@@ -20,7 +20,7 @@ fn MapDrops::new(src : Json) -> MapDrops raise @json.JsonDecodeError {
   meso_icons[MesoIcon::BAG] = nx_node_to_animation(
     get_icon_raw(src, "09000003"),
   )
-  { drops: Map::new(), spawns: @queue.new(), meso_icons }
+  { drops: Map([]), spawns: @queue.Queue([]), meso_icons }
 }
 
 ///|

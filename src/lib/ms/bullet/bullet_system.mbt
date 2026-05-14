@@ -24,7 +24,7 @@ struct BulletSystem {
 }
 
 ///|
-let current_bullet_system_ref : Ref[BulletSystem?] = Ref::new(None)
+let current_bullet_system_ref : Ref[BulletSystem?] = Ref(None)
 
 ///|
 
@@ -62,7 +62,7 @@ pub fn BulletSystem::spawn(
 /// Advance bullet simulation by one fixed logic timestep.
 pub fn BulletSystem::update(self : BulletSystem, timestep~ : Int64) -> Unit {
   for spawn in self.pending.process(timestep~) {
-    let entity = @entity.Entity::new()
+    let entity = @entity.Entity()
     let bullet = @combat_proto.Bullet::new(
       entity,
       spawn.animation,

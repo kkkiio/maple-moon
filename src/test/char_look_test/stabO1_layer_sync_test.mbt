@@ -1,7 +1,7 @@
 ///|
 async test "stabO1 frame layering stays synchronized with animation frame" {
   let previous_world = @ecs.current_world()
-  let world = @ecs.World::new()
+  let world = @ecs.World()
   @ecs.set_current_world(world)
   defer (match previous_world {
     Some(previous) => @ecs.set_current_world(previous)
@@ -9,7 +9,7 @@ async test "stabO1 frame layering stays synchronized with animation frame" {
   })
 
   @capture_app.init_app(
-    @app.App::new()
+    @app.App()
     .with_world(world)
     .with_viewport_width(220.0)
     .with_viewport_height(220.0)
@@ -21,7 +21,7 @@ async test "stabO1 frame layering stays synchronized with animation frame" {
     ),
   )
 
-  let host = @entity.Entity::new()
+  let host = @entity.Entity()
   defer host.destroy()
   @transform2d.set_xy(host, Vec2(110.0, 110.0))
 
@@ -35,7 +35,7 @@ async test "stabO1 frame layering stays synchronized with animation frame" {
   fn sprite_z(entity : @entity.Entity) -> Double {
     @transform.transforms().get(entity).map_or(0.0, fn(t) { t.translation.z })
   }
-  let frame0_z : Map[@entity.Entity, Double] = Map::new()
+  let frame0_z : Map[@entity.Entity, Double] = Map([])
   for child in @entity.Entity::get_children(host) {
     if @sprite.sprites().get(child) is Some(_) {
       frame0_z.set(child, sprite_z(child))

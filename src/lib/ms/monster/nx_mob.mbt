@@ -146,10 +146,10 @@ pub impl @json.FromJson for NxMob with from_json(json, path) {
   let info : MobInfo = @json.from_json(info_json, path=path.add_key("info"))
 
   // 2. Parse Standard Animations
-  let animations = load_animations(json) catch { _ => Map::new() }
+  let animations = load_animations(json) catch { _ => Map([]) }
 
   // 3. Parse Attacks
-  let attacks : Map[Int, NxMobAttackEntry] = Map::new()
+  let attacks : Map[Int, NxMobAttackEntry] = Map([])
   for key, value in root {
     if key.has_prefix("attack") {
       try {
@@ -180,7 +180,7 @@ pub impl @json.FromJson for NxMob with from_json(json, path) {
   }
 
   // 4. Parse Skills
-  let skills : Map[Int, NxMobSkillEntry] = Map::new()
+  let skills : Map[Int, NxMobSkillEntry] = Map([])
   match root.get("info") {
     Some(Object(info_obj)) =>
       match info_obj.get("skill") {

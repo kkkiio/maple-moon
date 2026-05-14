@@ -12,7 +12,7 @@ pub fn Bullet::new(
 ) -> Bullet {
   let sprite_animation = animation
   let transform = if toleft {
-    @selene_math.Transform::new()
+    @selene_math.Transform()
   } else {
     @selene_math.Transform::from_scale(-1.0, 1.0)
   }

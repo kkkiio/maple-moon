@@ -7,7 +7,7 @@ pub fn look_sync_system(_world : @ecs.World) -> Unit {
   let equipped_tab = @inventory.TypeId::EQUIPPED
 
   // Track which slots we've seen in inventory
-  let inventory_slots = Map::new()
+  let inventory_slots = Map([])
   let mut add_or_update_count = 0
   let mut remove_count = 0
 

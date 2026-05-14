@@ -396,7 +396,7 @@ priv struct State {
 }
 
 ///|
-let state_ref : Ref[State] = Ref::new({
+let state_ref : Ref[State] = Ref({
   visible: false,
   panel_x: 84,
   panel_y: 24,
@@ -419,19 +419,19 @@ let state_ref : Ref[State] = Ref::new({
 })
 
 ///|
-let ui_json_for_test_ref : Ref[Json?] = Ref::new(None)
+let ui_json_for_test_ref : Ref[Json?] = Ref(None)
 
 ///|
-let tooltip_json_for_test_ref : Ref[Json?] = Ref::new(None)
+let tooltip_json_for_test_ref : Ref[Json?] = Ref(None)
 
 ///|
-let map_helper_json_for_test_ref : Ref[Json?] = Ref::new(None)
+let map_helper_json_for_test_ref : Ref[Json?] = Ref(None)
 
 ///|
-let world_map_pages_for_test_ref : Ref[Map[String, Json]] = Ref::new({})
+let world_map_pages_for_test_ref : Ref[Map[String, Json]] = Ref({})
 
 ///|
-let cleanup_registered_ref : Ref[Bool] = Ref::new(false)
+let cleanup_registered_ref : Ref[Bool] = Ref(false)
 
 ///|
 const PANEL_BORDER_Z : Int = @graphics.UI_ZINDEX
@@ -999,7 +999,7 @@ fn spawn_sprite(
   x : Int,
   y : Int,
 ) -> Unit {
-  let entity = @entity.Entity::new()
+  let entity = @entity.Entity()
   state.render_entities.push(entity)
   @sprite.sprites().set(entity, sprite)
   @transform2d.set_xy(entity, @selene_math.Vec2(x.to_double(), y.to_double()))
@@ -1015,7 +1015,7 @@ fn spawn_rect(
   color : String,
   z : Int,
 ) -> Unit {
-  let entity = @entity.Entity::new()
+  let entity = @entity.Entity()
   state.render_entities.push(entity)
   @sprite.sprites().set(
     entity,
@@ -1074,7 +1074,7 @@ fn spawn_text(
   color? : String = "#f3f6fb",
   font? : String = "11px Menlo",
 ) -> Unit {
-  let entity = @entity.Entity::new()
+  let entity = @entity.Entity()
   state.render_entities.push(entity)
   @selene_ui.nodes().set(
     entity,
@@ -1083,16 +1083,13 @@ fn spawn_text(
       size=@selene_math.Vec2(320.0, 20.0),
     ),
   )
-  @selene_ui.z_indexes().set(entity, @selene_ui.ZIndex::new(z))
-  @selene_ui.texts().set(entity, @selene_ui.Text::new(text))
+  @selene_ui.z_indexes().set(entity, @selene_ui.ZIndex(z))
+  @selene_ui.texts().set(entity, @selene_ui.Text(text))
   @selene_ui.text_fonts().set(entity, @selene_ui.TextFont::from_css(font))
   @selene_ui.text_colors().set(entity, @selene_ui.TextColor::from_css(color))
   @selene_ui.text_layouts().set(
     entity,
-    @selene_ui.TextLayout::new(
-      align=@selene_math.Left,
-      baseline=@selene_math.Top,
-    ),
+    @selene_ui.TextLayout(align=@selene_math.Left, baseline=@selene_math.Top),
   )
 }
 

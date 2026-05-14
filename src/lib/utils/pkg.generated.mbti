@@ -33,7 +33,7 @@ type BiMap[K, V]
 pub fn[K : Eq + Hash, V : Eq + Hash] BiMap::from_array(Array[(K, V)]) -> Self[K, V]
 pub fn[K, V : Eq + Hash] BiMap::get_backward(Self[K, V], V) -> K?
 pub fn[K : Eq + Hash, V] BiMap::get_forward(Self[K, V], K) -> V?
-pub fn[K, V] BiMap::new() -> Self[K, V]
+pub fn[K : Eq + Hash, V : Eq + Hash] BiMap::new() -> Self[K, V]
 pub fn[K : Eq + Hash, V : Eq + Hash] BiMap::set(Self[K, V], K, V) -> Unit
 
 type BoolPair[T]
@@ -42,7 +42,7 @@ pub fn[T] BoolPair::op_get(Self[T], Bool) -> T
 pub impl[T : Default] Default for BoolPair[T]
 
 pub(all) struct Counter[K, V](Map[K, V])
-pub fn[K, V] Counter::new() -> Self[K, V]
+pub fn[K : Eq + Hash, V] Counter::new() -> Self[K, V]
 pub fn[K : Hash + Eq, V : Default] Counter::op_get(Self[K, V], K) -> V
 pub fn[K : Hash + Eq, V] Counter::op_set(Self[K, V], K, V) -> Unit
 
@@ -50,7 +50,7 @@ pub(all) struct DefaultMap[K, V] {
   map : Map[K, V]
   default_fn : () -> V
 }
-pub fn[K, V] DefaultMap::new(() -> V) -> Self[K, V]
+pub fn[K : Eq + Hash, V] DefaultMap::new(() -> V) -> Self[K, V]
 pub fn[K : Eq + Hash, V] DefaultMap::op_get(Self[K, V], K) -> V
 
 pub(all) struct Duration(Int) derive(Compare, Eq, @debug.Debug)

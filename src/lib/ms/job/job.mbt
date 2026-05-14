@@ -58,7 +58,7 @@ pub async fn Job::load(id? : Int = 0) -> Job {
     })
     |> Array::from_iter
   let data_list = @async.all(async_ops.view())
-  let sub_job_data_map = Map::new()
+  let sub_job_data_map = Map([])
   for item in data_list {
     let (subid, data) = item
     sub_job_data_map[subid] = data

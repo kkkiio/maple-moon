@@ -30,7 +30,7 @@ pub const HIDE_SECONDS : Int = 12
 
 ///|
 pub fn Cursor::new() -> Cursor {
-  let entity = @entity.Entity::new()
+  let entity = @entity.Entity()
   {
     state: CursorState::IDLE,
     inactive_seconds: 0.0,
@@ -132,10 +132,7 @@ fn sync_cursor_ui(cursor : Cursor, mouse_pos : @math.Vec2) -> Unit {
     cursor.entity,
     @selene_ui.Node::absolute(position, size~),
   )
-  @selene_ui.z_indexes().set(
-    cursor.entity,
-    @selene_ui.ZIndex::new(CURSOR_ZINDEX),
-  )
+  @selene_ui.z_indexes().set(cursor.entity, @selene_ui.ZIndex(CURSOR_ZINDEX))
   let frame = cursor_frame_index(cursor)
   let frame_pos_x = if cursor.state == CursorState::CAN_CLICK {
     frame.to_double() * CAN_CLICK_FRAME_WIDTH
@@ -144,7 +141,7 @@ fn sync_cursor_ui(cursor : Cursor, mouse_pos : @math.Vec2) -> Unit {
   }
   @selene_ui.ui_images().set(
     cursor.entity,
-    @selene_ui.UiImage::new(
+    @selene_ui.UiImage(
       size,
       cursor_texture_path(cursor.state),
       source=Some({ position: @math.Vec2(frame_pos_x, 0.0), size }),

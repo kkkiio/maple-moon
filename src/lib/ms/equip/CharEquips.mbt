@@ -21,7 +21,7 @@ struct CharEquips {
 
 ///|
 pub fn CharEquips::new() -> CharEquips {
-  { clothes: Map::new(), weapon_data: None }
+  { clothes: Map([]), weapon_data: None }
 }
 
 ///|

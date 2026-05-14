@@ -16,7 +16,7 @@ struct Module {
 }
 
 ///|
-let active_module : Ref[Module?] = Ref::new(None)
+let active_module : Ref[Module?] = Ref(None)
 
 ///|
 /// Raw in-progress quest-log entry exported for the `quest_log` facade.
@@ -54,7 +54,7 @@ pub(all) struct QuestLogSnapshotRaw {
 } derive(Debug)
 
 ///|
-let quest_log_revision_ref : Ref[Int] = Ref::new(0)
+let quest_log_revision_ref : Ref[Int] = Ref(0)
 
 ///|
 /// Returns monotonic revision used by quest-log query caches.
@@ -107,7 +107,7 @@ fn bump_quest_log_revision() -> Unit {
 pub fn setup(quests_resource : QuestResource) -> Unit {
   let mod = {
     quests_resource,
-    player_quest_log: Ref::new({ in_progress: {}, completed: {} }),
+    player_quest_log: Ref({ in_progress: {}, completed: {} }),
   }
   active_module.val = Some(mod)
   bump_quest_log_revision()

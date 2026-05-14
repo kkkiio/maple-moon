@@ -1,7 +1,7 @@
 ///|
 fn load_animations(src : Json) -> Map[StanceType, MobAnimation] raise {
   let mob_animations : MobAnimations = @json.from_json(src)
-  let animations : Map[StanceType, MobAnimation] = Map::new()
+  let animations : Map[StanceType, MobAnimation] = Map([])
   if mob_animations.fly is Some(fly) {
     let fly = nx_animation_to_mob_animation(fly, loop_=true)
     animations[StanceType::STAND] = fly

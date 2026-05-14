@@ -28,7 +28,7 @@ impl @resource.CsvTextLoader for FetchCsvTextLoader with load_text(self, path) -
 }
 
 ///|
-let mapx_loader : Ref[@resource.AsyncLoader?] = Ref::new(None)
+let mapx_loader : Ref[@resource.AsyncLoader?] = Ref(None)
 
 ///|
 /// 获取地图信息的加载器.

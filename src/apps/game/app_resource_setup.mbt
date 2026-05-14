@@ -1,9 +1,7 @@
 ///|
 /// App 级别的资源初始化系统
 /// 在 GameSetup 阶段异步加载静态资源，完成后切换到 SelectCharacter
-let loading_ref : Ref[@utils.Future[Result[AppResources, Error]]?] = Ref::new(
-  None,
-)
+let loading_ref : Ref[@utils.Future[Result[AppResources, Error]]?] = Ref(None)
 
 ///|
 pub fn app_resource_setup_system(_world : @ecs.World) -> Unit {

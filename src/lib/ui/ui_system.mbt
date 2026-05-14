@@ -29,11 +29,11 @@ pub fn UIMod::get_number_set(self : UIMod) -> NumberSet {
 
 ///|
 /// Module singleton reference.
-let ui_mod : Ref[UIMod?] = Ref::new(None)
+let ui_mod : Ref[UIMod?] = Ref(None)
 
 ///|
 /// Loading future reference.
-let loading_mod_future : Ref[Future[Result[UIMod, Error]]?] = Ref::new(None)
+let loading_mod_future : Ref[Future[Result[UIMod, Error]]?] = Ref(None)
 
 ///|
 /// UI system update function. Call this in the game loop to load UI resources.

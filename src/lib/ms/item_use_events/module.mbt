@@ -12,7 +12,7 @@ pub(all) enum ItemUseIntent {
 } derive(Debug, ToJson)
 
 ///|
-let queue_ref : Ref[Array[ItemUseIntent]] = Ref::new([])
+let queue_ref : Ref[Array[ItemUseIntent]] = Ref([])
 
 ///|
 /// Push one item-use intent into queue.

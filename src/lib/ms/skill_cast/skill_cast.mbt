@@ -9,7 +9,7 @@ using @combat_system {
 
 ///|
 /// Global registry of available moves.
-pub let move_map : Map[Int, @combat_system.CombatAction] = Map::new()
+pub let move_map : Map[Int, @combat_system.CombatAction] = Map([])
 
 ///|
 /// Register a move into the global cast registry.
@@ -69,7 +69,7 @@ pub fn use_move(cc : &@combat_system.CombatCharacter, move_id : Int) -> Unit {
       }
       after_images
     }
-    None => Map::new()
+    None => Map([])
   }
   combat.apply_move(cc, act, after_images)
 }
@@ -109,6 +109,6 @@ pub fn new_regular_attack(weapon_type : @weapon.Type) -> CombatAction {
     },
     apply_hit_effects: fn(_, _) {  },
     apply_hit_sfx: fn(_, _) {  },
-    get_afterimage: fn() { Map::new() },
+    get_afterimage: fn() { Map([]) },
   }
 }

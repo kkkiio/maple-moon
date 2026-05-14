@@ -12,7 +12,7 @@ pub(all) struct MapMobsContext {
 }
 
 ///|
-let map_mobs_ctx : Ref[MapMobsContext?] = Ref::new(None)
+let map_mobs_ctx : Ref[MapMobsContext?] = Ref(None)
 
 ///|
 
@@ -59,8 +59,8 @@ pub struct MapMobs {
 ///|
 pub fn MapMobs::new() -> MapMobs {
   {
-    mobs: Map::new(),
-    spawns: @queue.new(),
+    mobs: Map([]),
+    spawns: @queue.Queue([]),
     loading_mobs: Array::new(),
     randomizer: @random.Rand::new(),
   }
@@ -343,7 +343,7 @@ pub fn map_monsters_render_system(_world : @ecs.World) -> Unit {
       let transform = if flip {
         @selene_math.Transform::from_scale(-1.0, 1.0)
       } else {
-        @selene_math.Transform::new()
+        @selene_math.Transform()
       }
       let layer = mob.get_layer()
       let y = mob.get_position().y
@@ -372,7 +372,7 @@ pub fn map_monsters_render_system(_world : @ecs.World) -> Unit {
       if @transform.transforms().get(entity) is Some(current) {
         @transform.transforms().set(entity, {
           ..current,
-          translation: @selene_math.Vec3::new(
+          translation: @selene_math.Vec3(
             current.translation.x,
             current.translation.y,
             z.to_double(),

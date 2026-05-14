@@ -30,9 +30,9 @@ fn check_item_resources(ctx : RescheckContext) -> Array[CheckIssue] {
   }
 
   let refs = collect_drop_item_refs(ctx)
-  let checked_file : Map[String, Bool] = Map::new()
-  let parsed_file : Map[String, Json] = Map::new()
-  let missing_bundle_ids : Map[String, Array[Int]] = Map::new()
+  let checked_file : Map[String, Bool] = Map([])
+  let parsed_file : Map[String, Json] = Map([])
+  let missing_bundle_ids : Map[String, Array[Int]] = Map([])
 
   for item_ref in refs {
     let rel_file = "Item/\{item_ref.category}/\{item_ref.file_name}"
@@ -142,7 +142,7 @@ fn check_shop_equip_item_resources(
     return
   }
   let equip_refs = collect_shop_equip_refs(shopitems_abs_file, issues)
-  let parsed_file : Map[String, Json] = Map::new()
+  let parsed_file : Map[String, Json] = Map([])
   for equip_ref in equip_refs {
     let equip_rel_file = "Character/\{equip_ref.category}/\{equip_ref.file_name}"
     let equip_abs_file = path_join(ctx.assets_root, equip_rel_file)
@@ -191,7 +191,7 @@ fn collect_shop_equip_refs(
   issues : Array[CheckIssue],
 ) -> Array[ShopEquipRef] {
   let refs : Array[ShopEquipRef] = []
-  let seen : Map[String, Bool] = Map::new()
+  let seen : Map[String, Bool] = Map([])
   let sheet = @data_sheet.parse_tsv_sheet(
     read_text_file(shopitems_file_abs_path),
     "data/shopitems.tsv",
@@ -439,7 +439,7 @@ fn append_missing_bundle_id(
 fn collect_drop_item_refs(ctx : RescheckContext) -> Array[ItemRef] {
   let files = ["data/mob_drops.tsv", "data/drop_data_global.tsv"]
   let refs : Array[ItemRef] = []
-  let seen : Map[String, Bool] = Map::new()
+  let seen : Map[String, Bool] = Map([])
 
   for rel_file in files {
     let abs_file = path_join(ctx.assets_root, rel_file)

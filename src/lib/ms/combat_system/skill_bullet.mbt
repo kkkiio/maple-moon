@@ -91,7 +91,7 @@ async fn BySkillLevelBullet::new(
   skill_loader : @resource.AsyncLoader,
   base_path : String,
 ) -> BySkillLevelBullet {
-  let bullets = Map::new()
+  let bullets = Map([])
   if src is { "level": Object(levels), .. } {
     for level, sub in levels {
       if sub is { "ball": ball, .. } {

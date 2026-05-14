@@ -5,8 +5,10 @@ pub(all) struct DefaultMap[K, V] {
 }
 
 ///|
-pub fn[K, V] DefaultMap::new(default_fn : () -> V) -> DefaultMap[K, V] {
-  { map: Map::new(), default_fn }
+pub fn[K : Eq + Hash, V] DefaultMap::new(
+  default_fn : () -> V,
+) -> DefaultMap[K, V] {
+  { map: Map([]), default_fn }
 }
 
 ///|

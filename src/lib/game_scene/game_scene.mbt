@@ -177,10 +177,10 @@ pub fn reset_player_position() -> Unit {
 }
 
 ///|
-let stage_ref : Ref[Stage?] = Ref::new(None)
+let stage_ref : Ref[Stage?] = Ref(None)
 
 ///|
-let transiting_loading_ref : Ref[@utils.Future[Result[@map.SceneMap, Error]]?] = Ref::new(
+let transiting_loading_ref : Ref[@utils.Future[Result[@map.SceneMap, Error]]?] = Ref(
   None,
 )
 
@@ -352,7 +352,7 @@ pub fn scene_transition_system(world : @ecs.World) -> Unit {
         let draw_info = char_presentation_resource.draw_info
         let stance_bodys_map = char_presentation_resource.stance_bodys_map.0
         let stance_heads_map = char_presentation_resource.stance_heads_map.0
-        let entity = @entity.Entity::new()
+        let entity = @entity.Entity()
         let look = @char_look.CharLook::new(
           entity,
           {},
@@ -518,9 +518,9 @@ fn new_stage(
       .unwrap_or(@weapon.Type::NONE)
     },
     make_job_from_stats(stats_entry),
-    Map::new(),
-    Map::new(),
-    Map::new(),
+    Map([]),
+    Map([]),
+    Map([]),
   )
   let entity = char_look.get_root_entity()
   let global_inv = @inventory.inventory.val

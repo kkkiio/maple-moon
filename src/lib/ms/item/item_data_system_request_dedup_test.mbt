@@ -5,7 +5,7 @@ struct CountingItemBundleLoader {
 
 ///|
 fn CountingItemBundleLoader::new() -> CountingItemBundleLoader {
-  { counts: Ref::new(Map::new()) }
+  { counts: Ref(Map([])) }
 }
 
 ///|

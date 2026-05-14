@@ -339,7 +339,7 @@ priv struct MiniMapFrameDraw {
 ///|
 fn ui_image_from_texture(texture : @resource.NxTexture) -> @selene_ui.UiImage {
   let source = ui_image_source_from_texture(texture)
-  @selene_ui.UiImage::new(
+  @selene_ui.UiImage(
     @selene_math.Vec2(texture.w.to_double(), texture.h.to_double()),
     texture.i,
     source=Some(source),
@@ -368,7 +368,7 @@ fn spawn_minimap_texture_entity(
   local_y : Int,
   z : Int,
 ) -> Unit {
-  let entity = @entity.Entity::new()
+  let entity = @entity.Entity()
   @selene_ui.nodes().set(
     entity,
     @selene_ui.Node::absolute(
@@ -379,7 +379,7 @@ fn spawn_minimap_texture_entity(
       size=@selene_math.Vec2(texture.w.to_double(), texture.h.to_double()),
     ),
   )
-  @selene_ui.z_indexes().set(entity, @selene_ui.ZIndex::new(z))
+  @selene_ui.z_indexes().set(entity, @selene_ui.ZIndex(z))
   @selene_ui.ui_images().set(entity, ui_image_from_texture(texture))
   entities.push(entity)
 }
@@ -395,7 +395,7 @@ fn spawn_minimap_material_entity(
   height : Int,
   z : Int,
 ) -> Unit {
-  let entity = @entity.Entity::new()
+  let entity = @entity.Entity()
   @selene_ui.nodes().set(
     entity,
     @selene_ui.Node::absolute(
@@ -406,11 +406,8 @@ fn spawn_minimap_material_entity(
       size=@selene_math.Vec2(width.to_double(), height.to_double()),
     ),
   )
-  @selene_ui.z_indexes().set(entity, @selene_ui.ZIndex::new(z))
-  @selene_ui.material_nodes().set(
-    entity,
-    @selene_ui.MaterialNode::new(material),
-  )
+  @selene_ui.z_indexes().set(entity, @selene_ui.ZIndex(z))
+  @selene_ui.material_nodes().set(entity, @selene_ui.MaterialNode(material))
   entities.push(entity)
 }
 
@@ -473,18 +470,18 @@ priv struct MiniMapUIState {
 }
 
 ///|
-let mini_map_ui_state : Ref[MiniMapUIState?] = Ref::new(None)
+let mini_map_ui_state : Ref[MiniMapUIState?] = Ref(None)
 
 ///|
-let pending_map : Ref[(Int, String, String, @map.MiniMapRuntimeResource?)?] = Ref::new(
+let pending_map : Ref[(Int, String, String, @map.MiniMapRuntimeResource?)?] = Ref(
   None,
 )
 
 ///|
-let mini_map_json_override : Ref[Json?] = Ref::new(None)
+let mini_map_json_override : Ref[Json?] = Ref(None)
 
 ///|
-let map_helper_minimap_json_override : Ref[Json?] = Ref::new(None)
+let map_helper_minimap_json_override : Ref[Json?] = Ref(None)
 
 ///|
 fn ensure_mini_map_ui_state() -> MiniMapUIState {

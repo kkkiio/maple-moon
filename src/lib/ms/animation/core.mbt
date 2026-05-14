@@ -173,7 +173,7 @@ pub fn sprite_from_picture(
 ) -> @sprite.Sprite {
   let spec = picture.spec
   let flip_x = spec.flip_x
-  @sprite.Sprite::new(
+  @sprite.Sprite(
     image=Some(spec.image),
     rect=Some(spec.rect),
     custom_size=Some(spec.size),
@@ -201,9 +201,9 @@ pub fn sprite_from_animation(
   } else {
     animation.clip.anchor
   }
-  @sprite.Sprite::new(
+  @sprite.Sprite(
     image=Some(animation.clip.image),
-    texture_atlas=Some(@sprite.TextureAtlas::new(animation.clip.layout)),
+    texture_atlas=Some(@sprite.TextureAtlas(animation.clip.layout)),
     anchor~,
     flip_x~,
     color=white_with_alpha(alpha),
@@ -220,15 +220,15 @@ pub fn play_animation(
   set_animation_transform(entity, transform)
   @selene_animation.animation_target_ids().set(
     entity,
-    @selene_animation.AnimationTargetId::new("self"),
+    @selene_animation.AnimationTargetId("self"),
   )
   @selene_animation.animated_bys().set(
     entity,
-    @selene_animation.AnimatedBy::new(entity),
+    @selene_animation.AnimatedBy(entity),
   )
   @selene_animation.animation_graph_handles().set(entity, animation.clip.graph)
   let player = @selene_animation.animation_players().get_or_init(entity, fn() {
-    @selene_animation.AnimationPlayer::new()
+    @selene_animation.AnimationPlayer()
   })
   let repeat = if loop_ {
     @selene_animation.RepeatAnimation::Forever
@@ -247,15 +247,15 @@ pub fn play_animation(
       @sprite.sprites().set(entity, {
         ..sprite,
         image: Some(animation.clip.image),
-        texture_atlas: Some(@sprite.TextureAtlas::new(animation.clip.layout)),
+        texture_atlas: Some(@sprite.TextureAtlas(animation.clip.layout)),
         anchor,
       })
     None =>
       @sprite.sprites().set(
         entity,
-        @sprite.Sprite::new(
+        @sprite.Sprite(
           image=Some(animation.clip.image),
-          texture_atlas=Some(@sprite.TextureAtlas::new(animation.clip.layout)),
+          texture_atlas=Some(@sprite.TextureAtlas(animation.clip.layout)),
           anchor~,
           flip_x=transform.a < 0.0,
         ),
@@ -281,11 +281,7 @@ pub fn set_animation_transform(
     Some(t) =>
       @transform.transforms().set(entity, {
         ..t,
-        translation: @math.Vec3::new(
-          transform.tx,
-          transform.ty,
-          t.translation.z,
-        ),
+        translation: @math.Vec3(transform.tx, transform.ty, t.translation.z),
       })
     None => @transform2d.set_xy(entity, @math.Vec2(transform.tx, transform.ty))
   }
@@ -357,11 +353,11 @@ fn compile_frames_to_selene_clip(
   }
 
   let layout = @sprite.register_texture_atlas_layout(
-    @sprite.TextureAtlasLayout::new(first.size, rects),
+    @sprite.TextureAtlasLayout(first.size, rects),
   )
-  let clip = @selene_animation.AnimationClip::new(clip_name)
+  let clip = @selene_animation.AnimationClip(clip_name)
   clip.add_curve_to_target(
-    @selene_animation.AnimationTargetId::new("self"),
+    @selene_animation.AnimationTargetId("self"),
     @selene_animation.VariableCurve::scalar(
       @selene_animation.texture_atlas_index_field(),
       keys,

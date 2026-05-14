@@ -1,6 +1,6 @@
 ///|
 test "storage_item_entry_json" {
-  let stats = Map::new()
+  let stats = Map([])
   stats.set("WATK", 10)
   stats.set("STR", 5)
 

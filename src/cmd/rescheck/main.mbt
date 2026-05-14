@@ -79,7 +79,7 @@ fn validate_selected_modules(
   if selected.is_empty() {
     return true
   }
-  let known : Map[String, Bool] = Map::new()
+  let known : Map[String, Bool] = Map([])
   for check in checks {
     known[check.name] = true
   }

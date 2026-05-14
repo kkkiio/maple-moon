@@ -27,7 +27,7 @@ pub struct UiSliceResource {
 }
 
 ///|
-let ui_slice_cache : Map[String, UiSliceResource] = Map::new()
+let ui_slice_cache : Map[String, UiSliceResource] = Map([])
 
 ///|
 /// Load and cache one UI slice resource from an exported `slice.json`.
@@ -196,7 +196,7 @@ fn push_image(
     image,
     destination: dst,
     source: Some({ position: src.position, size: src.size }),
-    transform: @selene_math.Transform::new(),
+    transform: @selene_math.Transform(),
     repeat: @selene_math.NoRepeat,
     color: @selene_ui.rgba(255, 255, 255, 1.0),
     uv_transform: @selene_math.Transform::identity(),

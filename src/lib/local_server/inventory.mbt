@@ -43,7 +43,7 @@ pub fn StorageItemEntry::from_server_proto(
         item_id: id,
         slot,
         stats: {
-          let map = Map::new()
+          let map = Map([])
           for k, v in stats.0 {
             map.set(k.name(), v)
           }

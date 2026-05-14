@@ -119,7 +119,7 @@ pub async fn Skill::new(
       bullet.get(user, bulletid)
     }
   }
-  let after_image = Map::new()
+  let after_image = Map([])
   if src is { "afterimage": Object(map), .. } {
     for k, v in map {
       if k.has_suffix(".img") {

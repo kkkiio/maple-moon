@@ -8,7 +8,7 @@ pub(all) struct TalkContent {
 test "test text" {
   let markup_text = "Take this ship and you'll head off to a bigger continent. For #e150 mesos#n, I'll take you to #bVictoria Island#k. The thing is, once you leave this place, you can't ever come back. What do you think? Do you want to go to Victoria Island?"
   let result = parse_talk_content(markup_text)
-  inspect(result.selections, content="[]")
+  debug_inspect(result.selections, content="[]")
   inspect(
     result.text_html,
     content=(
@@ -47,7 +47,7 @@ test "test selections" {
 test "test no options" {
   let template = "Hi there! This cab is for VIP customers only. Instead of just taking you to different towns like the regular cabs, we offer a much better service worthy of VIP class. It's a bit pricey, but... for only 10,000 mesos, we'll take you safely to the \r\n#bAnt Tunnel#k."
   let result = parse_talk_content(template)
-  inspect(result.selections, content="[]")
+  debug_inspect(result.selections, content="[]")
   inspect(
     result.text_html,
     content=(

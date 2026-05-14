@@ -21,8 +21,8 @@ pub fn MapPortals::new(
   mapid : Int,
   map_portals_animations : MapPortalAnimations,
 ) -> MapPortals {
-  let portals_by_id = Map::new()
-  let name_portal_id_map = Map::new()
+  let portals_by_id = Map([])
+  let name_portal_id_map = Map([])
   for portal_id, res in src {
     let portal_type = res.pt
     let name = res.pn
@@ -242,7 +242,7 @@ priv struct PortalsContext {
 }
 
 ///|
-let portals_context : Ref[PortalsContext?] = Ref::new(None)
+let portals_context : Ref[PortalsContext?] = Ref(None)
 
 ///|
 pub fn set_portals(
@@ -254,7 +254,7 @@ pub fn set_portals(
   }
   portals_context.val = Some({
     portals,
-    portal_entities: Map::new(),
+    portal_entities: Map([]),
     get_touch_pos,
     dirty: true,
   })
@@ -328,7 +328,7 @@ fn ensure_portal_entities(ctx : PortalsContext) -> Unit {
     if ctx.portal_entities.contains(id) {
       continue
     }
-    let entity = @entity.Entity::new()
+    let entity = @entity.Entity()
     let position = portal.get_position()
     @transform2d.set_xy(
       entity,
@@ -406,7 +406,7 @@ test "parse portals" {
 
 ///|
 fn make_test_portals(src : Array[NxPortal]) -> MapPortals {
-  MapPortals::new(src, 101010103, { animations: Map::new() })
+  MapPortals::new(src, 101010103, { animations: Map([]) })
 }
 
 ///|

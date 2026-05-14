@@ -131,6 +131,6 @@ fn new_regular_attack() -> CombatAction {
     },
     apply_hit_effects: fn(_, _) {  },
     apply_hit_sfx: fn(_, _) {  },
-    get_afterimage: fn() { Map::new() },
+    get_afterimage: fn() { Map([]) },
   }
 }

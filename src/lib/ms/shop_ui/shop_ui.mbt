@@ -122,7 +122,7 @@ const SELL_SELECTION_X_OFFSET : Int = 321
 const SELECTION_Y_OFFSET : Int = 124
 
 ///|
-let state_ref : Ref[State] = Ref::new({
+let state_ref : Ref[State] = Ref({
   visible: false,
   pending_open_shop: None,
   pending_open_shop_item_ids: [],
@@ -138,20 +138,20 @@ let state_ref : Ref[State] = Ref::new({
   ui_resources: None,
   ui_loading: None,
   items_by_tab: new_items_map(),
-  icon_by_item_id: Map::new(),
-  item_name_by_id: Map::new(),
+  icon_by_item_id: Map([]),
+  item_name_by_id: Map([]),
   render_entities: [],
 })
 
 ///|
-let scene_cleanup_registered : Ref[Bool] = Ref::new(false)
+let scene_cleanup_registered : Ref[Bool] = Ref(false)
 
 ///|
-let ui_resources_cache_ref : Ref[UiResources?] = Ref::new(None)
+let ui_resources_cache_ref : Ref[UiResources?] = Ref(None)
 
 ///|
 fn new_items_map() -> Map[InventoryType, Array[DisplayInventoryItem]] {
-  let map = Map::new()
+  let map = Map([])
   for tab in tabs {
     map.set(tab, [])
   }
@@ -175,7 +175,7 @@ fn spawn_ui_sprite(
   x : Int,
   y : Int,
 ) -> Unit {
-  let entity = @entity.Entity::new()
+  let entity = @entity.Entity()
   entities.push(entity)
   @sprite.sprites().set(entity, sprite)
   @transform2d.set_xy(entity, @selene_math.Vec2(x.to_double(), y.to_double()))
@@ -190,7 +190,7 @@ fn make_text_sprite(
   z : Int,
   align? : @selene_math.HAlign = @selene_math.Left,
 ) -> Unit {
-  let entity = @entity.Entity::new()
+  let entity = @entity.Entity()
   entities.push(entity)
   @selene_ui.nodes().set(
     entity,
@@ -199,8 +199,8 @@ fn make_text_sprite(
       size=@selene_math.Vec2(240.0, 18.0),
     ),
   )
-  @selene_ui.z_indexes().set(entity, @selene_ui.ZIndex::new(z))
-  @selene_ui.texts().set(entity, @selene_ui.Text::new(text))
+  @selene_ui.z_indexes().set(entity, @selene_ui.ZIndex(z))
+  @selene_ui.texts().set(entity, @selene_ui.Text(text))
   @selene_ui.text_fonts().set(
     entity,
     @selene_ui.TextFont::from_css("11px Menlo"),
@@ -211,7 +211,7 @@ fn make_text_sprite(
   )
   @selene_ui.text_layouts().set(
     entity,
-    @selene_ui.TextLayout::new(align~, baseline=@selene_math.Top),
+    @selene_ui.TextLayout(align~, baseline=@selene_math.Top),
   )
 }
 
@@ -1073,7 +1073,7 @@ pub fn init_shop_ui() -> Unit {
 }
 
 ///|
-let game_server_handlers_registered : Ref[Bool] = Ref::new(false)
+let game_server_handlers_registered : Ref[Bool] = Ref(false)
 
 ///|
 /// Register local-server handlers for shop ui.

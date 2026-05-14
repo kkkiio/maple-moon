@@ -26,7 +26,7 @@ fn parse_json_file(path : String) -> Json raise {
 
 ///|
 fn make_test_look() -> @char_look.CharLook raise {
-  let entity = @entity.Entity::new()
+  let entity = @entity.Entity()
   let bodynode = parse_json_file("assets/Character/Body/00002000.img.json")
   let stance_bodys_map : @char_look.NxStanceLooks[@types.NxStanceBody] = @json.from_json(
     bodynode,
@@ -66,10 +66,10 @@ fn make_test_player(oid : Int) -> @player.Player raise {
   let stats : @char_stats.CharStats = @char_stats.CharStats::new(
     @server_proto.StatsEntry::default(),
     fn() { @weapon.Type::NONE },
-    @job.Job::new(0, @job.Level::BEGINNER, Map::new()),
-    Map::new(),
-    Map::new(),
-    Map::new(),
+    @job.Job::new(0, @job.Level::BEGINNER, Map([])),
+    Map([]),
+    Map([]),
+    Map([]),
   )
   @player.Player::new(
     look.get_root_entity(),
@@ -102,7 +102,7 @@ fn load_map_runtime(map_id : Int) -> (@map.MapInfo, @physics.Physics) raise {
 
 ///|
 fn install_test_keymap() -> Unit {
-  let keymap : @keymap.Keymap = Map::new()
+  let keymap : @keymap.Keymap = Map([])
   keymap[@inputs.Code::ArrowUp] = @keymap.Action::BASIC(
     @keymap.BasicActionId::MOVE_UP,
   )
@@ -143,7 +143,7 @@ fn setup_controller_env(
 ///|
 fn teardown_controller_env() -> Unit {
   apply_keyboard_snapshot([])
-  @keymap.set_keymap(Map::new())
+  @keymap.set_keymap(Map([]))
   @map.clear_runtime_context()
   @game_state.init_state(@game_state.GamePhase::SelectCharacter)
 }

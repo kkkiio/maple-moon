@@ -14,22 +14,9 @@ fn entity_count() -> Int {
 
 ///|
 async fn setup_number_scene() -> Unit {
-  @resource.register_async_loader(
-    "effect",
-    @resource.AsyncLoader::new(
-      "test_local_effect",
-      loader=@resource.CompositeAsyncResourceLoader::new({
-        "BasicEff.img/": @local_loader.LocalDirResourceLoader::new(
-          "assets/Effect/BasicEff.img",
-        ),
-        "CharacterEff.img/": @local_loader.LocalDirResourceLoader::new(
-          "assets/Effect/CharacterEff.img",
-        ),
-      }),
-    ),
-  )
+  @local_loader.install_resource_env_for_test()
 
-  let app = @app.App::new()
+  let app = @app.App()
     .with_viewport_width(320.0)
     .with_viewport_height(240.0)
     .add_plugin(@plugins.default_plugin)

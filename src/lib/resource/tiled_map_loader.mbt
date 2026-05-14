@@ -105,11 +105,11 @@ pub async fn load_tiled_map_from_mx(
 ) -> (String, @tiled.TiledMap) {
   let mx_json = loader.load_resource(mx_path)
   if mx_json is Null {
-    fail("mx.json not found, path=\{mx_path}")
+    fail("mx.json not found, path=\{to_repr(mx_path)}")
   }
   let tiled_path = match mx_json {
     { "tiled_path": String(path), .. } if path.length() > 0 => path
-    _ => fail("invalid mx.json, path=\{mx_path}")
+    _ => fail("invalid mx.json, path=\{to_repr(mx_path)}")
   }
   let tiled_path_parts = split_resource_path(tiled_path)
   guard !tiled_path_parts.is_empty() else {

@@ -1,6 +1,5 @@
 import {
   "moonbitlang/async",
-  "KKKIIO/maple-moon/lib/resource",
   "KKKIIO/maple-moon/lib/ui",
   "KKKIIO/maple-moon/lib/io_service",
   "KKKIIO/maple-moon/test/capture_app",

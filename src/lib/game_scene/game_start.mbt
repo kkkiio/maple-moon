@@ -15,7 +15,7 @@ let loading_data_ref : Ref[
       Error,
     ],
   ]?,
-] = Ref::new(None)
+] = Ref(None)
 
 ///|
 pub fn get_loading_data() -> @utils.Future[
@@ -63,7 +63,7 @@ pub fn clear_loading_data() -> Unit {
 }
 
 ///|
-let active_scene_map_ref : Ref[@map.SceneMap?] = Ref::new(None)
+let active_scene_map_ref : Ref[@map.SceneMap?] = Ref(None)
 
 ///|
 /// Store the active map runtime objects after map loading finished.
@@ -119,7 +119,7 @@ pub fn find_equipped_item_id(
 pub fn collect_inventory_item_ids(
   items : Array[@server_proto.InventoryItemEntry],
 ) -> Array[Int] {
-  let id_set : Map[Int, Bool] = Map::new()
+  let id_set : Map[Int, Bool] = Map([])
   for item in items {
     let item_id = match item {
       @server_proto.InventoryItemEntry::Equip(id~, ..) => id
@@ -176,5 +176,5 @@ pub fn make_job_from_stats(stats_entry : @server_proto.StatsEntry) -> @job.Job {
   } else {
     @job.Level::FOURTH
   }
-  @job.Job::new(job_id, level, Map::new())
+  @job.Job::new(job_id, level, Map([]))
 }

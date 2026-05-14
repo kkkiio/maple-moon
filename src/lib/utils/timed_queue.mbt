@@ -6,7 +6,7 @@ struct TimedQueue[T] {
 
 ///|
 pub fn[T] TimedQueue::new() -> TimedQueue[T] {
-  { queue: @priority_queue.PriorityQueue::new(), time: 0 }
+  { queue: @priority_queue.PriorityQueue([]), time: 0 }
 }
 
 ///|

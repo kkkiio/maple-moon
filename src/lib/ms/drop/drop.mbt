@@ -39,7 +39,7 @@ fn DropBase::new(
   mode : Int,
   _player_drop : Bool,
 ) -> DropBase {
-  let entity = @entity.Entity::new()
+  let entity = @entity.Entity()
   let phobj = @physics.PhysicsObject::new(on_pos_change=fn(pos) {
     @transform2d.set_xy(entity, pos)
   })

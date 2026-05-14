@@ -66,7 +66,7 @@ let tabs : Array[InventoryType] = [
 ]
 
 ///|
-let state_ref : Ref[State] = Ref::new({
+let state_ref : Ref[State] = Ref({
   visible: false,
   tab_index: 0,
   panel_x: PANEL_X,
@@ -76,17 +76,17 @@ let state_ref : Ref[State] = Ref::new({
   slot_max_by_tab: new_slot_max_map(),
   ui_resources: None,
   ui_loading: None,
-  icon_by_item_id: Map::new(),
+  icon_by_item_id: Map([]),
   ui_entities: [],
   tab_buttons: [],
   slot_buttons: [],
-  click_reader: @event.EventReader::new(),
+  click_reader: @event.EventReader(),
   binding_version: 0,
   active_slot: None,
 })
 
 ///|
-let scene_cleanup_registered : Ref[Bool] = Ref::new(false)
+let scene_cleanup_registered : Ref[Bool] = Ref(false)
 
 ///|
 const PANEL_X : Int = 536
@@ -134,7 +134,7 @@ const COUNT_TEXT_HEIGHT_PX : Int = 11
 
 ///|
 fn new_items_map() -> Map[InventoryType, Array[DisplayItem]] {
-  let map = Map::new()
+  let map = Map([])
   for tab in tabs {
     map.set(tab, [])
   }
@@ -143,7 +143,7 @@ fn new_items_map() -> Map[InventoryType, Array[DisplayItem]] {
 
 ///|
 fn new_slot_max_map() -> Map[InventoryType, Int] {
-  let map = Map::new()
+  let map = Map([])
   map.set(InventoryType::EQUIP, 96)
   map.set(InventoryType::USE, 96)
   map.set(InventoryType::SETUP, 96)
@@ -214,7 +214,7 @@ fn parse_ui_resources_from_item_json(item_json : Json) -> UiResources raise {
 ///|
 fn ui_image_from_texture(texture : @resource.NxTexture) -> @selene_ui.UiImage {
   let source = ui_image_source_from_texture(texture)
-  @selene_ui.UiImage::new(
+  @selene_ui.UiImage(
     @selene_math.Vec2(texture.w.to_double(), texture.h.to_double()),
     texture.i,
     source=Some(source),
@@ -252,7 +252,7 @@ fn spawn_image_node(
   width? : Int = texture.w,
   height? : Int = texture.h,
 ) -> @entity.Entity {
-  let entity = @entity.Entity::new()
+  let entity = @entity.Entity()
   entities.push(entity)
   @selene_ui.nodes().set(
     entity,
@@ -261,7 +261,7 @@ fn spawn_image_node(
       size=@selene_math.Vec2(width.to_double(), height.to_double()),
     ),
   )
-  @selene_ui.z_indexes().set(entity, @selene_ui.ZIndex::new(z))
+  @selene_ui.z_indexes().set(entity, @selene_ui.ZIndex(z))
   set_image_texture(entity, texture)
   entity
 }
@@ -278,7 +278,7 @@ fn spawn_text_node(
   align? : @selene_math.HAlign = @selene_math.Left,
   font_size? : Double = 11.0,
 ) -> @entity.Entity {
-  let entity = @entity.Entity::new()
+  let entity = @entity.Entity()
   entities.push(entity)
   @selene_ui.nodes().set(
     entity,
@@ -287,24 +287,24 @@ fn spawn_text_node(
       size=@selene_math.Vec2(width.to_double(), height.to_double()),
     ),
   )
-  @selene_ui.z_indexes().set(entity, @selene_ui.ZIndex::new(z))
+  @selene_ui.z_indexes().set(entity, @selene_ui.ZIndex(z))
   @selene_ui.text_layouts().set(
     entity,
-    @selene_ui.TextLayout::new(
+    @selene_ui.TextLayout(
       align~,
       baseline=@selene_math.Top,
       wrap=@selene_ui.TextWrap::NoWrap,
       overflow=@selene_ui.TextOverflow::Clip,
     ),
   )
-  @selene_ui.texts().set(entity, @selene_ui.Text::new(text))
+  @selene_ui.texts().set(entity, @selene_ui.Text(text))
   @selene_ui.text_colors().set(
     entity,
     @selene_ui.TextColor::from_css("#0b1f2a"),
   )
   @selene_ui.text_fonts().set(
     entity,
-    @selene_ui.TextFont::new(family="Menlo", size=font_size),
+    @selene_ui.TextFont(family="Menlo", size=font_size),
   )
   entity
 }
@@ -511,7 +511,7 @@ fn render_inventory(state : State) -> Unit {
   let current_tab = tabs[state.tab_index]
 
   let current_items = state.items_by_tab.get(current_tab).unwrap_or([])
-  let slot_map : Map[Int, DisplayItem] = Map::new()
+  let slot_map : Map[Int, DisplayItem] = Map([])
   for item in current_items {
     slot_map.set(item.slot, item)
   }
@@ -530,7 +530,7 @@ fn render_inventory(state : State) -> Unit {
       let col = i % SLOT_COLUMNS
       let x = slot_start_x + col * SLOT_WIDTH
       let y = slot_start_y + row * SLOT_HEIGHT
-      let slot_entity = @entity.Entity::new()
+      let slot_entity = @entity.Entity()
       state.ui_entities.push(slot_entity)
       @selene_ui.nodes().set(
         slot_entity,
@@ -542,8 +542,8 @@ fn render_inventory(state : State) -> Unit {
           ),
         ),
       )
-      @selene_ui.z_indexes().set(slot_entity, @selene_ui.ZIndex::new(z + 6))
-      @selene_ui.buttons().set(slot_entity, @selene_ui.Button::new())
+      @selene_ui.z_indexes().set(slot_entity, @selene_ui.ZIndex(z + 6))
+      @selene_ui.buttons().set(slot_entity, @selene_ui.Button())
       if state.active_slot == Some(slot_index) {
         @selene_ui.background_colors().set(
           slot_entity,
@@ -551,7 +551,7 @@ fn render_inventory(state : State) -> Unit {
         )
         @selene_ui.outlines().set(
           slot_entity,
-          @selene_ui.Outline::new(
+          @selene_ui.Outline(
             @selene_ui.Val::px(2.0),
             @selene_ui.BorderColor::from_css("#ffcf4a").color,
           ),
@@ -611,7 +611,7 @@ fn render_inventory(state : State) -> Unit {
       texture_draw_y(panel_y, tab_texture),
       z + 5,
     )
-    @selene_ui.buttons().set(tab_entity, @selene_ui.Button::new())
+    @selene_ui.buttons().set(tab_entity, @selene_ui.Button())
     state.tab_buttons.push({ tab_index: i, entity: tab_entity })
   }
 }
@@ -654,7 +654,7 @@ pub fn init_inventory_ui() -> Unit {
 }
 
 ///|
-let game_server_handlers_registered : Ref[Bool] = Ref::new(false)
+let game_server_handlers_registered : Ref[Bool] = Ref(false)
 
 ///|
 /// Register local-server inventory sync handlers for inventory UI.

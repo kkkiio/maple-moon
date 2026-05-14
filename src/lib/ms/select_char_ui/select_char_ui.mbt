@@ -266,13 +266,13 @@ pub async fn SelectCharUI::new(
       (step2, @selene_math.Vec2(40, 0)),
     ] {
     let (s, pos) = t
-    let entity = @entity.Entity::new()
+    let entity = @entity.Entity()
     @transform2d.set_xy(entity, pos)
     @sprite.sprites().set(entity, @ms_animation.sprite_from_animation(s, 0))
     entities.push(entity)
   }
   let characters_entities = Array::makei(characters.length(), fn(_) {
-    @entity.Entity::new()
+    @entity.Entity()
   })
   let characters_ui : Array[SelectableCharacterUI] = []
   for i, character in characters {
@@ -289,7 +289,7 @@ pub async fn SelectCharUI::new(
     y : Int,
     on_click : () -> Unit,
   ) -> SeleneButton {
-    let entity = @entity.Entity::new()
+    let entity = @entity.Entity()
     entities.push(entity)
     @transform2d.set_xy(entity, @selene_math.Vec2(x.to_double(), y.to_double()))
     let button = @ui.MapleButton::new(
@@ -307,7 +307,7 @@ pub async fn SelectCharUI::new(
     let slot = 0
     on_select_character(slot)
   })
-  let select_click_entity = @entity.Entity::new()
+  let select_click_entity = @entity.Entity()
   entities.push(select_click_entity)
   @selene_ui.nodes().set(
     select_click_entity,
@@ -319,12 +319,12 @@ pub async fn SelectCharUI::new(
       ),
     ),
   )
-  @selene_ui.z_indexes().set(select_click_entity, @selene_ui.ZIndex::new(3000))
-  @selene_ui.buttons().set(select_click_entity, @selene_ui.Button::new())
+  @selene_ui.z_indexes().set(select_click_entity, @selene_ui.ZIndex(3000))
+  @selene_ui.buttons().set(select_click_entity, @selene_ui.Button())
   @console.register_ui_entity(
     "select_char", "select_character", select_click_entity,
   )
-  let new_button_entity = @entity.Entity::new()
+  let new_button_entity = @entity.Entity()
   entities.push(new_button_entity)
   @transform2d.set_xy(new_button_entity, @selene_math.Vec2(200.0, 495.0))
   @sprite.sprites().set(
@@ -334,7 +334,7 @@ pub async fn SelectCharUI::new(
       10,
     ),
   )
-  let new_click_entity = @entity.Entity::new()
+  let new_click_entity = @entity.Entity()
   entities.push(new_click_entity)
   @selene_ui.nodes().set(
     new_click_entity,
@@ -346,12 +346,12 @@ pub async fn SelectCharUI::new(
       ),
     ),
   )
-  @selene_ui.z_indexes().set(new_click_entity, @selene_ui.ZIndex::new(3000))
-  @selene_ui.buttons().set(new_click_entity, @selene_ui.Button::new())
+  @selene_ui.z_indexes().set(new_click_entity, @selene_ui.ZIndex(3000))
+  @selene_ui.buttons().set(new_click_entity, @selene_ui.Button())
   @console.register_ui_entity("select_char", "new_character", new_click_entity)
   {
     buttons: [btn_select],
-    click_reader: @event.EventReader::new(),
+    click_reader: @event.EventReader(),
     select_click_entity,
     new_character_click_entity: new_click_entity,
     entities,
@@ -359,13 +359,13 @@ pub async fn SelectCharUI::new(
     characters: characters_ui,
     animations: [
       // ani17: 255->50 (3s=180f), 50->255 (3s=180f)
-      (entities[1], Ref::new(0), [(180, 255.0, 50.0), (180, 50.0, 255.0)]),
+      (entities[1], Ref(0), [(180, 255.0, 50.0), (180, 50.0, 255.0)]),
       // ani18: 100->255 (2.5s=150f), 255->100 (2.5s=150f)
-      (entities[2], Ref::new(0), [(150, 100.0, 255.0), (150, 255.0, 100.0)]),
+      (entities[2], Ref(0), [(150, 100.0, 255.0), (150, 255.0, 100.0)]),
       // ani19: 200->80 (2.3s=138f), 80->255 (3.3s=198f), 255->200 (1s=60f)
       (
         entities[3],
-        Ref::new(0),
+        Ref(0),
         [(138, 200.0, 80.0), (198, 80.0, 255.0), (60, 255.0, 200.0)],
       ),
     ],
@@ -384,8 +384,8 @@ fn spawn_character_name_entity(
     @transform.Transform::from_xyz(0.0, 54.0, 10.0),
   )
   entities.push(text_entity)
-  @text2d.text2ds().set(text_entity, @text2d.Text2d::new())
-  @selene_ui.texts().set(text_entity, @selene_ui.Text::new(name))
+  @text2d.text2ds().set(text_entity, @text2d.Text2d())
+  @selene_ui.texts().set(text_entity, @selene_ui.Text(name))
   @selene_ui.text_colors().set(
     text_entity,
     @selene_ui.TextColor::from_css("white"),
@@ -396,7 +396,7 @@ fn spawn_character_name_entity(
   )
   @selene_ui.text_layouts().set(
     text_entity,
-    @selene_ui.TextLayout::new(
+    @selene_ui.TextLayout(
       align=@selene_math.HAlign::Center,
       baseline=@selene_math.VAlign::Top,
     ),
@@ -446,7 +446,7 @@ fn get_character_slot_pos(
 }
 
 ///|
-let select_char_ui : Ref[SelectCharUI?] = Ref::new(None)
+let select_char_ui : Ref[SelectCharUI?] = Ref(None)
 
 ///|
 fn SelectCharUI::destroy(self : SelectCharUI) -> Unit {
@@ -458,13 +458,13 @@ fn SelectCharUI::destroy(self : SelectCharUI) -> Unit {
 }
 
 ///|
-let character_list_ref : Ref[Array[SelectableCharacter]?] = Ref::new(None)
+let character_list_ref : Ref[Array[SelectableCharacter]?] = Ref(None)
 
 ///|
-let character_list_requested_ref : Ref[Bool] = Ref::new(false)
+let character_list_requested_ref : Ref[Bool] = Ref(false)
 
 ///|
-let select_char_requested_ref : Ref[Bool] = Ref::new(false)
+let select_char_requested_ref : Ref[Bool] = Ref(false)
 
 ///|
 fn send_select_char_once(character_id : Int) -> Unit {
@@ -522,7 +522,7 @@ async fn add_select_char_ui(
 ///|
 let select_char_loading_future : Ref[
   @utils.Future[Result[SelectCharUI, Error]]?,
-] = Ref::new(None)
+] = Ref(None)
 
 ///|
 pub fn select_char_ui_system(_world : @ecs.World) -> Unit {

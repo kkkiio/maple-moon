@@ -31,7 +31,7 @@ pub(all) struct NxTexture {
 pub impl @json.FromJson for NxTexture with from_json(json, path) -> NxTexture raise @json.JsonDecodeError {
   guard json
     is { "__i": String(i), "__w": Number(w, ..), "__h": Number(h, ..), .. } else {
-    raise @json.JsonDecodeError((path, "invalid nx texture=\{json}"))
+    raise @json.JsonDecodeError((path, "invalid nx texture=\{to_repr(json)}"))
   }
   if i.contains("#") {
     raise @json.JsonDecodeError(

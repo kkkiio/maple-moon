@@ -1,7 +1,7 @@
 ///|
 async test "character stand1 face right" {
   let previous_world = @ecs.current_world()
-  let world = @ecs.World::new()
+  let world = @ecs.World()
   @ecs.set_current_world(world)
   defer (match previous_world {
     Some(previous) => @ecs.set_current_world(previous)
@@ -32,7 +32,7 @@ async test "character stand1 face right" {
     )
     |> @json.parse
     |> @json.from_json
-  let entity = @entity.Entity::new()
+  let entity = @entity.Entity()
   let look = @char_look.CharLook::new(
     entity,
     {},
@@ -59,7 +59,7 @@ async test "character stand1 face right" {
     |> @json.parse
   let weapon_info = match weapon_node {
     { "info": Object(info), .. } => info
-    _ => Map::new()
+    _ => Map([])
   }
   let weapon_icons = (
     weapon_info.get("icon").map(json => @json.from_json(json)).unwrap(),
@@ -84,7 +84,7 @@ async test "character stand1 face right" {
   look.play_animations()
   // Initialize test app and run one loop
   @capture_app.init_app(
-    @app.App::new()
+    @app.App()
     .with_world(world)
     .with_viewport_width(200.0)
     .with_viewport_height(200.0)

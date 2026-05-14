@@ -6,7 +6,7 @@ test "parse_mx_npc_basic" {
   }
   let npc : MxNpc = @json.from_json(src)
   inspect(npc.animations_path, content="animation.json")
-  inspect(npc.info.speak_keys, content="[\"n0\", \"n1\"]")
+  debug_inspect(npc.info.speak_keys, content="[\"n0\", \"n1\"]")
 }
 
 ///|
@@ -16,7 +16,7 @@ test "parse_mx_npc_link_and_scripted" {
     "animations_path": "animation.json",
   }
   let npc : MxNpc = @json.from_json(src)
-  inspect(npc.info.link, content="Some(\"1021000\")")
+  debug_inspect(npc.info.link, content="Some(\"1021000\")")
   inspect(npc.info.scripted, content="true")
 }
 

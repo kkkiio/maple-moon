@@ -25,18 +25,18 @@ priv struct QuestIconRuntime {
 }
 
 ///|
-let quest_icon_resources : Ref[QuestIconResources?] = Ref::new(None)
+let quest_icon_resources : Ref[QuestIconResources?] = Ref(None)
 
 ///|
-let quest_icon_loading : Ref[@utils.Future[Result[QuestIconResources, Error]]?] = Ref::new(
+let quest_icon_loading : Ref[@utils.Future[Result[QuestIconResources, Error]]?] = Ref(
   None,
 )
 
 ///|
-let runtime_by_oid : Ref[Map[Int, QuestIconRuntime]] = Ref::new({})
+let runtime_by_oid : Ref[Map[Int, QuestIconRuntime]] = Ref({})
 
 ///|
-let npc_icon_cache : Ref[Map[Int, CachedNpcIconQuery]] = Ref::new({})
+let npc_icon_cache : Ref[Map[Int, CachedNpcIconQuery]] = Ref({})
 
 ///|
 priv struct CachedNpcIconQuery {
@@ -45,7 +45,7 @@ priv struct CachedNpcIconQuery {
 }
 
 ///|
-let last_quest_log_revision : Ref[Int] = Ref::new(-1)
+let last_quest_log_revision : Ref[Int] = Ref(-1)
 
 ///|
 const QUEST_ICON_ZINDEX_OFFSET = 5000
@@ -240,7 +240,9 @@ fn upsert_runtime(
         @graphics.OBJECT_TILE_LAYER_ZINDEX + QUEST_ICON_ZINDEX_OFFSET,
       ),
     )
-    @physics2d.pickables().set(icon_entity, @physics2d.Pickable::new())
+    @physics2d.pickables().set(icon_entity, @physics2d.Pickable::{
+      active: true,
+    })
     @physics2d.shapes().set(
       icon_entity,
       @physics2d.CollisionShape::Rect(
@@ -369,7 +371,7 @@ using @lazy {type Lazy}
 ///|
 let inventory_changed_reader_ref : Lazy[
   @event.EventReader[@inventory.InventoryChangedEvent],
-] = Lazy::new(fn() { @event.EventReader::new() })
+] = Lazy::new(fn() { @event.EventReader() })
 
 ///|
 fn get_inventory_changed_reader() -> @event.EventReader[
@@ -388,11 +390,11 @@ fn get_char_stats_changed_reader() -> @event.EventReader[
 ///|
 let char_stats_changed_reader_ref : Lazy[
   @event.EventReader[@char_stats.CharStatsChangedEvent],
-] = Lazy::new(fn() { @event.EventReader::new() })
+] = Lazy::new(fn() { @event.EventReader() })
 
 ///|
 let pointer_event_reader_ref : Lazy[@event.EventReader[@physics2d.PointerEvent]] = Lazy::new(fn() {
-    @event.EventReader::new()
+    @event.EventReader()
   },
 )
 

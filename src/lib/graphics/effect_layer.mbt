@@ -45,7 +45,7 @@ pub fn add_effect(
   let transform = if flip {
     @selene_math.Transform::from_scale(-1.0, 1.0)
   } else {
-    @selene_math.Transform::new()
+    @selene_math.Transform()
   }
   let sprite = @ms_animation.sprite_from_animation(sprite_anim, z, transform~)
   let child = parent.spawn_child()

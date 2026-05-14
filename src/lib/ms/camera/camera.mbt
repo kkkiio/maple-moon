@@ -20,7 +20,7 @@ pub(all) struct CameraRuntime {
 }
 
 ///|
-let runtime_ref : Ref[CameraRuntime] = Ref::new({
+let runtime_ref : Ref[CameraRuntime] = Ref({
   camera_entity: None,
   follow_target: None,
   limits: None,
@@ -32,12 +32,12 @@ pub fn setup_camera_entity(
   center? : @math.Vec2 = @system.get_screen_size().scalar_mul(0.5),
 ) -> Unit {
   runtime_ref.val.camera_entity = Some(entity)
-  @selene_camera.cameras().set(entity, @selene_camera.Camera::new())
-  @selene_camera.camera2ds().set(entity, @selene_camera.Camera2d::new())
+  @selene_camera.cameras().set(entity, @selene_camera.Camera())
+  @selene_camera.camera2ds().set(entity, @selene_camera.Camera2d())
   if !@selene_camera.orthographic_projections().contains(entity) {
     @selene_camera.orthographic_projections().set(
       entity,
-      @selene_camera.OrthographicProjection::new(),
+      @selene_camera.OrthographicProjection(),
     )
   }
   @transform2d.set_xy(entity, center)
@@ -50,7 +50,7 @@ pub fn ensure_camera_entity(
   match runtime_ref.val.camera_entity {
     Some(entity) if entity.is_alive() => entity
     _ => {
-      let entity = @entity.Entity::new()
+      let entity = @entity.Entity()
       setup_camera_entity(entity, center~)
       entity
     }

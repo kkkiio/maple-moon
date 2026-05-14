@@ -29,7 +29,7 @@ pub impl @json.FromJson for NxFootholdTree with from_json(json, path) -> NxFooth
 ///|
 /// Build runtime foothold tree and acceleration structure from resource.
 pub fn FootholdTree::from_resource(src : NxFootholdTree) -> FootholdTree raise {
-  let footholds = Map::new()
+  let footholds = Map([])
   let null_fh = Foothold::default()
   for layer, basef in src.0 {
     for _, midf in basef {
@@ -337,7 +337,7 @@ priv struct SegTree {
 fn SegTree::build(footholds : Map[Int, Foothold]) -> SegTree {
   // 1) 收集端点（跳过墙）; 使用半开区间 [l, r+1)
   let xs = {
-    let tmp : Set[Int] = Set::new()
+    let tmp : Set[Int] = Set([])
     for _, f in footholds {
       if f.is_wall() {
         continue

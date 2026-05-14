@@ -104,25 +104,15 @@ pub fn BodyDrawInfo::new(
   bodynode : Map[StanceId, Array[NxStanceBody]],
   headnode : Map[StanceId, Array[NxMultiPartFrame]],
 ) -> BodyDrawInfo {
-  let body_positions = FixedArray::makei(StanceId::count(), fn(_i) {
-    Map::new()
-  })
-  let arm_positions = FixedArray::makei(StanceId::count(), fn(_i) { Map::new() })
-  let hand_positions = FixedArray::makei(StanceId::count(), fn(_i) {
-    Map::new()
-  })
-  let head_positions = FixedArray::makei(StanceId::count(), fn(_i) {
-    Map::new()
-  })
-  let hair_positions = FixedArray::makei(StanceId::count(), fn(_i) {
-    Map::new()
-  })
-  let face_positions = FixedArray::makei(StanceId::count(), fn(_i) {
-    Map::new()
-  })
-  let stance_delays = FixedArray::makei(StanceId::count(), fn(_i) { Map::new() })
-  let body_actions = Map::new()
-  let attack_delays = Map::new()
+  let body_positions = FixedArray::makei(StanceId::count(), fn(_i) { Map([]) })
+  let arm_positions = FixedArray::makei(StanceId::count(), fn(_i) { Map([]) })
+  let hand_positions = FixedArray::makei(StanceId::count(), fn(_i) { Map([]) })
+  let head_positions = FixedArray::makei(StanceId::count(), fn(_i) { Map([]) })
+  let hair_positions = FixedArray::makei(StanceId::count(), fn(_i) { Map([]) })
+  let face_positions = FixedArray::makei(StanceId::count(), fn(_i) { Map([]) })
+  let stance_delays = FixedArray::makei(StanceId::count(), fn(_i) { Map([]) })
+  let body_actions = Map([])
+  let attack_delays = Map([])
   for stance, stancenode in bodynode {
     let mut attackdelay : Int = 0
     for frame, frame_json in stancenode {
@@ -131,7 +121,7 @@ pub fn BodyDrawInfo::new(
           (match body_actions.get(stance) {
             Some(v) => v
             None => {
-              let v = Map::new()
+              let v = Map([])
               body_actions.set(stance, v)
               v
             }
@@ -161,7 +151,7 @@ pub fn BodyDrawInfo::new(
             .bind(fn(it) { it.part_texture_map.get("head") })
             .map(fn(it) { it.map.0 })
             .unwrap_or({})
-          let bodyshiftmap : Map[BodyLayer, Map[String, Point[Int]]] = Map::new()
+          let bodyshiftmap : Map[BodyLayer, Map[String, Point[Int]]] = Map([])
           for _, part in parts {
             guard part.z is Some(z) else { continue }
             bodyshiftmap.set(z, part.map.0)
@@ -239,8 +229,8 @@ pub fn BodyDrawInfo::default() -> BodyDrawInfo {
     hair_positions: [],
     face_positions: [],
     stance_delays: [],
-    body_actions: Map::new(),
-    attack_delays: Map::new(),
+    body_actions: Map([]),
+    attack_delays: Map([]),
   }
 }
 
@@ -385,7 +375,7 @@ pub impl @json.FromJson for NxMultiPartFrame with from_json(json, path) {
     raise @json.JsonDecodeError((path, "expect object"))
   }
   let mut delay = None
-  let layer_textures = Map::new()
+  let layer_textures = Map([])
   for k, v in obj {
     if k == "delay" {
       guard v is Number(delay_value, ..) else {

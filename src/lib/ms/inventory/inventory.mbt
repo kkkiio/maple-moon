@@ -48,7 +48,7 @@ pub struct InventoryChangedEvent {
 
 ///|
 /// Global inventory change event bus.
-pub let inventory_changed_event_bus : @event.Events[InventoryChangedEvent] = @event.Events::new()
+pub let inventory_changed_event_bus : @event.Events[InventoryChangedEvent] = @event.Events()
 
 ///|
 fn parse_int_arg(args : Array[String], index : Int, default : Int) -> Int {
@@ -129,10 +129,10 @@ pub fn Inventory::clear(self : Inventory) -> Unit {
 ///|
 pub fn Inventory::new() -> Inventory {
   {
-    inventories: @utils.DefaultMap::new(fn() { Map::new() }),
-    items: Map::new(),
-    equips: Map::new(),
-    pets: Map::new(),
+    inventories: @utils.DefaultMap::new(fn() { Map([]) }),
+    items: Map([]),
+    equips: Map([]),
+    pets: Map([]),
     running_uid: 0,
     meso: 0,
     bullet_slot: 0,
@@ -145,7 +145,7 @@ pub fn Inventory::new() -> Inventory {
       (TypeId::CASH, 96),
       (TypeId::EQUIPPED, @equip_slot.Id::length()),
     ]),
-    item_listeners_map: Map::new(),
+    item_listeners_map: Map([]),
     meso_listeners: Array::new(),
   }
 }
@@ -710,7 +710,7 @@ pub fn Inventory::use_item(self : Inventory, itemid : Int) -> Unit {
 }
 
 ///|
-pub let inventory : Ref[Inventory] = Ref::new(Inventory::new())
+pub let inventory : Ref[Inventory] = Ref(Inventory::new())
 
 ///|
 pub fn use_item_at_slot(type_id : TypeId, slot_no : Int) -> String? {

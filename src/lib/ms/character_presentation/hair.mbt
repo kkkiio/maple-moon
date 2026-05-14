@@ -64,9 +64,9 @@ pub fn Hair::parse(
   hairnode : NxStanceLooks[@types.NxMultiPartFrame],
   drawinfo : @types.BodyDrawInfo,
 ) -> Hair {
-  let stances : Map[StanceId, Map[HairLayer, @resource.NxAnimation]] = Map::new()
+  let stances : Map[StanceId, Map[HairLayer, @resource.NxAnimation]] = Map([])
   for stance, stancenode in hairnode.0 {
-    let layers : Map[HairLayer, Array[@resource.NxFrame]] = Map::new()
+    let layers : Map[HairLayer, Array[@resource.NxFrame]] = Map([])
     for frame, framenode in stancenode {
       for layername, layernode in framenode.part_texture_map {
         let layer = match layers_by_name.get(layername) {

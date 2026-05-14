@@ -13,7 +13,7 @@ pub(all) enum GamePhase {
 }
 
 ///|
-let app_state_ref : Ref[@state.State[GamePhase]?] = Ref::new(None)
+let app_state_ref : Ref[@state.State[GamePhase]?] = Ref(None)
 
 ///|
 fn require_state() -> @state.State[GamePhase] {
@@ -25,7 +25,7 @@ fn require_state() -> @state.State[GamePhase] {
 
 ///|
 pub fn init_state(initial : GamePhase) -> Unit {
-  app_state_ref.val = Some(@state.State::new(initial))
+  app_state_ref.val = Some(@state.State(initial))
 }
 
 ///|

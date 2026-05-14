@@ -5,10 +5,7 @@ priv struct BgmState {
 }
 
 ///|
-let bgm_state : Ref[BgmState] = Ref::new({
-  current_key: None,
-  current_entity: None,
-})
+let bgm_state : Ref[BgmState] = Ref({ current_key: None, current_entity: None })
 
 ///|
 fn bgm_asset_path(bgm_key : String) -> String? {
@@ -59,7 +56,7 @@ pub fn sync_map_bgm(bgm_key : String) -> Unit {
     return
   }
 
-  let entity = @entity.Entity::new()
+  let entity = @entity.Entity()
   @audio.attach_audio(
     entity,
     @audio.AudioPlayer::from_path(path),

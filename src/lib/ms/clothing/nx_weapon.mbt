@@ -90,7 +90,7 @@ pub impl @json.FromJson for NxWeaponFrame with from_json(json, path) -> NxWeapon
   guard json is Object(frame_obj) else {
     raise @json.JsonDecodeError((path, "NxWeaponFrame: expected object"))
   }
-  let parts = Map::new()
+  let parts = Map([])
   for part_name, part_json in frame_obj {
     guard part_json is Object(part_obj) && part_obj.contains("__i") else {
       continue
@@ -109,7 +109,7 @@ pub impl @json.FromJson for NxWeaponAction with from_json(json, path) -> NxWeapo
   guard json is Object(action_obj) else {
     raise @json.JsonDecodeError((path, "NxWeaponAction: expected object"))
   }
-  let frames = Map::new()
+  let frames = Map([])
   for frame_key, frame_json in action_obj {
     let frame_idx = @string.parse_int(frame_key) catch {
       _ =>
@@ -134,7 +134,7 @@ pub impl @json.FromJson for NxWeapon with from_json(json, path) -> NxWeapon rais
   guard json is Object(src_obj) else {
     raise @json.JsonDecodeError((path, "NxWeapon: expected object"))
   }
-  let actions = Map::new()
+  let actions = Map([])
   for action_name, action_json in src_obj {
     if action_name == "info" {
       continue

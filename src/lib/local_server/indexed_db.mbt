@@ -30,7 +30,7 @@ pub struct BrowserDB {
 
 ///|
 pub fn BrowserDB::new() -> BrowserDB {
-  { db_ref: Ref::new(None) }
+  { db_ref: Ref(None) }
 }
 
 ///|
@@ -68,7 +68,7 @@ pub struct MemoryDB {
 
 ///|
 pub fn MemoryDB::new() -> MemoryDB {
-  { stores: Ref::new({}) }
+  { stores: Ref({}) }
 }
 
 ///|
@@ -89,7 +89,7 @@ fn MemoryDB::get_or_init_store(
   self : MemoryDB,
   store : String,
 ) -> Map[String, Json] {
-  self.stores.val.get_or_init(store, fn() { Map::new() })
+  self.stores.val.get_or_init(store, fn() { Map([]) })
 }
 
 ///|

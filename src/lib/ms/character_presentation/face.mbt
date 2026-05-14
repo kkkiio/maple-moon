@@ -127,9 +127,9 @@ pub async fn Face::load(faceid : Int) -> Face {
 ///|
 pub fn Face::new(faceid : Int, facenode : Json) -> Face raise {
   guard facenode is Json::Object(facenode)
-  let expressions = Map::new()
+  let expressions = Map([])
   for exp, _ in expression_names {
-    let frames = Map::new()
+    let frames = Map([])
     if exp == ExpressionId::DEFAULT {
       frames.set(0, FaceFrame::from_resource(facenode["default"]))
     } else {

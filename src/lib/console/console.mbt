@@ -11,20 +11,16 @@ priv struct UiEntry {
 }
 
 ///|
-let state_sections_ref : Ref[Array[(String, StateSectionFn)]] = Ref::new([])
+let state_sections_ref : Ref[Array[(String, StateSectionFn)]] = Ref([])
 
 ///|
-let command_handlers_ref : Ref[Array[(String, CommandHandler)]] = Ref::new([])
+let command_handlers_ref : Ref[Array[(String, CommandHandler)]] = Ref([])
 
 ///|
-let ui_entries_by_entity_ref : Ref[Map[@entity.Entity, UiEntry]] = Ref::new(
-  Map::new(),
-)
+let ui_entries_by_entity_ref : Ref[Map[@entity.Entity, UiEntry]] = Ref(Map([]))
 
 ///|
-let ui_entity_by_key_ref : Ref[Map[String, @entity.Entity]] = Ref::new(
-  Map::new(),
-)
+let ui_entity_by_key_ref : Ref[Map[String, @entity.Entity]] = Ref(Map([]))
 
 ///|
 priv enum UiClickInjectionState {
@@ -33,7 +29,7 @@ priv enum UiClickInjectionState {
 }
 
 ///|
-let pending_ui_click_ref : Ref[UiClickInjectionState?] = Ref::new(None)
+let pending_ui_click_ref : Ref[UiClickInjectionState?] = Ref(None)
 
 ///|
 fn make_ui_key(package_name : String, ui_name : String) -> String {
@@ -148,7 +144,7 @@ fn click_registered_ui_text(package_name : String, ui_name : String) -> String {
 
 ///|
 fn render_registered_game_to_text() -> String {
-  let data = Map::new()
+  let data = Map([])
   for _, entry in state_sections_ref.val {
     let (name, handler) = entry
     data.set(name, handler())

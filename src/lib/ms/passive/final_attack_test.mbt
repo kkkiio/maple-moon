@@ -80,7 +80,7 @@ fn make_hit_event(source : @combat_system.HitSource) -> @combat_system.HitEvent 
 async test "sword_fa_fighter_triggers_with_sword_1h" {
   @local_loader.install_resource_env_for_test()
   let equips = make_test_equips(Some(1302000))
-  let trigger_count = Ref::new(0)
+  let trigger_count = Ref(0)
   let passive = SwordFaFighterPassive::default()
   let skill_id = @skill.SkillId::SWORD_FA_FIGHTER.int_value()
   let skill_data = Some(@skill.SkillData::load(skill_id))
@@ -100,7 +100,7 @@ async test "sword_fa_fighter_triggers_with_sword_1h" {
 ///|
 async test "sword_fa_fighter_does_not_trigger_with_axe_1h" {
   let equips = make_test_equips(Some(1312001))
-  let trigger_count = Ref::new(0)
+  let trigger_count = Ref(0)
   let passive = SwordFaFighterPassive::default()
   let ctx = make_final_attack_test_ctx(
     equips,
@@ -118,7 +118,7 @@ async test "sword_fa_fighter_does_not_trigger_with_axe_1h" {
 ///|
 async test "sword_fa_fighter_does_not_trigger_with_sword_2h" {
   let equips = make_test_equips(Some(1402000))
-  let trigger_count = Ref::new(0)
+  let trigger_count = Ref(0)
   let passive = SwordFaFighterPassive::default()
   let ctx = make_final_attack_test_ctx(
     equips,
@@ -135,7 +135,7 @@ async test "sword_fa_fighter_does_not_trigger_with_sword_2h" {
 
 ///|
 test "sword_fa_fighter_does_not_trigger_when_attacker_missing" {
-  let trigger_count = Ref::new(0)
+  let trigger_count = Ref(0)
   let passive = SwordFaFighterPassive::default()
   let ctx = make_final_attack_test_ctx(
     @equip.CharEquips::default(),
@@ -151,7 +151,7 @@ test "sword_fa_fighter_does_not_trigger_when_attacker_missing" {
 ///|
 async test "sword_fa_fighter_does_not_trigger_for_passive_source" {
   let equips = make_test_equips(Some(1302000))
-  let trigger_count = Ref::new(0)
+  let trigger_count = Ref(0)
   let passive = SwordFaFighterPassive::default()
   let ctx = make_final_attack_test_ctx(
     equips,

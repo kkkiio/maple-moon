@@ -71,7 +71,7 @@ fn load_weapon_item(item_id : Int) -> @item.ItemData raise {
     |> @json.parse
   let weapon_info = match weapon_node {
     { "info": Object(info), .. } => info
-    _ => Map::new()
+    _ => Map([])
   }
   let weapon_icons = (
     weapon_info.get("icon").map(json => @json.from_json(json)).unwrap(),
@@ -106,14 +106,14 @@ async fn snapshot_afterimage_case(
   visual_desc : String,
 ) -> Unit {
   let previous_world = @ecs.current_world()
-  let world = @ecs.World::new()
+  let world = @ecs.World()
   @ecs.set_current_world(world)
   defer (match previous_world {
     Some(previous) => @ecs.set_current_world(previous)
     None => @ecs.clear_current_world()
   })
   @capture_app.init_app(
-    @app.App::new()
+    @app.App()
     .with_world(world)
     .with_viewport_width(220.0)
     .with_viewport_height(220.0)
@@ -130,7 +130,7 @@ async fn snapshot_afterimage_case(
     ),
   )
 
-  let host = @entity.Entity::new()
+  let host = @entity.Entity()
   defer host.destroy()
   let after_image_host = host.spawn_child()
   defer @char_look.clear_after_image(after_image_host)

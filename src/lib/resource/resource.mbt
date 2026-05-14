@@ -88,13 +88,16 @@ pub impl[T : @json.FromJson] @json.FromJson for IntMap[T] with from_json(
 pub(all) struct EnumMap[K, V](Map[K, V]) derive(Debug)
 
 ///|
-pub impl[K, V] Default for EnumMap[K, V] with default() -> EnumMap[K, V] {
-  EnumMap(Map::new())
+pub impl[K : Eq + Hash, V] Default for EnumMap[K, V] with default() -> EnumMap[
+  K,
+  V,
+] {
+  EnumMap(Map([]))
 }
 
 ///|
 pub impl[K : ToJson, V : ToJson] ToJson for EnumMap[K, V] with to_json(self) -> Json {
-  let map = Map::new(capacity=self.0.length())
+  let map = Map([], capacity=self.0.length())
   for key, value in self.0 {
     guard key.to_json() is String(key) else { abort("expect string") }
     map.set(key, value.to_json())

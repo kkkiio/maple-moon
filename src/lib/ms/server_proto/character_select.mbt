@@ -111,7 +111,7 @@ pub impl @json.FromJson for LookEntry with from_json(json, path) {
     guard value is Object(obj) else {
       raise @json.JsonDecodeError((path, "expect object"))
     }
-    let result = Map::new()
+    let result = Map([])
     for key, item in obj {
       let slot_id = @string.parse_int(key) catch {
         _ => raise @json.JsonDecodeError((path.add_key(key), "invalid int key"))

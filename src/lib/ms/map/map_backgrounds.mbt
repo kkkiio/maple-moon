@@ -431,7 +431,7 @@ fn background_sprite_for_frame(
 ) -> @sprite.Sprite {
   match state.clip {
     Some(clip) => {
-      let atlas = @sprite.TextureAtlas::new(clip.layout, index=frame_index)
+      let atlas = @sprite.TextureAtlas(clip.layout, index=frame_index)
       {
         ..state.sprite_template,
         image: Some(clip.image),
@@ -494,7 +494,7 @@ fn create_background_motion_states(
   clips_by_entity : Map[@entity.Entity, @resource.SeleneClip],
 ) -> Map[@entity.Entity, TiledBackgroundMotionState] raise {
   ignore(tile_map)
-  let states : Map[@entity.Entity, TiledBackgroundMotionState] = Map::new()
+  let states : Map[@entity.Entity, TiledBackgroundMotionState] = Map([])
   for layer_entity, instance in @tiled.tiled_image_layer_instances() {
     guard instance.map_entity == root &&
       is_background_image_layer(instance.layer.name) else {
@@ -873,12 +873,12 @@ test "background tile count uses ceil viewport coverage plus margin" {
   assert_eq(background_tile_count_for_axis(false, 801.0, 256.0), 1)
   assert_eq(background_tile_count_for_axis(true, 800.0, 256.0), 7)
   assert_eq(background_tile_count_for_axis(true, 512.0, 256.0), 5)
-  assert_eq(
+  assert_true(
     background_tile_counts(
       (true, true),
       @selene_math.Vec2(800.0, 600.0),
       @selene_math.Vec2(256.0, 128.0),
-    ),
+    ) ==
     (7, 8),
   )
 }

@@ -5,8 +5,8 @@ struct BiMap[K, V] {
 }
 
 ///|
-pub fn[K, V] BiMap::new() -> BiMap[K, V] {
-  { forward: Map::new(), backward: Map::new() }
+pub fn[K : Eq + Hash, V : Eq + Hash] BiMap::new() -> BiMap[K, V] {
+  { forward: Map([]), backward: Map([]) }
 }
 
 ///|

@@ -15,11 +15,11 @@ pub impl @resource.AsyncResourceLoader for FlatJsonFileLoader with load_data(
 ) -> Json {
   let root = self.root.strip_suffix("/").unwrap_or(self.root)
   let raw_rel = path
-    .to_string()
+    .to_owned()
     .strip_prefix("/")
-    .unwrap_or(path.to_string())
-    .to_string()
-  let rel = normalize_test_resource_path(root.to_string(), raw_rel)
+    .unwrap_or(path.to_owned())
+    .to_owned()
+  let rel = normalize_test_resource_path(root.to_owned(), raw_rel)
   let full_path = "\{root}/\{rel}"
   (@fs.read_file_to_string(full_path) |> @json.parse) catch {
     _ => null
@@ -28,10 +28,10 @@ pub impl @resource.AsyncResourceLoader for FlatJsonFileLoader with load_data(
 
 ///|
 fn normalize_test_resource_path(root : String, path : String) -> String {
-  let normalized_root = root.strip_prefix("/").unwrap_or(root).to_string()
+  let normalized_root = root.strip_prefix("/").unwrap_or(root).to_owned()
   let rel = match path.strip_prefix("\{normalized_root}/") {
-    Some(rest) => rest.to_string()
-    None => path.strip_prefix("assets/").unwrap_or(path).to_string()
+    Some(rest) => rest.to_owned()
+    None => path.strip_prefix("assets/").unwrap_or(path).to_owned()
   }
   normalize_mapx_test_path(rel)
 }
@@ -62,10 +62,7 @@ fn setup_resource_loaders() -> Unit {
   )
   @resource.register_async_loader(
     "string",
-    @resource.AsyncLoader::new(
-      "string",
-      loader=@local_loader.LocalDirResourceLoader::new("assets/String"),
-    ),
+    @local_loader.make_local_string_loader(),
   )
 }
 
@@ -94,7 +91,7 @@ fn normalize_camera_limits(
 
 ///|
 fn setup_camera(position : @math.Vec2, map_info : @map.MapInfo) -> Unit {
-  let camera_anchor = @entity.Entity::new()
+  let camera_anchor = @entity.Entity()
   @transform2d.set_xy(camera_anchor, position)
   @ms_camera.setup_camera_entity(camera_anchor, center=position)
   @ms_camera.set_follow_target(camera_anchor)
@@ -138,7 +135,7 @@ fn spawn_npc_from_life(
 ///|
 async fn setup_shop_scene_npcs() -> Unit {
   setup_resource_loaders()
-  let app = @app.App::new()
+  let app = @app.App()
     .with_viewport_width(800.0)
     .with_viewport_height(600.0)
     .with_fixed_hz(125U)

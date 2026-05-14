@@ -15,7 +15,7 @@ pub fn set_xy(entity : @entity.Entity, pos : @math.Vec2) -> Unit {
     Some(current) =>
       @transform.transforms().set(entity, {
         ..current,
-        translation: @math.Vec3::new(
+        translation: @math.Vec3(
           pos[@math.X],
           pos[@math.Y],
           current.translation.z,

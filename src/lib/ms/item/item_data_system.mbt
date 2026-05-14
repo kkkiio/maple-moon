@@ -12,13 +12,13 @@ pub fn ItemDataSystem::new(
 ) -> ItemDataSystem {
   {
     item_loader,
-    pending_item_loads: Ref::new(Map::new()),
-    item_load_errors: Ref::new(Map::new()),
+    pending_item_loads: Ref(Map([])),
+    item_load_errors: Ref(Map([])),
   }
 }
 
 ///|
-let item_data_system_ref : Ref[ItemDataSystem?] = Ref::new(None)
+let item_data_system_ref : Ref[ItemDataSystem?] = Ref(None)
 
 ///|
 /// Replaces the global item-data system instance.

@@ -18,10 +18,10 @@ priv struct MobHpBarState {
 }
 
 ///|
-let hp_events : @queue.Queue[MobHpEvent] = @queue.new()
+let hp_events : @queue.Queue[MobHpEvent] = @queue.Queue([])
 
 ///|
-let hp_states : Map[Int, MobHpBarState] = Map::new()
+let hp_states : Map[Int, MobHpBarState] = Map([])
 
 ///|
 const HP_BAR_WIDTH : Int = 50
@@ -57,7 +57,7 @@ fn set_rect_sprite(
   if @transform.transforms().get(entity) is Some(current) {
     @transform.transforms().set(entity, {
       ..current,
-      translation: @selene_math.Vec3::new(
+      translation: @selene_math.Vec3(
         current.translation.x,
         current.translation.y,
         @graphics.MOB_HP_BAR_ZINDEX.to_double(),

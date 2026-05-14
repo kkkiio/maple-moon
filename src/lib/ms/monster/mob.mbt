@@ -384,7 +384,7 @@ fn Mob::new(
   monster_id~ : Int,
   randomizer? : @random.Rand = @random.Rand::new(),
 ) -> Mob {
-  let entity = @entity.Entity::new()
+  let entity = @entity.Entity()
   let phobj = @physics.PhysicsObject::new(on_pos_change=fn(pos) {
     @transform2d.set_xy(entity, pos)
   })
@@ -453,8 +453,8 @@ fn Mob::new(
     oid: object_id,
     phobj,
     animations,
-    skill_cache: Map::new(),
-    attacks: Map::new(),
+    skill_cache: Map([]),
+    attacks: Map([]),
     skill_stands,
     attack_stands,
     effect_animations: runtime.effect_animations,

@@ -30,7 +30,7 @@ using @server_proto {
 }
 
 ///|
-pub let default_rand_seed : Ref[Bytes] = Ref::new(
+pub let default_rand_seed : Ref[Bytes] = Ref(
   b"0123456789abcdef0123456789abcdef",
 )
 
@@ -94,8 +94,8 @@ pub fn LocalServer::new(
   drop_rng? : @random.Rand = @random.Rand::chacha8(seed=default_rand_seed.val),
 ) -> LocalServer {
   {
-    client_message_queue: @queue.new(),
-    server_message_queue: @queue.new(),
+    client_message_queue: @queue.Queue([]),
+    server_message_queue: @queue.Queue([]),
     client_message_handler_map: {},
     server_message_handlers_map: {},
     last_map_id: 100000000,
@@ -108,17 +108,18 @@ pub fn LocalServer::new(
     character_revision: 0,
     character_roster: [],
     player_items: {
-      let m : Map[InventoryType, Map[Int, @server_proto.InventoryItemEntry]] = Map::new()
-      m.set(InventoryType::EQUIP, Map::new())
-      m.set(InventoryType::EQUIPPED, Map::new())
-      m.set(InventoryType::USE, Map::new())
-      m.set(InventoryType::SETUP, Map::new())
-      m.set(InventoryType::ETC, Map::new())
-      m.set(InventoryType::CASH, Map::new())
+      let m : Map[InventoryType, Map[Int, @server_proto.InventoryItemEntry]] = Map([],
+      )
+      m.set(InventoryType::EQUIP, Map([]))
+      m.set(InventoryType::EQUIPPED, Map([]))
+      m.set(InventoryType::USE, Map([]))
+      m.set(InventoryType::SETUP, Map([]))
+      m.set(InventoryType::ETC, Map([]))
+      m.set(InventoryType::CASH, Map([]))
       m
     },
     slot_max_by_tab: {
-      let m : Map[InventoryType, Int] = Map::new()
+      let m : Map[InventoryType, Int] = Map([])
       m.set(InventoryType::EQUIP, 96)
       m.set(InventoryType::USE, 96)
       m.set(InventoryType::SETUP, 96)
@@ -126,12 +127,12 @@ pub fn LocalServer::new(
       m.set(InventoryType::CASH, 96)
       m
     },
-    mobs: Map::new(),
-    drops: Map::new(),
+    mobs: Map([]),
+    drops: Map([]),
     pending_mob_spawns: Array::new(),
     pending_npc_spawns: Array::new(),
     active_shop: None,
-    npc_id_by_oid: Map::new(),
+    npc_id_by_oid: Map([]),
     npc_shop_db: None,
     db,
     drop_db: None,
@@ -758,7 +759,7 @@ async fn new_inventory_item_entry(
           "error": err.to_string(),
         })
     }
-    let stats = Map::new()
+    let stats = Map([])
     for stat_id in @maple_stat.all_equip_stats {
       let value = equip_data.get_defstat(stat_id)
       if value != 0 {

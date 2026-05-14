@@ -73,7 +73,7 @@ pub fn DirResourceLoader::new(String) -> Self
 pub impl AsyncResourceLoader for DirResourceLoader
 
 pub(all) struct EnumMap[K, V](Map[K, V]) derive(@debug.Debug)
-pub impl[K, V] Default for EnumMap[K, V]
+pub impl[K : Eq + Hash, V] Default for EnumMap[K, V]
 pub impl[K : ToJson, V : ToJson] ToJson for EnumMap[K, V]
 pub impl[K : Eq + Hash + @json.FromJson, V : @json.FromJson] @json.FromJson for EnumMap[K, V]
 

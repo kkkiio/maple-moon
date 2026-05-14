@@ -142,7 +142,7 @@ pub fn Clothing::from_resource(
     let part_frames_map : Map[
       String,
       (Array[@resource.NxFrame], Array[ClothingLayer]),
-    ] = Map::new()
+    ] = Map([])
     for frame = 0; ; frame = frame + 1 {
       guard stancenode is Object(stance_obj) else { break }
       guard stance_obj.get(frame.to_string()) is Some(framenode) else { break }

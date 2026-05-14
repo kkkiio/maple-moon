@@ -73,7 +73,7 @@ struct ByLevelAction {
 
 ///|
 fn ByLevelAction::new(src : Json, id : Int) -> ByLevelAction raise {
-  let actions = Map::new()
+  let actions = Map([])
   if src is { "level": Object(levels), .. } {
     for level, sub in levels {
       if sub is { "action": String(action), .. } {

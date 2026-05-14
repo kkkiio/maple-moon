@@ -95,7 +95,7 @@ priv struct QuestLogUiState {
 }
 
 ///|
-let states_by_world_ref : Ref[Map[UInt, QuestLogUiState]] = Ref::new(Map::new())
+let states_by_world_ref : Ref[Map[UInt, QuestLogUiState]] = Ref(Map([]))
 
 ///|
 fn make_initial_state() -> QuestLogUiState {
@@ -114,7 +114,7 @@ fn make_initial_state() -> QuestLogUiState {
     quest_entry_buttons: [],
     action_buttons: [],
     selected_forfeit_quest_id: None,
-    click_reader: @event.EventReader::new(),
+    click_reader: @event.EventReader(),
   }
 }
 
@@ -167,7 +167,7 @@ fn clear_entities(entities : Array[@entity.Entity]) -> Unit {
 ///|
 fn ui_image_from_texture(texture : @resource.NxTexture) -> @selene_ui.UiImage {
   let source = ui_image_source_from_texture(texture)
-  @selene_ui.UiImage::new(
+  @selene_ui.UiImage(
     @selene_math.Vec2(texture.w.to_double(), texture.h.to_double()),
     texture.i,
     source=Some(source),
@@ -203,7 +203,7 @@ fn spawn_image_node(
   y : Int,
   z : Int,
 ) -> @entity.Entity {
-  let entity = @entity.Entity::new()
+  let entity = @entity.Entity()
   entities.push(entity)
   @selene_ui.nodes().set(
     entity,
@@ -212,7 +212,7 @@ fn spawn_image_node(
       size=@selene_math.Vec2(texture.w.to_double(), texture.h.to_double()),
     ),
   )
-  @selene_ui.z_indexes().set(entity, @selene_ui.ZIndex::new(z))
+  @selene_ui.z_indexes().set(entity, @selene_ui.ZIndex(z))
   set_image_texture(entity, texture)
   entity
 }
@@ -230,7 +230,7 @@ fn spawn_text_node(
   align? : @selene_math.HAlign = @selene_math.Left,
   size? : Double = 12.0,
 ) -> @entity.Entity {
-  let entity = @entity.Entity::new()
+  let entity = @entity.Entity()
   entities.push(entity)
   @selene_ui.nodes().set(
     entity,
@@ -239,21 +239,21 @@ fn spawn_text_node(
       size=@selene_math.Vec2(width.to_double(), height.to_double()),
     ),
   )
-  @selene_ui.z_indexes().set(entity, @selene_ui.ZIndex::new(z))
+  @selene_ui.z_indexes().set(entity, @selene_ui.ZIndex(z))
   @selene_ui.text_layouts().set(
     entity,
-    @selene_ui.TextLayout::new(
+    @selene_ui.TextLayout(
       align~,
       baseline=@selene_math.Top,
       wrap=@selene_ui.TextWrap::NoWrap,
       overflow=@selene_ui.TextOverflow::Clip,
     ),
   )
-  @selene_ui.texts().set(entity, @selene_ui.Text::new(text))
+  @selene_ui.texts().set(entity, @selene_ui.Text(text))
   @selene_ui.text_colors().set(entity, @selene_ui.TextColor::from_css(color))
   @selene_ui.text_fonts().set(
     entity,
-    @selene_ui.TextFont::new(family="Menlo", size~),
+    @selene_ui.TextFont(family="Menlo", size~),
   )
   entity
 }
@@ -262,7 +262,7 @@ fn spawn_text_node(
 fn set_text_style(entity : @entity.Entity, run : TextRun) -> Unit {
   @selene_ui.text_fonts().set(
     entity,
-    @selene_ui.TextFont::new(family="Menlo", size=12.0, bold=run.bold),
+    @selene_ui.TextFont(family="Menlo", size=12.0, bold=run.bold),
   )
   @selene_ui.text_colors().set(
     entity,
@@ -280,7 +280,7 @@ fn spawn_rich_text_block(
   width : Int,
   height : Int,
 ) -> @entity.Entity {
-  let entity = @entity.Entity::new()
+  let entity = @entity.Entity()
   entities.push(entity)
   @selene_ui.nodes().set(
     entity,
@@ -291,10 +291,10 @@ fn spawn_rich_text_block(
       overflow_y=@selene_ui.Overflow::Clip,
     ),
   )
-  @selene_ui.z_indexes().set(entity, @selene_ui.ZIndex::new(z))
+  @selene_ui.z_indexes().set(entity, @selene_ui.ZIndex(z))
   @selene_ui.text_layouts().set(
     entity,
-    @selene_ui.TextLayout::new(
+    @selene_ui.TextLayout(
       align=@selene_math.Left,
       baseline=@selene_math.Top,
       line_height=1.22,
@@ -303,11 +303,9 @@ fn spawn_rich_text_block(
     ),
   )
   let spans : Array[@selene_ui.TextSpan] = runs.map(fn(run) {
-    @selene_ui.TextSpan::new(
+    @selene_ui.TextSpan(
       run.text,
-      font=Some(
-        @selene_ui.TextFont::new(family="Menlo", size=12.0, bold=run.bold),
-      ),
+      font=Some(@selene_ui.TextFont(family="Menlo", size=12.0, bold=run.bold)),
       color=Some(@selene_ui.TextColor::from_css(run.color)),
       bold=run.bold,
       underline=run.underline,
@@ -524,7 +522,7 @@ fn spawn_action_button(
   on_click : () -> Unit,
 ) -> Unit {
   let entity = spawn_image_node(state.render_entities, button.normal, x, y, z)
-  @selene_ui.buttons().set(entity, @selene_ui.Button::new())
+  @selene_ui.buttons().set(entity, @selene_ui.Button())
   state.action_buttons.push({ resource: button, entity, enabled, on_click })
 }
 
@@ -698,7 +696,7 @@ fn render_entries(
           top + i * line_height + 3,
           QUEST_LOG_BASE_Z + 28,
         )
-        @selene_ui.buttons().set(icon_entity, @selene_ui.Button::new())
+        @selene_ui.buttons().set(icon_entity, @selene_ui.Button())
         let icon_button = { tab_index: 0, entry_index: i, entity: icon_entity }
         state.quest_entry_buttons.push(icon_button)
         @console.register_ui_entity(
@@ -721,7 +719,7 @@ fn render_entries(
           20,
           color=if selected { "#ffffff" } else { "#0b1f2a" },
         )
-        @selene_ui.buttons().set(text_entity, @selene_ui.Button::new())
+        @selene_ui.buttons().set(text_entity, @selene_ui.Button())
         let text_button = { tab_index: 0, entry_index: i, entity: text_entity }
         state.quest_entry_buttons.push(text_button)
         @console.register_ui_entity(
@@ -764,7 +762,7 @@ fn render_entries(
           top + i * line_height + 3,
           QUEST_LOG_BASE_Z + 28,
         )
-        @selene_ui.buttons().set(icon_entity, @selene_ui.Button::new())
+        @selene_ui.buttons().set(icon_entity, @selene_ui.Button())
         let icon_button = { tab_index: 1, entry_index: i, entity: icon_entity }
         state.quest_entry_buttons.push(icon_button)
         @console.register_ui_entity(
@@ -787,7 +785,7 @@ fn render_entries(
           20,
           color=if selected { "#ffffff" } else { "#0b1f2a" },
         )
-        @selene_ui.buttons().set(text_entity, @selene_ui.Button::new())
+        @selene_ui.buttons().set(text_entity, @selene_ui.Button())
         let text_button = { tab_index: 1, entry_index: i, entity: text_entity }
         state.quest_entry_buttons.push(text_button)
         @console.register_ui_entity(
@@ -1098,7 +1096,7 @@ fn render_quest_log(state : QuestLogUiState) -> Unit {
       texture_draw_y(list_y, texture),
       QUEST_LOG_BASE_Z + 10,
     )
-    @selene_ui.buttons().set(entity, @selene_ui.Button::new())
+    @selene_ui.buttons().set(entity, @selene_ui.Button())
     state.tab_buttons.push({ tab_index: tab, entity })
     @console.register_ui_entity(
       QUEST_LOG_DEBUG_PACKAGE,

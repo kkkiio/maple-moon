@@ -144,7 +144,7 @@ pub fn Player::new(
     last_move: Movement::default(),
     ladder: None,
     inventory,
-    buffs: Map::new(),
+    buffs: Map([]),
     randomizer: @random.Rand::new(),
     skill_book,
     // load_skill_book,
@@ -711,7 +711,7 @@ pub fn Player::change_job(_ : Player, _ : Int) -> Unit {
 }
 
 ///|
-pub let player_ref : Ref[Player?] = Ref::new(None)
+pub let player_ref : Ref[Player?] = Ref(None)
 
 ///|
 pub fn get_player() -> Player? {
@@ -748,7 +748,7 @@ fn sync_player_world_z(player : Player) -> Unit {
     Some(current) =>
       @transform.transforms().set(player.entity, {
         ..current,
-        translation: @math.Vec3::new(
+        translation: @math.Vec3(
           current.translation.x,
           current.translation.y,
           root_z.to_double(),

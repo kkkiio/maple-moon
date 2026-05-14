@@ -13,7 +13,7 @@ priv struct MapDropsContext {
 }
 
 ///|
-let map_drops_ctx : Ref[MapDropsContext?] = Ref::new(None)
+let map_drops_ctx : Ref[MapDropsContext?] = Ref(None)
 
 ///|
 

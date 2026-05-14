@@ -1,17 +1,15 @@
 ///|
-fn load_json_from_file(path : String) -> Json {
-  (@fs.read_file_to_string(path) |> @json.parse) catch {
-    _ => panic()
-  }
+fn load_json_from_file(path : String) -> Json raise {
+  @fs.read_file_to_string(path) |> @json.parse
 }
 
 ///|
-fn load_real_mini_map_ui_json() -> Json {
+fn load_real_mini_map_ui_json() -> Json raise {
   load_json_from_file("assets/ui/UIWindow2.img/MiniMap.json")
 }
 
 ///|
-fn load_real_map_helper_minimap_json() -> Json {
+fn load_real_map_helper_minimap_json() -> Json raise {
   load_json_from_file("assets/spritesheets/Map/MapHelper.img/minimap.json")
 }
 
@@ -46,14 +44,14 @@ fn setup_mini_map_ui_scene_with_data(
   map_name : String,
   street_name : String,
   mini_map_resource : @map.MiniMapRuntimeResource?,
-) -> Unit {
+) -> Unit raise {
   @local_loader.install_resource_env_for_test()
   @mini_map_ui.set_minimap_json_for_test(load_real_mini_map_ui_json())
   @mini_map_ui.set_map_helper_minimap_json_for_test(
     load_real_map_helper_minimap_json(),
   )
   @mini_map_ui.clear_current_map()
-  let app = @app.App::new()
+  let app = @app.App()
     .with_viewport_width(420.0)
     .with_viewport_height(240.0)
     .add_plugin(@plugins.default_plugin)

@@ -30,7 +30,7 @@ async test "mob hpbar render snapshot" {
   defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
   defer @sprite.sprites().clear()
 
-  let app = @app.App::new()
+  let app = @app.App()
     .with_viewport_width(160.0)
     .with_viewport_height(120.0)
     .add_plugin(@plugins.default_plugin)
@@ -47,7 +47,7 @@ async test "mob hpbar render snapshot" {
   @capture_app.init_app(app)
   let mob_pos = @math.Vec2(80.0, 86.0)
   let camera_center = @math.Vec2(80.0, 62.0)
-  let camera_anchor = @entity.Entity::new()
+  let camera_anchor = @entity.Entity()
   @ms_camera.setup_camera_entity(camera_anchor, center=camera_center)
   @ms_camera.set_follow_target(camera_anchor)
 

@@ -81,7 +81,7 @@ pub async fn AnimationLoader::load(
 }
 
 ///|
-let animation_cache : Map[String, LoadedAnimations] = Map::new()
+let animation_cache : Map[String, LoadedAnimations] = Map([])
 
 ///|
 priv struct FrameItem {
@@ -156,7 +156,7 @@ fn compile_loaded_animations(
   let anchor_by_tag = parse_anchor_info_by_tag(slices_json)
 
   let atlas_layout = @sprite.register_texture_atlas_layout(
-    @sprite.TextureAtlasLayout::new(
+    @sprite.TextureAtlasLayout(
       @math.Vec2(atlas_size.x.to_double(), atlas_size.y.to_double()),
       frames.map(fn(frame) { frame.rect }),
     ),
@@ -191,11 +191,9 @@ fn compile_loaded_animations(
       frame_durations_ms.push(frame.duration_ms)
       frame_alphas.push(frame.alpha)
     }
-    let clip = @selene_animation.AnimationClip::new(
-      "npc/aseprite/\{range.name}",
-    )
+    let clip = @selene_animation.AnimationClip("npc/aseprite/\{range.name}")
     clip.add_curve_to_target(
-      @selene_animation.AnimationTargetId::new("self"),
+      @selene_animation.AnimationTargetId("self"),
       @selene_animation.VariableCurve::scalar(
         @selene_animation.texture_atlas_index_field(),
         keys,
@@ -203,7 +201,7 @@ fn compile_loaded_animations(
       ),
     )
     clip.add_curve_to_target(
-      @selene_animation.AnimationTargetId::new("self"),
+      @selene_animation.AnimationTargetId("self"),
       @selene_animation.VariableCurve::vec3(
         sprite_anchor_field(),
         build_sprite_anchor_keys(frames, range, anchor_by_tag),
@@ -223,7 +221,7 @@ fn compile_loaded_animations(
   )
   let graph_handle = @selene_animation.register_animation_graph_asset(graph)
 
-  let clips : Map[String, SeleneClip] = Map::new(capacity=tag_names.length())
+  let clips : Map[String, SeleneClip] = Map([], capacity=tag_names.length())
   for idx = 0; idx < tag_names.length(); idx = idx + 1 {
     let tag = tag_names[idx]
     let anchor_info = match anchor_by_tag.get(tag) {
@@ -280,7 +278,7 @@ fn parse_frames(
         "duration": Number(duration_ms, ..),
         ..
       } else {
-      fail("invalid aseprite frame json: \{frame}")
+      fail("invalid aseprite frame json: \{to_repr(frame)}")
     }
     let wi = w.to_int()
     let hi = h.to_int()
@@ -328,7 +326,7 @@ fn parse_frame_alpha_by_index(
     let layer_alpha = parse_optional_opacity(layer_obj.get("opacity"))
     match layer_obj.get("cels") {
       Some(Array(cels)) => {
-        let has_any_cel = Ref::new(false)
+        let has_any_cel = Ref(false)
         for cel in cels {
           guard cel is Object(cel_obj) else { continue }
           let frame_index = match cel_obj.get("frame") {
@@ -389,7 +387,7 @@ fn parse_tag_ranges(
         "direction": String(direction),
         ..
       } else {
-      fail("invalid aseprite frameTags item: \{tag}")
+      fail("invalid aseprite frameTags item: \{to_repr(tag)}")
     }
     let from_i = from.to_int()
     let to_i = to.to_int()
@@ -407,7 +405,7 @@ fn parse_tag_ranges(
 fn parse_anchor_info_by_tag(
   slices_json : Array[Json],
 ) -> Map[String, AnchorInfo] {
-  let anchors = Map::new()
+  let anchors = Map([])
   for slice in slices_json {
     guard slice is { "name": String(name), "keys": Array(keys), .. } else {
       continue
@@ -462,7 +460,7 @@ fn build_sprite_anchor_keys(
     let @sprite.Anchor(anchor) = frame_anchor(frame, info)
     keys.push({
       time: t,
-      value: @math.Vec3::new(anchor.0, anchor.1, 0.0),
+      value: @math.Vec3(anchor.0, anchor.1, 0.0),
       in_tangent: None,
       out_tangent: None,
     })
@@ -489,7 +487,7 @@ fn frame_anchor(frame : FrameItem, info : AnchorInfo) -> @sprite.Anchor raise {
 }
 
 ///|
-let sprite_anchor_field_ref : Ref[@selene_animation.AnimatedFieldHandle?] = Ref::new(
+let sprite_anchor_field_ref : Ref[@selene_animation.AnimatedFieldHandle?] = Ref(
   None,
 )
 
@@ -508,7 +506,7 @@ fn sprite_anchor_field() -> @selene_animation.AnimatedFieldHandle {
               sprite.anchor
             })
           @selene_animation.AnimatedValue::Vec3(
-            @math.Vec3::new(anchor.0, anchor.1, 0.0),
+            @math.Vec3(anchor.0, anchor.1, 0.0),
           )
         },
         apply: fn(entity, value) {

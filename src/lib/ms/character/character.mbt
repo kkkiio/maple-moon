@@ -84,7 +84,7 @@ pub(all) struct Character {
 
 ///|
 /// Global character registry keyed by object id.
-let character_registry : Map[Int, Character] = Map::new()
+let character_registry : Map[Int, Character] = Map([])
 
 ///|
 /// Register a character into the global registry.

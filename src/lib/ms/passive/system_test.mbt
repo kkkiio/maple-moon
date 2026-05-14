@@ -32,10 +32,7 @@ struct MockPassiveSkill {
 
 ///|
 fn MockPassiveSkill::new() -> MockPassiveSkill {
-  {
-    call_count: Ref::new(0),
-    last_event: Ref::new((None : @combat_system.HitEvent?)),
-  }
+  { call_count: Ref(0), last_event: Ref((None : @combat_system.HitEvent?)) }
 }
 
 ///|

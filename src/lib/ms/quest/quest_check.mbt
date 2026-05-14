@@ -112,7 +112,7 @@ impl QuestCheck for JobsCheck with check(self, context) {
       return Ok(())
     }
   }
-  return Err("Expected job \{self.jobs}, got \{player_job}")
+  return Err("Expected job \{to_repr(self.jobs)}, got \{player_job}")
 }
 
 ///|

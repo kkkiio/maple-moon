@@ -12,12 +12,12 @@ struct DamageSkin {
 
 ///|
 pub impl Default for DamageSkin with default() {
-  { sprites: Map::new() }
+  { sprites: Map([]) }
 }
 
 ///|
 pub impl @json.FromJson for DamageSkin with from_json(json, path) {
-  let sprites = Map::new()
+  let sprites = Map([])
   guard json is Object(obj) else { return { sprites, } }
   for name, sub in obj {
     guard sub is { "__i": String(_), .. } else { continue }
@@ -235,7 +235,7 @@ pub fn NumberSet::show_number(
   }
 
   // Create Parent Entity
-  let parent_entity = @entity.Entity::new()
+  let parent_entity = @entity.Entity()
   @transform2d.set_xy(parent_entity, Vec2::zero())
 
   // Spawn Children

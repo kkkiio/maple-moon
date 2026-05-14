@@ -740,7 +740,7 @@ fn make_world_range(
 }
 
 ///|
-let combat_ref : Ref[Combat?] = Ref::new(None)
+let combat_ref : Ref[Combat?] = Ref(None)
 
 ///|
 pub fn set_combat(combat : Combat?) -> Unit {
@@ -754,7 +754,7 @@ pub fn get_combat() -> Combat? {
 }
 
 ///|
-let player_ref : Ref[&DamagableCharacter?] = Ref::new(None)
+let player_ref : Ref[&DamagableCharacter?] = Ref(None)
 
 ///|
 pub fn set_player(player : &DamagableCharacter?) -> Unit {

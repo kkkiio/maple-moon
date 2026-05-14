@@ -68,7 +68,7 @@ fn main {
   @item.set_item_data_system(
     @item.ItemDataSystem::new(@resource.require_async_loader("item")),
   )
-  let app = @app.App::new()
+  let app = @app.App()
     .with_image_smooth(false)
     .with_viewport_width(@graphics.view_size.0 |> Double::from_int)
     .with_viewport_height(@graphics.view_size.1 |> Double::from_int)

@@ -33,10 +33,10 @@ fn check_one_map_tmj(
     issues.push(make_issue("map_z", Error, rel_path, "missing layers array"))
     return
   }
-  let last_bucket = Ref::new(-1)
-  let last_map_layer = Ref::new(-1)
-  let obj_index_by_layer : Map[Int, Int] = Map::new()
-  let tile_index_by_layer : Map[Int, Int] = Map::new()
+  let last_bucket = Ref(-1)
+  let last_map_layer = Ref(-1)
+  let obj_index_by_layer : Map[Int, Int] = Map([])
+  let tile_index_by_layer : Map[Int, Int] = Map([])
   for idx, layer in layers {
     guard layer is { "name": String(name), "type": String(layer_type), .. } else {
       continue

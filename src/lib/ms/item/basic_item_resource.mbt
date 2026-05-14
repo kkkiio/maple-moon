@@ -32,7 +32,7 @@ fn collect_item_ids_from_bundle(json : Json, id_set : Map[Int, Bool]) -> Unit {
 async fn discover_consume_and_etc_item_ids(
   item_loader : @resource.AsyncLoader,
 ) -> Array[Int] {
-  let id_set : Map[Int, Bool] = Map::new()
+  let id_set : Map[Int, Bool] = Map([])
   for bundle in consume_bundle_files {
     let bundle_json = load_item_bundle_cached("Consume", bundle, item_loader)
     collect_item_ids_from_bundle(bundle_json, id_set)
@@ -56,7 +56,7 @@ pub async fn BasicItemResource::load(
 ) -> BasicItemResource {
   preload_item_text_bundles(string_loader)
   let ids = discover_consume_and_etc_item_ids(item_loader)
-  let items_by_id : Map[Int, ItemData] = Map::new()
+  let items_by_id : Map[Int, ItemData] = Map([])
   for item_id in ids {
     let item_data = ItemData::load_item_data_with_loader(item_id, item_loader)
     items_by_id.set(item_id, item_data)
@@ -79,9 +79,7 @@ pub fn BasicItemResource::ids(self : BasicItemResource) -> Array[Int] {
 }
 
 ///|
-let resources_by_world : Ref[Map[UInt, BasicItemResource]] = Ref::new(
-  Map::new(),
-)
+let resources_by_world : Ref[Map[UInt, BasicItemResource]] = Ref(Map([]))
 
 ///|
 /// Gets basic item resource for the current world.

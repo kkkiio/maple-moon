@@ -26,6 +26,7 @@ pub(all) enum CapType {
 type CharEquips
 pub fn CharEquips::add_equip(Self, @item.ItemData, @slot.Id, @character_body.BodyDrawInfo) -> Unit raise
 pub fn CharEquips::adjust_stance(Self, @char_stance.StanceId) -> @char_stance.StanceId
+pub fn CharEquips::default() -> Self
 pub fn CharEquips::get_clothing(Self, @slot.Id) -> @clothing.Clothing?
 pub fn CharEquips::get_equip(Self, @slot.Id) -> Int
 pub fn CharEquips::get_weapon(Self) -> @weapon.WeaponData?

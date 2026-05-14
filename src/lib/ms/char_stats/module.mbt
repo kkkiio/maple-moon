@@ -14,9 +14,9 @@ pub fn Module::load() -> Module {
 ///|
 fn Module::new() -> Module {
   {
-    stat_listeners: Map::new(),
-    i64stat_listeners: Map::new(),
-    total_listeners: Map::new(),
+    stat_listeners: Map([]),
+    i64stat_listeners: Map([]),
+    total_listeners: Map([]),
     player_char_stats: None,
   }
 }

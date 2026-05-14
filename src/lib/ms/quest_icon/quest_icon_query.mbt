@@ -14,7 +14,7 @@ struct Module {
 }
 
 ///|
-let active_module : Ref[Module?] = Ref::new(None)
+let active_module : Ref[Module?] = Ref(None)
 
 ///|
 pub(all) struct DemoQuestSelection {
@@ -27,10 +27,10 @@ pub(all) struct DemoQuestSelection {
 } derive(Debug)
 
 ///|
-let quest_icon_query_revision_ref : Ref[Int] = Ref::new(0)
+let quest_icon_query_revision_ref : Ref[Int] = Ref(0)
 
 ///|
-let selected_demo_quest : Ref[DemoQuestSelection?] = Ref::new(None)
+let selected_demo_quest : Ref[DemoQuestSelection?] = Ref(None)
 
 ///|
 /// Returns monotonic revision used by quest-icon query caches.
@@ -377,7 +377,7 @@ fn check_quest_requirements(
   phase : Int,
 ) -> Result[Unit, String] {
   if check.unknown_checks.length() > 0 {
-    return Err("Unknown checks: \{check.unknown_checks}")
+    return Err("Unknown checks: \{to_repr(check.unknown_checks)}")
   }
   for check in check.checks {
     if check.check({

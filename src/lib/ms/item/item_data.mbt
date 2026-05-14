@@ -46,7 +46,7 @@ async fn load_item_text_src(
 }
 
 ///|
-let item_text_bundle_cache : Map[String, Json] = Map::new()
+let item_text_bundle_cache : Map[String, Json] = Map([])
 
 ///|
 async fn load_item_text_bundle_cached(
@@ -203,10 +203,10 @@ pub async fn ItemData::load(
 }
 
 ///|
-let cache : Map[Int, ItemData] = Map::new()
+let cache : Map[Int, ItemData] = Map([])
 
 ///|
-let bundle_cache : Map[String, Json] = Map::new()
+let bundle_cache : Map[String, Json] = Map([])
 
 ///|
 async fn load_item_bundle_cached(
@@ -362,6 +362,6 @@ pub fn ItemData::get_icon(self : ItemData, raw : Bool) -> @resource.NxTexture {
 pub fn ItemData::get_info(self : ItemData) -> Map[String, Json] {
   match self.src {
     { "info": Object(info), .. } => info
-    _ => Map::new()
+    _ => Map([])
   }
 }

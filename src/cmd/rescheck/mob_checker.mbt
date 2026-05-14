@@ -79,7 +79,7 @@ fn check_mob_resources(ctx : RescheckContext) -> Array[CheckIssue] {
 ///|
 fn collect_map_mob_ids(ctx : RescheckContext) -> Array[String] {
   let out : Array[String] = []
-  let seen : Map[String, Bool] = Map::new()
+  let seen : Map[String, Bool] = Map([])
   let preferred_map_file = "map/map1/104030000.img.json"
   let mut preferred_found = false
   for abs_path in ctx.all_files {
@@ -131,7 +131,7 @@ fn collect_i_refs(json : Json) -> Array[String] {
   let out : Array[String] = []
   collect_i_refs_rec(json, out)
   let unique : Array[String] = []
-  let seen : Map[String, Bool] = Map::new()
+  let seen : Map[String, Bool] = Map([])
   for p in out {
     if !seen.contains(p) {
       seen[p] = true

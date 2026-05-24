@@ -74,6 +74,7 @@ MoonBit 允许 `test` 直接传播错误, 用 `fail` 函数抛出错误.
 ### Repo Structure & Important Files
 
 - `docs/`: 游戏策划文档.
+- `adrs/`: 架构决策记录.
 - `src/lib/ms`: 游戏模块源码.
 - `src/test/`: 集成测试用例.
 - `assets/`: 资源文件.

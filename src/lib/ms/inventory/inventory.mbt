@@ -18,7 +18,7 @@ pub fn Movement::int_value(self : Movement) -> Int {
 
 ///|
 enum ModificationMode {
-  ADD(InventoryItemEntry)
+  // ADD(InventoryItemEntry)
   CHANGE_COUNT
   SWAP
   REMOVE
@@ -316,7 +316,7 @@ pub fn Inventory::apply_local_modify_inventory_message(
 
 ///|
 /// Recalculate sums of equip stats
-pub impl @legacy_types.Inventory for Inventory with recalc_stats(
+pub impl @legacy_types.Inventory for Inventory with fn recalc_stats(
   self : Inventory,
   weapontype : @weapon.Type,
 ) -> Unit {
@@ -459,7 +459,7 @@ pub fn Inventory::add_equip(
 }
 
 ///|
-pub impl @legacy_types.Inventory for Inventory with get_stat(
+pub impl @legacy_types.Inventory for Inventory with fn get_stat(
   self : Inventory,
   stat : @maple_stat.EquipStatId,
 ) -> Int {
@@ -467,14 +467,14 @@ pub impl @legacy_types.Inventory for Inventory with get_stat(
 }
 
 ///|
-pub impl @legacy_types.Inventory for Inventory with has_projectile(
+pub impl @legacy_types.Inventory for Inventory with fn has_projectile(
   self : Inventory,
 ) -> Bool {
   self.bullet_slot > 0
 }
 
 ///|
-pub impl @legacy_types.Inventory for Inventory with get_bulletid(
+pub impl @legacy_types.Inventory for Inventory with fn get_bulletid(
   self : Inventory,
 ) -> Int {
   self.get_item_id(TypeId::USE, self.bullet_slot)
@@ -495,7 +495,7 @@ pub fn Inventory::get_slot_item_at(
 }
 
 ///|
-pub impl @legacy_types.Inventory for Inventory with get_bulletcount(
+pub impl @legacy_types.Inventory for Inventory with fn get_bulletcount(
   self : Inventory,
 ) -> Int {
   self.get_item_count_at_slot(TypeId::USE, self.bullet_slot)
@@ -554,7 +554,7 @@ pub fn Inventory::modify(
         _ => ()
       }
     ModificationMode::REMOVE => self.remove(t, slot)
-    ModificationMode::ADD(_) => ()
+    // ModificationMode::ADD(_) => ()
   }
   self.notify_item_listeners(t)
   match notify_other_tab {

@@ -29,7 +29,7 @@ fn collect_item_ids_from_bundle(json : Json, id_set : Map[Int, Bool]) -> Unit {
 }
 
 ///|
-async fn discover_consume_and_etc_item_ids(
+fn discover_consume_and_etc_item_ids(
   item_loader : @resource.AsyncLoader,
 ) -> Array[Int] {
   let id_set : Map[Int, Bool] = Map([])
@@ -50,7 +50,7 @@ async fn discover_consume_and_etc_item_ids(
 
 ///|
 /// Loads consume/etc basic item resources and keeps a full in-memory item-data map.
-pub async fn BasicItemResource::load(
+pub fn BasicItemResource::load(
   item_loader : @resource.AsyncLoader,
   string_loader : @resource.AsyncLoader,
 ) -> BasicItemResource {

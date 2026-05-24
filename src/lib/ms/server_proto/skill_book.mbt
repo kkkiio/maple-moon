@@ -4,7 +4,7 @@ pub(all) struct SpendSPMessage {
 } derive(Debug, ToJson, FromJson)
 
 ///|
-pub impl ClientMessage for SpendSPMessage with type_code() {
+pub impl ClientMessage for SpendSPMessage with fn type_code() {
   ClientOpcode::SPEND_SP.int_value()
 }
 
@@ -17,6 +17,6 @@ pub(all) struct UseSPResetMessage {
 } derive(Debug, ToJson, FromJson)
 
 ///|
-pub impl ClientMessage for UseSPResetMessage with type_code() {
+pub impl ClientMessage for UseSPResetMessage with fn type_code() {
   ClientOpcode::USE_CASH_ITEM.int_value()
 }

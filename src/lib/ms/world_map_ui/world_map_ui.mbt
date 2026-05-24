@@ -87,7 +87,7 @@ priv struct NxWorldMapSearch {
 }
 
 ///|
-impl @json.FromJson for NxWorldMapSearch with from_json(json, path) -> NxWorldMapSearch raise @json.JsonDecodeError {
+impl @json.FromJson for NxWorldMapSearch with fn from_json(json, path) -> NxWorldMapSearch raise @json.JsonDecodeError {
   match json {
     { "backgrnd": background, "notice": notice, .. } =>
       {
@@ -110,7 +110,7 @@ priv struct NxWorldMapUI {
 }
 
 ///|
-impl @json.FromJson for NxWorldMapUI with from_json(json, path) -> NxWorldMapUI raise @json.JsonDecodeError {
+impl @json.FromJson for NxWorldMapUI with fn from_json(json, path) -> NxWorldMapUI raise @json.JsonDecodeError {
   match json {
     {
       "Border": border,
@@ -155,7 +155,7 @@ priv struct NxWorldMapMarker {
 }
 
 ///|
-impl @json.FromJson for NxWorldMapMarker with from_json(json, path) -> NxWorldMapMarker raise @json.JsonDecodeError {
+impl @json.FromJson for NxWorldMapMarker with fn from_json(json, path) -> NxWorldMapMarker raise @json.JsonDecodeError {
   match json {
     {
       "curPos": cur_pos,
@@ -208,7 +208,7 @@ priv struct NxWorldMapToolTip {
 }
 
 ///|
-impl @json.FromJson for NxWorldMapToolTip with from_json(json, path) -> NxWorldMapToolTip raise @json.JsonDecodeError {
+impl @json.FromJson for NxWorldMapToolTip with fn from_json(json, path) -> NxWorldMapToolTip raise @json.JsonDecodeError {
   match json {
     { "Line": line, "Mob": mob, "Npc": npc, "Party": party, .. } =>
       {
@@ -230,7 +230,7 @@ priv struct NxWorldMapLinkInner {
 }
 
 ///|
-impl @json.FromJson for NxWorldMapLinkInner with from_json(json, path) -> NxWorldMapLinkInner raise @json.JsonDecodeError {
+impl @json.FromJson for NxWorldMapLinkInner with fn from_json(json, path) -> NxWorldMapLinkInner raise @json.JsonDecodeError {
   match json {
     { "linkImg": link_img, "linkMap": String(link_map), .. } =>
       {
@@ -248,7 +248,7 @@ priv struct NxWorldMapLink {
 }
 
 ///|
-impl @json.FromJson for NxWorldMapLink with from_json(json, path) -> NxWorldMapLink raise @json.JsonDecodeError {
+impl @json.FromJson for NxWorldMapLink with fn from_json(json, path) -> NxWorldMapLink raise @json.JsonDecodeError {
   match json {
     { "link": link, "toolTip": String(tooltip), .. } =>
       { link: @json.from_json(link, path=path.add_key("link")), tooltip }
@@ -268,7 +268,7 @@ priv struct NxWorldMapSpot {
 }
 
 ///|
-impl @json.FromJson for NxWorldMapSpot with from_json(json, path) -> NxWorldMapSpot raise @json.JsonDecodeError {
+impl @json.FromJson for NxWorldMapSpot with fn from_json(json, path) -> NxWorldMapSpot raise @json.JsonDecodeError {
   match json {
     { "mapNo": map_no, "spot": [spot_x, spot_y], "type": type_, .. } => {
       let title = match json {
@@ -322,7 +322,7 @@ priv struct NxWorldMapInfo {
 }
 
 ///|
-impl @json.FromJson for NxWorldMapInfo with from_json(json, path) -> NxWorldMapInfo raise @json.JsonDecodeError {
+impl @json.FromJson for NxWorldMapInfo with fn from_json(json, path) -> NxWorldMapInfo raise @json.JsonDecodeError {
   match json {
     { "parentMap": String(parent_map), .. } => { parent_map, }
     _ => raise @json.JsonDecodeError((path, "missing field parentMap"))
@@ -338,7 +338,7 @@ priv struct NxWorldMapPage {
 }
 
 ///|
-impl @json.FromJson for NxWorldMapPage with from_json(json, path) -> NxWorldMapPage raise @json.JsonDecodeError {
+impl @json.FromJson for NxWorldMapPage with fn from_json(json, path) -> NxWorldMapPage raise @json.JsonDecodeError {
   match json {
     { "BaseImg": base_img, "MapList": map_list, "info": info, .. } => {
       let map_links = match json {
@@ -687,7 +687,7 @@ fn parse_world_map_page_resource(
 }
 
 ///|
-async fn load_ui_resources(
+fn load_ui_resources(
   ui_json : Json?,
   tooltip_json : Json?,
   map_helper_json : Json?,
@@ -695,30 +695,38 @@ async fn load_ui_resources(
   let ui_json = match ui_json {
     Some(json) => json
     None =>
-      @resource.require_async_loader("ui_window_2").load_resource(["WorldMap"])
+      @resource.require_async_loader("ui_window_2").require_resource([
+        "WorldMap",
+      ])
   }
   let tooltip_json = match tooltip_json {
     Some(json) => json
     None =>
-      @resource.require_async_loader("ui_window_2").load_resource([
+      @resource.require_async_loader("ui_window_2").require_resource([
         "ToolTip", "WorldMap",
       ])
   }
   let map_helper_json = match map_helper_json {
     Some(json) => json
     None =>
-      @resource.require_async_loader("map_latest").load_resource([
+      @resource.require_async_loader("map_latest").require_resource([
         "MapHelper.img", "worldMap",
       ])
   }
-  let ui = parse_world_map_ui_resource(ui_json)
-  let marker = parse_world_map_marker_resource(map_helper_json)
-  let tooltip = parse_world_map_tooltip_resource(tooltip_json)
+  let ui = parse_world_map_ui_resource(ui_json) catch {
+    _ => abort("invalid WorldMap ui resource")
+  }
+  let marker = parse_world_map_marker_resource(map_helper_json) catch {
+    _ => abort("invalid MapHelper worldMap resource")
+  }
+  let tooltip = parse_world_map_tooltip_resource(tooltip_json) catch {
+    _ => abort("invalid WorldMap tooltip resource")
+  }
   { ui, marker, tooltip }
 }
 
 ///|
-async fn load_world_map_page(
+fn load_world_map_page(
   name : String,
   marker : WorldMapMarkerResource,
   injected_json : Json?,
@@ -726,11 +734,14 @@ async fn load_world_map_page(
   let json = match injected_json {
     Some(json) => json
     None =>
-      @resource.require_async_loader("map_world_map").load_resource([
+      @resource.require_async_loader("map_world_map").require_resource([
         "\{name}.img",
       ])
   }
-  (name, parse_world_map_page_resource(name, json, marker))
+  let page = parse_world_map_page_resource(name, json, marker) catch {
+    _ => abort("invalid world map page resource: \{name}")
+  }
+  (name, page)
 }
 
 ///|
@@ -820,7 +831,7 @@ fn ensure_page_loading(state : State, resources : UiResources) -> Unit {
   let current_name = state.current_world_name
   let injected_json = world_map_pages_for_test_ref.val.get(current_name)
   state.page_loading = Some(
-    @io_service.submit_background_task(async fn() {
+    @io_service.submit_background_task(fn() {
       load_world_map_page(current_name, resources.marker, injected_json)
     }),
   )
@@ -862,7 +873,7 @@ fn poll_ui_resources(state : State) -> Bool {
       let tooltip_json = tooltip_json_for_test_ref.val
       let map_helper_json = map_helper_json_for_test_ref.val
       state.ui_loading = Some(
-        @io_service.submit_background_task(async fn() {
+        @io_service.submit_background_task(fn() {
           load_ui_resources(ui_json, tooltip_json, map_helper_json)
         }),
       )
@@ -1039,7 +1050,7 @@ fn spawn_texture(
   z : Int,
 ) -> Unit {
   let animation = @ms_animation.Animation::single_frame_from_image(
-    @asset.load_image(texture.i),
+    @resource.load_image(texture.i),
     @selene_math.Vec2(texture.w.to_double(), texture.h.to_double()),
     offset=@selene_math.Vec2(
       texture.offset.x.to_double(),

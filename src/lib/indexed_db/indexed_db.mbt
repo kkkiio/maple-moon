@@ -1,35 +1,15 @@
 ///|
-#external
-type JSValue
-
-///|
-fn[X] JSValue::make(v : X) -> JSValue = "%identity"
-
-///|
-fn[X] JSValue::cast(self : JSValue) -> X = "%identity"
-
-///|
-extern "js" fn JSValue::is_null(self : JSValue) -> Bool = "(v) => v === null"
-
-///|
-extern "js" fn JSValue::is_undefined(self : JSValue) -> Bool = "(v) => v === undefined"
-
-///|
-/// Browser IndexedDB-backed implementation.
+/// Synchronous browser storage facade kept behind the old package name.
 pub struct IndexedDB {
-  db : JSValue
+  name : String
 }
 
 ///|
-/// Open an IndexedDB database and ensure all stores exist.
-pub async fn open(
-  name : String,
-  version : Int,
-  stores : Array[String],
-) -> IndexedDB {
-  let stores_value : JSValue = JSValue::make(stores)
-  let db = indexed_db_open_promise(name, version, stores_value).wait()
-  IndexedDB::{ db: JSValue::make(db) }
+/// Open a browser-local store namespace.
+pub fn open(name : String, version : Int, stores : Array[String]) -> IndexedDB {
+  ignore(version)
+  ignore(stores)
+  { name, }
 }
 
 ///|
@@ -39,94 +19,35 @@ pub fn IndexedDB::save_json(
   key : String,
   data : Json,
 ) -> Unit {
-  let json_str = data.stringify()
-  let _ = save_json_promise(self.db, store, key, json_str)
+  local_storage_set(storage_key(self.name, store, key), data.stringify())
 }
 
 ///|
-pub fn IndexedDB::save_json_promise(
-  self : IndexedDB,
-  store : String,
-  key : String,
-  data : Json,
-) -> @js_async.Promise[JSValue] {
-  let json_str = data.stringify()
-  save_json_promise(self.db, store, key, json_str)
-}
-
-///|
-pub fn IndexedDB::load_json_promise(
-  self : IndexedDB,
-  store : String,
-  key : String,
-) -> @js_async.Promise[JSValue] {
-  load_json_promise(self.db, store, key)
-}
-
-///|
-pub async fn IndexedDB::load_json(
+pub fn IndexedDB::load_json(
   self : IndexedDB,
   store : String,
   key : String,
 ) -> Json? {
-  let val = load_json_promise(self.db, store, key).wait()
-  if val.is_null() || val.is_undefined() {
-    None
-  } else {
-    let json_str : String = val.cast()
-    (@json.parse(json_str) |> Some) catch {
-      _ => None
-    }
+  match local_storage_get(storage_key(self.name, store, key)) {
+    Some(json_str) => (@json.parse(json_str) |> Some) catch { _ => None }
+    None => None
   }
 }
 
-// FFI
+///|
+fn storage_key(name : String, store : String, key : String) -> String {
+  "maple-moon:\{name}:\{store}:\{key}"
+}
 
 ///|
-extern "js" fn indexed_db_open_promise(
-  name : String,
-  version : Int,
-  stores : JSValue,
-) -> @js_async.Promise[JSValue] =
-  #| (name, version, stores) => new Promise((resolve, reject) => {
-  #|   const req = indexedDB.open(name, version);
-  #|   req.onsuccess = () => resolve(req.result);
-  #|   req.onerror = () => reject(req.error);
-  #|   req.onupgradeneeded = (e) => {
-  #|     const db = e.target.result;
-  #|     for (const store of stores) {
-  #|       if (!db.objectStoreNames.contains(store)) {
-  #|         db.createObjectStore(store);
-  #|       }
-  #|     }
-  #|   };
-  #| })
+extern "js" fn local_storage_set(key : String, value : String) -> Unit =
+  #| (key, value) => {
+  #|   globalThis.localStorage?.setItem(key, value);
+  #| }
 
 ///|
-extern "js" fn save_json_promise(
-  db : JSValue,
-  store : String,
-  key : String,
-  json_str : String,
-) -> @js_async.Promise[JSValue] =
-  #| (db, store, key, json_str) => new Promise((resolve, reject) => {
-  #|   const tx = db.transaction(store, "readwrite");
-  #|   const objStore = tx.objectStore(store);
-  #|   const req = objStore.put(JSON.parse(json_str), key);
-  #|   req.onsuccess = () => resolve(req.result);
-  #|   req.onerror = () => reject(req.error);
-  #| })
-
-///|
-extern "js" fn load_json_promise(
-  db : JSValue,
-  store : String,
-  key : String,
-) -> @js_async.Promise[JSValue] =
-  #| (db, store, key) => new Promise((resolve, reject) => {
-  #|   const tx = db.transaction(store, "readonly");
-  #|   const objStore = tx.objectStore(store);
-  #|   const req = objStore.get(key);
-  #|   req.onsuccess = () => resolve(req.result ? JSON.stringify(req.result) : null);
-  #|   req.onerror = () => reject(req.error);
-  #| })
+extern "js" fn local_storage_get(key : String) -> String? =
+  #| (key) => {
+  #|   const value = globalThis.localStorage?.getItem(key);
+  #|   return value == null ? undefined : value;
+  #| }

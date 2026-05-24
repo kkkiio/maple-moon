@@ -47,7 +47,7 @@ pub(all) enum ClothingLayer {
 pub fn ClothingLayer::int_value(self : ClothingLayer) -> Int = "%identity"
 
 ///|
-pub impl ToJson for ClothingLayer with to_json(self) {
+pub impl ToJson for ClothingLayer with fn to_json(self) {
   self.to_repr().to_string().to_json()
 }
 

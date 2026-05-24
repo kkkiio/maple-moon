@@ -16,7 +16,7 @@ pub struct UIMod {
 
 ///|
 /// Async load the UI module.
-pub async fn UIMod::load() -> UIMod {
+pub fn UIMod::load() -> UIMod {
   let number_set = NumberSet::load()
   { number_set, }
 }

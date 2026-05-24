@@ -39,25 +39,9 @@ fn LocalServer::set_default_quest_state(self : LocalServer) -> Unit {
 
 ///|
 fn LocalServer::init_quest_runtime(self : LocalServer) -> Unit {
-  @io_service.execute_background(
-    async fn() {
-      let loader = @resource.require_async_loader("quest")
-      let raw = loader.load_resource(["nx"]) catch {
-        err => {
-          @log.error("failed to load quest nx for local server runtime", data={
-            "error": err.to_string(),
-          })
-          return
-        }
-      }
-      self.quest_defs = parse_quest_definitions(raw)
-    },
-    on_error=fn(err) {
-      @log.error("failed to initialize local quest runtime", data={
-        "error": err.to_string(),
-      })
-    },
-  )
+  let path = @resource.resolve_resource_path("quest", "nx.json")
+  let raw = @resource.fetch_json(path).unwrap()
+  self.quest_defs = parse_quest_definitions(raw)
 }
 
 ///|
@@ -233,7 +217,7 @@ fn LocalServer::build_player_quest_log_info(
 ///|
 fn LocalServer::on_quest_action(self : LocalServer, json : Json) -> Unit raise {
   let msg : QuestActionMessage = @json.from_json(json)
-  @io_service.execute_background(async fn() { self.handle_quest_action(msg) }, on_error=fn(
+  @io_service.execute_background(fn() { self.handle_quest_action(msg) }, on_error=fn(
     err,
   ) {
     @log.error("failed to handle quest action", data={
@@ -243,7 +227,7 @@ fn LocalServer::on_quest_action(self : LocalServer, json : Json) -> Unit raise {
 }
 
 ///|
-async fn LocalServer::handle_quest_action(
+fn LocalServer::handle_quest_action(
   self : LocalServer,
   msg : QuestActionMessage,
 ) -> Unit {
@@ -256,7 +240,7 @@ async fn LocalServer::handle_quest_action(
 }
 
 ///|
-async fn LocalServer::handle_start_quest(
+fn LocalServer::handle_start_quest(
   self : LocalServer,
   quest_id : Int,
   npc_id : Int,
@@ -291,7 +275,7 @@ async fn LocalServer::handle_start_quest(
 }
 
 ///|
-async fn LocalServer::handle_complete_quest(
+fn LocalServer::handle_complete_quest(
   self : LocalServer,
   quest_id : Int,
   npc_id : Int,
@@ -572,7 +556,7 @@ fn LocalServer::remove_item_from_inventory(
 }
 
 ///|
-async fn LocalServer::apply_quest_item_effects(
+fn LocalServer::apply_quest_item_effects(
   self : LocalServer,
   effects : Array[QuestItemEffect],
 ) -> Bool {

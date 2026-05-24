@@ -195,7 +195,7 @@ pub fn MapPortalAnimations::load() -> MapPortalAnimations {
     frame_height : Double,
     pivot : @selene_math.Vec2,
   ) -> @ms_animation.Animation {
-    let image = @selene_asset.load_image(path)
+    let image = @resource.load_image(path)
     let frames : Array[@ms_animation.AnimationFrame] = []
     for frame_index = 0
         frame_index < frame_count
@@ -211,14 +211,14 @@ pub fn MapPortalAnimations::load() -> MapPortalAnimations {
     @ms_animation.Animation::new(frames, loop_=true)
   }
   let ani1 = atlas_animation(
-    "/assets/portal/continue.png",
+    "assets/portal/continue.png",
     7,
     128.0,
     122.0,
     @selene_math.Vec2(62, 119),
   )
   let ani2 = atlas_animation(
-    "/assets/portal/regular.png",
+    "assets/portal/regular.png",
     8,
     89.0,
     257.0,

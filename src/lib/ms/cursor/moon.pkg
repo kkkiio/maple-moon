@@ -6,6 +6,7 @@ import {
   "Milky2018/selene/physics2d",
   "Milky2018/selene/collision",
   "KKKIIO/maple-moon/lib/ui",
+  "KKKIIO/maple-moon/lib/resource",
   "Milky2018/selene/inputs",
   "KKKIIO/maple-moon/lib/graphics",
   "Milky2018/selene/ecs",

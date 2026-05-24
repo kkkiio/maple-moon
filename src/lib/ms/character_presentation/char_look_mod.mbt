@@ -12,7 +12,7 @@ pub struct CharacterPresentationResource {
 }
 
 ///|
-pub async fn CharacterPresentationResource::load() -> CharacterPresentationResource {
+pub fn CharacterPresentationResource::load() -> CharacterPresentationResource {
   let stance_bodys_map = load_stance_bodys_map()
   let stance_heads_map = load_stance_heads_map()
   let draw_info = @types.BodyDrawInfo::new(
@@ -88,7 +88,7 @@ pub fn CharacterPresentationResource::load_body_by_skin_id(
 }
 
 ///|
-pub async fn CharacterPresentationResource::load_hair_by_id(
+pub fn CharacterPresentationResource::load_hair_by_id(
   self : CharacterPresentationResource,
   hair_id : Int,
 ) -> Hair {
@@ -98,7 +98,7 @@ pub async fn CharacterPresentationResource::load_hair_by_id(
 }
 
 ///|
-pub async fn CharacterPresentationResource::load_face_by_id(
+pub fn CharacterPresentationResource::load_face_by_id(
   self : CharacterPresentationResource,
   face_id : Int,
 ) -> Face {
@@ -180,19 +180,23 @@ pub fn set_module(resource : CharacterPresentationResource) -> Unit {
 // }
 
 ///|
-async fn load_stance_bodys_map() -> NxStanceLooks[@types.NxStanceBody] {
-  let bodynode = @resource.require_async_loader("body").load_resource([
+fn load_stance_bodys_map() -> NxStanceLooks[@types.NxStanceBody] {
+  let bodynode = @resource.require_async_loader("body").require_resource([
     "00002000.img",
   ])
-  let v : NxStanceLooks[@types.NxStanceBody] = @json.from_json(bodynode)
+  let v : NxStanceLooks[@types.NxStanceBody] = @json.from_json(bodynode) catch {
+    err => abort("failed to decode body stance map: \{err}")
+  }
   v
 }
 
 ///|
-async fn load_stance_heads_map() -> NxStanceLooks[@types.NxMultiPartFrame] {
-  let headnode = @resource.require_async_loader("body").load_resource([
+fn load_stance_heads_map() -> NxStanceLooks[@types.NxMultiPartFrame] {
+  let headnode = @resource.require_async_loader("body").require_resource([
     "00012000.img",
   ])
-  let v : NxStanceLooks[@types.NxMultiPartFrame] = @json.from_json(headnode)
+  let v : NxStanceLooks[@types.NxMultiPartFrame] = @json.from_json(headnode) catch {
+    err => abort("failed to decode head stance map: \{err}")
+  }
   v
 }

@@ -24,7 +24,7 @@ pub(all) enum BodyLayer {
 } derive(Eq, Compare, Debug, Hash)
 
 ///|
-pub impl ToJson for BodyLayer with to_json(self) {
+pub impl ToJson for BodyLayer with fn to_json(self) {
   self.name().to_json()
 }
 

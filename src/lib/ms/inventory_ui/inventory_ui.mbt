@@ -160,9 +160,11 @@ fn clear_entities(entities : Array[@entity.Entity]) -> Unit {
 }
 
 ///|
-async fn load_ui_resources() -> UiResources {
-  let item = @ui.ui_window_2_loader().load_resource(["Item"])
-  parse_ui_resources_from_item_json(item)
+fn load_ui_resources() -> UiResources {
+  let item = @ui.ui_window_2_loader().require_resource(["Item"])
+  parse_ui_resources_from_item_json(item) catch {
+    _ => abort("invalid UIWindow2 Item resource")
+  }
 }
 
 ///|
@@ -214,9 +216,9 @@ fn parse_ui_resources_from_item_json(item_json : Json) -> UiResources raise {
 ///|
 fn ui_image_from_texture(texture : @resource.NxTexture) -> @selene_ui.UiImage {
   let source = ui_image_source_from_texture(texture)
-  @selene_ui.UiImage(
+  @selene_ui.UiImage::from_image(
     @selene_math.Vec2(texture.w.to_double(), texture.h.to_double()),
-    texture.i,
+    @resource.load_image(texture.i),
     source=Some(source),
   )
 }
@@ -803,7 +805,7 @@ fn poll_ui_resources(state : State) -> Bool {
       }
     None => {
       state.ui_loading = Some(
-        @io_service.submit_background_task(async fn() { load_ui_resources() }),
+        @io_service.submit_background_task(fn() { load_ui_resources() }),
       )
       false
     }

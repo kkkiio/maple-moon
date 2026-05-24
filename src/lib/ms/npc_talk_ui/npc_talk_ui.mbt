@@ -202,15 +202,18 @@ fn current_player_name() -> String {
 }
 
 ///|
-async fn load_npc_talk_resource() -> NpcTalkResource {
-  let src : Json = @resource.require_async_loader("ui_window_2").load_resource([
-    "UtilDlgEx",
-  ])
+fn load_npc_talk_resource() -> NpcTalkResource {
+  let src : Json = @resource.require_async_loader("ui_window_2").require_resource([
+      "UtilDlgEx",
+    ],
+  )
   let window_slice = @ui.load_ui_slice_resource(
     @ui.ui_slice_loader(),
     "ui/UIWindow2.img/UtilDlgEx/slice.json",
   )
-  NpcTalkResource::from_resource(src, window_slice)
+  NpcTalkResource::from_resource(src, window_slice) catch {
+    _ => abort("invalid UtilDlgEx NPC talk resource")
+  }
 }
 
 ///|
@@ -319,7 +322,7 @@ pub fn open_npc_talk_ui(args : TalkArgs) -> Unit {
   close_npc_talk_ui()
   if npc_talk_resource_ref.val is None && npc_talk_loading_ref.val is None {
     npc_talk_loading_ref.val = Some(
-      @io_service.submit_background_task(async fn() { load_npc_talk_resource() }),
+      @io_service.submit_background_task(fn() { load_npc_talk_resource() }),
     )
   }
   npc_talk_pending_args_ref.val = Some(args)
@@ -619,9 +622,9 @@ fn ui_image_from_texture(
   fit? : @selene_ui.ImageFit = @selene_ui.ImageFit::None,
 ) -> @selene_ui.UiImage {
   let source = ui_image_source_from_texture(texture)
-  @selene_ui.UiImage(
+  @selene_ui.UiImage::from_image(
     @selene_math.Vec2(texture.w.to_double(), texture.h.to_double()),
-    texture.i,
+    @resource.load_image(texture.i),
     fit~,
     source=Some(source),
   )

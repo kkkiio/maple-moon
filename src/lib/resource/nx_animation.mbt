@@ -14,7 +14,7 @@ pub(all) struct NxTexture {
   /// 翻转x轴时, 是以origin.x为对称轴, 翻转x轴.
   /// ```mbt
   /// let t = NxTexture::{
-  ///     i: "/assets/character/body/male_1_white_face.png",
+  ///     i: "assets/character/body/male_1_white_face.png",
   ///     w: 39,
   ///     h: 35,
   ///     offset: {x: 41, y: 0},
@@ -28,7 +28,7 @@ pub(all) struct NxTexture {
 } derive(Debug)
 
 ///|
-pub impl @json.FromJson for NxTexture with from_json(json, path) -> NxTexture raise @json.JsonDecodeError {
+pub impl @json.FromJson for NxTexture with fn from_json(json, path) -> NxTexture raise @json.JsonDecodeError {
   guard json
     is { "__i": String(i), "__w": Number(w, ..), "__h": Number(h, ..), .. } else {
     raise @json.JsonDecodeError((path, "invalid nx texture=\{to_repr(json)}"))
@@ -71,7 +71,7 @@ pub(all) struct NxFrame {
 } derive(Debug)
 
 ///|
-pub impl @json.FromJson for NxFrame with from_json(json, path) -> NxFrame raise @json.JsonDecodeError {
+pub impl @json.FromJson for NxFrame with fn from_json(json, path) -> NxFrame raise @json.JsonDecodeError {
   let texture = @json.from_json(json, path~)
   let delay = match json {
     { "delay": Number(delay, ..), .. } => Some(delay.to_int())
@@ -101,7 +101,7 @@ pub(all) struct NxAnimation {
 
 ///|
 /// animation is a map based array or a single frame
-pub impl @json.FromJson for NxAnimation with from_json(json, path) -> NxAnimation raise @json.JsonDecodeError {
+pub impl @json.FromJson for NxAnimation with fn from_json(json, path) -> NxAnimation raise @json.JsonDecodeError {
   let frames = if json is { "0": _, .. } {
     parse_map_based_array(json, path~)
   } else {

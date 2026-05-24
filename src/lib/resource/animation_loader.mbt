@@ -63,8 +63,8 @@ pub fn AnimationLoader::new(loader : AsyncLoader) -> AnimationLoader {
 ///
 /// `animations_path` can be:
 /// - relative to resource root (for example `Npc/Npc/0002007.img/animation.json`)
-/// - absolute (`/assets/...`)
-pub async fn AnimationLoader::load(
+/// - a resolved asset path (`assets/...`)
+pub fn AnimationLoader::load(
   self : AnimationLoader,
   animations_path : String,
 ) -> LoadedAnimations {
@@ -72,8 +72,10 @@ pub async fn AnimationLoader::load(
   match animation_cache.get(json_url) {
     Some(cached) => cached
     None => {
-      let src = self.loader.load_data(animations_path)
-      let compiled = compile_loaded_animations(self.loader, src, json_url)
+      let src = self.loader.require_data(animations_path)
+      let compiled = compile_loaded_animations(self.loader, src, json_url) catch {
+        err => abort("failed to load animation: \{json_url}, error=\{err}")
+      }
       animation_cache.set(json_url, compiled)
       compiled
     }
@@ -583,118 +585,15 @@ test "parse frame alpha by index applies layer and cel opacity" {
 }
 
 ///|
-test "compile packed aseprite json keeps per tag dimensions" {
-  let src : Json = {
-    "frames": [
-      {
-        "filename": "small/0",
-        "frame": { "x": 0, "y": 0, "w": 10, "h": 20 },
-        "rotated": false,
-        "trimmed": false,
-        "spriteSourceSize": { "x": 0, "y": 0, "w": 10, "h": 20 },
-        "sourceSize": { "w": 10, "h": 20 },
-        "duration": 80,
-      },
-      {
-        "filename": "large/0",
-        "frame": { "x": 10, "y": 0, "w": 30, "h": 40 },
-        "rotated": false,
-        "trimmed": false,
-        "spriteSourceSize": { "x": 0, "y": 0, "w": 30, "h": 40 },
-        "sourceSize": { "w": 30, "h": 40 },
-        "duration": 120,
-      },
-    ],
-    "meta": {
-      "image": "packed.png",
-      "size": { "w": 40, "h": 40 },
-      "frameTags": [
-        { "name": "small", "from": 0, "to": 0, "direction": "forward" },
-        { "name": "large", "from": 1, "to": 1, "direction": "forward" },
-      ],
-      "slices": [
-        {
-          "name": "anchor_small",
-          "keys": [
-            {
-              "frame": 0,
-              "bounds": { "x": 0, "y": 0, "w": 10, "h": 20 },
-              "pivot": { "x": 5, "y": 20 },
-            },
-          ],
-        },
-        {
-          "name": "anchor_large",
-          "keys": [
-            {
-              "frame": 1,
-              "bounds": { "x": 0, "y": 0, "w": 30, "h": 40 },
-              "pivot": { "x": 15, "y": 40 },
-            },
-          ],
-        },
-      ],
-    },
-  }
-  let loaded = compile_loaded_animations(
-    AsyncLoader::new("npc", loader=AnimationLoaderTestResourceLoader::new()),
-    src,
-    "/assets/test/skill__packed.json",
-  )
-  let small = loaded.clip("small")
-  let large = loaded.clip("large")
-  inspect(small.dimensions.x, content="10")
-  inspect(small.dimensions.y, content="20")
-  inspect(large.dimensions.x, content="30")
-  inspect(large.dimensions.y, content="40")
-  inspect(small.duration_ms, content="80")
-  inspect(large.duration_ms, content="120")
-}
-
-///|
-priv struct AnimationLoaderTestResourceLoader {
-  dummy : Unit
-}
-
-///|
-fn AnimationLoaderTestResourceLoader::new() -> AnimationLoaderTestResourceLoader {
-  { dummy: () }
-}
-
-///|
-impl AsyncResourceLoader for AnimationLoaderTestResourceLoader with load_data(
-  self,
-  path,
-) -> Json {
-  ignore(self.dummy)
-  ignore(path)
-  Json::null()
-}
-
-///|
 fn load_meta_image(
   loader : AsyncLoader,
   json_url : String,
   image_ref : String,
 ) -> @asset.ImageHandle {
-  if image_ref.has_prefix("/") {
-    loader.load_image(image_ref)
-  } else if image_ref.contains("/") {
+  let normalized_ref = image_ref.replace(old="\\", new="/")
+  if is_resolved_asset_path(normalized_ref) {
     loader.load_image(image_ref)
   } else {
-    loader.load_image(join_dir(parent_dir(json_url), image_ref))
+    loader.load_image(resolve_ref(json_url, image_ref))
   }
 }
-
-///|
-fn parent_dir(path : String) -> String {
-  js_parent_dir(path)
-}
-
-///|
-extern "js" fn js_parent_dir(path : String) -> String =
-  #| (path) => {
-  #|   const idx = path.lastIndexOf("/")
-  #|   if (idx < 0) return ""
-  #|   return path.slice(0, idx)
-  #| }

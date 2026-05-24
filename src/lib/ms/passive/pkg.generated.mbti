@@ -42,7 +42,7 @@ pub impl Default for SwordFaFighterPassive
 
 // Traits
 pub(open) trait PassiveSkill {
-  id(Self) -> Int
-  on_hit(Self, PassiveContext, @combat_system.HitEvent) -> Unit
+  fn id(Self) -> Int
+  fn on_hit(Self, PassiveContext, @combat_system.HitEvent) -> Unit
 }
 

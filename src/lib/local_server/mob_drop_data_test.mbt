@@ -130,9 +130,11 @@ test "MobDropDatabase::roll_drops gates quest drops by started quest ids" {
 /// 使用固定随机种子，让结果可预测，用 inspect 输出具体掉落内容
 /// 真实数据位置：assets/data/mob_drops.tsv (dropperid=1210100)
 test "calculate_mob_drops for pig with real config" {
-  let tsv_content : String = @fsx.read_file_sync(
-    "assets/data/mob_drops.tsv", "utf-8",
-  )
+  let tsv_content : String = @fs.read_file_to_string(
+    "assets/data/mob_drops.tsv",
+  ) catch {
+    err => fail("failed to read mob_drops.tsv: \{err}")
+  }
   let drop_db = MobDropDatabase::from_tsv(tsv_content)
 
   // 验证数据库中猪猪的掉落配置有 28 个可能的物品

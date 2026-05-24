@@ -1,7 +1,4 @@
 ///|
-let local_server_db_name : String = "MapleMoonLocalServerDB"
-
-///|
 let character_meta_store_name : String = "character_meta"
 
 ///|
@@ -17,47 +14,116 @@ let character_quest_store_name : String = "character_quest"
 let character_roster_store_name : String = "character_roster"
 
 ///|
-/// Generic async persistence backend.
+/// Generic persistence backend.
 pub(open) trait DB {
-  async save_json(Self, String, String, Json) -> Unit
-  async load_json(Self, String, String) -> Json?
+  fn save_json(Self, String, String, Json) -> Unit
+  fn load_json(Self, String, String) -> Json?
 }
 
 ///|
-pub struct BrowserDB {
-  db_ref : Ref[@indexed_db.IndexedDB?]
+/// File-backed DB for the native local server.
+pub struct FileDB {
+  root_path : String
 }
 
 ///|
-pub fn BrowserDB::new() -> BrowserDB {
-  { db_ref: Ref(None) }
+/// Create a file-backed DB under `root_path`.
+///
+/// # Example
+/// ```moonbit nocheck
+/// let db = FileDB::new(root_path=".local/maple-moon/local_server")
+/// inspect(db.root_path_for_debug(), content=".local/maple-moon/local_server")
+/// ```
+pub fn FileDB::new(
+  root_path? : String = ".local/maple-moon/local_server",
+) -> FileDB {
+  { root_path, }
 }
 
 ///|
-async fn BrowserDB::ensure_indexed_db(
-  self : BrowserDB,
-) -> @indexed_db.IndexedDB {
-  if self.db_ref.val is Some(db) {
-    return db
+/// Return the root path used by this DB. Intended for diagnostics and tests.
+pub fn FileDB::root_path_for_debug(self : FileDB) -> String {
+  self.root_path
+}
+
+///|
+fn FileDB::store_dir(self : FileDB, store : String) -> String {
+  join_file_path(self.root_path, safe_file_part(store))
+}
+
+///|
+fn FileDB::data_file_path(
+  self : FileDB,
+  store : String,
+  key : String,
+) -> String {
+  join_file_path(self.store_dir(store), safe_file_part(key) + ".json")
+}
+
+///|
+fn safe_file_part(value : String) -> String {
+  value
+  .replace(old="\\", new="-")
+  .replace(old="/", new="-")
+  .replace(old=":", new="-")
+  .replace(old=" ", new="_")
+}
+
+///|
+fn join_file_path(root : String, child : String) -> String {
+  let root = root.strip_suffix("/").unwrap_or(root)
+  let child = child.strip_prefix("/").unwrap_or(child)
+  "\{root}/\{child}"
+}
+
+///|
+fn ensure_dir_recursive(path : String) -> Unit {
+  let normalized = path.replace(old="\\", new="/")
+  let mut current = if normalized.has_prefix("/") { "/" } else { "" }
+  for part in normalized.split("/") {
+    if part.is_empty() {
+      continue
+    }
+    current = if current.is_empty() || current == "/" {
+      current + part.to_owned()
+    } else {
+      current + "/" + part.to_owned()
+    }
+    if !@fs.path_exists(current) {
+      @fs.create_dir(current) catch {
+        err =>
+          if !@fs.path_exists(current) {
+            abort("failed to create directory: \{current}, error=\{err}")
+          }
+      }
+    }
   }
-  let db = @indexed_db.open(local_server_db_name, 4, [
-    character_meta_store_name, character_core_store_name, character_inventory_store_name,
-    character_quest_store_name, character_roster_store_name,
-  ])
-  self.db_ref.val = Some(db)
-  db
 }
 
 ///|
-pub impl DB for BrowserDB with save_json(self, store, key, data) {
-  let db = self.ensure_indexed_db()
-  let _ = db.save_json_promise(store, key, data).wait()
+pub impl DB for FileDB with fn save_json(self, store, key, data) {
+  let dir = self.store_dir(store)
+  ensure_dir_recursive(dir)
+  let path = self.data_file_path(store, key)
+  @fs.write_string_to_file(path, data.stringify()) catch {
+    err => abort("failed to write local server data: \{path}, error=\{err}")
+  }
 }
 
 ///|
-pub impl DB for BrowserDB with load_json(self, store, key) {
-  let db = self.ensure_indexed_db()
-  db.load_json(store, key)
+pub impl DB for FileDB with fn load_json(self, store, key) {
+  let path = self.data_file_path(store, key)
+  if !@fs.path_exists(path) {
+    return None
+  }
+  let content = @fs.read_file_to_string(path) catch {
+    err => abort("failed to read local server data: \{path}, error=\{err}")
+  }
+  Some(
+    @json.parse(content) catch {
+      _ => abort("failed to parse local server data: \{path}")
+    },
+  )
 }
 
 ///|
@@ -93,15 +159,84 @@ fn MemoryDB::get_or_init_store(
 }
 
 ///|
-pub impl DB for MemoryDB with save_json(self, store, key, data) {
+pub impl DB for MemoryDB with fn save_json(self, store, key, data) {
   self.get_or_init_store(store).set(key, clone_json(data))
 }
 
 ///|
-pub impl DB for MemoryDB with load_json(self, store, key) {
+pub impl DB for MemoryDB with fn load_json(self, store, key) {
   guard self.stores.val.get(store) is Some(store_map) else { return None }
   match store_map.get(key) {
     Some(data) => Some(clone_json(data))
+    None => None
+  }
+}
+
+///|
+/// Browser-local DB for JS/WebGPU builds.
+///
+/// # Example
+/// ```moonbit nocheck
+/// let db = BrowserDB::new()
+/// db.save_json("store", "key", { "ok": true })
+/// ```
+#cfg(target="js")
+pub struct BrowserDB {
+  name : String
+}
+
+///|
+/// Create a browser-local DB under the Maple Moon local-server namespace.
+///
+/// # Example
+/// ```moonbit nocheck
+/// let db = BrowserDB::new()
+/// ```
+#cfg(target="js")
+pub fn BrowserDB::new(name? : String = "MapleMoonLocalServerDB") -> BrowserDB {
+  { name, }
+}
+
+///|
+#cfg(target="js")
+fn browser_storage_key(name : String, store : String, key : String) -> String {
+  "maple-moon:\{name}:\{safe_file_part(store)}:\{safe_file_part(key)}"
+}
+
+///|
+#cfg(target="js")
+extern "js" fn browser_storage_set(key : String, value : String) -> Unit =
+  #| (key, value) => {
+  #|   globalThis.localStorage?.setItem(key, value);
+  #| }
+
+///|
+#cfg(target="js")
+extern "js" fn browser_storage_get(key : String) -> String? =
+  #| (key) => {
+  #|   const value = globalThis.localStorage?.getItem(key);
+  #|   return value == null ? undefined : value;
+  #| }
+
+///|
+#cfg(target="js")
+pub impl DB for BrowserDB with fn save_json(self, store, key, data) {
+  browser_storage_set(
+    browser_storage_key(self.name, store, key),
+    data.stringify(),
+  )
+}
+
+///|
+#cfg(target="js")
+pub impl DB for BrowserDB with fn load_json(self, store, key) {
+  match browser_storage_get(browser_storage_key(self.name, store, key)) {
+    Some(json_str) =>
+      Some(
+        @json.parse(json_str) catch {
+          _ => abort("failed to parse browser local server data")
+        },
+      )
     None => None
   }
 }
@@ -154,14 +289,14 @@ fn character_roster_key() -> String {
 }
 
 ///|
-pub async fn LocalServer::save_character_roster(self : LocalServer) -> Unit {
+pub fn LocalServer::save_character_roster(self : LocalServer) -> Unit {
   self.db.save_json(character_roster_store_name, character_roster_key(), {
     "characters": self.character_roster.to_json(),
   })
 }
 
 ///|
-pub async fn LocalServer::load_character_roster(self : LocalServer) -> Bool {
+pub fn LocalServer::load_character_roster(self : LocalServer) -> Bool {
   guard self.db.load_json(character_roster_store_name, character_roster_key())
     is Some(data) else {
     return false
@@ -172,7 +307,9 @@ pub async fn LocalServer::load_character_roster(self : LocalServer) -> Bool {
       for char_json in chars {
         let entry : @server_proto.CharacterListEntry = @json.from_json(
           char_json,
-        )
+        ) catch {
+          _ => abort("invalid character roster entry")
+        }
         self.character_roster.push(entry)
       }
       true
@@ -182,7 +319,7 @@ pub async fn LocalServer::load_character_roster(self : LocalServer) -> Bool {
 }
 
 ///|
-async fn LocalServer::save_character_meta(
+fn LocalServer::save_character_meta(
   self : LocalServer,
   character_id : Int,
   revision : Int,
@@ -201,7 +338,7 @@ async fn LocalServer::save_character_meta(
 }
 
 ///|
-async fn LocalServer::save_character_core_data(
+fn LocalServer::save_character_core_data(
   self : LocalServer,
   character_id : Int,
   revision : Int,
@@ -220,7 +357,7 @@ async fn LocalServer::save_character_core_data(
 }
 
 ///|
-pub async fn LocalServer::save_character_core(
+pub fn LocalServer::save_character_core(
   self : LocalServer,
   character_id : Int,
 ) -> Unit {
@@ -230,7 +367,7 @@ pub async fn LocalServer::save_character_core(
 }
 
 ///|
-pub async fn LocalServer::save_character_inventory(
+pub fn LocalServer::save_character_inventory(
   self : LocalServer,
   character_id : Int,
 ) -> Unit {
@@ -240,7 +377,7 @@ pub async fn LocalServer::save_character_inventory(
 }
 
 ///|
-pub async fn LocalServer::save_character(
+pub fn LocalServer::save_character(
   self : LocalServer,
   character_id : Int,
 ) -> Unit {
@@ -284,7 +421,7 @@ fn LocalServer::load_character_core_data(
 }
 
 ///|
-pub async fn LocalServer::load_character(
+pub fn LocalServer::load_character(
   self : LocalServer,
   character_id : Int,
 ) -> Bool {
@@ -322,7 +459,7 @@ pub async fn LocalServer::load_character(
 }
 
 ///|
-pub async fn LocalServer::save_character_quest_data(
+pub fn LocalServer::save_character_quest_data(
   self : LocalServer,
   character_id : Int,
   revision : Int,

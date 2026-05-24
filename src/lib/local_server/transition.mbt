@@ -1,7 +1,7 @@
 ///|
 fn LocalServer::on_change_map(self : LocalServer, json : Json) -> Unit raise {
   let change_map_message : ChangeMapMessage = @json.from_json(json)
-  @io_service.execute_background(async fn() {
+  @io_service.execute_background(fn() {
     guard get_target_by_map_id_and_portal_name(
         self.last_map_id,
         change_map_message.target_p,
@@ -30,7 +30,7 @@ fn LocalServer::on_change_map(self : LocalServer, json : Json) -> Unit raise {
 }
 
 ///|
-async fn get_target_by_map_id_and_portal_name(
+fn get_target_by_map_id_and_portal_name(
   map_id : Int,
   portal_name : String,
 ) -> PortalTarget? {
@@ -54,7 +54,7 @@ priv struct PortalTarget {
 }
 
 ///|
-async fn get_portal_id_by_map_id_and_portal_name(
+fn get_portal_id_by_map_id_and_portal_name(
   map_id : Int,
   portal_name : String,
 ) -> Int? {
@@ -70,15 +70,15 @@ async fn get_portal_id_by_map_id_and_portal_name(
 }
 
 ///|
-fn require_portal_layer(map : @tiled.TiledMap) -> @tiled.TiledObjectLayer raise {
+fn require_portal_layer(map : @tiled.TiledMap) -> @tiled.TiledObjectLayer {
   match map.object_layer("portal") {
     Some(layer) => layer
-    None => fail("missing `portal` layer in map.tmj")
+    None => abort("missing `portal` layer in map.tmj")
   }
 }
 
 ///|
-async fn load_tiled_map_by_map_id(map_id : Int) -> @tiled.TiledMap? {
+fn load_tiled_map_by_map_id(map_id : Int) -> @tiled.TiledMap? {
   if map_id <= 0 {
     return None
   }
@@ -98,26 +98,23 @@ async fn load_tiled_map_by_map_id(map_id : Int) -> @tiled.TiledMap? {
 fn tiled_object_string_required(
   obj : @tiled.TiledObject,
   name : String,
-) -> String raise {
+) -> String {
   match obj.property(name) {
     Some(@tiled.TiledPropertyValue::String(value)) => value
     Some(_) =>
-      fail("object property '\{name}' must be string, object_id=\{obj.id}")
-    None => fail("missing object property '\{name}', object_id=\{obj.id}")
+      abort("object property '\{name}' must be string, object_id=\{obj.id}")
+    None => abort("missing object property '\{name}', object_id=\{obj.id}")
   }
 }
 
 ///|
-fn tiled_object_int_required(
-  obj : @tiled.TiledObject,
-  name : String,
-) -> Int raise {
+fn tiled_object_int_required(obj : @tiled.TiledObject, name : String) -> Int {
   match obj.property(name) {
     Some(@tiled.TiledPropertyValue::Int(value)) => value
     Some(@tiled.TiledPropertyValue::Float(value)) => value.to_int()
     Some(_) =>
-      fail("object property '\{name}' must be int, object_id=\{obj.id}")
-    None => fail("missing object property '\{name}', object_id=\{obj.id}")
+      abort("object property '\{name}' must be int, object_id=\{obj.id}")
+    None => abort("missing object property '\{name}', object_id=\{obj.id}")
   }
 }
 
@@ -125,20 +122,20 @@ fn tiled_object_int_required(
 fn tiled_object_int_like_required(
   obj : @tiled.TiledObject,
   name : String,
-) -> Int raise {
+) -> Int {
   match obj.property(name) {
     Some(@tiled.TiledPropertyValue::Int(value)) => value
     Some(@tiled.TiledPropertyValue::Float(value)) => value.to_int()
     Some(@tiled.TiledPropertyValue::String(value)) =>
       @string.parse_int(value) catch {
         _ =>
-          fail(
+          abort(
             "object property '\{name}' must be int-like string, object_id=\{obj.id}",
           )
       }
     Some(_) =>
-      fail("object property '\{name}' must be int-like, object_id=\{obj.id}")
-    None => fail("missing object property '\{name}', object_id=\{obj.id}")
+      abort("object property '\{name}' must be int-like, object_id=\{obj.id}")
+    None => abort("missing object property '\{name}', object_id=\{obj.id}")
   }
 }
 
@@ -147,20 +144,20 @@ fn tiled_object_int_or_default(
   obj : @tiled.TiledObject,
   name : String,
   default_ : Int,
-) -> Int raise {
+) -> Int {
   match obj.property(name) {
     Some(@tiled.TiledPropertyValue::Int(value)) => value
     Some(@tiled.TiledPropertyValue::Float(value)) => value.to_int()
     Some(_) =>
-      fail("object property '\{name}' must be int, object_id=\{obj.id}")
+      abort("object property '\{name}' must be int, object_id=\{obj.id}")
     None => default_
   }
 }
 
 ///|
-fn require_life_layer(map : @tiled.TiledMap) -> @tiled.TiledObjectLayer raise {
+fn require_life_layer(map : @tiled.TiledMap) -> @tiled.TiledObjectLayer {
   match map.object_layer("life") {
     Some(layer) => layer
-    None => fail("missing `life` layer in map.tmj")
+    None => abort("missing `life` layer in map.tmj")
   }
 }

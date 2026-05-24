@@ -24,7 +24,7 @@ priv struct ExplorerCreationUIResource {
 fn get_etc_loader() -> @resource.AsyncLoader {
   @resource.AsyncLoader::new(
     "Etc",
-    loader=@resource.DirResourceLoader::new("/assets/Etc"),
+    loader=@resource.DirResourceLoader::new("assets/Etc"),
   )
 }
 
@@ -33,7 +33,7 @@ fn get_map001_loader() -> @resource.AsyncLoader {
   @resource.AsyncLoader::new(
     "map001",
     loader=@resource.CompositeAsyncResourceLoader::new({
-      "Back/": @resource.DirResourceLoader::new("/assets/Map001/Back"),
+      "Back/": @resource.DirResourceLoader::new("assets/Map001/Back"),
     }),
   )
 }
@@ -42,23 +42,29 @@ fn get_map001_loader() -> @resource.AsyncLoader {
 fn get_login_loader() -> @resource.AsyncLoader {
   @resource.AsyncLoader::new(
     "Login",
-    loader=@resource.DirResourceLoader::new("/assets/UI"),
+    loader=@resource.DirResourceLoader::new("assets/UI"),
   )
 }
 
 ///|
-fn parse_choice_values(json : Json) -> Array[Int] raise {
-  guard json is Object(obj) else { fail("expected choice object") }
+fn parse_choice_values(json : Json) -> Array[Int] {
+  guard json is Object(obj) else { abort("expected choice object") }
   let values = []
   for _, value in obj {
-    values.push(@json.from_json(value))
+    values.push(
+      @json.from_json(value) catch {
+        _ => abort("invalid choice value")
+      },
+    )
   }
   values
 }
 
 ///|
-fn parse_choices(json : Json) -> LookChoices raise {
-  guard json is Object(obj) else { fail("expected MakeCharInfo choice object") }
+fn parse_choices(json : Json) -> LookChoices {
+  guard json is Object(obj) else {
+    abort("expected MakeCharInfo choice object")
+  }
   let faces = obj.get("0").map_or([], parse_choice_values)
   let hairs = obj.get("1").map_or([], parse_choice_values)
   let haircolors = obj.get("2").map_or([], parse_choice_values)
@@ -75,19 +81,29 @@ fn parse_choices(json : Json) -> LookChoices raise {
     !bots.is_empty() &&
     !shoes.is_empty() &&
     !weapons.is_empty() else {
-    fail("MakeCharInfo choices are incomplete")
+    abort("MakeCharInfo choices are incomplete")
   }
   { faces, hairs, haircolors, skins, tops, bots, shoes, weapons }
 }
 
 ///|
-fn json_to_picture(json : Json) -> @ms_animation.Picture raise {
-  let texture : @resource.NxTexture = @json.from_json(json)
+fn json_to_picture(json : Json, label : String) -> @ms_animation.Picture {
+  let texture : @resource.NxTexture = @json.from_json(json) catch {
+    _ => abort("invalid \{label} texture")
+  }
   @ms_animation.from_nx_texture(texture)
 }
 
 ///|
-fn load_button_visual(json : Json) -> @ui.NxMapleButton raise {
+fn json_to_animation(json : Json, label : String) -> @ms_animation.Animation {
+  let animation : @resource.NxAnimation = @json.from_json(json) catch {
+    _ => abort("invalid animation resource: \{label}")
+  }
+  @ms_animation.from_nx_animation(animation)
+}
+
+///|
+fn load_button_visual(json : Json, label : String) -> @ui.NxMapleButton {
   let normalized : Json = match json {
     { "normal": normal, "mouseOver": mouse_over, "pressed": pressed, .. } =>
       {
@@ -101,161 +117,168 @@ fn load_button_visual(json : Json) -> @ui.NxMapleButton raise {
       }
     _ => json
   }
-  @json.from_json(normalized)
+  @json.from_json(normalized) catch {
+    _ => abort("invalid button resource: \{label}")
+  }
 }
 
 ///|
-async fn load_resource() -> ExplorerCreationUIResource {
+fn require_field(json : Json, key : String) -> Json {
+  match json {
+    Object(obj) =>
+      match obj.get(key) {
+        Some(value) => value
+        None => abort("missing \{key}")
+      }
+    _ => abort("expected object with \{key}")
+  }
+}
+
+///|
+fn load_resource() -> ExplorerCreationUIResource {
   let login_loader = get_login_loader()
-  let mkinfo = get_etc_loader().load_resource(["MakeCharInfo.img", "Info"])
+  let mkinfo = get_etc_loader().require_resource(["MakeCharInfo.img", "Info"])
   let male_choices = match mkinfo {
     { "CharMale": Object(_) as char_male, .. } => parse_choices(char_male)
-    _ => fail("missing CharMale choices")
+    _ => abort("missing CharMale choices")
   }
   let female_choices = match mkinfo {
     { "CharFemale": Object(_) as char_female, .. } => parse_choices(char_female)
-    _ => fail("missing CharFemale choices")
+    _ => abort("missing CharFemale choices")
   }
   let map001_loader = get_map001_loader()
-  let customize_char_src = login_loader.load_resource([
+  let customize_char_src = login_loader.require_resource([
     "Login.img", "CustomizeChar", "000",
   ])
-  let signboard2_src = @resource.require_async_loader("map_latest").load_resource([
+  let signboard2_src = @resource.require_async_loader("map_latest").require_resource([
       "Obj", "login.img", "NewChar", "signboard", "2",
     ],
   )
   let board_src = match customize_char_src {
     { "board": Object(_) as board_src, .. } => board_src
-    _ => fail("missing board")
+    _ => abort("missing board")
   }
   let gender_select_src = match customize_char_src {
     { "genderSelect": Object(_) as gender_select_src, .. } => gender_select_src
-    _ => fail("missing genderSelect")
+    _ => abort("missing genderSelect")
   }
-  let sky_src = map001_loader.load_resource(["Back", "login.img", "back", "2"])
-  let cloud_src = map001_loader.load_resource([
+  let sky_src = map001_loader.require_resource([
+    "Back", "login.img", "back", "2",
+  ])
+  let cloud_src = map001_loader.require_resource([
     "Back", "login.img", "back", "27",
   ])
-  let back14_src = map001_loader.load_resource([
+  let back14_src = map001_loader.require_resource([
     "Back", "login.img", "back", "14",
   ])
-  let sky_texture : @resource.NxTexture = @json.from_json(sky_src)
+  let sky_texture : @resource.NxTexture = @json.from_json(sky_src) catch {
+    _ => abort("invalid sky texture")
+  }
   let sky = @ms_animation.from_nx_texture(
     sky_texture,
     size=@selene_math.Vec2(800.0, 400.0),
     repeat=@selene_math.Repeat,
   )
-  let cloud = json_to_picture(cloud_src)
+  let cloud = json_to_picture(cloud_src, "cloud")
   let avatar_sel : Array[@ms_animation.Animation] = []
   let avatar_sel_src = match customize_char_src {
     { "avatarSel": Object(_) as avatar_sel_src, .. } => avatar_sel_src
-    _ => fail("missing avatarSel")
+    _ => abort("missing avatarSel")
   }
   guard avatar_sel_src is Object(avatar_sel_obj) else {
-    fail("invalid avatarSel")
+    abort("invalid avatarSel")
   }
   for i = 0; i <= 5; i = i + 1 {
     let anim_json = avatar_sel_obj.get(i.to_string()).unwrap_or(Json::null())
     let normal_json = match anim_json {
       { "normal": normal, .. } => normal
-      _ => fail("missing avatarSel normal")
+      _ => abort("missing avatarSel normal")
     }
-    avatar_sel.push(
-      @ms_animation.from_nx_animation(@json.from_json(normal_json)),
-    )
+    avatar_sel.push(json_to_animation(normal_json, "avatarSel normal"))
   }
   {
     male_choices,
     female_choices,
     sky,
     cloud,
-    board_gender_top: @ms_animation.from_nx_animation(
-      @json.from_json(
-        match board_src {
-          { "genderTop": gender_top, .. } => gender_top
-          _ => fail("missing genderTop")
-        },
-      ),
+    board_gender_top: json_to_animation(
+      require_field(board_src, "genderTop"),
+      "genderTop",
     ),
-    board_gender_mid: @ms_animation.from_nx_animation(
-      @json.from_json(
-        match board_src {
-          { "boardMid": board_mid, .. } => board_mid
-          _ => fail("missing boardMid")
-        },
-      ),
+    board_gender_mid: json_to_animation(
+      require_field(board_src, "boardMid"),
+      "boardMid",
     ),
-    board_gender_bottom: @ms_animation.from_nx_animation(
-      @json.from_json(
-        match board_src {
-          { "boardBottom": board_bottom, .. } => board_bottom
-          _ => fail("missing boardBottom")
-        },
-      ),
+    board_gender_bottom: json_to_animation(
+      require_field(board_src, "boardBottom"),
+      "boardBottom",
     ),
-    board_char_set: @ms_animation.from_nx_animation(
-      @json.from_json(
-        match customize_char_src {
-          { "charSet": char_set, .. } => char_set
-          _ => fail("missing charSet")
-        },
-      ),
+    board_char_set: json_to_animation(
+      require_field(customize_char_src, "charSet"),
+      "charSet",
     ),
-    back14: @ms_animation.from_nx_animation(@json.from_json(back14_src)),
-    signboard2: @ms_animation.from_nx_animation(@json.from_json(signboard2_src)),
+    back14: json_to_animation(back14_src, "back14"),
+    signboard2: json_to_animation(signboard2_src, "signboard2"),
     bt_gender_male: @ui.MapleButtonResource::from_nx(
       load_button_visual(
         match gender_select_src {
           { "male": male, .. } => male
-          _ => fail("missing male button")
+          _ => abort("missing male button")
         },
+        "male",
       ),
     ),
     bt_gender_female: @ui.MapleButtonResource::from_nx(
       load_button_visual(
         match gender_select_src {
           { "female": female, .. } => female
-          _ => fail("missing female button")
+          _ => abort("missing female button")
         },
+        "female",
       ),
     ),
     bt_left: @ui.MapleButtonResource::from_nx(
       load_button_visual(
         match customize_char_src {
           { "BtLeft": bt_left, .. } => bt_left
-          _ => fail("missing BtLeft")
+          _ => abort("missing BtLeft")
         },
+        "BtLeft",
       ),
     ),
     bt_right: @ui.MapleButtonResource::from_nx(
       load_button_visual(
         match customize_char_src {
           { "BtRight": bt_right, .. } => bt_right
-          _ => fail("missing BtRight")
+          _ => abort("missing BtRight")
         },
+        "BtRight",
       ),
     ),
     bt_yes: @ui.MapleButtonResource::from_nx(
       load_button_visual(
         match customize_char_src {
           { "BtYes": bt_yes, .. } => bt_yes
-          _ => fail("missing BtYes")
+          _ => abort("missing BtYes")
         },
+        "BtYes",
       ),
     ),
     bt_no: @ui.MapleButtonResource::from_nx(
       load_button_visual(
         match customize_char_src {
           { "BtNo": bt_no, .. } => bt_no
-          _ => fail("missing BtNo")
+          _ => abort("missing BtNo")
         },
+        "BtNo",
       ),
     ),
     nameboard: json_to_picture(
       match customize_char_src {
         { "charName": char_name, .. } => char_name
-        _ => fail("missing charName")
+        _ => abort("missing charName")
       },
+      "charName",
     ),
     avatar_sel,
   }

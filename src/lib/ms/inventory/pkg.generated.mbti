@@ -8,15 +8,12 @@ import {
   "KKKIIO/maple-moon/lib/ms/maple_stat",
   "KKKIIO/maple-moon/lib/ms/server_proto",
   "KKKIIO/maple-moon/lib/ms/weapon",
-  "KKKIIO/maple-moon/lib/resource",
   "Milky2018/selene/event",
   "moonbitlang/core/debug",
   "moonbitlang/core/ref",
 }
 
 // Values
-pub fn drop_item(Module, String, Int, Int) -> String
-
 pub fn find_equip_slot(Inventory, @data.EquipData) -> @slot.Id
 
 pub fn handle_item(Inventory, @server_proto.InventoryItemEntry) -> Unit
@@ -27,13 +24,7 @@ pub let inventory_changed_event_bus : @event.Events[InventoryChangedEvent]
 
 pub fn setup_game_server_handlers() -> Unit
 
-pub fn use_item_at(Module, String, SlotNo, Array[String]) -> String
-
 pub fn use_item_at_slot(@server_proto.InventoryType, Int) -> String?
-
-pub fn watch_inventory_by_kind(Module, String, (Array[WithItemSlot?]) -> Bool) -> String
-
-pub fn watch_meso(Module, (Int) -> Bool) -> Unit
 
 // Errors
 
@@ -101,15 +92,6 @@ pub struct SlotItem {
 }
 
 pub struct SlotNo(Int) derive(Eq, Hash, ToJson, @debug.Debug)
-
-pub struct WithItemSlot {
-  slot_no : SlotNo
-  id : Int
-  name : String
-  desc : String
-  count : Int
-  icon : @resource.Image
-}
 
 // Type aliases
 pub using @server_proto {type InventoryType as TypeId}

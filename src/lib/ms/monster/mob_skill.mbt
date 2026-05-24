@@ -16,12 +16,14 @@ pub(all) struct MobSkill {
 }
 
 ///|
-pub async fn MobSkill::load(id : Int, level : Int) -> MobSkill {
-  let src = @resource.require_async_loader("skill").load_resource([
+pub fn MobSkill::load(id : Int, level : Int) -> MobSkill {
+  let src = @resource.require_async_loader("skill").require_resource([
     "MobSkill.img",
     id.to_string(),
   ])
-  MobSkill::new(id, level, src)
+  MobSkill::new(id, level, src) catch {
+    err => abort("failed to load mob skill: \{id}/\{level}, error=\{err}")
+  }
 }
 
 ///|
@@ -112,7 +114,7 @@ pub fn Effect::apply(
 
 ///|
 trait MobSkillUseEffect {
-  apply(Self, Mob) -> Unit
+  fn apply(Self, Mob) -> Unit
 }
 
 ///|
@@ -148,7 +150,7 @@ pub fn MobSingleUseEffect::new(src : Json) -> MobSingleUseEffect {
 }
 
 ///|
-pub impl MobSkillUseEffect for MobSingleUseEffect with apply(
+pub impl MobSkillUseEffect for MobSingleUseEffect with fn apply(
   self : MobSingleUseEffect,
   mob : Mob,
 ) -> Unit {
@@ -190,7 +192,7 @@ pub fn MobMultiUseEffect::new(
 }
 
 ///|
-pub impl MobSkillUseEffect for MobMultiUseEffect with apply(
+pub impl MobSkillUseEffect for MobMultiUseEffect with fn apply(
   self : MobMultiUseEffect,
   mob : Mob,
 ) -> Unit {

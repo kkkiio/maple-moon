@@ -519,10 +519,10 @@ pub impl ClientMessage for UseSPResetMessage
 
 // Traits
 pub(open) trait ClientMessage : ToJson + @json.FromJson {
-  type_code() -> Int
+  fn type_code() -> Int
 }
 
 pub(open) trait ServerMessage : ToJson + @json.FromJson {
-  type_code() -> Int
+  fn type_code() -> Int
 }
 

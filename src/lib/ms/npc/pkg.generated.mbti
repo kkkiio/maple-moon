@@ -77,7 +77,7 @@ pub fn Npc::get_npc_id(Self) -> Int
 pub fn Npc::get_npc_object(Self) -> @physics.MovingObject
 pub fn Npc::get_oid(Self) -> Int
 pub fn Npc::is_scripted(Self) -> Bool
-pub async fn Npc::load(@resource.AsyncLoader, @resource.AsyncLoader, Int, Int, Bool, Int, @res_types.Point[Int]) -> Self
+pub fn Npc::load(@resource.AsyncLoader, @resource.AsyncLoader, Int, Int, Bool, Int, @res_types.Point[Int]) -> Self
 pub fn Npc::set_stance(Self, String) -> Unit
 pub fn Npc::talk(Self) -> TalkArgs?
 pub fn Npc::update(Self, @physics.Physics) -> Unit
@@ -98,7 +98,7 @@ pub struct NpcDialogue {
 
 type NpcSpawn derive(ToJson, @debug.Debug)
 pub fn NpcSpawn::get_oid(Self) -> Int
-pub async fn NpcSpawn::instantiate(Self, @resource.AsyncLoader, @resource.AsyncLoader, @physics.Physics) -> Npc
+pub fn NpcSpawn::instantiate(Self, @resource.AsyncLoader, @resource.AsyncLoader, @physics.Physics) -> Npc
 
 pub struct SpawnNpcController {
   mode : Int

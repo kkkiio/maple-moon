@@ -3,25 +3,15 @@ package "KKKIIO/maple-moon/test/capture_app"
 
 import {
   "KKKIIO/maple-moon/lib/ms/server_proto",
-  "Milky2018/selene/app",
-  "Milky2018/selene/render_pipeline",
   "moonbitlang/core/json",
 }
 
 // Values
 pub fn add_mock_server_handler(Int, (Json) -> Unit raise) -> Unit
 
-pub fn create_canvas(Int, Int) -> Canvas
-
-pub fn create_image() -> Image
-
 pub fn[T : @server_proto.ServerMessage] emit_mock_server_message(T) -> Unit raise
 
 pub fn emit_mock_server_state(Int, Json) -> Unit raise
-
-pub fn get_ctx() -> Context2D?
-
-pub fn init_app(@app.App) -> Unit
 
 pub fn mock_server_latest_sent_json(Int) -> Json?
 
@@ -31,61 +21,17 @@ pub fn mock_server_sent_count(Int) -> Int
 
 pub fn mock_server_sent_count_internal(Int) -> Int
 
-pub fn png_buffers_equal_by_pixels(Buffer, Buffer) -> Bool
-
 pub fn record_mock_server_sent_message(Int, Json) -> Unit
 
 pub fn reset_mock_server() -> Unit
 
 pub fn reset_mock_server_state() -> Unit
 
-pub fn run_loop(Double) -> Unit
-
-pub fn set_canvas(Canvas) -> Unit
-
-pub fn set_ctx(Context2D) -> Unit
-
-pub async fn snapshot(String, visual_desc~ : String) -> Unit
-
-pub fn submit_frame(@render_pipeline.RenderFrame) -> Unit
-
-pub fn to_buffer() -> Buffer
+pub fn snapshot(String, Bytes, visual_desc~ : String) -> Unit raise
 
 // Errors
 
 // Types and methods
-pub type Buffer
-pub fn Buffer::from_bytes(Bytes) -> Self
-pub fn Buffer::to_base64(Self) -> String
-pub fn Buffer::to_bytes(Self) -> Bytes
-
-pub type Canvas
-pub fn Canvas::get_context(Self, String) -> Context2D
-pub fn Canvas::to_buffer(Self, String) -> Buffer
-
-pub type Context2D
-pub fn Context2D::clear_rect(Self, Double, Double, Double, Double) -> Unit
-pub fn Context2D::draw_image(Self, Image, Double, Double, Double, Double, Double, Double, Double, Double) -> Unit
-pub fn Context2D::fill_rect(Self, Double, Double, Double, Double) -> Unit
-pub fn Context2D::fill_text(Self, String, Double, Double) -> Unit
-pub fn Context2D::restore(Self) -> Unit
-pub fn Context2D::save(Self) -> Unit
-pub fn Context2D::scale(Self, Double, Double) -> Unit
-pub fn Context2D::set_fill_style(Self, String) -> Unit
-pub fn Context2D::set_font(Self, String) -> Unit
-pub fn Context2D::set_global_alpha(Self, Double) -> Unit
-pub fn Context2D::set_image_smoothing_enabled(Self, Bool) -> Unit
-pub fn Context2D::set_stroke_style(Self, String) -> Unit
-pub fn Context2D::set_text_align(Self, String) -> Unit
-pub fn Context2D::set_text_baseline(Self, String) -> Unit
-pub fn Context2D::stroke_rect(Self, Double, Double, Double, Double) -> Unit
-pub fn Context2D::transform(Self, Double, Double, Double, Double, Double, Double) -> Unit
-pub fn Context2D::translate(Self, Double, Double) -> Unit
-
-pub type Image
-pub fn Image::height(Self) -> Double
-pub fn Image::set_src(Self, Buffer) -> Unit
-pub fn Image::width(Self) -> Double
 
 // Type aliases
 

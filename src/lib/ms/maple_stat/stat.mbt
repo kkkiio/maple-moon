@@ -81,17 +81,17 @@ pub fn Id::from_name(name : String) -> Id? {
 }
 
 ///|
-pub impl Show for Id with output(self, logger) -> Unit {
+pub impl Show for Id with fn output(self, logger) -> Unit {
   logger.write_string(self.name())
 }
 
 ///|
-pub impl ToJson for Id with to_json(self) -> Json {
+pub impl ToJson for Id with fn to_json(self) -> Json {
   Json::string(self.name())
 }
 
 ///|
-pub impl @json.FromJson for Id with from_json(json, path) -> Id {
+pub impl @json.FromJson for Id with fn from_json(json, path) -> Id {
   let name : String = @json.from_json(json, path=path.add_key("name"))
   Id::from_name(name).unwrap_or_error(
     @json.JsonDecodeError((path, "invalid stat name")),

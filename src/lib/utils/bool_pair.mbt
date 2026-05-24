@@ -16,6 +16,6 @@ pub fn[T] BoolPair::op_get(self : BoolPair[T], b : Bool) -> T {
 }
 
 ///|
-pub impl[T : Default] Default for BoolPair[T] with default() {
+pub impl[T : Default] Default for BoolPair[T] with fn default() {
   BoolPair::new(T::default(), T::default())
 }

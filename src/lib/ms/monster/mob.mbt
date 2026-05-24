@@ -120,7 +120,7 @@ pub enum FlyDirection {
 }
 
 ///|
-pub async fn Mob::load(
+pub fn Mob::load(
   oi : Int,
   mid : Int,
   mode : Int,
@@ -133,8 +133,10 @@ pub async fn Mob::load(
   let mob_loader = @resource.require_async_loader("mob")
   let strid = @utils.stoi_left_pad0(mid, 7)
   let mx_path = "Mob/\{strid}.img/mx.json"
-  let mx_src = mob_loader.load_data(mx_path)
-  let mx_mob : MxMob = @json.from_json(mx_src)
+  let mx_src = mob_loader.require_data(mx_path)
+  let mx_mob : MxMob = @json.from_json(mx_src) catch {
+    err => abort("failed to decode mob mx: \{mid}, error=\{err}")
+  }
   let runtime = load_mx_runtime(
     mx_mob,
     mob_loader,
@@ -163,7 +165,7 @@ priv struct MxMobRuntime {
 }
 
 ///|
-async fn load_mx_runtime(
+fn load_mx_runtime(
   mx_mob : MxMob,
   mob_loader : @resource.AsyncLoader,
   base_path : String,
@@ -220,7 +222,7 @@ async fn load_mx_runtime(
           _ => ()
         }
       None =>
-        fail("missing mx_animations ref for stance node: \{node.path_key}")
+        abort("missing mx_animations ref for stance node: \{node.path_key}")
     }
   }
 
@@ -229,7 +231,7 @@ async fn load_mx_runtime(
     match effect_animations.get(attack_node.animation_path_key) {
       Some(anim) => attack_stands[attack_id] = anim
       None =>
-        fail(
+        abort(
           "missing mx_animations ref for attack animation: \{attack_node.animation_path_key}",
         )
     }
@@ -239,7 +241,7 @@ async fn load_mx_runtime(
     match effect_animations.get(skill_node.animation_path_key) {
       Some(anim) => skill_stands[skill_id] = anim
       None =>
-        fail(
+        abort(
           "missing mx_animations ref for skill animation: \{skill_node.animation_path_key}",
         )
     }
@@ -249,7 +251,7 @@ async fn load_mx_runtime(
 }
 
 ///|
-async fn load_mx_clip(
+fn load_mx_clip(
   animation_loader : @resource.AnimationLoader,
   animation_path : String,
   tag : String,
@@ -258,7 +260,9 @@ async fn load_mx_clip(
   let loaded = animation_loader.load(
     @resource.resolve_ref(base_path, animation_path),
   )
-  loaded.clip(tag)
+  loaded.clip(tag) catch {
+    err => abort("missing mob animation tag: \{tag}, error=\{err}")
+  }
 }
 
 ///|
@@ -333,7 +337,7 @@ fn parse_info_double(
 }
 
 ///|
-pub impl @json.FromJson for MobInfo with from_json(json, path) {
+pub impl @json.FromJson for MobInfo with fn from_json(json, path) {
   guard json is Object(root) else {
     raise @json.JsonDecodeError((path, "missing info fields"))
   }
@@ -883,9 +887,7 @@ pub fn Mob::get_move_skill(
   level : Int,
 ) -> @utils.Future[Result[MobSkill, Error]] {
   self.skill_cache.get_or_init(move_id, fn() {
-    @io_service.submit_background_task(async fn() {
-      MobSkill::load(move_id, level)
-    })
+    @io_service.submit_background_task(fn() { MobSkill::load(move_id, level) })
   })
 }
 

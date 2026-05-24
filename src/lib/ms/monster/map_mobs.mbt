@@ -82,7 +82,7 @@ pub fn MapMobs::update(self : MapMobs, physics : @physics.Physics) -> Unit {
     guard self.spawns.pop() is Some(spawn) else { break }
     if !self.mobs.contains(spawn.oid) {
       self.loading_mobs.push(
-        @io_service.submit_background_task(async fn() {
+        @io_service.submit_background_task(fn() {
           spawn.instantiate(self.randomizer)
         }),
       )
@@ -303,10 +303,7 @@ pub fn create_mob_spawn(
 }
 
 ///|
-pub async fn MobSpawn::instantiate(
-  self : MobSpawn,
-  randomizer : @random.Rand,
-) -> Mob {
+pub fn MobSpawn::instantiate(self : MobSpawn, randomizer : @random.Rand) -> Mob {
   Mob::load(
     self.oid,
     self.id,

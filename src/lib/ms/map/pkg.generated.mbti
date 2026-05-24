@@ -40,7 +40,7 @@ pub fn get_portal_pos_by_id_current(Int) -> @res_types.Point[Int]?
 
 pub fn get_runtime_context() -> (MapInfo, @physics.Physics)?
 
-pub async fn load_map_resources_by_id(Int) -> MapRawResources
+pub fn load_map_resources_by_id(Int) -> MapRawResources
 
 pub fn portal_system(@ecs.World) -> Unit
 

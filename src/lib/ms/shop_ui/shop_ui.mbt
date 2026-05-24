@@ -222,7 +222,7 @@ fn nx_texture_to_inventory_icon_animation(
   @ms_animation.Animation::new(
     [
       @ms_animation.AnimationFrame::{
-        image: @asset.load_image(texture.i),
+        image: @resource.load_image(texture.i),
         size: @selene_math.Vec2(texture.w.to_double(), texture.h.to_double()),
         offset: @selene_math.Vec2(
           texture.offset.x.to_double(),
@@ -329,7 +329,7 @@ fn parse_texture_array(
 }
 
 ///|
-impl @json.FromJson for NxShopTabGroup with from_json(json, path) {
+impl @json.FromJson for NxShopTabGroup with fn from_json(json, path) {
   match json {
     { "enabled": enabled_json, "disabled": disabled_json, .. } => {
       let enabled = parse_texture_array(enabled_json, path.add_key("enabled"))
@@ -344,7 +344,7 @@ impl @json.FromJson for NxShopTabGroup with from_json(json, path) {
 }
 
 ///|
-impl @json.FromJson for NxShopButton with from_json(json, path) {
+impl @json.FromJson for NxShopButton with fn from_json(json, path) {
   match json {
     { "normal": { "0": normal_json, .. }, .. } => {
       let normal : @resource.NxTexture = @json.from_json(
@@ -358,7 +358,7 @@ impl @json.FromJson for NxShopButton with from_json(json, path) {
 }
 
 ///|
-impl @json.FromJson for NxShopCheckBox with from_json(json, path) {
+impl @json.FromJson for NxShopCheckBox with fn from_json(json, path) {
   match json {
     { "0": off_json, .. } => {
       let off : @resource.NxTexture = @json.from_json(
@@ -372,7 +372,7 @@ impl @json.FromJson for NxShopCheckBox with from_json(json, path) {
 }
 
 ///|
-impl @json.FromJson for NxShop with from_json(json, path) {
+impl @json.FromJson for NxShop with fn from_json(json, path) {
   match json {
     {
       "backgrnd": backgrnd_json,
@@ -463,9 +463,11 @@ impl @json.FromJson for NxShop with from_json(json, path) {
 }
 
 ///|
-async fn load_ui_resources() -> UiResources {
-  let shop2 = @ui.ui_window_2_loader().load_resource(["Shop2"])
-  parse_ui_resources_from_shop2_json(shop2)
+fn load_ui_resources() -> UiResources {
+  let shop2 = @ui.ui_window_2_loader().require_resource(["Shop2"])
+  parse_ui_resources_from_shop2_json(shop2) catch {
+    _ => abort("invalid Shop2 ui resource")
+  }
 }
 
 ///|
@@ -1249,7 +1251,7 @@ fn poll_ui_resources(state : State) -> Bool {
       }
     None => {
       state.ui_loading = Some(
-        @io_service.submit_background_task(async fn() { load_ui_resources() }),
+        @io_service.submit_background_task(fn() { load_ui_resources() }),
       )
       false
     }

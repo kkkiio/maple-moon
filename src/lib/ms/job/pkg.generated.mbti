@@ -30,7 +30,7 @@ pub fn Job::get_primary(Self, @weapon.Type) -> @maple_stat.EquipStatId
 pub fn Job::get_secondary(Self, @weapon.Type) -> @maple_stat.EquipStatId
 pub fn Job::get_subjob(Self, Level) -> Int
 pub fn Job::is_a(Self, Int) -> Bool
-pub async fn Job::load(id? : Int) -> Self
+pub fn Job::load(id? : Int) -> Self
 pub fn Job::new(Int, Level, Map[Int, JobData]) -> Self
 
 pub(all) struct JobData {
@@ -38,7 +38,7 @@ pub(all) struct JobData {
   skill_ids : Array[Int]
   name : String
 }
-pub async fn JobData::load(Int) -> Self
+pub fn JobData::load(Int) -> Self
 pub fn JobData::new(Json, String) -> Self
 
 pub(all) enum JobId {

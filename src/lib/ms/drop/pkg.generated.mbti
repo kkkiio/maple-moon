@@ -47,7 +47,7 @@ pub impl Drop for MesoDrop
 
 type Module
 pub fn Module::get_map_drops(Self) -> MapDrops
-pub async fn Module::load() -> Self
+pub fn Module::load() -> Self
 
 // Type aliases
 

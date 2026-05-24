@@ -14,7 +14,7 @@
 
 并按固定规则映射到：
 
-- `/assets/sound/BgmXX.img/Name.mp3`
+- `assets/sound/BgmXX.img/Name.mp3`
 
 不处理技能音效、UI 音效或其他 `Sound.nx` 路径。
 

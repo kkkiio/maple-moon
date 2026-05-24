@@ -2,7 +2,6 @@
 package "KKKIIO/maple-moon/lib/local_server"
 
 import {
-  "KKKIIO/maple-moon/lib/indexed_db",
   "KKKIIO/maple-moon/lib/log",
   "KKKIIO/maple-moon/lib/ms/server_proto",
   "moonbitlang/core/debug",
@@ -23,25 +22,26 @@ pub fn server_system(LocalServer) -> Unit
 // Errors
 
 // Types and methods
-pub struct BrowserDB {
-  db_ref : @ref.Ref[@indexed_db.IndexedDB?]
+pub struct FileDB {
+  root_path : String
 }
-pub fn BrowserDB::new() -> Self
-pub impl DB for BrowserDB
+pub fn FileDB::new(root_path? : String) -> Self
+pub fn FileDB::root_path_for_debug(Self) -> String
+pub impl DB for FileDB
 
 type LocalServer
 pub fn LocalServer::add_server_message_handler(Self, String, Int, (Json) -> Unit raise) -> Unit
 pub fn LocalServer::init_routes(Self) -> Unit
-pub async fn LocalServer::load_character(Self, Int) -> Bool
+pub fn LocalServer::load_character(Self, Int) -> Bool
 pub fn LocalServer::load_character_inventory_tab_data(Self, Json) -> Unit
-pub async fn LocalServer::load_character_roster(Self) -> Bool
+pub fn LocalServer::load_character_roster(Self) -> Bool
 pub fn LocalServer::new(db~ : &DB, drop_rng? : @random.Rand) -> Self
-pub async fn LocalServer::save_character(Self, Int) -> Unit
-pub async fn LocalServer::save_character_core(Self, Int) -> Unit
-pub async fn LocalServer::save_character_inventory(Self, Int) -> Unit
-pub async fn LocalServer::save_character_inventory_data(Self, Int, Int) -> Unit
-pub async fn LocalServer::save_character_quest_data(Self, Int, Int) -> Unit
-pub async fn LocalServer::save_character_roster(Self) -> Unit
+pub fn LocalServer::save_character(Self, Int) -> Unit
+pub fn LocalServer::save_character_core(Self, Int) -> Unit
+pub fn LocalServer::save_character_inventory(Self, Int) -> Unit
+pub fn LocalServer::save_character_inventory_data(Self, Int, Int) -> Unit
+pub fn LocalServer::save_character_quest_data(Self, Int, Int) -> Unit
+pub fn LocalServer::save_character_roster(Self) -> Unit
 #callsite(autofill(loc))
 pub fn[T : @server_proto.ClientMessage] LocalServer::send_client_message(Self, T, log_level? : @log.Level, loc~ : SourceLoc) -> Unit
 
@@ -98,7 +98,7 @@ pub fn StorageItemEntry::to_server_proto(Self, @server_proto.InventoryType) -> @
 
 // Traits
 pub(open) trait DB {
-  async save_json(Self, String, String, Json) -> Unit
-  async load_json(Self, String, String) -> Json?
+  fn save_json(Self, String, String, Json) -> Unit
+  fn load_json(Self, String, String) -> Json?
 }
 

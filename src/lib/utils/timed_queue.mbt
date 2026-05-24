@@ -38,11 +38,11 @@ pub fn[T] TimedQueue::process(
 struct Timed[T](Int64, T)
 
 ///|
-pub impl[T] Compare for Timed[T] with compare(self, other) -> Int {
+pub impl[T] Compare for Timed[T] with fn compare(self, other) -> Int {
   self.0.compare(other.0).neg() // less first
 }
 
 ///|
-pub impl[T] Eq for Timed[T] with equal(self, other) -> Bool {
+pub impl[T] Eq for Timed[T] with fn equal(self, other) -> Bool {
   self.0.equal(other.0)
 }

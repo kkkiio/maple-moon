@@ -12,7 +12,7 @@ pub(all) struct NxMapleButton {
 }
 
 ///|
-pub impl @json.FromJson for NxMapleButton with from_json(
+pub impl @json.FromJson for NxMapleButton with fn from_json(
   src : Json,
   path : @json.JsonPath,
 ) -> NxMapleButton {

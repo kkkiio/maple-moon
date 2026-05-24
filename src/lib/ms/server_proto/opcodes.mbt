@@ -211,7 +211,7 @@ pub(all) suberror UnknownOpCodeError {
 }
 
 ///|
-pub impl Hash for Opcode with hash_combine(self : Opcode, hasher : Hasher) -> Unit {
+pub impl Hash for Opcode with fn hash_combine(self : Opcode, hasher : Hasher) -> Unit {
   hasher.combine(self.int_value())
 }
 

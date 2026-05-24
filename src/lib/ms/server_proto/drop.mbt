@@ -14,7 +14,7 @@ pub(all) struct DropLootMessage {
 } derive(Debug, ToJson, FromJson)
 
 ///|
-pub impl ServerMessage for DropLootMessage with type_code() {
+pub impl ServerMessage for DropLootMessage with fn type_code() {
   Opcode::DROP_LOOT.int_value()
 }
 
@@ -26,7 +26,7 @@ pub(all) struct RemoveLootMessage {
 } derive(Debug, ToJson, FromJson)
 
 ///|
-pub impl ServerMessage for RemoveLootMessage with type_code() {
+pub impl ServerMessage for RemoveLootMessage with fn type_code() {
   Opcode::REMOVE_LOOT.int_value()
 }
 
@@ -38,7 +38,7 @@ pub(all) struct PickupItemMessage {
 } derive(Debug, ToJson, FromJson)
 
 ///|
-pub impl ClientMessage for PickupItemMessage with type_code() {
+pub impl ClientMessage for PickupItemMessage with fn type_code() {
   ClientOpcode::PICKUP_ITEM.int_value()
 }
 
@@ -49,7 +49,7 @@ pub(all) struct ChangeStatsMesoMessage {
 } derive(Debug, ToJson, FromJson)
 
 ///|
-pub impl ServerMessage for ChangeStatsMesoMessage with type_code() {
+pub impl ServerMessage for ChangeStatsMesoMessage with fn type_code() {
   Opcode::CHANGE_STATS.int_value()
 }
 
@@ -60,7 +60,7 @@ pub(all) struct ShowStatusMesoGainMessage {
 } derive(Debug, ToJson, FromJson)
 
 ///|
-pub impl ServerMessage for ShowStatusMesoGainMessage with type_code() {
+pub impl ServerMessage for ShowStatusMesoGainMessage with fn type_code() {
   Opcode::SHOW_STATUS_INFO.int_value()
 }
 
@@ -92,6 +92,6 @@ pub(all) struct ModifyInventoryMessage {
 } derive(Debug, ToJson, FromJson)
 
 ///|
-pub impl ServerMessage for ModifyInventoryMessage with type_code() {
+pub impl ServerMessage for ModifyInventoryMessage with fn type_code() {
   Opcode::MODIFY_INVENTORY.int_value()
 }

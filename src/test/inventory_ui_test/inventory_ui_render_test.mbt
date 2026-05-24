@@ -38,7 +38,7 @@ fn make_inventory_entry() -> InventoryEntry {
 }
 
 ///|
-async fn setup_inventory_ui_test_scene() -> Unit {
+fn setup_inventory_ui_test_scene() -> @app.App raise {
   let app = @app.App()
     .with_viewport_width(800.0)
     .with_viewport_height(540.0)
@@ -53,7 +53,8 @@ async fn setup_inventory_ui_test_scene() -> Unit {
       fn(world) { @io_service.io_system(world) },
       system_name="io_system",
     )
-  @capture_app.init_app(app)
+  @ecs.set_current_world(app.world())
+  @system.configure_display(800.0, 540.0, 1.0)
 
   @local_loader.install_resource_env_for_test()
   let character_loader = @resource.require_async_loader("character")
@@ -71,36 +72,34 @@ async fn setup_inventory_ui_test_scene() -> Unit {
   @inventory_ui.set_item_json_for_test(ui_item_json)
   @inventory_ui.set_inventory_entry(make_inventory_entry())
   @inventory_ui.set_inventory_visible(true)
-
-  for _ in 0..<60 {
-    @capture_app.run_loop(0.016)
-  }
+  app
 }
 
 ///|
-async test "inventory ui renders equip tab with icon count and meso" {
+test "inventory ui renders equip tab with icon count and meso" {
   defer @inventory_ui.set_inventory_visible(false)
   defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
   defer @sprite.sprites().clear()
-  setup_inventory_ui_test_scene()
+  let app = setup_inventory_ui_test_scene()
+  let captures = app.run_frames_capture(60, raw_delta=0.016)
   @capture_app.snapshot(
     "src/test/inventory_ui_test/__snapshot__/inventory_ui_default.png",
+    captures[captures.length() - 1].png,
     visual_desc="Inventory UI is displayed showing the default equip tab with items.",
   )
 }
 
 ///|
-async test "inventory ui renders use tab with icon count and meso" {
+test "inventory ui renders use tab with icon count and meso" {
   defer @inventory_ui.set_inventory_visible(false)
   defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
   defer @sprite.sprites().clear()
-  setup_inventory_ui_test_scene()
+  let app = setup_inventory_ui_test_scene()
   @inventory_ui.set_tab_index_for_test(1)
-  for _ in 0..<2 {
-    @capture_app.run_loop(0.016)
-  }
+  let captures = app.run_frames_capture(62, raw_delta=0.016)
   @capture_app.snapshot(
     "src/test/inventory_ui_test/__snapshot__/inventory_ui_use_tab.png",
+    captures[captures.length() - 1].png,
     visual_desc="Inventory UI is displayed showing the use tab with items.",
   )
 }

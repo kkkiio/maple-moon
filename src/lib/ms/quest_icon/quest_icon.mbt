@@ -145,7 +145,7 @@ fn ensure_resource_loading() -> Unit {
     return
   }
   quest_icon_loading.val = Some(
-    @io_service.submit_background_task(async fn() { load_resources() }),
+    @io_service.submit_background_task(fn() { load_resources() }),
   )
 }
 
@@ -164,15 +164,21 @@ fn poll_loading_result() -> Unit {
 }
 
 ///|
-async fn load_resources() -> QuestIconResources {
+fn load_resources() -> QuestIconResources {
   let loader = @resource.require_async_loader("ui_window_2")
-  let available_json = loader.load_resource(["QuestIcon", "0"])
-  let inprogress_json = loader.load_resource(["QuestIcon", "1"])
-  let completed_json = loader.load_resource(["QuestIcon", "2"])
+  let available_json = loader.require_resource(["QuestIcon", "0"])
+  let inprogress_json = loader.require_resource(["QuestIcon", "1"])
+  let completed_json = loader.require_resource(["QuestIcon", "2"])
   {
-    available: @json.from_json(available_json),
-    in_progress: @json.from_json(inprogress_json),
-    completed: @json.from_json(completed_json),
+    available: @json.from_json(available_json) catch {
+      _ => abort("invalid available quest icon")
+    },
+    in_progress: @json.from_json(inprogress_json) catch {
+      _ => abort("invalid in-progress quest icon")
+    },
+    completed: @json.from_json(completed_json) catch {
+      _ => abort("invalid completed quest icon")
+    },
   }
 }
 

@@ -112,12 +112,12 @@ pub fn ColorName::css_name(self : ColorName) -> String {
 }
 
 ///|
-pub impl ToJson for ColorName with to_json(self) {
+pub impl ToJson for ColorName with fn to_json(self) {
   self.css_name().to_json()
 }
 
 ///|
-pub impl Show for ColorName with output(self, logger) {
+pub impl Show for ColorName with fn output(self, logger) {
   logger.write_string(self.css_name())
 }
 
@@ -388,12 +388,12 @@ pub fn Color::blend(self : Color, other : Color, alpha : Double) -> Color {
 }
 
 ///|
-pub impl Mul for Color with mul(self, o) {
+pub impl Mul for Color with fn mul(self, o) {
   Color(self.r() * o.r(), self.g() * o.g(), self.b() * o.b(), self.a() * o.a())
 }
 
 ///|
-pub impl Div for Color with div(self, o) {
+pub impl Div for Color with fn div(self, o) {
   Color(self.r() / o.r(), self.g() / o.g(), self.b() / o.b(), self.a() / o.a())
 }
 

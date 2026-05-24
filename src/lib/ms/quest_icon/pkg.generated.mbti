@@ -78,7 +78,7 @@ pub fn MapQuests::set_player(Self, @player.Player) -> Unit
 pub fn MapQuests::update_quest(Self, Int) -> Unit
 
 type MapQuestsResource
-pub async fn MapQuestsResource::load() -> Self
+pub fn MapQuestsResource::load() -> Self
 pub fn MapQuestsResource::new(@resource.NxAnimation, @resource.NxAnimation, @resource.NxAnimation) -> Self
 
 type Module

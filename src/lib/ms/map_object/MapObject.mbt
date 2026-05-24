@@ -1,10 +1,10 @@
 ///|
 pub(open) trait MapObject {
-  get_oid(Self) -> Int
-  update(Self, @physics.Physics) -> Int
-  destroy(Self) -> Unit
-  get_layer(Self) -> Int
-  get_position(Self) -> @struct.Point[Int]
+  fn get_oid(Self) -> Int
+  fn update(Self, @physics.Physics) -> Int
+  fn destroy(Self) -> Unit
+  fn get_layer(Self) -> Int
+  fn get_position(Self) -> @struct.Point[Int]
 }
 
 ///|

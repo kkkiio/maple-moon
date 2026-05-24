@@ -17,48 +17,53 @@ fn basic_mock_item_entry(icon_path : String, icon_raw_path : String) -> Json {
 }
 
 ///|
-pub impl @resource.AsyncResourceLoader for MockBasicItemLoader with load_data(
+pub impl @resource.AsyncResourceLoader for MockBasicItemLoader with fn load_data(
   self,
   path,
-) -> Json {
+) -> Json? {
   ignore(self)
-  match path.to_owned() {
-    "Consume/0200.img" =>
-      {
-        "02000000": basic_mock_item_entry(
-          "images/Item/consume_icon.png", "images/Item/consume_icon_raw.png",
-        ),
-      }
-    "Etc/0400.img" =>
-      {
-        "04000000": basic_mock_item_entry(
-          "images/Item/etc_icon.png", "images/Item/etc_icon_raw.png",
-        ),
-      }
-    p if p.has_prefix("Consume/") || p.has_prefix("Etc/") => {}
-    _ => fail("unexpected item bundle path: \{path}")
-  }
+  Some(
+    match path.to_owned() {
+      "Consume/0200.img" =>
+        {
+          "02000000": basic_mock_item_entry(
+            "images/Item/consume_icon.png", "images/Item/consume_icon_raw.png",
+          ),
+        }
+      "Etc/0400.img" =>
+        {
+          "04000000": basic_mock_item_entry(
+            "images/Item/etc_icon.png", "images/Item/etc_icon_raw.png",
+          ),
+        }
+      p if p.has_prefix("Consume/") || p.has_prefix("Etc/") => {}
+      _ => abort("unexpected item bundle path: \{path}")
+    },
+  )
 }
 
 ///|
 struct MockBasicStringLoader {}
 
 ///|
-pub impl @resource.AsyncResourceLoader for MockBasicStringLoader with load_data(
+pub impl @resource.AsyncResourceLoader for MockBasicStringLoader with fn load_data(
   self,
   path,
-) -> Json {
+) -> Json? {
   ignore(self)
-  match path.to_owned() {
-    "Consume.img" => { "2000000": { "name": "apple", "desc": "red potion" } }
-    "Etc.img" => { "Etc": { "4000000": { "name": "ore", "desc": "gray ore" } } }
-    "Eqp.img" | "Ins.img" | "Cash.img" => {}
-    _ => fail("unexpected string bundle path: \{path}")
-  }
+  Some(
+    match path.to_owned() {
+      "Consume.img" => { "2000000": { "name": "apple", "desc": "red potion" } }
+      "Etc.img" =>
+        { "Etc": { "4000000": { "name": "ore", "desc": "gray ore" } } }
+      "Eqp.img" | "Ins.img" | "Cash.img" => {}
+      _ => abort("unexpected string bundle path: \{path}")
+    },
+  )
 }
 
 ///|
-async test "basic item resource should preload consume/etc and install to cache" {
+test "basic item resource should preload consume/etc and install to cache" {
   let item_loader = @resource.AsyncLoader::new("item", loader=MockBasicItemLoader::{
 
   })

@@ -12,7 +12,7 @@ pub struct MxMap {
 }
 
 ///|
-pub impl @json.FromJson for MxMap with from_json(json, path) {
+pub impl @json.FromJson for MxMap with fn from_json(json, path) {
   match json {
     { "tiled_path": String(tiled_path), .. } if tiled_path.length() > 0 =>
       { tiled_path, }
@@ -22,8 +22,8 @@ pub impl @json.FromJson for MxMap with from_json(json, path) {
 
 ///|
 /// Loads the raw map resources by map id.
-pub async fn load_map_resources_by_id(map_id : Int) -> MapRawResources {
-  guard map_id >= 0 else { fail("invalid map_id=\{map_id}") }
+pub fn load_map_resources_by_id(map_id : Int) -> MapRawResources {
+  guard map_id >= 0 else { abort("invalid map_id=\{map_id}") }
   let prefix = (map_id / 100000000).to_string()
   let strid = @utils.stoi_left_pad0(map_id, 9)
   let mx_path = ["Map", "Map\{prefix}", "\{strid}.img", "mx.json"]
@@ -48,7 +48,7 @@ fn aseprite_to_json_path(path : String) -> String? {
 }
 
 ///|
-async fn load_tiled_background_animations(
+fn load_tiled_background_animations(
   tiled_path : String,
   tiled_map : @tiled.TiledMap,
   animation_loader : @resource.AnimationLoader,
@@ -61,11 +61,21 @@ async fn load_tiled_background_animations(
     let resolved_json_path = @resource.resolve_ref(tiled_path, json_path)
     let clips = animation_loader.load(resolved_json_path)
     let clip = if clips.list_tags().contains("main") {
-      clips.clip("main")
+      clips.clip("main") catch {
+        err =>
+          abort(
+            "missing main background animation: \{resolved_json_path}, error=\{err}",
+          )
+      }
     } else if clips.list_tags().is_empty() {
-      fail("no tags in background animation: \{resolved_json_path}")
+      abort("no tags in background animation: \{resolved_json_path}")
     } else {
-      clips.clip(clips.list_tags()[0])
+      clips.clip(clips.list_tags()[0]) catch {
+        err =>
+          abort(
+            "missing fallback background animation: \{resolved_json_path}, error=\{err}",
+          )
+      }
     }
     loaded[layer.name] = clip
   }
@@ -88,7 +98,7 @@ pub struct NxLife {
 } derive(Debug)
 
 ///|
-pub impl @json.FromJson for NxLife with from_json(json, path) {
+pub impl @json.FromJson for NxLife with fn from_json(json, path) {
   match json {
     {
       "cy": Number(cy, ..),

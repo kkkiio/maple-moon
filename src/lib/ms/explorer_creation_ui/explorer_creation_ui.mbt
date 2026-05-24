@@ -134,8 +134,13 @@ fn stage_to_string(stage : UiStage) -> String {
 }
 
 ///|
-extern "js" fn now_millis() -> Int =
-  #| () => Math.trunc(Date.now())
+let now_counter : Ref[Int] = Ref(0)
+
+///|
+fn now_millis() -> Int {
+  now_counter.val += 1
+  now_counter.val
+}
 
 ///|
 fn action_to_string(action : UiAction) -> String {
@@ -316,7 +321,7 @@ fn ExplorerCreationUI::request_preview_if_needed(
       let resource = self.char_presentation_resource
       let draw_info = resource.draw_info
       self.preview.loading = Some(
-        @io_service.submit_background_task(async fn() {
+        @io_service.submit_background_task(fn() {
           let body = resource.load_body_by_skin_id(
             config_to_look_entry(config, self.resource).skin,
           )
@@ -695,9 +700,7 @@ pub fn explorer_creation_ui_system(_world : @ecs.World) -> Unit {
   }
   guard creation_ui_loading_future.val is Some(fut) else {
     creation_ui_loading_future.val = Some(
-      @io_service.submit_background_task(async fn() {
-        (load_resource(), resource)
-      }),
+      @io_service.submit_background_task(fn() { (load_resource(), resource) }),
     )
     return
   }

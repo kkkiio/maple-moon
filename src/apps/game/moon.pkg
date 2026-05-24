@@ -1,7 +1,7 @@
 import {
   "moonbitlang/core/random",
   "Milky2018/selene/system",
-  "Milky2018/selene/app" @app,
+  "Milky2018/selene/app",
   "Milky2018/selene/time",
   "Milky2018/selene/plugins",
   "Milky2018/selene/audio",
@@ -43,22 +43,21 @@ import {
   "KKKIIO/maple-moon/lib/lazy",
   "KKKIIO/maple-moon/lib/ms/inventory",
   "KKKIIO/maple-moon/lib/log",
-  "KKKIIO/maple-moon/lib/local_server",
-  "moonbitlang/async/js_async",
+  "Milky2018/selene/asset",
   "Milky2018/selene/ecs",
 }
 
-supported_targets = "js"
+supported_targets = "native"
 
 options(
   "is-main": true,
+  link: { "native": { "cc": "clang" } },
   overrides: [
-    "Milky2018/selene_webgpu/platform_window",
-    "Milky2018/selene_webgpu/platform_input",
-    "Milky2018/selene_webgpu/platform_render",
-    "Milky2018/selene_webgpu/platform_audio",
-    "Milky2018/selene_webgpu/platform_asset_io",
-    "KKKIIO/maple-moon/lib/utils/abort_with_log",
+    "Milky2018/selene_raylib/platform_window",
+    "Milky2018/selene_raylib/platform_input",
+    "Milky2018/selene_raylib/platform_render",
+    "Milky2018/selene_raylib/platform_audio",
+    "Milky2018/selene_raylib/platform_asset_io",
     "KKKIIO/maple-moon/lib/local_server/local_server_workaround",
   ],
 )

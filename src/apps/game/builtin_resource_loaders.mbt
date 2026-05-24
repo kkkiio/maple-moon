@@ -2,29 +2,28 @@
 /// 定义一些内置的资源的加载器.
 /// 
 /// 资源路径解析由 `resource` 包内部的 PathResolver 统一处理:
-/// - 允许绝对路径(`/...`)
+/// - resolved asset path 统一为 `assets/...`
+/// - 禁止 leading-slash 路径(`/...`)
 /// - 禁止 `http(s)` 路径
 /// - 相对路径按 source 规则映射到本地 assets 根目录
 using @lazy {type Lazy}
 
 ///|
-priv struct FetchCsvTextLoader {
-  dummy : Unit
-}
+priv struct FetchCsvTextLoader {}
 
 ///|
 fn FetchCsvTextLoader::new() -> FetchCsvTextLoader {
-  { dummy: () }
+  FetchCsvTextLoader::{  }
 }
 
 ///|
-extern "js" fn fetch_text(path : String) -> @js_async.Promise[String] =
-  #| (p) => fetch(p).then((res) => res.text())
-
-///|
-impl @resource.CsvTextLoader for FetchCsvTextLoader with load_text(self, path) -> String {
-  ignore(self.dummy)
-  fetch_text(path).wait()
+impl @resource.CsvTextLoader for FetchCsvTextLoader with fn load_text(
+  _self,
+  path,
+) -> String {
+  @asset.read_bytes(path)
+  .map(fn(bytes) { bytes.to_unchecked_string() })
+  .unwrap_or_else(fn() { abort("failed to read CSV/TSV asset: \{path}") })
 }
 
 ///|
@@ -38,7 +37,7 @@ fn get_mapx_loader() -> @resource.AsyncLoader {
   }
   let loader = @resource.AsyncLoader::new(
     "mapx",
-    loader=@resource.FileJsonResourceLoader::new("/assets/map"),
+    loader=@resource.FileJsonResourceLoader::new("assets/map"),
   )
   mapx_loader.val = Some(loader)
   loader
@@ -49,9 +48,9 @@ let map_latest_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
   @resource.AsyncLoader::new(
     "map_latest",
     loader=@resource.CompositeAsyncResourceLoader::new({
-      "Obj/": @resource.DirResourceLoader::new("/assets/map/obj"),
+      "Obj/": @resource.DirResourceLoader::new("assets/map/obj"),
       "MapHelper.img/": @resource.DirResourceLoader::new(
-        "/assets/spritesheets/Map/MapHelper.img",
+        "assets/spritesheets/Map/MapHelper.img",
       ),
     }),
   )
@@ -66,7 +65,7 @@ fn get_map_latest_loader() -> @resource.AsyncLoader {
 let map_world_map_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
   @resource.AsyncLoader::new(
     "map_world_map",
-    loader=@resource.DirResourceLoader::new("/assets/map/WorldMap"),
+    loader=@resource.DirResourceLoader::new("assets/map/WorldMap"),
   )
 })
 
@@ -81,7 +80,7 @@ let background_set_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
     "background_set_loader",
     loader=@resource.DirResourceLoader::new(
       // "https://maple-res.kkkiiox.work/Map/Back",
-      "/assets/map/back",
+      "assets/map/back",
     ),
   )
 })
@@ -98,7 +97,7 @@ let object_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
     "object_loader",
     loader=@resource.DirResourceLoader::new(
       // "https://maple-res.kkkiiox.work/Map/Obj",
-      "/assets/map/obj",
+      "assets/map/obj",
     ),
   )
 })
@@ -115,7 +114,7 @@ let tile_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
     "tile",
     loader=@resource.DirResourceLoader::new(
       // "https://maple-res.kkkiiox.work/Map/Tile",
-      "/assets/map/tile",
+      "assets/map/tile",
     ),
   )
 })
@@ -132,7 +131,7 @@ let mob_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
     "mob",
     loader=@resource.FileJsonResourceLoader::new(
       // "https://maple-res.kkkiiox.work/mob",
-      "/assets/mob",
+      "assets/mob",
     ),
   )
 })
@@ -149,7 +148,7 @@ let skill_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
     "skill",
     loader=@resource.DirResourceLoader::new(
       // "https://maple-res.kkkiiox.work/Skill",
-      "/assets/Skill",
+      "assets/Skill",
     ),
   )
 })
@@ -166,32 +165,32 @@ let character_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
     loader=@resource.CompositeAsyncResourceLoader::new({
       "Pants/": @resource.DirResourceLoader::new(
         // "https://maple-res.kkkiiox.work/Character/Pants",
-        "/assets/Character/Pants",
+        "assets/Character/Pants",
       ),
       "Weapon/": @resource.DirResourceLoader::new(
         // "https://maple-res.kkkiiox.work/Character/Weapon",
-        "/assets/Character/Weapon",
+        "assets/Character/Weapon",
       ),
       "Coat/": @resource.DirResourceLoader::new(
         // "https://maple-res.kkkiiox.work/Character/Coat",
-        "/assets/Character/Coat",
+        "assets/Character/Coat",
       ),
-      "Cap/": @resource.DirResourceLoader::new("/assets/Character/Cap"),
+      "Cap/": @resource.DirResourceLoader::new("assets/Character/Cap"),
       "Longcoat/": @resource.DirResourceLoader::new(
         // "https://maple-res.kkkiiox.work/Character/Longcoat",
-        "/assets/Character/Longcoat",
+        "assets/Character/Longcoat",
       ),
       "Shield/": @resource.DirResourceLoader::new(
         // "https://maple-res.kkkiiox.work/Character/Shield",
-        "/assets/Character/Shield",
+        "assets/Character/Shield",
       ),
       "Shoes/": @resource.DirResourceLoader::new(
         // "https://maple-res.kkkiiox.work/Character/Shoes",
-        "/assets/Character/Shoes",
+        "assets/Character/Shoes",
       ),
-      "Glove/": @resource.DirResourceLoader::new("/assets/Character/Glove"),
+      "Glove/": @resource.DirResourceLoader::new("assets/Character/Glove"),
       "Accessory/": @resource.DirResourceLoader::new(
-        "/assets/Character/Accessory",
+        "assets/Character/Accessory",
       ),
     }),
   )
@@ -208,7 +207,7 @@ let afterimage_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
     "afterimage",
     loader=@resource.DirResourceLoader::new(
       // "https://maple-res.kkkiiox.work/Character/Afterimage",
-      "/assets/Character/Afterimage",
+      "assets/Character/Afterimage",
     ),
   )
 })
@@ -224,7 +223,7 @@ let body_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
     "body",
     loader=@resource.DirResourceLoader::new(
       // "https://maple-res.kkkiiox.work/Character/Body",
-      "/assets/Character/Body",
+      "assets/Character/Body",
     ),
   )
 })
@@ -241,11 +240,11 @@ let effect_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
     loader=@resource.CompositeAsyncResourceLoader::new({
       "BasicEff.img/": @resource.DirResourceLoader::new(
         // "https://maple-res.kkkiiox.work/Effect/BasicEff.img",
-        "/assets/Effect/BasicEff.img",
+        "assets/Effect/BasicEff.img",
       ),
       "CharacterEff.img/": @resource.DirResourceLoader::new(
         // "https://maple-res.kkkiiox.work/Effect/CharacterEff.img",
-        "/assets/Effect/CharacterEff.img",
+        "assets/Effect/CharacterEff.img",
       ),
     }),
   )
@@ -262,7 +261,7 @@ let face_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
     "face",
     loader=@resource.DirResourceLoader::new(
       // "https://maple-res.kkkiiox.work/Character/Face",
-      "/assets/Character/Face",
+      "assets/Character/Face",
     ),
   )
 })
@@ -278,7 +277,7 @@ let hair_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
     "hair",
     loader=@resource.DirResourceLoader::new(
       // "https://maple-res.kkkiiox.work/Character/Hair",
-      "/assets/Character/Hair",
+      "assets/Character/Hair",
     ),
   )
 })
@@ -294,7 +293,7 @@ let item_special_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
     "item_special",
     loader=@resource.DirResourceLoader::new(
       // "https://maple-res.kkkiiox.work/Item/Special",
-      "/assets/Item/Special",
+      "assets/Item/Special",
     ),
   )
 })
@@ -309,11 +308,11 @@ let item_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
   @resource.AsyncLoader::new(
     "item",
     loader=@resource.CompositeAsyncResourceLoader::new({
-      "Consume/": @resource.DirResourceLoader::new("/assets/Item/Consume"),
-      "Cash/": @resource.DirResourceLoader::new("/assets/Item/Cash"),
-      "Etc/": @resource.DirResourceLoader::new("/assets/Item/Etc"),
-      "Install/": @resource.DirResourceLoader::new("/assets/Item/Install"),
-      "Pet/": @resource.DirResourceLoader::new("/assets/Item/Pet"),
+      "Consume/": @resource.DirResourceLoader::new("assets/Item/Consume"),
+      "Cash/": @resource.DirResourceLoader::new("assets/Item/Cash"),
+      "Etc/": @resource.DirResourceLoader::new("assets/Item/Etc"),
+      "Install/": @resource.DirResourceLoader::new("assets/Item/Install"),
+      "Pet/": @resource.DirResourceLoader::new("assets/Item/Pet"),
     }),
   )
 })
@@ -327,7 +326,7 @@ fn get_item_loader() -> @resource.AsyncLoader {
 let ui_window_2_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
   @resource.AsyncLoader::new(
     "ui_window_2",
-    loader=@resource.DirResourceLoader::new("/assets/ui/UIWindow2.img"),
+    loader=@resource.DirResourceLoader::new("assets/ui/UIWindow2.img"),
   )
 })
 
@@ -340,7 +339,7 @@ fn get_ui_window_2_loader() -> @resource.AsyncLoader {
 let ui_window_4_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
   @resource.AsyncLoader::new(
     "ui_window_4",
-    loader=@resource.DirResourceLoader::new("/assets/ui/UIWindow4.img"),
+    loader=@resource.DirResourceLoader::new("assets/ui/UIWindow4.img"),
   )
 })
 
@@ -353,7 +352,7 @@ fn get_ui_window_4_loader() -> @resource.AsyncLoader {
 let ui_slice_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
   @resource.AsyncLoader::new(
     "ui_slice",
-    loader=@resource.FileJsonResourceLoader::new("/assets"),
+    loader=@resource.FileJsonResourceLoader::new("assets"),
   )
 })
 
@@ -366,7 +365,7 @@ fn get_ui_slice_loader() -> @resource.AsyncLoader {
 let npc_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
   @resource.AsyncLoader::new(
     "npc",
-    loader=@resource.FileJsonResourceLoader::new("/assets"),
+    loader=@resource.FileJsonResourceLoader::new("assets"),
   )
 })
 
@@ -379,26 +378,13 @@ fn get_npc_loader() -> @resource.AsyncLoader {
 let string_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
   @resource.AsyncLoader::new(
     "string",
-    loader=@resource.DirResourceLoader::new("/assets/String"),
+    loader=@resource.DirResourceLoader::new("assets/String"),
   )
 })
 
 ///|
 fn get_string_loader() -> @resource.AsyncLoader {
   string_loader.get()
-}
-
-///|
-let quest_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
-  @resource.AsyncLoader::new(
-    "quest",
-    loader=@resource.DirResourceLoader::new("/assets/Quest"),
-  )
-})
-
-///|
-fn get_quest_loader() -> @resource.AsyncLoader {
-  quest_loader.get()
 }
 
 ///|
@@ -425,7 +411,13 @@ pub fn install_builtin_resource_loaders() -> Unit {
   @resource.register_async_loader("ui_slice", get_ui_slice_loader())
   @resource.register_async_loader("npc", get_npc_loader())
   @resource.register_async_loader("string", get_string_loader())
-  @resource.register_async_loader("quest", get_quest_loader())
+  @resource.register_async_loader(
+    "quest",
+    @resource.AsyncLoader::new(
+      "quest",
+      loader=@resource.DirResourceLoader::new("assets/Quest"),
+    ),
+  )
   @resource.set_csv_loader(
     @resource.CsvLoader::new(loader=FetchCsvTextLoader::new()),
   )

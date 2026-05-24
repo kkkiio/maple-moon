@@ -9,7 +9,7 @@ import {
 // Values
 pub fn build_npc_shop_map(String, String) -> Map[Int, @server_proto.OpenNpcShopMessage] raise
 
-pub async fn load_npc_shop_map(@resource.CsvLoader, shops_path? : String, shopitems_path? : String) -> Map[Int, @server_proto.OpenNpcShopMessage]
+pub fn load_npc_shop_map(@resource.CsvLoader, shops_path? : String, shopitems_path? : String) -> Map[Int, @server_proto.OpenNpcShopMessage]
 
 pub fn parse_shop_item_rows(String) -> Map[Int, Array[NxShopItemRow]] raise
 

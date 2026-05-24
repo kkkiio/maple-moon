@@ -32,7 +32,7 @@ fn resolve_relative_resource_path(
 ) -> Array[String] {
   let rel = relative_path.replace(old="\\", new="/")
   if rel.has_prefix("/") {
-    return normalize_resource_path_parts(split_resource_path(rel))
+    abort("tiled resource reference must be relative: \{relative_path}")
   }
   let base_dir : Array[String] = []
   for i = 0; i + 1 < base_file_path.length(); i = i + 1 {
@@ -49,33 +49,33 @@ fn resolve_relative_resource_path(
 }
 
 ///|
-async fn resolve_external_tilesets_in_tmj_json(
+fn resolve_external_tilesets_in_tmj_json(
   loader : AsyncLoader,
   tiled_path : Array[String],
   tmj_json : Json,
 ) -> Json {
   guard tmj_json is Object(root_obj) else {
-    fail("map.tmj root must be object, tiled_path=\{join_path(tiled_path)}")
+    abort("map.tmj root must be object, tiled_path=\{join_path(tiled_path)}")
   }
   guard root_obj.get("tilesets") is Some(Array(tilesets)) else {
-    fail("map.tmj missing `tilesets`, tiled_path=\{join_path(tiled_path)}")
+    abort("map.tmj missing `tilesets`, tiled_path=\{join_path(tiled_path)}")
   }
   let resolved_tilesets : Array[Json] = []
   for tileset_json in tilesets {
     guard tileset_json is Object(tileset_ref) else {
-      fail("tileset entry must be object, tiled_path=\{join_path(tiled_path)}")
+      abort("tileset entry must be object, tiled_path=\{join_path(tiled_path)}")
     }
     match tileset_ref.get("source") {
       Some(String(source)) if source.length() > 0 => {
         let source_path = resolve_relative_resource_path(tiled_path, source)
-        let tsj_json = loader.load_resource(source_path)
+        let tsj_json = loader.require_resource(source_path)
         guard tsj_json is Object(tsj_obj) else {
-          fail(
+          abort(
             "failed to load external tileset: \{source}, tiled_path=\{join_path(tiled_path)}",
           )
         }
         guard tileset_ref.get("firstgid") is Some(first_gid) else {
-          fail("tileset source missing `firstgid`, source=\{source}")
+          abort("tileset source missing `firstgid`, source=\{source}")
         }
         let merged : Map[String, Json] = {}
         for key, value in tsj_obj {
@@ -99,25 +99,25 @@ async fn resolve_external_tilesets_in_tmj_json(
 ///|
 /// Load map `mx.json` and the referenced `map.tmj`, then resolve external
 /// TSJ tilesets through the same `mapx` loader.
-pub async fn load_tiled_map_from_mx(
+pub fn load_tiled_map_from_mx(
   loader : AsyncLoader,
   mx_path : Array[String],
 ) -> (String, @tiled.TiledMap) {
-  let mx_json = loader.load_resource(mx_path)
+  let mx_json = loader.require_resource(mx_path)
   if mx_json is Null {
-    fail("mx.json not found, path=\{to_repr(mx_path)}")
+    abort("mx.json not found, path=\{to_repr(mx_path)}")
   }
   let tiled_path = match mx_json {
     { "tiled_path": String(path), .. } if path.length() > 0 => path
-    _ => fail("invalid mx.json, path=\{to_repr(mx_path)}")
+    _ => abort("invalid mx.json, path=\{to_repr(mx_path)}")
   }
   let tiled_path_parts = split_resource_path(tiled_path)
   guard !tiled_path_parts.is_empty() else {
-    fail("invalid tiled_path in mx.json: \{tiled_path}")
+    abort("invalid tiled_path in mx.json: \{tiled_path}")
   }
-  let tmj_json = loader.load_resource(tiled_path_parts)
+  let tmj_json = loader.require_resource(tiled_path_parts)
   if tmj_json is Null {
-    fail("map.tmj not found, tiled_path=\{tiled_path}")
+    abort("map.tmj not found, tiled_path=\{tiled_path}")
   }
   let resolved_tmj_json = resolve_external_tilesets_in_tmj_json(
     loader, tiled_path_parts, tmj_json,

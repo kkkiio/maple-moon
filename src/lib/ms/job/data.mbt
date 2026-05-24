@@ -6,13 +6,15 @@ pub(all) struct JobData {
 }
 
 ///|
-pub async fn JobData::load(id : Int) -> JobData {
+pub fn JobData::load(id : Int) -> JobData {
   let strid = @utils.stoi_left_pad0(id, 3)
-  let src = @resource.require_async_loader("skill").load_resource([
+  let src = @resource.require_async_loader("skill").require_resource([
     strid + ".img",
   ])
   let name = match
-    @resource.require_async_loader("string").load_resource(["Skill.img", strid]) {
+    @resource.require_async_loader("string").require_resource([
+      "Skill.img", strid,
+    ]) {
     { "bookName": String(name), .. } => name
     _ => ""
   }

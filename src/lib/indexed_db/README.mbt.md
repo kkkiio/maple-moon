@@ -2,7 +2,8 @@
 
 一个通用的 JSON Key-Value 存储抽象，当前提供：
 
-- 浏览器 `IndexedDB` 实现。
+- 同步 JSON Key-Value API。
+- JS 后端使用 `localStorage` 命名空间保存数据。
 
 ## 用法
 

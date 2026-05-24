@@ -27,15 +27,15 @@ pub impl SkillBook for MockSkillBook
 
 // Traits
 pub(open) trait Inventory {
-  recalc_stats(Self, @weapon.Type) -> Unit
-  get_stat(Self, @maple_stat.EquipStatId) -> Int
-  has_projectile(Self) -> Bool
-  get_bulletid(Self) -> Int
-  get_bulletcount(Self) -> Int
+  fn recalc_stats(Self, @weapon.Type) -> Unit
+  fn get_stat(Self, @maple_stat.EquipStatId) -> Int
+  fn has_projectile(Self) -> Bool
+  fn get_bulletid(Self) -> Int
+  fn get_bulletcount(Self) -> Int
 }
 
 pub(open) trait SkillBook {
-  get_level(Self, Int) -> Int
-  set_skill(Self, Int, Int, Int, Int) -> Unit
+  fn get_level(Self, Int) -> Int
+  fn set_skill(Self, Int, Int, Int, Int) -> Unit
 }
 

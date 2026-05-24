@@ -29,7 +29,7 @@ pub fn parse_markup(String, Map[Char, MarkupType]) -> Array[Node] raise ParseErr
 
 pub let player_tag : (Char, MarkupType)
 
-pub async fn preload_reference_data() -> Unit
+pub fn preload_reference_data() -> Unit
 
 pub fn resolve_item_name(StringView) -> String raise
 

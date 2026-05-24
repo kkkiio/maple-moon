@@ -38,7 +38,7 @@ pub struct NxMobAttackInfo {
 }
 
 ///|
-pub impl @json.FromJson for NxMobAttackInfo with from_json(json, path) {
+pub impl @json.FromJson for NxMobAttackInfo with fn from_json(json, path) {
   guard json is Object(root) else {
     raise @json.JsonDecodeError((path, "NxMobAttackInfo must be an object"))
   }
@@ -133,7 +133,7 @@ fn parse_point(json : Json) -> @struct.Point[Int] {
 }
 
 ///|
-pub impl @json.FromJson for NxMob with from_json(json, path) {
+pub impl @json.FromJson for NxMob with fn from_json(json, path) {
   guard json is Object(root) else {
     raise @json.JsonDecodeError((path, "NxMob must be an object"))
   }

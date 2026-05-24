@@ -10,21 +10,21 @@ pub fn[T] Point::new(x : T, y : T) -> Point[T] {
 }
 
 ///|
-pub impl[T : Add] Add for Point[T] with add(self : Point[T], p2 : Point[T]) -> Point[
+pub impl[T : Add] Add for Point[T] with fn add(self : Point[T], p2 : Point[T]) -> Point[
   T,
 ] {
   { x: self.x + p2.x, y: self.y + p2.y }
 }
 
 ///|
-pub impl[T : Sub] Sub for Point[T] with sub(self : Point[T], p2 : Point[T]) -> Point[
+pub impl[T : Sub] Sub for Point[T] with fn sub(self : Point[T], p2 : Point[T]) -> Point[
   T,
 ] {
   { x: self.x - p2.x, y: self.y - p2.y }
 }
 
 ///|
-pub impl[T : Neg] Neg for Point[T] with neg(self : Point[T]) -> Point[T] {
+pub impl[T : Neg] Neg for Point[T] with fn neg(self : Point[T]) -> Point[T] {
   { x: -self.x, y: -self.y }
 }
 
@@ -52,7 +52,7 @@ pub fn[T : Eq] Point::straight(self : Point[T]) -> Bool {
 }
 
 ///|
-pub impl @json.FromJson for Point[Int] with from_json(value, path) {
+pub impl @json.FromJson for Point[Int] with fn from_json(value, path) {
   match value {
     [Json::Number(x, ..), Json::Number(y, ..)] =>
       Point::new(x.to_int(), y.to_int())
@@ -65,7 +65,7 @@ pub impl @json.FromJson for Point[Int] with from_json(value, path) {
 }
 
 ///|
-pub impl[T : ToJson] ToJson for Point[T] with to_json(self) -> Json {
+pub impl[T : ToJson] ToJson for Point[T] with fn to_json(self) -> Json {
   [self.x.to_json(), self.y.to_json()]
 }
 

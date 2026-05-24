@@ -2,7 +2,7 @@
 pub(all) struct NxStanceLooks[T](Map[StanceId, Array[T]])
 
 ///|
-pub impl[T : @json.FromJson] @json.FromJson for NxStanceLooks[T] with from_json(
+pub impl[T : @json.FromJson] @json.FromJson for NxStanceLooks[T] with fn from_json(
   json,
   path,
 ) {

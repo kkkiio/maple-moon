@@ -41,7 +41,7 @@ pub(all) struct NxWeapon {
 } derive(Debug)
 
 ///|
-pub impl @json.FromJson for NxMapAnchor with from_json(json, path) -> NxMapAnchor raise @json.JsonDecodeError {
+pub impl @json.FromJson for NxMapAnchor with fn from_json(json, path) -> NxMapAnchor raise @json.JsonDecodeError {
   guard json is Object(map_obj) else {
     raise @json.JsonDecodeError((path, "NxMapAnchor: expected object"))
   }
@@ -61,7 +61,7 @@ pub impl @json.FromJson for NxMapAnchor with from_json(json, path) -> NxMapAncho
 }
 
 ///|
-pub impl @json.FromJson for NxWeaponPart with from_json(json, path) -> NxWeaponPart raise @json.JsonDecodeError {
+pub impl @json.FromJson for NxWeaponPart with fn from_json(json, path) -> NxWeaponPart raise @json.JsonDecodeError {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "NxWeaponPart: expected object"))
   }
@@ -86,7 +86,7 @@ pub impl @json.FromJson for NxWeaponPart with from_json(json, path) -> NxWeaponP
 }
 
 ///|
-pub impl @json.FromJson for NxWeaponFrame with from_json(json, path) -> NxWeaponFrame raise @json.JsonDecodeError {
+pub impl @json.FromJson for NxWeaponFrame with fn from_json(json, path) -> NxWeaponFrame raise @json.JsonDecodeError {
   guard json is Object(frame_obj) else {
     raise @json.JsonDecodeError((path, "NxWeaponFrame: expected object"))
   }
@@ -105,7 +105,7 @@ pub impl @json.FromJson for NxWeaponFrame with from_json(json, path) -> NxWeapon
 }
 
 ///|
-pub impl @json.FromJson for NxWeaponAction with from_json(json, path) -> NxWeaponAction raise @json.JsonDecodeError {
+pub impl @json.FromJson for NxWeaponAction with fn from_json(json, path) -> NxWeaponAction raise @json.JsonDecodeError {
   guard json is Object(action_obj) else {
     raise @json.JsonDecodeError((path, "NxWeaponAction: expected object"))
   }
@@ -130,7 +130,7 @@ pub impl @json.FromJson for NxWeaponAction with from_json(json, path) -> NxWeapo
 }
 
 ///|
-pub impl @json.FromJson for NxWeapon with from_json(json, path) -> NxWeapon raise @json.JsonDecodeError {
+pub impl @json.FromJson for NxWeapon with fn from_json(json, path) -> NxWeapon raise @json.JsonDecodeError {
   guard json is Object(src_obj) else {
     raise @json.JsonDecodeError((path, "NxWeapon: expected object"))
   }

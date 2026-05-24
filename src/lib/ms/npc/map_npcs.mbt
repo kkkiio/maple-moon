@@ -170,7 +170,7 @@ pub fn MapNpcs::update(self : MapNpcs, physics : @physics.Physics) -> Unit {
     let oid = spawn.get_oid()
     if !self.npcs.contains(oid) {
       self.loading_npcs.push(
-        @io_service.submit_background_task(async fn() {
+        @io_service.submit_background_task(fn() {
           spawn.instantiate(self.npc_loader, self.string_loader, physics)
         }),
       )
@@ -277,7 +277,7 @@ pub fn NpcSpawn::get_oid(self : NpcSpawn) -> Int {
 }
 
 ///|
-pub async fn NpcSpawn::instantiate(
+pub fn NpcSpawn::instantiate(
   self : NpcSpawn,
   npc_loader : @resource.AsyncLoader,
   string_loader : @resource.AsyncLoader,
@@ -366,7 +366,7 @@ pub fn Npc::talk(self : Npc) -> TalkArgs? {
 }
 
 ///|
-pub async fn Npc::load(
+pub fn Npc::load(
   npc_loader : @resource.AsyncLoader,
   string_loader : @resource.AsyncLoader,
   id : Int,
@@ -381,13 +381,17 @@ pub async fn Npc::load(
   })
   let strid = @utils.stoi_left_pad0(id, 7) + ".img"
   let mut mx_path = "Npc/Npc/\{strid}/mx.json"
-  let mut src = npc_loader.load_data(mx_path)
-  let strsrc = string_loader.load_resource(["Npc.img", id.to_string()])
-  let mut mx_npc : MxNpc = @json.from_json(src)
+  let mut src = npc_loader.require_data(mx_path)
+  let strsrc = string_loader.require_resource(["Npc.img", id.to_string()])
+  let mut mx_npc : MxNpc = @json.from_json(src) catch {
+    _ => abort("invalid npc mx data: \{mx_path}")
+  }
   if mx_npc.info.link is Some(link) {
     mx_path = "Npc/Npc/\{link}.img/mx.json"
-    src = npc_loader.load_data(mx_path)
-    mx_npc = @json.from_json(src)
+    src = npc_loader.require_data(mx_path)
+    mx_npc = @json.from_json(src) catch {
+      _ => abort("invalid linked npc mx data: \{mx_path}")
+    }
   }
   let animation_loader = @resource.AnimationLoader::new(npc_loader)
   let loaded_aseprite = animation_loader.load(
@@ -418,7 +422,9 @@ pub async fn Npc::load(
   let animations : Map[String, NpcAnimation] = {}
   let states : Array[String] = []
   for state in loaded_aseprite.list_tags() {
-    let clip = loaded_aseprite.clip(state)
+    let clip = loaded_aseprite.clip(state) catch {
+      _ => abort("npc \{id} missing animation state: \{state}")
+    }
     animations[state] = {
       clip,
       duration_ms: clip.duration_ms,
@@ -442,7 +448,7 @@ pub async fn Npc::load(
   } else if !states.is_empty() {
     states[0]
   } else {
-    fail("npc \{id} has no animation states")
+    abort("npc \{id} has no animation states")
   }
   phobj.set_fhid(f)
   phobj.set_position(

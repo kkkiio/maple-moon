@@ -65,17 +65,20 @@ pub fn EquipStatId::from_name(name : String) -> EquipStatId? {
 }
 
 ///|
-pub impl Show for EquipStatId with output(self : EquipStatId, logger : &Logger) -> Unit {
+pub impl Show for EquipStatId with fn output(
+  self : EquipStatId,
+  logger : &Logger,
+) -> Unit {
   logger.write_string(self.name())
 }
 
 ///|
-pub impl ToJson for EquipStatId with to_json(self) -> Json {
+pub impl ToJson for EquipStatId with fn to_json(self) -> Json {
   Json::string(self.name())
 }
 
 ///|
-pub impl @json.FromJson for EquipStatId with from_json(json, path) -> EquipStatId {
+pub impl @json.FromJson for EquipStatId with fn from_json(json, path) -> EquipStatId {
   guard json is String(name) else {
     raise @json.JsonDecodeError((path, "expect string"))
   }

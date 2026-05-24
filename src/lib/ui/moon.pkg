@@ -13,7 +13,7 @@ import {
   "Milky2018/selene/render2d",
   "Milky2018/selene/render2d_types",
   "Milky2018/selene/sprite",
-  "KKKIIO/maple-moon/lib/ms/transform2d" @transform2d,
+  "KKKIIO/maple-moon/lib/ms/transform2d",
   "Milky2018/selene/math" @selene_math,
   "Milky2018/selene/ui" @selene_ui,
   "Milky2018/selene/entity",

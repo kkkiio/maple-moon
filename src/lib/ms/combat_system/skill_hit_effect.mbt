@@ -6,7 +6,7 @@ struct NxHitEffect {
 }
 
 ///|
-pub impl @json.FromJson for NxHitEffect with from_json(json, path) {
+pub impl @json.FromJson for NxHitEffect with fn from_json(json, path) {
   let parse_int_like = fn(field : String) -> Int raise @json.JsonDecodeError {
     match json {
       Object(obj) =>
@@ -48,7 +48,7 @@ priv struct LoadedHitEffect {
 }
 
 ///|
-async fn load_hit_effect(
+fn load_hit_effect(
   src : NxHitEffect,
   tag : String,
   skill_loader : @resource.AsyncLoader,
@@ -76,7 +76,7 @@ struct NxHitEntry {
 }
 
 ///|
-pub impl @json.FromJson for NxHitEntry with from_json(json, path) {
+pub impl @json.FromJson for NxHitEntry with fn from_json(json, path) {
   let hit = match json {
     { "hit": hit, .. } =>
       @resource.parse_map_based_array(hit, path=path.add_key("hit"))
@@ -103,7 +103,7 @@ fn NxTwoHandedHit::from_hit_array(hits : Array[NxHitEffect]) -> NxTwoHandedHit? 
 struct NxCharLevelHit(Map[Int, NxHitEntry])
 
 ///|
-pub impl @json.FromJson for NxCharLevelHit with from_json(json, path) {
+pub impl @json.FromJson for NxCharLevelHit with fn from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expect object"))
   }
@@ -123,7 +123,7 @@ pub impl @json.FromJson for NxCharLevelHit with from_json(json, path) {
 struct NxSkillLevelHit(Map[Int, NxHitEntry])
 
 ///|
-pub impl @json.FromJson for NxSkillLevelHit with from_json(json, path) {
+pub impl @json.FromJson for NxSkillLevelHit with fn from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expect object"))
   }
@@ -140,7 +140,7 @@ pub impl @json.FromJson for NxSkillLevelHit with from_json(json, path) {
 }
 
 ///|
-async fn new_hit_effect(
+fn new_hit_effect(
   res : NxHitEffect,
   tag : String,
   skill_loader : @resource.AsyncLoader,
@@ -154,7 +154,7 @@ async fn new_hit_effect(
 
 ///|
 /// A single animation
-pub async fn new_single_hit_effect(
+pub fn new_single_hit_effect(
   res : NxHitEffect,
   skill_loader : @resource.AsyncLoader,
   base_path : String,
@@ -172,7 +172,7 @@ pub async fn new_single_hit_effect(
 
 ///|
 /// The animation changes depending on the weapon used
-pub async fn new_twohanded_hit_effect(
+pub fn new_twohanded_hit_effect(
   hit0 : NxHitEffect,
   hit1 : NxHitEffect,
   skill_loader : @resource.AsyncLoader,
@@ -199,15 +199,17 @@ pub async fn new_twohanded_hit_effect(
 
 ///|
 /// The animation changes with the character level
-pub async fn new_by_level_hit_effect(
+pub fn new_by_level_hit_effect(
   src : Json,
   skill_loader : @resource.AsyncLoader,
   base_path : String,
-) -> ((@combat_proto.AttackUser, @monster.Mob) -> Unit) raise Error {
+) -> (@combat_proto.AttackUser, @monster.Mob) -> Unit {
   let effects = []
   let by_level : NxCharLevelHit = @json.from_json(
     hit_effect_get_path(src, ["CharLevel"]),
-  )
+  ) catch {
+    _ => abort("invalid by-character-level skill hit effect")
+  }
   for level, entry in by_level.0 {
     match entry.hit.get(0) {
       Some(hit0) =>
@@ -243,15 +245,17 @@ pub async fn new_by_level_hit_effect(
 
 ///|
 /// The animation changes with the character level and weapon used
-pub async fn new_by_level_twohanded_hit_effect(
+pub fn new_by_level_twohanded_hit_effect(
   src : Json,
   skill_loader : @resource.AsyncLoader,
   base_path : String,
-) -> ((@combat_proto.AttackUser, @monster.Mob) -> Unit) raise Error {
+) -> (@combat_proto.AttackUser, @monster.Mob) -> Unit {
   let effects = []
   let by_level : NxCharLevelHit = @json.from_json(
     hit_effect_get_path(src, ["CharLevel"]),
-  )
+  ) catch {
+    _ => abort("invalid by-character-level two-handed skill hit effect")
+  }
   for level, entry in by_level.0 {
     match NxTwoHandedHit::from_hit_array(entry.hit) {
       Some(pair) =>
@@ -295,15 +299,17 @@ pub async fn new_by_level_twohanded_hit_effect(
 
 ///|
 /// The animation changes with the skill level
-pub async fn new_by_skill_level_hit_effect(
+pub fn new_by_skill_level_hit_effect(
   src : Json,
   skill_loader : @resource.AsyncLoader,
   base_path : String,
-) -> ((@combat_proto.AttackUser, @monster.Mob) -> Unit) raise Error {
+) -> (@combat_proto.AttackUser, @monster.Mob) -> Unit {
   let effects = Map([])
   let by_level : NxSkillLevelHit = @json.from_json(
     hit_effect_get_path(src, ["level"]),
-  )
+  ) catch {
+    _ => abort("invalid by-skill-level hit effect")
+  }
   for level, entry in by_level.0 {
     match entry.hit.get(0) {
       Some(hit0) =>

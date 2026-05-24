@@ -50,7 +50,7 @@ priv struct SeleneButton {
 }
 
 ///|
-pub fn SelectCharUIResource::load() -> SelectCharUIResource raise {
+pub fn SelectCharUIResource::load() -> SelectCharUIResource {
   let ani18_res : Json = {
     "0": {
       "__h": 442,
@@ -60,7 +60,7 @@ pub fn SelectCharUIResource::load() -> SelectCharUIResource raise {
       "delay": 2500,
       "origin": [216, 221],
       "z": 0,
-      "__i": "/assets/ui/login.img/char_select/light18.png",
+      "__i": "assets/ui/login.img/char_select/light18.png",
     },
     "1": {
       "__h": 442,
@@ -71,7 +71,7 @@ pub fn SelectCharUIResource::load() -> SelectCharUIResource raise {
       "delay": 2500,
       "origin": [216, 221],
       "z": 0,
-      "__i": "/assets/ui/login.img/char_select/light18.png",
+      "__i": "assets/ui/login.img/char_select/light18.png",
     },
   }
   let bt_new_res : Json = {
@@ -82,7 +82,7 @@ pub fn SelectCharUIResource::load() -> SelectCharUIResource raise {
         "__off": [110, 37],
         "origin": [0, 0],
         "z": 0,
-        "__i": "/assets/ui/login.img/char_select/bt_new.png",
+        "__i": "assets/ui/login.img/char_select/bt_new.png",
       },
     },
     "mouseOver": {
@@ -92,7 +92,7 @@ pub fn SelectCharUIResource::load() -> SelectCharUIResource raise {
         "__off": [0, 37],
         "origin": [0, 0],
         "z": 0,
-        "__i": "/assets/ui/login.img/char_select/bt_new.png",
+        "__i": "assets/ui/login.img/char_select/bt_new.png",
       },
     },
     "normal": {
@@ -102,7 +102,7 @@ pub fn SelectCharUIResource::load() -> SelectCharUIResource raise {
         "__off": [0, 0],
         "origin": [0, 0],
         "z": 0,
-        "__i": "/assets/ui/login.img/char_select/bt_new.png",
+        "__i": "assets/ui/login.img/char_select/bt_new.png",
       },
     },
     "pressed": {
@@ -112,11 +112,13 @@ pub fn SelectCharUIResource::load() -> SelectCharUIResource raise {
         "__off": [110, 0],
         "origin": [0, 0],
         "z": 0,
-        "__i": "/assets/ui/login.img/char_select/bt_new.png",
+        "__i": "assets/ui/login.img/char_select/bt_new.png",
       },
     },
   }
-  let ani18 : @resource.NxAnimation = @json.from_json(ani18_res)
+  let ani18 : @resource.NxAnimation = @json.from_json(ani18_res) catch {
+    _ => abort("invalid select character light animation")
+  }
   let bt_select_res : Json = {
     "normal": {
       "0": {
@@ -124,7 +126,7 @@ pub fn SelectCharUIResource::load() -> SelectCharUIResource raise {
         "__w": 140,
         "origin": [0, 0],
         "z": 0,
-        "__i": "/assets/ui/login.img/char_select/bt_select.png",
+        "__i": "assets/ui/login.img/char_select/bt_select.png",
       },
     },
     "mouseOver": {
@@ -133,7 +135,7 @@ pub fn SelectCharUIResource::load() -> SelectCharUIResource raise {
         "__w": 140,
         "origin": [0, 0],
         "z": 0,
-        "__i": "/assets/ui/login.img/char_select/bt_select.png",
+        "__i": "assets/ui/login.img/char_select/bt_select.png",
       },
     },
     "pressed": {
@@ -142,7 +144,7 @@ pub fn SelectCharUIResource::load() -> SelectCharUIResource raise {
         "__w": 140,
         "origin": [0, 0],
         "z": 0,
-        "__i": "/assets/ui/login.img/char_select/bt_select.png",
+        "__i": "assets/ui/login.img/char_select/bt_select.png",
       },
     },
     "disabled": {
@@ -151,12 +153,16 @@ pub fn SelectCharUIResource::load() -> SelectCharUIResource raise {
         "__w": 140,
         "origin": [0, 0],
         "z": 0,
-        "__i": "/assets/ui/login.img/char_select/bt_select.png",
+        "__i": "assets/ui/login.img/char_select/bt_select.png",
       },
     },
   }
-  let bt_new : @ui.NxMapleButton = @json.from_json(bt_new_res)
-  let bt_select : @ui.NxMapleButton = @json.from_json(bt_select_res)
+  let bt_new : @ui.NxMapleButton = @json.from_json(bt_new_res) catch {
+    _ => abort("invalid select character new button")
+  }
+  let bt_select : @ui.NxMapleButton = @json.from_json(bt_select_res) catch {
+    _ => abort("invalid select character select button")
+  }
   {
     ani18: @ms_animation.from_nx_animation(ani18),
     bt_new: @ui.MapleButtonResource::from_nx(bt_new),
@@ -172,7 +178,7 @@ pub(all) struct SelectableCharacter {
 }
 
 ///|
-pub async fn SelectCharUI::new(
+pub fn SelectCharUI::new(
   resources : SelectCharUIResource,
   characters : Array[SelectableCharacter],
   resource : CharacterPresentationResource,
@@ -180,13 +186,13 @@ pub async fn SelectCharUI::new(
   on_new_character? : () -> Unit = fn() {  },
 ) -> SelectCharUI {
   let back13 = @ms_animation.Animation::single_frame(
-    "/assets/ui/login.img/char_select/back13.png",
+    "assets/ui/login.img/char_select/back13.png",
     @selene_math.Vec2(800, 600),
     //   "origin": [392, 297]
   )
   let ani17 = @ms_animation.Animation::new([
     @ms_animation.AnimationFrame::{
-      image: @asset.load_image("/assets/ui/login.img/char_select/light17.png"),
+      image: @resource.load_image("assets/ui/login.img/char_select/light17.png"),
       size: @selene_math.Vec2(505, 242),
       offset: @selene_math.Vec2(0, 0),
       pivot: @selene_math.Vec2(121, 252), // origin
@@ -197,7 +203,7 @@ pub async fn SelectCharUI::new(
       //     "delay": 3000,
     },
     @ms_animation.AnimationFrame::{
-      image: @asset.load_image("/assets/ui/login.img/char_select/light17.png"),
+      image: @resource.load_image("assets/ui/login.img/char_select/light17.png"),
       size: @selene_math.Vec2(505, 242),
       offset: @selene_math.Vec2(0, 0),
       pivot: @selene_math.Vec2(121, 252), // origin
@@ -210,7 +216,7 @@ pub async fn SelectCharUI::new(
   ])
   let ani19 : @ms_animation.Animation = @ms_animation.Animation::new([
     @ms_animation.AnimationFrame::{
-      image: @asset.load_image("/assets/ui/login.img/char_select/light19.png"),
+      image: @resource.load_image("assets/ui/login.img/char_select/light19.png"),
       size: @selene_math.Vec2(355, 312),
       offset: @selene_math.Vec2(0, 0),
       pivot: @selene_math.Vec2(156, 177), // origin
@@ -222,7 +228,7 @@ pub async fn SelectCharUI::new(
       // "origin": [156, 177],
     },
     @ms_animation.AnimationFrame::{
-      image: @asset.load_image("/assets/ui/login.img/char_select/light19.png"),
+      image: @resource.load_image("assets/ui/login.img/char_select/light19.png"),
       offset: @selene_math.Vec2(312, 0),
       size: @selene_math.Vec2(355, 312),
       pivot: @selene_math.Vec2(156, 177), // origin
@@ -233,7 +239,7 @@ pub async fn SelectCharUI::new(
       // "origin": [156, 177],
     },
     @ms_animation.AnimationFrame::{
-      image: @asset.load_image("/assets/ui/login.img/char_select/light19.png"),
+      image: @resource.load_image("assets/ui/login.img/char_select/light19.png"),
       offset: @selene_math.Vec2(312, 0),
       size: @selene_math.Vec2(355, 312),
       pivot: @selene_math.Vec2(156, 177), // origin
@@ -246,12 +252,12 @@ pub async fn SelectCharUI::new(
     },
   ])
   let frame = @ms_animation.Animation::single_frame(
-    "/assets/ui/login.img/char_select/frame.png",
+    "assets/ui/login.img/char_select/frame.png",
     @selene_math.Vec2(800, 600),
     //   "origin": [400, 300]
   )
   let step2 = @ms_animation.Animation::single_frame(
-    "/assets/ui/login.img/char_select/select_character_btn.png",
+    "assets/ui/login.img/char_select/select_character_btn.png",
     @selene_math.Vec2(127, 45),
     //   "origin": [0, 0]
   )
@@ -404,7 +410,7 @@ fn spawn_character_name_entity(
 }
 
 ///|
-pub async fn load_char_look(
+pub fn load_char_look(
   entity : @entity.Entity,
   resource : @char_look.CharacterPresentationResource,
   character : SelectableCharacter,
@@ -417,7 +423,7 @@ pub async fn load_char_look(
 }
 
 ///|
-pub async fn to_selectable_character_ui(
+pub fn to_selectable_character_ui(
   entity : @entity.Entity,
   i : Int,
   character : SelectableCharacter,
@@ -496,7 +502,7 @@ fn reset_select_char_ui_runtime_state() -> Unit {
 }
 
 ///|
-async fn add_select_char_ui(
+fn add_select_char_ui(
   resource : CharacterPresentationResource,
   slots : Array[SelectableCharacter],
 ) -> SelectCharUI {
@@ -646,7 +652,12 @@ fn init {
 }
 
 ///|
+/// Register server message handlers used by the select-character UI.
+///
+/// The select-character runtime state is reset before registration so repeated
+/// test setups start from the same empty UI state.
 pub fn setup_game_server_handlers() -> Unit {
+  reset_select_char_ui_runtime_state()
   @game_server.add_server_message_handler(
     "select_char_list",
     CharacterListMessage::type_code(),

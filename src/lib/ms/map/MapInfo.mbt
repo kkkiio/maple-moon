@@ -11,7 +11,7 @@ struct NxSeat {
 }
 
 ///|
-pub impl @json.FromJson for NxSeat with from_json(json, path) -> NxSeat raise @json.JsonDecodeError {
+pub impl @json.FromJson for NxSeat with fn from_json(json, path) -> NxSeat raise @json.JsonDecodeError {
   match json {
     { "x": Number(x, ..), "y": Number(y, ..), .. } =>
       { x: x.to_int(), y: y.to_int() }
@@ -32,7 +32,7 @@ struct NxLadder {
 }
 
 ///|
-pub impl @json.FromJson for NxLadder with from_json(json, path) -> NxLadder raise @json.JsonDecodeError {
+pub impl @json.FromJson for NxLadder with fn from_json(json, path) -> NxLadder raise @json.JsonDecodeError {
   match json {
     {
       "x": Number(x, ..),

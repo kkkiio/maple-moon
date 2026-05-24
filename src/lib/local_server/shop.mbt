@@ -22,7 +22,7 @@ fn LocalServer::on_npc_shop_action(
   let msg : @server_proto.NpcShopActionMessage = @json.from_json(json)
   match msg.mode {
     0 =>
-      @io_service.execute_background(async fn() { self.on_npc_shop_buy(msg) }, on_error=fn(
+      @io_service.execute_background(fn() { self.on_npc_shop_buy(msg) }, on_error=fn(
         err,
       ) {
         @log.error("failed to handle npc shop buy", data={ "error": err })
@@ -42,7 +42,7 @@ fn LocalServer::send_shop_confirm(self : LocalServer, code : Int) -> Unit {
 }
 
 ///|
-async fn LocalServer::on_npc_shop_buy(
+fn LocalServer::on_npc_shop_buy(
   self : LocalServer,
   msg : @server_proto.NpcShopActionMessage,
 ) -> Unit {
@@ -178,7 +178,7 @@ fn LocalServer::on_npc_shop_recharge(
 }
 
 ///|
-async fn LocalServer::add_item_to_inventory(
+fn LocalServer::add_item_to_inventory(
   self : LocalServer,
   item_id : Int,
   quantity : Int,

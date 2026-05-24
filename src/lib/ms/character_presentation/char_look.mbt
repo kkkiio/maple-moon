@@ -289,7 +289,7 @@ fn apply_local_frame(
   )
   let flip_x = state.transform.a < 0.0
   let anchor = anchor_from_origin(origin, size, flip_x~)
-  let image = @selene_asset.load_image(texture.i)
+  let image = @resource.load_image(texture.i)
   match @sprite.sprites().get(entity) {
     Some(sprite) =>
       @sprite.sprites().set(entity, {
@@ -320,7 +320,7 @@ pub fn char_look_layer_system(world : @ecs.World) -> Unit {
 }
 
 ///|
-pub async fn CharLook::load(
+pub fn CharLook::load(
   entity : @entity.Entity,
   entry : LookEntry,
   body : FullBody,
@@ -328,17 +328,10 @@ pub async fn CharLook::load(
   face : Face,
   draw_info : @types.BodyDrawInfo,
 ) -> CharLook {
-  let async_ops = entry.equips
-    .iter()
-    .map(fn(it) {
-      let (slot_id, itemid) = it
-      async fn() {
-        let itemdata = @item.ItemData::load_item_data(itemid)
-        (slot_id, itemdata)
-      }
-    })
-    |> Array::from_iter()
-  let equips = @async.all(async_ops.view()) |> Map::from_array()
+  let equips : Map[Int, @item.ItemData] = Map([])
+  for slot_id, itemid in entry.equips {
+    equips.set(slot_id, @item.ItemData::load_item_data(itemid))
+  }
   CharLook::new(entity, equips, body, hair, face, draw_info)
 }
 
@@ -967,7 +960,7 @@ let attack_stances : FixedArray[FixedArray[StanceId]] = [
 ]
 
 ///|
-pub impl ToJson for CharLook with to_json(_) -> Json {
+pub impl ToJson for CharLook with fn to_json(_) -> Json {
   {} // TODO
 }
 

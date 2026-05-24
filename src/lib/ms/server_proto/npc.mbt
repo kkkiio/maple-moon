@@ -7,7 +7,7 @@ pub(all) struct TalkToNpcMessage {
 } derive(Debug, ToJson, FromJson)
 
 ///|
-pub impl ClientMessage for TalkToNpcMessage with type_code() {
+pub impl ClientMessage for TalkToNpcMessage with fn type_code() {
   ClientOpcode::TALK_TO_NPC.int_value()
 }
 
@@ -20,7 +20,7 @@ pub(all) struct NpcTalkMoreMessage {
 } derive(Debug, ToJson, FromJson)
 
 ///|
-pub impl ClientMessage for NpcTalkMoreMessage with type_code() {
+pub impl ClientMessage for NpcTalkMoreMessage with fn type_code() {
   ClientOpcode::NPC_TALK_MORE.int_value()
 }
 
@@ -36,7 +36,7 @@ pub(all) struct NpcSpawnMessage {
 } derive(Debug, ToJson, FromJson)
 
 ///|
-pub impl ServerMessage for NpcSpawnMessage with type_code() {
+pub impl ServerMessage for NpcSpawnMessage with fn type_code() {
   Opcode::SPAWN_NPC.int_value()
 }
 
@@ -53,6 +53,6 @@ pub(all) struct NpcSpawnControllerMessage {
 } derive(Debug, ToJson, FromJson)
 
 ///|
-pub impl ServerMessage for NpcSpawnControllerMessage with type_code() {
+pub impl ServerMessage for NpcSpawnControllerMessage with fn type_code() {
   Opcode::SPAWN_NPC_C.int_value()
 }

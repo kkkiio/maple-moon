@@ -158,7 +158,7 @@ pub fn StatId::hash(self : StatId) -> Int {
 }
 
 ///|
-pub impl Hash for StatId with hash_combine(self : StatId, hasher : Hasher) -> Unit {
+pub impl Hash for StatId with fn hash_combine(self : StatId, hasher : Hasher) -> Unit {
   hasher.combine(self.int_value())
 }
 

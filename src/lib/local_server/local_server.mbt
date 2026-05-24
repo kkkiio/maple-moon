@@ -256,7 +256,7 @@ fn default_character_entry() -> CharacterListEntry {
 }
 
 ///|
-async fn make_equipped_inventory_entry(
+fn make_equipped_inventory_entry(
   slot_id : @slot.Id,
   item_id : Int,
 ) -> InventoryItemEntry {
@@ -269,7 +269,7 @@ async fn make_equipped_inventory_entry(
 }
 
 ///|
-async fn LocalServer::apply_character_look_to_inventory(
+fn LocalServer::apply_character_look_to_inventory(
   self : LocalServer,
   look : LookEntry,
 ) -> Unit {
@@ -297,7 +297,7 @@ async fn LocalServer::apply_character_look_to_inventory(
 }
 
 ///|
-async fn LocalServer::init_character_storage(
+fn LocalServer::init_character_storage(
   self : LocalServer,
   entry : CharacterListEntry,
 ) -> Unit {
@@ -325,7 +325,7 @@ fn LocalServer::find_character_entry(
 
 ///|
 fn LocalServer::on_character_list_request(self : LocalServer) -> Unit {
-  @io_service.execute_background(async fn() {
+  @io_service.execute_background(fn() {
     if self.character_roster.is_empty() {
       ignore(self.load_character_roster())
     }
@@ -340,7 +340,7 @@ fn LocalServer::on_create_char(self : LocalServer, json : Json) -> Unit raise {
   let request : CreateCharRequest = @json.from_json(json)
   ignore(request.job)
   @io_service.execute_background(
-    async fn() {
+    fn() {
       if self.character_roster.is_empty() {
         let entry = default_character_entry()
         self.character_roster.push(entry)
@@ -475,7 +475,7 @@ fn LocalServer::spawn_drops_for_mob(
 fn LocalServer::on_pickup_item(self : LocalServer, json : Json) -> Unit raise {
   let msg : PickupItemMessage = @json.from_json(json)
   @io_service.execute_background(
-    async fn() {
+    fn() {
       guard self.drops.get(msg.oid) is Some(drop) else { return }
       if drop.meso {
         let gain = drop.item_id
@@ -738,7 +738,7 @@ fn LocalServer::on_unequip_item(
 }
 
 ///|
-async fn new_inventory_item_entry(
+fn new_inventory_item_entry(
   invtype : InventoryType,
   slot : Int,
   item_id : Int,
@@ -796,10 +796,7 @@ async fn new_inventory_item_entry(
 }
 
 ///|
-async fn LocalServer::apply_pickup_item(
-  self : LocalServer,
-  item_id : Int,
-) -> Bool {
+fn LocalServer::apply_pickup_item(self : LocalServer, item_id : Int) -> Bool {
   guard InventoryType::by_item_id(item_id) is Some(invtype) else {
     return false
   }
@@ -879,7 +876,7 @@ fn LocalServer::reset_player_inventory_state(self : LocalServer) -> Unit {
 ///|
 fn LocalServer::save_character_core_snapshot(self : LocalServer) -> Unit {
   @io_service.execute_background(
-    async fn() { self.save_character_core(self.current_character_id) },
+    fn() { self.save_character_core(self.current_character_id) },
     on_error=fn(err) {
       @log.error("failed to save character core snapshot", data={ "error": err })
     },
@@ -889,7 +886,7 @@ fn LocalServer::save_character_core_snapshot(self : LocalServer) -> Unit {
 ///|
 fn LocalServer::save_character_inventory_snapshot(self : LocalServer) -> Unit {
   @io_service.execute_background(
-    async fn() { self.save_character_inventory(self.current_character_id) },
+    fn() { self.save_character_inventory(self.current_character_id) },
     on_error=fn(err) {
       @log.error("failed to save character inventory snapshot", data={
         "error": err,
@@ -901,7 +898,7 @@ fn LocalServer::save_character_inventory_snapshot(self : LocalServer) -> Unit {
 ///|
 fn LocalServer::save_character_quest_snapshot(self : LocalServer) -> Unit {
   @io_service.execute_background(
-    async fn() {
+    fn() {
       let revision = self.bump_character_revision()
       self.save_character_quest_data(self.current_character_id, revision)
       self.save_character_meta(self.current_character_id, revision, "quest")
@@ -943,7 +940,7 @@ fn LocalServer::spawn_mobs_for_map(self : LocalServer, map_id : Int) -> Unit {
   self.pending_npc_spawns.clear()
   self.active_shop = None
   self.npc_id_by_oid.clear()
-  @io_service.execute_background(async fn() {
+  @io_service.execute_background(fn() {
     guard load_tiled_map_by_map_id(map_id) is Some(map) else { return }
     let life_layer = require_life_layer(map)
     for entity in life_layer.objects {
@@ -972,7 +969,7 @@ fn LocalServer::spawn_mobs_for_map(self : LocalServer, map_id : Int) -> Unit {
           let mob_loader = @resource.require_async_loader("mob")
           let mob_strid = @utils.stoi_left_pad0(monster_id, 7)
           let mob_path = ["\{mob_strid}.img"]
-          let mob_node = mob_loader.load_resource(mob_path)
+          let mob_node = mob_loader.require_resource(mob_path)
           guard mob_node is { "info": { "maxHP": Number(max_hp, ..), .. }, .. } else {
             continue
           }
@@ -1103,16 +1100,14 @@ pub fn server_system(server : LocalServer) -> Unit {
 fn LocalServer::load_drop_databases(self : LocalServer) -> Unit {
   let tsv_loader = @resource.get_csv_loader()
   // 加载怪物特定掉落
-  @io_service.execute_background(async fn() {
-    let text : String = tsv_loader.load_text("/assets/data/mob_drops.tsv")
+  @io_service.execute_background(fn() {
+    let text : String = tsv_loader.load_text("assets/data/mob_drops.tsv")
     self.drop_db = Some(MobDropDatabase::from_tsv(text))
     @log.info("Loaded mob_drops.tsv", data={})
   })
   // 加载全局掉落
-  @io_service.execute_background(async fn() {
-    let text : String = tsv_loader.load_text(
-      "/assets/data/drop_data_global.tsv",
-    )
+  @io_service.execute_background(fn() {
+    let text : String = tsv_loader.load_text("assets/data/drop_data_global.tsv")
     self.global_drop_db = Some(MobDropDatabase::from_tsv(text))
     @log.info("Loaded drop_data_global.tsv", data={})
   })

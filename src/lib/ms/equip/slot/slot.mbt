@@ -35,7 +35,7 @@ pub(all) enum Id {
 } derive(Eq, Debug)
 
 ///|
-pub impl ToJson for Id with to_json(self) -> Json {
+pub impl ToJson for Id with fn to_json(self) -> Json {
   self.to_repr().to_string().to_json()
 }
 
@@ -78,7 +78,7 @@ pub fn Id::int_value(self : Id) -> Int {
 }
 
 ///|
-pub impl Hash for Id with hash_combine(self : Id, hasher : Hasher) -> Unit {
+pub impl Hash for Id with fn hash_combine(self : Id, hasher : Hasher) -> Unit {
   hasher.combine(self.int_value())
 }
 

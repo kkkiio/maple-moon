@@ -1,6 +1,6 @@
 ///|
 trait SkillAction {
-  apply(Self, @character.Character, @combat_proto.AttackType) -> Unit
+  fn apply(Self, @character.Character, @combat_proto.AttackType) -> Unit
 }
 
 ///|
@@ -12,7 +12,7 @@ fn NoAction::new() -> NoAction {
 }
 
 ///|
-pub impl SkillAction for NoAction with apply(
+pub impl SkillAction for NoAction with fn apply(
   _ : NoAction,
   _ : @character.Character,
   _ : @combat_proto.AttackType,
@@ -35,7 +35,7 @@ fn SingleAction::new(src : Json) -> SingleAction {
 }
 
 ///|
-pub impl SkillAction for SingleAction with apply(
+pub impl SkillAction for SingleAction with fn apply(
   self : SingleAction,
   target : @character.Character,
   _ : @combat_proto.AttackType,
@@ -59,7 +59,7 @@ fn TwoHandedAction::new(src : Json) -> TwoHandedAction {
 }
 
 ///|
-pub impl SkillAction for TwoHandedAction with apply(self, target, _) {
+pub impl SkillAction for TwoHandedAction with fn apply(self, target, _) {
   let twohanded = target.is_two_handed()
   let action = self.actions[twohanded]
   target.attack_by_action(action)
@@ -72,12 +72,15 @@ struct ByLevelAction {
 }
 
 ///|
-fn ByLevelAction::new(src : Json, id : Int) -> ByLevelAction raise {
+fn ByLevelAction::new(src : Json, id : Int) -> ByLevelAction {
   let actions = Map([])
   if src is { "level": Object(levels), .. } {
     for level, sub in levels {
       if sub is { "action": String(action), .. } {
-        actions.set(@string.parse_int(level), action)
+        let parsed_level = @string.parse_int(level) catch {
+          _ => abort("invalid skill action level: \{level}")
+        }
+        actions.set(parsed_level, action)
       }
     }
   }
@@ -85,7 +88,7 @@ fn ByLevelAction::new(src : Json, id : Int) -> ByLevelAction raise {
 }
 
 ///|
-pub impl SkillAction for ByLevelAction with apply(
+pub impl SkillAction for ByLevelAction with fn apply(
   self : ByLevelAction,
   target : @character.Character,
   _ : @combat_proto.AttackType,
@@ -101,6 +104,6 @@ pub impl SkillAction for ByLevelAction with apply(
 struct FuncSkillAction((@character.Character, @combat_proto.AttackType) -> Unit)
 
 ///|
-pub impl SkillAction for FuncSkillAction with apply(self, c, t) {
+pub impl SkillAction for FuncSkillAction with fn apply(self, c, t) {
   (self.0)(c, t)
 }

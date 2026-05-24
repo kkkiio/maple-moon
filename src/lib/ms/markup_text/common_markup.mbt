@@ -83,20 +83,20 @@ pub(all) suberror ResolveReferenceError {
 } derive(Debug)
 
 ///|
-pub async fn preload_reference_data() -> Unit {
+pub fn preload_reference_data() -> Unit {
   if reference_data_ref.val is Some(_) {
     return
   }
   let loader = @resource.require_async_loader("string")
   reference_data_ref.val = Some({
-    npc_img: loader.load_resource(["Npc.img"]),
-    mob_img: loader.load_resource(["Mob.img"]),
-    map_img: loader.load_resource(["Map.img"]),
-    eqp_img: loader.load_resource(["Eqp.img"]),
-    consume_img: loader.load_resource(["Consume.img"]),
-    ins_img: loader.load_resource(["Ins.img"]),
-    etc_img: loader.load_resource(["Etc.img"]),
-    cash_img: loader.load_resource(["Cash.img"]),
+    npc_img: loader.require_resource(["Npc.img"]),
+    mob_img: loader.require_resource(["Mob.img"]),
+    map_img: loader.require_resource(["Map.img"]),
+    eqp_img: loader.require_resource(["Eqp.img"]),
+    consume_img: loader.require_resource(["Consume.img"]),
+    ins_img: loader.require_resource(["Ins.img"]),
+    etc_img: loader.require_resource(["Etc.img"]),
+    cash_img: loader.require_resource(["Cash.img"]),
   })
 }
 

@@ -1,7 +1,7 @@
 ///|
-fn sanitize_skill_animation_tag_part(part : String) -> String raise {
+fn sanitize_skill_animation_tag_part(part : String) -> String {
   if part == "" {
-    fail("empty skill animation tag path segment")
+    abort("empty skill animation tag path segment")
   }
   part
   .replace(old="/", new="_")
@@ -10,9 +10,9 @@ fn sanitize_skill_animation_tag_part(part : String) -> String raise {
 }
 
 ///|
-fn skill_animation_tag(parts : Array[String]) -> String raise {
+fn skill_animation_tag(parts : Array[String]) -> String {
   if parts.is_empty() {
-    fail("empty skill animation tag path")
+    abort("empty skill animation tag path")
   }
   let out : Array[String] = []
   for part in parts {

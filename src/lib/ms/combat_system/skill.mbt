@@ -17,11 +17,11 @@ struct Skill {
 }
 
 ///|
-pub async fn Skill::load(skill_id : Int) -> Skill {
+pub fn Skill::load(skill_id : Int) -> Skill {
   let data = @skill.SkillData::load(skill_id)
   let strid = @utils.stoi_left_pad0(skill_id, 7)
   let jobid = strid.view(end_offset=3)
-  let skill_base_path = "/assets/Skill/\{jobid}.img.json"
+  let skill_base_path = "assets/Skill/\{jobid}.img.json"
   let skill_loader = @resource.require_async_loader("skill")
   Skill::new(
     skill_id,
@@ -37,7 +37,7 @@ pub async fn Skill::load(skill_id : Int) -> Skill {
 }
 
 ///|
-pub async fn Skill::new(
+pub fn Skill::new(
   skill_id : Int,
   src : Json,
   skill_loader : @resource.AsyncLoader,
@@ -125,7 +125,9 @@ pub async fn Skill::new(
       if k.has_suffix(".img") {
         continue
       }
-      let resource : @char_look.NxAfterImage = @json.from_json(v)
+      let resource : @char_look.NxAfterImage = @json.from_json(v) catch {
+        _ => abort("invalid skill afterimage resource: \{k}")
+      }
       after_image.set(k, resource)
     }
   }
@@ -348,12 +350,12 @@ pub fn Skill::apply_hit_sfx(
 pub struct UseEffect((@character.Character) -> Unit)
 
 ///|
-pub async fn make_use_effect(
+pub fn make_use_effect(
   src : Json,
   skill_id : Int,
   skill_loader : @resource.AsyncLoader,
   skill_base_path : String,
-) -> UseEffect raise Error {
+) -> UseEffect {
   let by_level_effect = json_has_children(
     skill_get_path(src, ["CharLevel", "10", "effect"]),
   )
@@ -388,7 +390,7 @@ struct NxSkill {
 }
 
 ///|
-pub impl @json.FromJson for NxSkill with from_json(json, path) {
+pub impl @json.FromJson for NxSkill with fn from_json(json, path) {
   let hit = match json {
     { "hit": hit, .. } =>
       @resource.parse_map_based_array(hit, path=path.add_key("hit"))
@@ -398,7 +400,7 @@ pub impl @json.FromJson for NxSkill with from_json(json, path) {
 }
 
 ///|
-pub async fn make_hit_effect(
+pub fn make_hit_effect(
   src : Json,
   skill_loader : @resource.AsyncLoader,
   skill_base_path : String,
@@ -409,7 +411,9 @@ pub async fn make_hit_effect(
   let by_skill_level_hit = json_has_children(
     skill_get_path(src, ["level", "1", "hit"]),
   )
-  let res : NxSkill = @json.from_json(src)
+  let res : NxSkill = @json.from_json(src) catch {
+    _ => abort("invalid skill hit effect resource")
+  }
   let has_hit0 = res.hit.get(0) is Some(_)
   let has_hit1 = res.hit.get(1) is Some(_)
   if by_level_hit {

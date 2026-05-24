@@ -8,7 +8,7 @@ import {
 // Values
 pub fn build_drop_row_map(String) -> Map[Int, Array[NxMobDropRow]]
 
-pub async fn load_drop_row_map(@resource.CsvLoader, String) -> Map[Int, Array[NxMobDropRow]]
+pub fn load_drop_row_map(@resource.CsvLoader, String) -> Map[Int, Array[NxMobDropRow]]
 
 pub fn parse_drop_rows(String) -> Array[NxMobDropRow]
 

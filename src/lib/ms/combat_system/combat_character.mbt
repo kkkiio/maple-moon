@@ -12,17 +12,17 @@ using @legacy_types {trait Inventory, trait SkillBook}
 
 ///|
 pub(open) trait DamagableCharacter {
-  is_invincible(Self) -> Bool
-  get_phobj(Self) -> @physics.PhysicsObject
-  damage(Self, MobAttack) -> MobAttackResult
+  fn is_invincible(Self) -> Bool
+  fn get_phobj(Self) -> @physics.PhysicsObject
+  fn damage(Self, MobAttack) -> MobAttackResult
 }
 
 ///|
 pub(open) trait CombatCharacter {
-  get_character(Self) -> Character
-  get_stats(Self) -> CharStats
-  get_inventory(Self) -> &Inventory
-  get_skill_book(Self) -> &SkillBook
-  can_attack(Self) -> Bool
-  rush(Self, Double) -> Unit
+  fn get_character(Self) -> Character
+  fn get_stats(Self) -> CharStats
+  fn get_inventory(Self) -> &Inventory
+  fn get_skill_book(Self) -> &SkillBook
+  fn can_attack(Self) -> Bool
+  fn rush(Self, Double) -> Unit
 }

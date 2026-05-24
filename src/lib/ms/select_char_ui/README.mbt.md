@@ -4,7 +4,7 @@
 
 职责：
 
-- 在 `GamePhase::SelectCharacter` 时异步加载并创建选人 UI
+- 在 `GamePhase::SelectCharacter` 时加载并创建选人 UI
 - 显示背景、角色立绘和角色名字
 - 处理 Select 按钮点击并发送 `SelectCharMessage`
 - 监听 `SET_FIELD`，销毁 UI 并推进到游戏内场景

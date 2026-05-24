@@ -52,7 +52,7 @@ pub fn nx_texture_to_picture_spec(
     size: @math.Vec2(texture.w.to_double(), texture.h.to_double()),
   }
   {
-    image: @asset.load_image(texture.i),
+    image: @resource.load_image(texture.i),
     rect,
     size: resolved_size,
     origin: @math.Vec2(
@@ -83,7 +83,7 @@ pub fn Animation::single_frame(
   duration? : Double = 1.0,
 ) -> Animation {
   Animation::new([
-    { image: @asset.load_image(path), size, offset, pivot, duration },
+    { image: @resource.load_image(path), size, offset, pivot, duration },
   ])
 }
 
@@ -122,7 +122,7 @@ pub fn from_nx_animation(src : NxAnimation, loop_? : Bool = false) -> Animation 
       None => 100
     }
     frames.push({
-      image: @asset.load_image(texture.i),
+      image: @resource.load_image(texture.i),
       size: @math.Vec2(texture.w.to_double(), texture.h.to_double()),
       offset: @math.Vec2(
         texture.offset.x.to_double(),

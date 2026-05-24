@@ -4,6 +4,6 @@ pub(all) struct SpendAPMessage {
 } derive(Debug, ToJson, FromJson)
 
 ///|
-pub impl ClientMessage for SpendAPMessage with type_code() {
+pub impl ClientMessage for SpendAPMessage with fn type_code() {
   ClientOpcode::SPEND_AP.int_value()
 }

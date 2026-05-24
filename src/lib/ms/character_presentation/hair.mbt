@@ -31,7 +31,7 @@ struct Hair {
 }
 
 ///|
-pub impl ToJson for Hair with to_json(self) -> Json {
+pub impl ToJson for Hair with fn to_json(self) -> Json {
   { "name": self.name.to_json(), "color": self.color.to_json() }
 }
 
@@ -47,14 +47,16 @@ pub let layers_by_name : @immut/sorted_map.SortedMap[String, HairLayer] = @immut
 )
 
 ///|
-pub async fn Hair::load(hairid : Int, drawinfo : @types.BodyDrawInfo) -> Hair {
+pub fn Hair::load(hairid : Int, drawinfo : @types.BodyDrawInfo) -> Hair {
   let strid = "000" + hairid.to_string()
-  let hairnode = @resource.require_async_loader("hair").load_resource([
+  let hairnode = @resource.require_async_loader("hair").require_resource([
     "\{strid}.img",
   ])
   let hairnode : NxStanceLooks[@types.NxMultiPartFrame] = @json.from_json(
     hairnode,
-  )
+  ) catch {
+    err => abort("failed to decode hair: \{hairid}, error=\{err}")
+  }
   Hair::parse(hairid, hairnode, drawinfo)
 }
 

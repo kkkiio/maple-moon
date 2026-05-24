@@ -15,7 +15,7 @@ pub(all) struct NxFootholdTree(Map[Int, Map[Int, Map[Int, NxFoothold]]]) // laye
 
 ///|
 /// Decode foothold tree from JSON object.
-pub impl @json.FromJson for NxFootholdTree with from_json(json, path) -> NxFootholdTree raise @json.JsonDecodeError {
+pub impl @json.FromJson for NxFootholdTree with fn from_json(json, path) -> NxFootholdTree raise @json.JsonDecodeError {
   let wrapper : @resource.IntMap[@resource.IntMap[@resource.IntMap[NxFoothold]]] = @resource.IntMap::from_json(
     json, path,
   )

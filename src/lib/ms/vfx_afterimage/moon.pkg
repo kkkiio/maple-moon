@@ -18,7 +18,7 @@ import {
   "Milky2018/selene/ecs",
   "Milky2018/selene/time",
   "Milky2018/selene/visibility",
-  "moonbitlang/x/fs" @fs,
+  "moonbitlang/x/fs",
   "KKKIIO/maple-moon/lib/ms/character_body" @cb,
-  "KKKIIO/maple-moon/lib/ms/char_stance" @char_stance,
+  "KKKIIO/maple-moon/lib/ms/char_stance",
 } for "test"

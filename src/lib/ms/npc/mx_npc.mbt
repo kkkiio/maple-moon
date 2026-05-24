@@ -19,7 +19,7 @@ pub struct MxNpcInfo {
 }
 
 ///|
-pub impl @json.FromJson for MxNpcInfo with from_json(json, path) -> MxNpcInfo raise @json.JsonDecodeError {
+pub impl @json.FromJson for MxNpcInfo with fn from_json(json, path) -> MxNpcInfo raise @json.JsonDecodeError {
   guard json is Object(info_obj) else {
     raise @json.JsonDecodeError((path, "MxNpcInfo must be an object"))
   }
@@ -50,7 +50,7 @@ pub impl @json.FromJson for MxNpcInfo with from_json(json, path) -> MxNpcInfo ra
 }
 
 ///|
-pub impl @json.FromJson for MxNpc with from_json(json, path) -> MxNpc raise @json.JsonDecodeError {
+pub impl @json.FromJson for MxNpc with fn from_json(json, path) -> MxNpc raise @json.JsonDecodeError {
   guard json is Object(root) else {
     raise @json.JsonDecodeError((path, "MxNpc must be an object"))
   }

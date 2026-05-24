@@ -15,12 +15,12 @@ using @legacy_types {trait Inventory, trait SkillBook}
 priv struct CachedMaxLevelSkillBook {}
 
 ///|
-impl SkillBook for CachedMaxLevelSkillBook with get_level(_, skill_id) {
+impl SkillBook for CachedMaxLevelSkillBook with fn get_level(_, skill_id) {
   @skill.get_skill_max_level(skill_id)
 }
 
 ///|
-impl SkillBook for CachedMaxLevelSkillBook with set_skill(_, _, _, _, _) {
+impl SkillBook for CachedMaxLevelSkillBook with fn set_skill(_, _, _, _, _) {
 
 }
 
@@ -46,52 +46,52 @@ pub(all) struct Player {
 }
 
 ///|
-pub impl CombatCharacter for Player with get_character(self) {
+pub impl CombatCharacter for Player with fn get_character(self) {
   self.character
 }
 
 ///|
-pub impl CombatCharacter for Player with get_stats(self) {
+pub impl CombatCharacter for Player with fn get_stats(self) {
   self.get_stats()
 }
 
 ///|
-pub impl CombatCharacter for Player with get_inventory(self) {
+pub impl CombatCharacter for Player with fn get_inventory(self) {
   self.inventory
 }
 
 ///|
-pub impl CombatCharacter for Player with get_skill_book(self) {
+pub impl CombatCharacter for Player with fn get_skill_book(self) {
   self.skill_book
 }
 
 ///|
-pub impl CombatCharacter for Player with can_attack(self) {
+pub impl CombatCharacter for Player with fn can_attack(self) {
   self.can_attack()
 }
 
 ///|
-pub impl CombatCharacter for Player with rush(self, targetx) {
+pub impl CombatCharacter for Player with fn rush(self, targetx) {
   self.rush(targetx)
 }
 
 ///|
-pub impl DamagableCharacter for Player with is_invincible(self) {
+pub impl DamagableCharacter for Player with fn is_invincible(self) {
   self.is_invincible()
 }
 
 ///|
-pub impl DamagableCharacter for Player with get_phobj(self) {
+pub impl DamagableCharacter for Player with fn get_phobj(self) {
   self.character.get_phobj()
 }
 
 ///|
-pub impl DamagableCharacter for Player with damage(self, attack) {
+pub impl DamagableCharacter for Player with fn damage(self, attack) {
   self.damage(attack)
 }
 
 ///|
-pub async fn Player::load(
+pub fn Player::load(
   entity : @entity.Entity,
   entry : @character.CharEntry,
   inventory : &Inventory,

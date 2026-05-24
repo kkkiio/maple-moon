@@ -4,7 +4,7 @@ priv struct Ball {
 }
 
 ///|
-async fn load_ball_animation(
+fn load_ball_animation(
   src : Json,
   tag : String,
   skill_loader : @resource.AsyncLoader,
@@ -12,17 +12,19 @@ async fn load_ball_animation(
 ) -> @ms_animation.Animation {
   let ref_path = match src {
     { "mx_animation": String(path), .. } => path
-    _ => fail("missing mx_animation in skill ball")
+    _ => abort("missing mx_animation in skill ball")
   }
   let resolved = @resource.resolve_ref(base_path, ref_path)
   let animation_loader = @resource.AnimationLoader::new(skill_loader)
   let loaded = animation_loader.load(resolved)
-  let clip = loaded.clip(tag)
+  let clip = loaded.clip(tag) catch {
+    _ => abort("missing skill ball animation tag '\{tag}': \{resolved}")
+  }
   @ms_animation.from_selene_clip(clip, loop_=true)
 }
 
 ///|
-async fn Ball::new(
+fn Ball::new(
   src : Json,
   tag : String,
   skill_loader : @resource.AsyncLoader,
@@ -56,7 +58,7 @@ priv struct SingleBullet {
 }
 
 ///|
-async fn SingleBullet::new(
+fn SingleBullet::new(
   src : Json,
   skill_loader : @resource.AsyncLoader,
   base_path : String,
@@ -64,7 +66,7 @@ async fn SingleBullet::new(
   let ball = match src {
     { "ball": ball, .. } =>
       Ball::new(ball, skill_animation_tag(["ball"]), skill_loader, base_path)
-    _ => fail("missing skill ball")
+    _ => abort("missing skill ball")
   }
   { ball, }
 }
@@ -85,7 +87,7 @@ priv struct BySkillLevelBullet {
 }
 
 ///|
-async fn BySkillLevelBullet::new(
+fn BySkillLevelBullet::new(
   src : Json,
   id : Int,
   skill_loader : @resource.AsyncLoader,
@@ -95,8 +97,11 @@ async fn BySkillLevelBullet::new(
   if src is { "level": Object(levels), .. } {
     for level, sub in levels {
       if sub is { "ball": ball, .. } {
+        let parsed_level = @string.parse_int(level) catch {
+          _ => abort("invalid skill ball level: \{level}")
+        }
         bullets.set(
-          @string.parse_int(level),
+          parsed_level,
           Ball::new(
             ball,
             skill_animation_tag(["level", level, "ball"]),

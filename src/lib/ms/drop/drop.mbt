@@ -1,11 +1,11 @@
 ///|
 trait Drop {
-  get_oid(Self) -> Int
-  update(Self, @physics.Physics) -> Int
-  destroy(Self) -> Unit
-  get_position(Self) -> @struct.Point[Int]
-  get_bounds(Self) -> @struct.Rectangle[Int]
-  expire(Self, Int, @physics.PhysicsObject?) -> Unit
+  fn get_oid(Self) -> Int
+  fn update(Self, @physics.Physics) -> Int
+  fn destroy(Self) -> Unit
+  fn get_position(Self) -> @struct.Point[Int]
+  fn get_bounds(Self) -> @struct.Rectangle[Int]
+  fn expire(Self, Int, @physics.PhysicsObject?) -> Unit
 }
 
 ///|
@@ -193,12 +193,12 @@ pub fn MesoDrop::new(
 // }
 
 ///|
-pub impl Drop for MesoDrop with get_oid(self : MesoDrop) -> Int {
+pub impl Drop for MesoDrop with fn get_oid(self : MesoDrop) -> Int {
   self.base.oid
 }
 
 ///|
-pub impl Drop for MesoDrop with update(
+pub impl Drop for MesoDrop with fn update(
   self : MesoDrop,
   physics : @physics.Physics,
 ) -> Int {
@@ -233,27 +233,27 @@ pub impl Drop for MesoDrop with update(
 }
 
 ///|
-pub impl Drop for MesoDrop with destroy(self : MesoDrop) -> Unit {
+pub impl Drop for MesoDrop with fn destroy(self : MesoDrop) -> Unit {
   @sprite.sprites().remove(self.base.entity)
   self.base.entity.destroy()
 }
 
 ///|
-pub impl Drop for MesoDrop with get_position(self : MesoDrop) -> @struct.Point[
+pub impl Drop for MesoDrop with fn get_position(self : MesoDrop) -> @struct.Point[
   Int,
 ] {
   self.base.phobj.get_position()
 }
 
 ///|
-pub impl Drop for MesoDrop with get_bounds(self : MesoDrop) -> @struct.Rectangle[
+pub impl Drop for MesoDrop with fn get_bounds(self : MesoDrop) -> @struct.Rectangle[
   Int,
 ] {
   self.base.bounds()
 }
 
 ///|
-pub impl Drop for MesoDrop with expire(
+pub impl Drop for MesoDrop with fn expire(
   self : MesoDrop,
   t : Int,
   lt : @physics.PhysicsObject?,
@@ -306,12 +306,12 @@ pub fn ItemDrop::new(
 // }
 
 ///|
-pub impl Drop for ItemDrop with get_oid(self : ItemDrop) -> Int {
+pub impl Drop for ItemDrop with fn get_oid(self : ItemDrop) -> Int {
   self.base.oid
 }
 
 ///|
-pub impl Drop for ItemDrop with update(
+pub impl Drop for ItemDrop with fn update(
   self : ItemDrop,
   physics : @physics.Physics,
 ) -> Int {
@@ -342,27 +342,27 @@ pub impl Drop for ItemDrop with update(
 ///|
 
 ///|
-pub impl Drop for ItemDrop with destroy(self : ItemDrop) -> Unit {
+pub impl Drop for ItemDrop with fn destroy(self : ItemDrop) -> Unit {
   @sprite.sprites().remove(self.base.entity)
   self.base.entity.destroy()
 }
 
 ///|
-pub impl Drop for ItemDrop with get_position(self : ItemDrop) -> @struct.Point[
+pub impl Drop for ItemDrop with fn get_position(self : ItemDrop) -> @struct.Point[
   Int,
 ] {
   self.base.phobj.get_position()
 }
 
 ///|
-pub impl Drop for ItemDrop with get_bounds(self : ItemDrop) -> @struct.Rectangle[
+pub impl Drop for ItemDrop with fn get_bounds(self : ItemDrop) -> @struct.Rectangle[
   Int,
 ] {
   self.base.bounds()
 }
 
 ///|
-pub impl Drop for ItemDrop with expire(
+pub impl Drop for ItemDrop with fn expire(
   self : ItemDrop,
   t : Int,
   lt : @physics.PhysicsObject?,

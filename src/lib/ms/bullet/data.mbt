@@ -6,15 +6,17 @@ pub(all) struct BulletData {
 }
 
 ///|
-pub async fn BulletData::load(strid : String) -> BulletData {
-  guard strid.length() == 8 else { fail("Invalid bullet id: \{strid}") }
+pub fn BulletData::load(strid : String) -> BulletData {
+  guard strid.length() == 8 else { abort("Invalid bullet id: \{strid}") }
   let prefix = strid[:4]
-  let src = @resource.require_async_loader("item").load_resource([
+  let src = @resource.require_async_loader("item").require_resource([
     "Consume",
     prefix.to_owned() + ".img",
     strid,
   ])
-  let id = strid.trim_start(chars="0") |> @string.parse_int
+  let id = (strid.trim_start(chars="0") |> @string.parse_int) catch {
+    _ => abort("Invalid bullet id: \{strid}")
+  }
   let item_data = @item.ItemData::load(
     id,
     @resource.require_async_loader("character"),
@@ -32,23 +34,27 @@ fn read_mx_animation_ref(src : Json) -> String raise {
 }
 
 ///|
-async fn load_bullet_native_animation(
+fn load_bullet_native_animation(
   item_loader : @resource.AsyncLoader,
   strid : String,
   bullet_src : Json,
 ) -> @ms_animation.Animation {
   let prefix = strid[:4]
-  let base_path = "/assets/Item/Consume/\{prefix}.img.json"
-  let ref_path = read_mx_animation_ref(bullet_src)
+  let base_path = "assets/Item/Consume/\{prefix}.img.json"
+  let ref_path = read_mx_animation_ref(bullet_src) catch {
+    _ => abort("missing mx_animation in bullet node: \{strid}")
+  }
   let resolved = @resource.resolve_ref(base_path, ref_path)
   let animation_loader = @resource.AnimationLoader::new(item_loader)
   let loaded = animation_loader.load(resolved)
-  let clip = loaded.clip("main")
+  let clip = loaded.clip("main") catch {
+    _ => abort("missing main clip in bullet animation: \{strid}")
+  }
   @ms_animation.from_selene_clip(clip, loop_=true)
 }
 
 ///|
-async fn BulletData::new(
+fn BulletData::new(
   src : Json,
   item_data : @item.ItemData,
   strid : String,
@@ -63,6 +69,6 @@ async fn BulletData::new(
       let bullet = load_bullet_native_animation(item_loader, strid, bullet_src)
       { item_data, bullet, watk }
     }
-    _ => fail("Invalid bullet data")
+    _ => abort("Invalid bullet data")
   }
 }

@@ -16,7 +16,7 @@ pub fn check_attack_type(@character.Character, &@legacy_types.Inventory, Bool) -
 
 pub fn get_skill_move(Int) -> @combat_system.CombatAction?
 
-pub async fn load_skill_move(Int) -> @combat_system.CombatAction
+pub fn load_skill_move(Int) -> @combat_system.CombatAction
 
 pub let move_map : Map[Int, @combat_system.CombatAction]
 

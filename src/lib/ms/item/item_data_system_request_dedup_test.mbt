@@ -61,36 +61,40 @@ fn MockStringLoader::new() -> MockStringLoader {
 }
 
 ///|
-impl @resource.AsyncResourceLoader for CountingItemBundleLoader with load_data(
+impl @resource.AsyncResourceLoader for CountingItemBundleLoader with fn load_data(
   self,
   path,
-) -> Json {
+) -> Json? {
   let key = path.to_owned()
   self.increment(key)
-  match key {
-    "Consume/0299.img" => mock_consume_0299_bundle_json()
-    _ => fail("unexpected item bundle path: \{key}")
-  }
+  Some(
+    match key {
+      "Consume/0299.img" => mock_consume_0299_bundle_json()
+      _ => abort("unexpected item bundle path: \{key}")
+    },
+  )
 }
 
 ///|
-impl @resource.AsyncResourceLoader for MockStringLoader with load_data(
+impl @resource.AsyncResourceLoader for MockStringLoader with fn load_data(
   self,
   path,
-) -> Json {
+) -> Json? {
   ignore(self)
-  match path.to_owned() {
-    "Consume.img" =>
-      {
-        "29999998": { "name": "mock item 1", "desc": "mock desc 1" },
-        "29999999": { "name": "mock item 2", "desc": "mock desc 2" },
-      }
-    _ => null
-  }
+  Some(
+    match path.to_owned() {
+      "Consume.img" =>
+        {
+          "29999998": { "name": "mock item 1", "desc": "mock desc 1" },
+          "29999999": { "name": "mock item 2", "desc": "mock desc 2" },
+        }
+      _ => null
+    },
+  )
 }
 
 ///|
-async test "item data loader should not request same bundle json twice" {
+test "item data loader should not request same bundle json twice" {
   let counting_loader = CountingItemBundleLoader::new()
   let async_loader = @resource.AsyncLoader::new("item", loader=counting_loader)
   @resource.register_async_loader("character", async_loader)

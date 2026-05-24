@@ -27,7 +27,7 @@ pub(all) enum ExpressionId {
 } derive(Eq, Compare, Hash)
 
 ///|
-pub impl Default for ExpressionId with default() -> ExpressionId {
+pub impl Default for ExpressionId with fn default() -> ExpressionId {
   ExpressionId::DEFAULT
 }
 
@@ -61,7 +61,7 @@ pub let expression_names : @immut/sorted_map.SortedMap[ExpressionId, String] = @
 )
 
 ///|
-pub impl ToJson for ExpressionId with to_json(self) {
+pub impl ToJson for ExpressionId with fn to_json(self) {
   expression_names.get(self).unwrap().to_json()
 }
 
@@ -87,7 +87,7 @@ struct Face {
 } derive(Default)
 
 ///|
-pub impl ToJson for Face with to_json(self) -> Json {
+pub impl ToJson for Face with fn to_json(self) -> Json {
   { "name": self.name.to_json() }
 }
 
@@ -116,12 +116,14 @@ pub fn FaceFrame::from_resource(src : Json) -> FaceFrame raise {
 }
 
 ///|
-pub async fn Face::load(faceid : Int) -> Face {
+pub fn Face::load(faceid : Int) -> Face {
   let strid = "000" + faceid.to_string()
-  let facenode = @resource.require_async_loader("face").load_resource([
+  let facenode = @resource.require_async_loader("face").require_resource([
     "\{strid}.img",
   ])
-  Face::new(faceid, facenode)
+  Face::new(faceid, facenode) catch {
+    err => abort("failed to load face: \{faceid}, error=\{err}")
+  }
 }
 
 ///|

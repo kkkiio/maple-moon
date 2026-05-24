@@ -41,9 +41,9 @@ pub fn MiniMapUI::set_map(Self, Int, String, String, @map.MiniMapRuntimeResource
 
 pub struct MiniMapUIResource {
   portal_marker : @resource.NxTexture
-  frame_slice : @ui.UiSliceResource
+  min_map : NxMiniMapFrames
 }
-pub async fn MiniMapUIResource::load() -> Self
+pub fn MiniMapUIResource::load() -> Self
 
 type NxMapHelperMiniMap
 pub impl @json.FromJson for NxMapHelperMiniMap

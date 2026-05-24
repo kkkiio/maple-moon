@@ -64,7 +64,7 @@ pub fn ItemDataSystem::request(self : ItemDataSystem, id : Int) -> Unit {
   let item_loader = self.item_loader
   self.pending_item_loads.val.set(
     id,
-    @io_service.submit_background_task(async fn() {
+    @io_service.submit_background_task(fn() {
       ItemData::load_item_data_with_loader(id, item_loader)
     }),
   )

@@ -14,7 +14,7 @@ pub(all) struct NxStanceBodyAction {
 }
 
 ///|
-pub impl @json.FromJson for NxStanceBodyAction with from_json(value, path) {
+pub impl @json.FromJson for NxStanceBodyAction with fn from_json(value, path) {
   match value {
     { "action": Json::String(ststr), "frame": Json::Number(frame, ..), .. } => {
       let sgndelay = match value {
@@ -354,7 +354,7 @@ pub enum NxStanceBody {
 }
 
 ///|
-pub impl @json.FromJson for NxStanceBody with from_json(json, path) {
+pub impl @json.FromJson for NxStanceBody with fn from_json(json, path) {
   match json {
     { "action": Json::String(_), .. } => Action(@json.from_json(json, path~))
     _ => MultiPartFrame(@json.from_json(json, path~))
@@ -370,7 +370,7 @@ pub(all) struct NxMultiPartFrame {
 }
 
 ///|
-pub impl @json.FromJson for NxMultiPartFrame with from_json(json, path) {
+pub impl @json.FromJson for NxMultiPartFrame with fn from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expect object"))
   }
@@ -399,7 +399,7 @@ pub(all) struct NxBodyLayerTexture {
 }
 
 ///|
-pub impl @json.FromJson for NxBodyLayerTexture with from_json(json, path) {
+pub impl @json.FromJson for NxBodyLayerTexture with fn from_json(json, path) {
   let z = match json {
     { "z": Json::String(z), .. } => BodyLayer::from_name(z)
     _ => None

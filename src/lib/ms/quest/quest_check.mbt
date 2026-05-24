@@ -1,6 +1,6 @@
 ///|
 pub trait QuestCheck: Debug {
-  check(Self, CheckContext) -> Result[Unit, String]
+  fn check(Self, CheckContext) -> Result[Unit, String]
 }
 
 ///|
@@ -18,7 +18,7 @@ priv struct MinLevelCheck {
 } derive(Debug)
 
 ///|
-impl QuestCheck for MinLevelCheck with check(self, context) {
+impl QuestCheck for MinLevelCheck with fn check(self, context) {
   let level = (context.char_stats_provider)().get_stat(@maple_stat.Id::LEVEL)
   if level < self.min_level {
     return Err("Expected level at least \{self.min_level}, got \{level}")
@@ -32,7 +32,7 @@ priv struct NpcCheck {
 } derive(Debug)
 
 ///|
-impl QuestCheck for NpcCheck with check(_self, _context) {
+impl QuestCheck for NpcCheck with fn check(_self, _context) {
   // server will check if the player is near the npc
   Ok(())
 }
@@ -43,7 +43,7 @@ priv struct IntervalMinutesCheck {
 } derive(Debug)
 
 ///|
-impl QuestCheck for IntervalMinutesCheck with check(_self, _context) {
+impl QuestCheck for IntervalMinutesCheck with fn check(_self, _context) {
   Err("not implemented")
 }
 
@@ -58,7 +58,7 @@ struct InfoExCheck {
 } derive(Debug)
 
 ///|
-pub impl QuestCheck for InfoExCheck with check(self, context) {
+pub impl QuestCheck for InfoExCheck with fn check(self, context) {
   if self.info_ex.is_empty() {
     return Ok(())
   }
@@ -82,7 +82,7 @@ priv struct QuestsStatusCheck {
 } derive(Debug)
 
 ///|
-impl QuestCheck for QuestsStatusCheck with check(self, context) {
+impl QuestCheck for QuestsStatusCheck with fn check(self, context) {
   for quest_id, expected_status in self.quest_status_map {
     let stated_quest = context.log.get_quest(quest_id)
     let quest_status = match stated_quest {
@@ -105,7 +105,7 @@ priv struct JobsCheck {
 } derive(Debug)
 
 ///|
-impl QuestCheck for JobsCheck with check(self, context) {
+impl QuestCheck for JobsCheck with fn check(self, context) {
   let player_job = (context.char_stats_provider)().get_job().get_id()
   for job_id in self.jobs {
     if player_job == job_id || player_job == @job.JobId::GM {
@@ -121,7 +121,7 @@ priv struct MonsterHuntCheck {
 } derive(Debug)
 
 ///|
-impl QuestCheck for MonsterHuntCheck with check(self, context) {
+impl QuestCheck for MonsterHuntCheck with fn check(self, context) {
   if self.monster_hunts.is_empty() {
     return Ok(())
   }
@@ -167,7 +167,7 @@ priv struct ItemCheck {
 } derive(Debug)
 
 ///|
-impl QuestCheck for ItemCheck with check(self, context) {
+impl QuestCheck for ItemCheck with fn check(self, context) {
   for it in self.items {
     let item_id = it.id
     let count = it.count

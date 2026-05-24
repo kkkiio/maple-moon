@@ -14,7 +14,7 @@ fn LocalServer::on_admin_command(self : LocalServer, json : Json) -> Unit raise 
         return
       }
       @io_service.execute_background(
-        async fn() {
+        fn() {
           if self.add_item_to_inventory(item_id, quantity) {
             self.save_character_inventory_snapshot()
           }

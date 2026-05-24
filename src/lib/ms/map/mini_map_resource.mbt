@@ -21,7 +21,7 @@ pub struct MiniMapResource {
 }
 
 ///|
-pub impl @json.FromJson for MiniMapResource with from_json(json, path) {
+pub impl @json.FromJson for MiniMapResource with fn from_json(json, path) {
   match json {
     {
       "mag": Number(mag, ..),

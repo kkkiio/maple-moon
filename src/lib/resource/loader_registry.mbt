@@ -11,16 +11,13 @@ pub fn register_async_loader(name : String, loader : AsyncLoader) -> Unit {
 ///|
 /// Get a registered async loader by name.
 pub fn require_async_loader(name : String) -> AsyncLoader {
-  match async_loader_registry.get(name) {
-    Some(loader) => loader
-    None => panic()
-  }
+  async_loader_registry.get(name).unwrap()
 }
 
 ///|
 /// Loader interface for text resources.
 pub(open) trait TextResourceLoader {
-  async load_text(self : Self, path : String) -> String
+  fn load_text(self : Self, path : String) -> String
 }
 
 ///|
@@ -37,7 +34,7 @@ pub fn TextLoader::new(loader~ : &TextResourceLoader) -> TextLoader {
 
 ///|
 /// Load text for a resource path.
-pub async fn TextLoader::load_text(self : TextLoader, path : String) -> String {
+pub fn TextLoader::load_text(self : TextLoader, path : String) -> String {
   self.loader.load_text(path)
 }
 
@@ -63,7 +60,7 @@ pub fn get_text_loader(name : String) -> TextLoader {
 ///|
 /// CSV text loader interface (compatibility wrapper).
 pub(open) trait CsvTextLoader {
-  async load_text(self : Self, path : String) -> String
+  fn load_text(self : Self, path : String) -> String
 }
 
 ///|
@@ -81,7 +78,7 @@ pub fn CsvLoader::new(loader~ : &CsvTextLoader) -> CsvLoader {
 
 ///|
 /// Load text for a CSV resource path.
-pub async fn CsvLoader::load_text(self : CsvLoader, path : String) -> String {
+pub fn CsvLoader::load_text(self : CsvLoader, path : String) -> String {
   self.inner.load_text(path)
 }
 
@@ -97,7 +94,7 @@ fn CsvTextLoaderAdapter::new(loader : &CsvTextLoader) -> CsvTextLoaderAdapter {
 }
 
 ///|
-impl TextResourceLoader for CsvTextLoaderAdapter with load_text(self, path) -> String {
+impl TextResourceLoader for CsvTextLoaderAdapter with fn load_text(self, path) -> String {
   self.loader.load_text(path)
 }
 

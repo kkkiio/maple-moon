@@ -17,11 +17,13 @@ pub let all_bullet_ids : Array[String] = [
 let module_ref : Ref[Module?] = Ref(None)
 
 ///|
-pub async fn Module::load() -> Module {
+pub fn Module::load() -> Module {
   let bullet_data = Map([])
   for id in all_bullet_ids {
     let data = BulletData::load(id)
-    let int_id = id.trim_start(chars="0").to_owned() |> @string.parse_int
+    let int_id = (id.trim_start(chars="0").to_owned() |> @string.parse_int) catch {
+      _ => abort("Invalid bullet id: \{id}")
+    }
     bullet_data.set(int_id, data)
   }
   Module::new(bullet_data)

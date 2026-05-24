@@ -91,9 +91,9 @@ fn hide_cursor_entity(entity : @entity.Entity) -> Unit {
 ///|
 fn cursor_texture_path(state : CursorState) -> String {
   match state {
-    CursorState::CAN_CLICK => "/assets/ui/cursor/cursor_can_click.png"
-    CursorState::CLICKING => "/assets/ui/cursor/cursor_clicking.png"
-    _ => "/assets/ui/cursor/cursor_idle.png"
+    CursorState::CAN_CLICK => "assets/ui/cursor/cursor_can_click.png"
+    CursorState::CLICKING => "assets/ui/cursor/cursor_clicking.png"
+    _ => "assets/ui/cursor/cursor_idle.png"
   }
 }
 
@@ -141,9 +141,9 @@ fn sync_cursor_ui(cursor : Cursor, mouse_pos : @math.Vec2) -> Unit {
   }
   @selene_ui.ui_images().set(
     cursor.entity,
-    @selene_ui.UiImage(
+    @selene_ui.UiImage::from_image(
       size,
-      cursor_texture_path(cursor.state),
+      @resource.load_image(cursor_texture_path(cursor.state)),
       source=Some({ position: @math.Vec2(frame_pos_x, 0.0), size }),
     ),
   )

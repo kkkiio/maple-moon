@@ -14,7 +14,7 @@ pub(all) struct FullBody {
 }
 
 ///|
-// async fn Body::load(skin : Int, drawinfo : @types.BodyDrawInfo) -> Body raise {
+// fn Body::load(skin : Int, drawinfo : @types.BodyDrawInfo) -> Body raise {
 //   let strid : String = @utils.stoi_left_pad0(skin, 2)
 //   let loader = @resource.get_async_loader("body")
 //   let bodynode = loader.load_res_async(["000020" + strid + ".img"])
@@ -176,6 +176,6 @@ pub fn FullBody::get_name(self : FullBody) -> String {
 }
 
 ///|
-pub impl ToJson for FullBody with to_json(self) -> Json {
+pub impl ToJson for FullBody with fn to_json(self) -> Json {
   { "name": self.name.to_json() }
 }

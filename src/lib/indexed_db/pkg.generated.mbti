@@ -1,27 +1,18 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "KKKIIO/maple-moon/lib/indexed_db"
 
-import {
-  "moonbitlang/async/js_async",
-}
-
 // Values
-pub async fn open(String, Int, Array[String]) -> IndexedDB
+pub fn open(String, Int, Array[String]) -> IndexedDB
 
 // Errors
 
 // Types and methods
 pub struct IndexedDB {
-  db : JSValue
+  name : String
 }
-pub async fn IndexedDB::load_json(Self, String, String) -> Json?
-pub fn IndexedDB::load_json_promise(Self, String, String) -> @js_async.Promise[JSValue]
+pub fn IndexedDB::load_json(Self, String, String) -> Json?
 pub fn IndexedDB::save_json(Self, String, String, Json) -> Unit
-pub fn IndexedDB::save_json_promise(Self, String, String, Json) -> @js_async.Promise[JSValue]
-
-type JSValue
 
 // Type aliases
 
 // Traits
-

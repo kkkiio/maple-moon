@@ -45,7 +45,7 @@ pub(all) struct Stats {
 ///|
 /// Load skill data asynchronously with caching.
 /// Raises error if resource not found - caller must ensure preloading.
-pub async fn SkillData::load(id : Int) -> SkillData {
+pub fn SkillData::load(id : Int) -> SkillData {
   load_skill(id)
 }
 
@@ -79,7 +79,7 @@ struct SkillNxResource {
 // ),
 
 ///|
-pub impl @json.FromJson for SkillNxResource with from_json(json, path) -> SkillNxResource raise @json.JsonDecodeError {
+pub impl @json.FromJson for SkillNxResource with fn from_json(json, path) -> SkillNxResource raise @json.JsonDecodeError {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expect object"))
   }
@@ -162,7 +162,7 @@ struct SkillTextResource {
 }
 
 ///|
-pub impl @json.FromJson for SkillTextResource with from_json(json, path) -> SkillTextResource raise @json.JsonDecodeError {
+pub impl @json.FromJson for SkillTextResource with fn from_json(json, path) -> SkillTextResource raise @json.JsonDecodeError {
   let (name, desc) = match json {
     { "name": String(name), "desc": String(desc), .. } => (name, desc)
     _ => raise @json.JsonDecodeError((path, "expect object with name and desc"))
@@ -321,7 +321,7 @@ pub fn SkillData::get_stats(self : SkillData, level : Int) -> Stats? {
 priv struct NxLevelStats(Map[Int, Stats])
 
 ///|
-impl @json.FromJson for NxLevelStats with from_json(json, path) -> NxLevelStats raise @json.JsonDecodeError {
+impl @json.FromJson for NxLevelStats with fn from_json(json, path) -> NxLevelStats raise @json.JsonDecodeError {
   let stats = {}
   guard json is Object(levels) else {
     raise @json.JsonDecodeError((path, "expect object"))
@@ -452,7 +452,7 @@ impl @json.FromJson for NxLevelStats with from_json(json, path) -> NxLevelStats 
 struct WeaponType(@weapon.Type)
 
 ///|
-pub impl @json.FromJson for WeaponType with from_json(json, path) -> WeaponType raise @json.JsonDecodeError {
+pub impl @json.FromJson for WeaponType with fn from_json(json, path) -> WeaponType raise @json.JsonDecodeError {
   match json {
     Null => @weapon.Type::NONE
     Number(v, ..) =>

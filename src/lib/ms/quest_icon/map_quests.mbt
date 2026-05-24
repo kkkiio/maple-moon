@@ -68,15 +68,21 @@ pub fn MapQuestsResource::new(
 
 ///|
 /// Loads the graphical resources for quest icons.
-pub async fn MapQuestsResource::load() -> MapQuestsResource {
+pub fn MapQuestsResource::load() -> MapQuestsResource {
   let loader = @resource.require_async_loader("ui_window_2")
-  let available_json = loader.load_resource(["QuestIcon", "0"])
-  let inprogress_json = loader.load_resource(["QuestIcon", "1"])
-  let completed_json = loader.load_resource(["QuestIcon", "2"])
+  let available_json = loader.require_resource(["QuestIcon", "0"])
+  let inprogress_json = loader.require_resource(["QuestIcon", "1"])
+  let completed_json = loader.require_resource(["QuestIcon", "2"])
   {
-    available_quest_icon: @json.from_json(available_json),
-    inprogress_quest_icon: @json.from_json(inprogress_json),
-    completed_quest_icon: @json.from_json(completed_json),
+    available_quest_icon: @json.from_json(available_json) catch {
+      _ => abort("invalid available quest icon")
+    },
+    inprogress_quest_icon: @json.from_json(inprogress_json) catch {
+      _ => abort("invalid in-progress quest icon")
+    },
+    completed_quest_icon: @json.from_json(completed_json) catch {
+      _ => abort("invalid completed quest icon")
+    },
   }
 }
 

@@ -19,7 +19,7 @@ pub(all) struct NxAfterImage {
 ///|
 
 ///|
-pub impl @json.FromJson for NxAfterImage with from_json(json, path) -> NxAfterImage raise @json.JsonDecodeError {
+pub impl @json.FromJson for NxAfterImage with fn from_json(json, path) -> NxAfterImage raise @json.JsonDecodeError {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expect object"))
   }
@@ -72,7 +72,7 @@ struct NxAfterImages {
 }
 
 ///|
-pub impl @json.FromJson for NxAfterImages with from_json(json, path) -> NxAfterImages raise @json.JsonDecodeError {
+pub impl @json.FromJson for NxAfterImages with fn from_json(json, path) -> NxAfterImages raise @json.JsonDecodeError {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expect object"))
   }

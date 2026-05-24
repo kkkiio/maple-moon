@@ -38,7 +38,7 @@ struct Job {
 }
 
 ///|
-pub async fn Job::load(id? : Int = 0) -> Job {
+pub fn Job::load(id? : Int = 0) -> Job {
   let level = if id == 0 {
     Level::BEGINNER
   } else if id % 100 == 0 {
@@ -53,14 +53,9 @@ pub async fn Job::load(id? : Int = 0) -> Job {
   let subids = get_levels(upto=level).map(fn(sub_level) {
     get_subjob_id(id, level, sub_level)
   })
-  let async_ops = subids.map(fn(subid) {
-      async fn() { (subid, JobData::load(subid)) }
-    })
-    |> Array::from_iter
-  let data_list = @async.all(async_ops.view())
   let sub_job_data_map = Map([])
-  for item in data_list {
-    let (subid, data) = item
+  for subid in subids {
+    let data = JobData::load(subid)
     sub_job_data_map[subid] = data
   }
   Job::new(id, level, sub_job_data_map)
@@ -269,7 +264,7 @@ pub fn JobId::from_int(i : Int) -> JobId? {
 }
 
 ///|
-pub impl Show for JobId with output(self, logger) {
+pub impl Show for JobId with fn output(self, logger) {
   let name = match self {
     BEGINNER => "Beginner"
     WARRIOR => "Swordsman"
@@ -358,7 +353,7 @@ pub impl Show for JobId with output(self, logger) {
 }
 
 ///|
-pub impl @json.FromJson for JobId with from_json(json, path) {
+pub impl @json.FromJson for JobId with fn from_json(json, path) {
   let id : Int = @json.from_json(json, path~)
   if JobId::from_int(id) is Some(jobid) {
     jobid

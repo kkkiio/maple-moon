@@ -15,9 +15,8 @@ import {
   "Milky2018/selene/inputs",
   "Milky2018/selene/math" @selene_math,
   "Milky2018/selene/ui" @selene_ui,
-  "KKKIIO/maple-moon/lib/ms/transform2d" @transform2d,
+  "KKKIIO/maple-moon/lib/ms/transform2d",
   "Milky2018/selene/sprite",
-  "Milky2018/selene/asset",
   "Milky2018/selene/ecs",
   "moonbitlang/core/string",
 }

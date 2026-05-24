@@ -36,12 +36,12 @@ fn MockPassiveSkill::new() -> MockPassiveSkill {
 }
 
 ///|
-impl PassiveSkill for MockPassiveSkill with id(_self) -> Int {
+impl PassiveSkill for MockPassiveSkill with fn id(_self) -> Int {
   -999
 }
 
 ///|
-impl PassiveSkill for MockPassiveSkill with on_hit(
+impl PassiveSkill for MockPassiveSkill with fn on_hit(
   self : MockPassiveSkill,
   _ctx : PassiveContext,
   event : @combat_system.HitEvent,

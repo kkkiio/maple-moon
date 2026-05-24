@@ -29,7 +29,7 @@ pub(all) enum UpdateQuestInfoMessage {
 } derive(Debug, ToJson, @json.FromJson)
 
 ///|
-pub impl ServerMessage for UpdateQuestInfoMessage with type_code() {
+pub impl ServerMessage for UpdateQuestInfoMessage with fn type_code() {
   Opcode::UPDATE_QUEST_INFO.int_value()
 }
 
@@ -44,7 +44,7 @@ pub(all) enum QuestActionMessage {
 } derive(Debug, ToJson, @json.FromJson)
 
 ///|
-pub impl ClientMessage for QuestActionMessage with type_code() {
+pub impl ClientMessage for QuestActionMessage with fn type_code() {
   ClientOpcode::QUEST_ACTION.int_value()
 }
 
@@ -78,6 +78,6 @@ pub(all) struct ShowStatusExpGainMessage {
 } derive(Debug, ToJson, @json.FromJson)
 
 ///|
-pub impl ServerMessage for ShowStatusExpGainMessage with type_code() {
+pub impl ServerMessage for ShowStatusExpGainMessage with fn type_code() {
   Opcode::SHOW_STATUS_INFO.int_value()
 }

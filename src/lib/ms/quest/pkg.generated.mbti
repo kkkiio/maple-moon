@@ -8,7 +8,7 @@ import {
 }
 
 // Values
-pub async fn load_quest_resource() -> (QuestResource, Json)
+pub fn load_quest_resource() -> (QuestResource, Json)
 
 // Errors
 
@@ -148,6 +148,6 @@ pub enum StartedQuest {
 
 // Traits
 pub trait QuestCheck : @debug.Debug {
-  check(Self, CheckContext) -> Result[Unit, String]
+  fn check(Self, CheckContext) -> Result[Unit, String]
 }
 

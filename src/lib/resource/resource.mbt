@@ -1,8 +1,4 @@
 ///|
-#external
-type ImageLoader
-
-///|
 fn join_path(parts : ArrayView[String]) -> String {
   parts.join("/")
 }
@@ -15,7 +11,7 @@ pub(all) struct ResPath(Array[String]) derive(Eq)
 pub struct MapBasedArray[T](Array[T]) derive(Debug)
 
 ///|
-pub impl[T : @json.FromJson] @json.FromJson for MapBasedArray[T] with from_json(
+pub impl[T : @json.FromJson] @json.FromJson for MapBasedArray[T] with fn from_json(
   json,
   path,
 ) -> MapBasedArray[T] raise {
@@ -51,7 +47,7 @@ pub fn[T : @json.FromJson] parse_map_based_array(
 pub struct Nullable[T](T?) derive(Debug)
 
 ///|
-pub impl[T : @json.FromJson] @json.FromJson for Nullable[T] with from_json(
+pub impl[T : @json.FromJson] @json.FromJson for Nullable[T] with fn from_json(
   json,
   path,
 ) {
@@ -66,7 +62,7 @@ pub impl[T : @json.FromJson] @json.FromJson for Nullable[T] with from_json(
 pub struct IntMap[T](Map[Int, T]) derive(Debug)
 
 ///|
-pub impl[T : @json.FromJson] @json.FromJson for IntMap[T] with from_json(
+pub impl[T : @json.FromJson] @json.FromJson for IntMap[T] with fn from_json(
   json,
   path,
 ) {
@@ -88,7 +84,7 @@ pub impl[T : @json.FromJson] @json.FromJson for IntMap[T] with from_json(
 pub(all) struct EnumMap[K, V](Map[K, V]) derive(Debug)
 
 ///|
-pub impl[K : Eq + Hash, V] Default for EnumMap[K, V] with default() -> EnumMap[
+pub impl[K : Eq + Hash, V] Default for EnumMap[K, V] with fn default() -> EnumMap[
   K,
   V,
 ] {
@@ -96,7 +92,7 @@ pub impl[K : Eq + Hash, V] Default for EnumMap[K, V] with default() -> EnumMap[
 }
 
 ///|
-pub impl[K : ToJson, V : ToJson] ToJson for EnumMap[K, V] with to_json(self) -> Json {
+pub impl[K : ToJson, V : ToJson] ToJson for EnumMap[K, V] with fn to_json(self) -> Json {
   let map = Map([], capacity=self.0.length())
   for key, value in self.0 {
     guard key.to_json() is String(key) else { abort("expect string") }
@@ -109,7 +105,7 @@ pub impl[K : ToJson, V : ToJson] ToJson for EnumMap[K, V] with to_json(self) -> 
 pub impl[K : Eq + Hash + @json.FromJson, V : @json.FromJson] @json.FromJson for EnumMap[
   K,
   V,
-] with from_json(json, path) {
+] with fn from_json(json, path) {
   parse_enum_map(json, path~) |> EnumMap
 }
 

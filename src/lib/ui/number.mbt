@@ -11,12 +11,12 @@ struct DamageSkin {
 }
 
 ///|
-pub impl Default for DamageSkin with default() {
+pub impl Default for DamageSkin with fn default() {
   { sprites: Map([]) }
 }
 
 ///|
-pub impl @json.FromJson for DamageSkin with from_json(json, path) {
+pub impl @json.FromJson for DamageSkin with fn from_json(json, path) {
   let sprites = Map([])
   guard json is Object(obj) else { return { sprites, } }
   for name, sub in obj {
@@ -162,30 +162,32 @@ pub(all) struct NumberSet {
 } derive(Default)
 
 ///|
-pub async fn NumberSet::load() -> NumberSet {
+pub fn NumberSet::load() -> NumberSet {
   let loader = @resource.require_async_loader("effect")
   // 'No' for Number
-  let no_red_1 = loader.load_resource(["BasicEff.img", "NoRed1"])
-    |> @json.from_json
-  let no_red_0 = loader.load_resource(["BasicEff.img", "NoRed0"])
-    |> @json.from_json
-  let no_cri_1 = loader.load_resource(["BasicEff.img", "NoCri1"])
-    |> @json.from_json
-  let no_cri_0 = loader.load_resource(["BasicEff.img", "NoCri0"])
-    |> @json.from_json
-  let no_violet_1 = loader.load_resource(["BasicEff.img", "NoViolet1"])
-    |> @json.from_json
-  let no_violet_0 = loader.load_resource(["BasicEff.img", "NoViolet0"])
-    |> @json.from_json
-  let no_blue_1 = loader.load_resource(["BasicEff.img", "NoBlue1"])
-    |> @json.from_json
-  let no_blue_0 = loader.load_resource(["BasicEff.img", "NoBlue0"])
-    |> @json.from_json
+  let no_red_1 = load_damage_skin(loader, "NoRed1")
+  let no_red_0 = load_damage_skin(loader, "NoRed0")
+  let no_cri_1 = load_damage_skin(loader, "NoCri1")
+  let no_cri_0 = load_damage_skin(loader, "NoCri0")
+  let no_violet_1 = load_damage_skin(loader, "NoViolet1")
+  let no_violet_0 = load_damage_skin(loader, "NoViolet0")
+  let no_blue_1 = load_damage_skin(loader, "NoBlue1")
+  let no_blue_0 = load_damage_skin(loader, "NoBlue0")
   let red_skins : Skins = { big: no_red_1, small: no_red_0 }
   let cri_skins : Skins = { big: no_cri_1, small: no_cri_0 }
   let violet_skins : Skins = { big: no_violet_1, small: no_violet_0 }
   let blue_skins : Skins = { big: no_blue_1, small: no_blue_0 }
   { red_skins, cri_skins, violet_skins, blue_skins }
+}
+
+///|
+fn load_damage_skin(
+  loader : @resource.AsyncLoader,
+  name : String,
+) -> DamageSkin {
+  (loader.require_resource(["BasicEff.img", name]) |> @json.from_json) catch {
+    _ => abort("invalid damage skin resource: BasicEff.img/\{name}")
+  }
 }
 
 ///|

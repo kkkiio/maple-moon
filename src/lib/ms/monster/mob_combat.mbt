@@ -31,7 +31,7 @@ pub fn MobCombat::use_move(
         apply_move_attack(mov, mob)
       } else if skill_id != 0 {
         // let fut = mob.get_move_skill(skill_id, level)
-        // @io_service.execute_background(async fn() {
+        // @io_service.execute_background(fn() {
         //   let mov = @io_service.wait_future(fut).unwrap_or_error()
         //   apply_move_skill(mov, mob)
         // })

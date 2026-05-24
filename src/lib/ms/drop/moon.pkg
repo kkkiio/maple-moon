@@ -13,7 +13,7 @@ import {
   "KKKIIO/maple-moon/lib/utils",
   "KKKIIO/maple-moon/lib/log",
   "KKKIIO/maple-moon/lib/io_service",
-  "KKKIIO/maple-moon/lib/ms/transform2d" @transform2d,
+  "KKKIIO/maple-moon/lib/ms/transform2d",
   "Milky2018/selene/entity",
   "Milky2018/selene/sprite",
   "Milky2018/selene/math" @selene_math,

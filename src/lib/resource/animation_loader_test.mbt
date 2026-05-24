@@ -9,10 +9,10 @@ fn DummyResourceLoader::new() -> DummyResourceLoader {
 }
 
 ///|
-impl AsyncResourceLoader for DummyResourceLoader with load_data(self, path) -> Json {
+impl AsyncResourceLoader for DummyResourceLoader with fn load_data(self, path) -> Json? {
   ignore(self.dummy)
   ignore(path)
-  Json::null()
+  None
 }
 
 ///|
@@ -25,11 +25,11 @@ test "async loader resolves json path with base urls" {
   let loader = make_loader()
   inspect(
     loader.resolve_json_path("Npc/Npc/0002007.img/animation.json"),
-    content="/assets/Npc/Npc/0002007.img/animation.json",
+    content="assets/Npc/Npc/0002007.img/animation.json",
   )
   inspect(
-    loader.resolve_json_path("/assets/Npc/Npc/0002007.img/animation.json"),
-    content="/assets/Npc/Npc/0002007.img/animation.json",
+    loader.resolve_json_path("assets/Npc/Npc/0002007.img/animation.json"),
+    content="assets/Npc/Npc/0002007.img/animation.json",
   )
 }
 

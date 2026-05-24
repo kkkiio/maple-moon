@@ -9,7 +9,7 @@ pub(all) struct ChangeMapMessage {
 } derive(ToJson, FromJson)
 
 ///|
-pub impl ClientMessage for ChangeMapMessage with type_code() {
+pub impl ClientMessage for ChangeMapMessage with fn type_code() {
   ClientOpcode::CHANGE_MAP.int_value()
 }
 
@@ -26,7 +26,7 @@ pub(all) enum SetFieldMessage {
 } derive(Debug, ToJson, @json.FromJson)
 
 ///|
-pub impl ServerMessage for SetFieldMessage with type_code() {
+pub impl ServerMessage for SetFieldMessage with fn type_code() {
   Opcode::SET_FIELD.int_value()
 }
 
@@ -110,7 +110,7 @@ pub fn InventoryType::by_value(value : Int) -> InventoryType? {
 }
 
 ///|
-pub impl Show for InventoryType with output(self, logger) {
+pub impl Show for InventoryType with fn output(self, logger) {
   logger.write_string(self.to_repr().to_string())
 }
 
@@ -157,7 +157,7 @@ pub(all) struct SelectCharMessage {
 } derive(Debug, ToJson, FromJson)
 
 ///|
-pub impl ClientMessage for SelectCharMessage with type_code() {
+pub impl ClientMessage for SelectCharMessage with fn type_code() {
   ClientOpcode::SELECT_CHAR.int_value()
 }
 
@@ -171,6 +171,6 @@ pub(all) struct PlayerMapTransferMessage(Unit) derive (
 )
 
 ///|
-pub impl ClientMessage for PlayerMapTransferMessage with type_code() {
+pub impl ClientMessage for PlayerMapTransferMessage with fn type_code() {
   ClientOpcode::PLAYER_MAP_TRANSFER.int_value()
 }

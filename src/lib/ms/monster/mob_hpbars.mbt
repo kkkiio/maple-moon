@@ -47,13 +47,12 @@ fn set_rect_sprite(
   height : Double,
   color : String,
 ) -> Unit {
-  @sprite.sprites().set(
-    entity,
-    @sprite.Sprite::from_color(
-      @sprite.color_from_css(color),
-      @selene_math.Vec2(width, height),
-    ),
+  let sprite = @sprite.Sprite::from_color(
+    @sprite.color_from_css(color),
+    @selene_math.Vec2(width, height),
   )
+  sprite.anchor = @sprite.Anchor(@selene_math.Vec2(-0.5, 0.5))
+  @sprite.sprites().set(entity, sprite)
   if @transform.transforms().get(entity) is Some(current) {
     @transform.transforms().set(entity, {
       ..current,

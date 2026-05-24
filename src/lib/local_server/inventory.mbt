@@ -155,7 +155,7 @@ pub fn LocalServer::load_character_inventory_tab_data(
 }
 
 ///|
-pub async fn LocalServer::save_character_inventory_data(
+pub fn LocalServer::save_character_inventory_data(
   self : LocalServer,
   character_id : Int,
   revision : Int,

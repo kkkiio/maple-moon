@@ -13,12 +13,11 @@ import {
   "KKKIIO/maple-moon/lib/ms/animation" @ms_animation,
   "Milky2018/selene/entity",
   "Milky2018/selene/sprite",
-  "KKKIIO/maple-moon/lib/ms/transform2d" @transform2d,
+  "KKKIIO/maple-moon/lib/ms/transform2d",
   "Milky2018/selene/ecs",
   "moonbitlang/core/string",
 }
 
 import {
-  "moonbitlang/async",
   "KKKIIO/maple-moon/test/local_loader",
 } for "test"

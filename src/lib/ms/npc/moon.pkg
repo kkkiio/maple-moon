@@ -17,7 +17,7 @@ import {
   "KKKIIO/maple-moon/lib/ms/markup_text",
   "Milky2018/selene/transform",
   "Milky2018/selene/animation" @selene_animation,
-  "KKKIIO/maple-moon/lib/ms/transform2d" @transform2d,
+  "KKKIIO/maple-moon/lib/ms/transform2d",
   "Milky2018/selene/entity",
   "Milky2018/selene/sprite",
   "Milky2018/selene/inputs",

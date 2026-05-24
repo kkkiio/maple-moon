@@ -15,7 +15,7 @@ pub(all) struct MoveMonsterMessage {
 } derive(Debug, ToJson, FromJson)
 
 ///|
-pub impl ClientMessage for MoveMonsterMessage with type_code() {
+pub impl ClientMessage for MoveMonsterMessage with fn type_code() {
   ClientOpcode::MOVE_MONSTER.int_value()
 }
 
@@ -31,7 +31,7 @@ pub(all) struct MobSpawnMessage {
 } derive(ToJson, @json.FromJson)
 
 ///|
-pub impl ServerMessage for MobSpawnMessage with type_code() {
+pub impl ServerMessage for MobSpawnMessage with fn type_code() {
   Opcode::SPAWN_MOB.int_value()
 }
 
@@ -44,7 +44,7 @@ pub(all) struct MobDamageMessage {
 } derive(Debug, ToJson, FromJson)
 
 ///|
-pub impl ClientMessage for MobDamageMessage with type_code() {
+pub impl ClientMessage for MobDamageMessage with fn type_code() {
   ClientOpcode::CLOSE_ATTACK.int_value()
 }
 
@@ -55,7 +55,7 @@ pub(all) struct MobHpMessage {
 } derive(Debug, ToJson, FromJson)
 
 ///|
-pub impl ServerMessage for MobHpMessage with type_code() {
+pub impl ServerMessage for MobHpMessage with fn type_code() {
   Opcode::SHOW_MOB_HP.int_value()
 }
 
@@ -66,7 +66,7 @@ pub(all) struct KillMobMessage {
 } derive(Debug, ToJson, FromJson)
 
 ///|
-pub impl ServerMessage for KillMobMessage with type_code() {
+pub impl ServerMessage for KillMobMessage with fn type_code() {
   Opcode::KILL_MOB.int_value()
 }
 
@@ -83,7 +83,7 @@ pub(all) struct MobSpawnControllerMessage {
 } derive(ToJson, @json.FromJson)
 
 ///|
-pub impl ServerMessage for MobSpawnControllerMessage with type_code() {
+pub impl ServerMessage for MobSpawnControllerMessage with fn type_code() {
   Opcode::SPAWN_MOB_C.int_value()
 }
 

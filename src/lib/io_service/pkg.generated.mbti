@@ -7,11 +7,11 @@ import {
 }
 
 // Values
-pub fn execute_background(async () -> Unit, on_error? : (Error) -> Unit) -> Unit
+pub fn execute_background(() -> Unit, on_error? : (Error) -> Unit) -> Unit
 
 pub fn io_system(@ecs.World) -> Unit
 
-pub fn[T] submit_background_task(async () -> T) -> @utils.Future[Result[T, Error]]
+pub fn[T] submit_background_task(() -> T) -> @utils.Future[Result[T, Error]]
 
 // Errors
 

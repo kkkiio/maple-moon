@@ -115,7 +115,7 @@ pub fn PortalType::is_manual_trigger(self : PortalType) -> Bool {
 }
 
 ///|
-pub impl @json.FromJson for PortalType with from_json(json, path) -> PortalType {
+pub impl @json.FromJson for PortalType with fn from_json(json, path) -> PortalType {
   match json {
     Number(n, ..) =>
       PortalType::typebyid(n.to_int()).unwrap_or_error(

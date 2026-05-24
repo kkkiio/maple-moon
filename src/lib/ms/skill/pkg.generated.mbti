@@ -19,9 +19,9 @@ pub fn get_skill_max_level(Int) -> Int
 
 pub fn is_skill_cached(Int) -> Bool
 
-pub async fn load_skill(Int) -> SkillData
+pub fn load_skill(Int) -> SkillData
 
-pub async fn preload_skills(Array[Int]) -> Unit
+pub fn preload_skills(Array[Int]) -> Unit
 
 pub fn skill_cache_stats() -> (Int, Int)
 
@@ -48,7 +48,7 @@ pub(all) struct SkillData {
 pub fn SkillData::get_cached(Int) -> Self?
 pub fn SkillData::get_stats(Self, Int) -> Stats?
 pub fn SkillData::is_attack(Self) -> Bool
-pub async fn SkillData::load(Int) -> Self
+pub fn SkillData::load(Int) -> Self
 pub fn SkillData::new(Int, Json, SkillResource, SkillTextResource) -> Self
 
 pub(all) enum SkillId {

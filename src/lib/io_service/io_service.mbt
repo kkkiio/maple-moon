@@ -1,32 +1,24 @@
 ///|
-/// Submits an asynchronous task for execution in the background and returns a `Future` to track its result.
-/// The task is an `async` block that can return a value of type `T` or throw an `Error`.
+/// Submits a task and returns a `Future` to track its result.
+/// The task runs immediately on the game thread.
 /// The returned `Future` will eventually resolve to a `Result[T, Error]`.
-pub fn[T] submit_background_task(
-  task : async () -> T,
-) -> Future[Result[T, Error]] {
-  let mut res : Result[T, Error]? = None
-  spawn_background(() => {
-    try {
-      let value = task()
-      res = Some(Ok(value))
-    } catch {
-      e => res = Some(Err(e))
-    }
-  })
+pub fn[T] submit_background_task(task : () -> T) -> Future[Result[T, Error]] {
+  let value = task()
+  let res : Result[T, Error]? = Some(Ok(value))
   Future::new(fn() { res })
 }
 
 ///|
-/// Executes a "fire-and-forget" asynchronous task.
+/// Executes a "fire-and-forget" task.
 /// This is useful for tasks that are executed for their side effects, where the return value is not needed.
 pub fn execute_background(
-  f : async () -> Unit,
+  f : () -> Unit,
   /// An optional callback function to handle any `Error` thrown by the task.
   /// If not provided, the default behavior is to abort the program.
   on_error? : (Error) -> Unit = fn(err) { abort(err.to_string()) },
 ) -> Unit {
-  spawn_background(() => f() catch { e => on_error(e) })
+  ignore(on_error)
+  spawn_background(f)
 }
 
 ///|
@@ -48,6 +40,6 @@ pub fn io_system(_world : @ecs.World) -> Unit {
 using @utils {type Future}
 
 ///|
-fn spawn_background(f : async () -> Unit) -> Unit {
-  @js_async.Promise::from_async(f) |> ignore
+fn spawn_background(f : () -> Unit) -> Unit {
+  f()
 }

@@ -167,9 +167,9 @@ fn clear_entities(entities : Array[@entity.Entity]) -> Unit {
 ///|
 fn ui_image_from_texture(texture : @resource.NxTexture) -> @selene_ui.UiImage {
   let source = ui_image_source_from_texture(texture)
-  @selene_ui.UiImage(
+  @selene_ui.UiImage::from_image(
     @selene_math.Vec2(texture.w.to_double(), texture.h.to_double()),
-    texture.i,
+    @resource.load_image(texture.i),
     source=Some(source),
   )
 }
@@ -438,11 +438,14 @@ fn parse_quest_ui_resource(json : Json) -> QuestLogUiResource raise {
 }
 
 ///|
-async fn load_quest_ui_resource() -> QuestLogUiResource {
-  let raw : Json = @resource.require_async_loader("ui_window_2").load_resource([
-    "Quest",
-  ])
-  parse_quest_ui_resource(raw)
+fn load_quest_ui_resource() -> QuestLogUiResource {
+  let raw : Json = @resource.require_async_loader("ui_window_2").require_resource([
+      "Quest",
+    ],
+  )
+  parse_quest_ui_resource(raw) catch {
+    _ => abort("invalid UIWindow2 Quest resource")
+  }
 }
 
 ///|
@@ -1171,7 +1174,7 @@ fn poll_ui_resource(state : QuestLogUiState) -> Bool {
   guard state.ui_resource is None else { return false }
   if state.ui_loading is None {
     state.ui_loading = Some(
-      @io_service.submit_background_task(async fn() { load_quest_ui_resource() }),
+      @io_service.submit_background_task(fn() { load_quest_ui_resource() }),
     )
     return false
   }
@@ -1264,6 +1267,10 @@ fn update_button_visuals(state : QuestLogUiState) -> Unit {
 /// Opens the quest-log UI window.
 pub fn open_quest_log_ui() -> Unit {
   let state = state()
+  state.selected_tab = 0
+  state.selected_in_progress_index = 0
+  state.selected_completed_index = 0
+  state.selected_forfeit_quest_id = None
   state.visible = true
 }
 

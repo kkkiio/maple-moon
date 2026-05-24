@@ -7,7 +7,7 @@ pub struct QuestResource {
 }
 
 ///|
-pub impl @json.FromJson for QuestResource with from_json(json, path) {
+pub impl @json.FromJson for QuestResource with fn from_json(json, path) {
   let parsed : QuestNxResource = @json.from_json(json, path~)
   {
     quest_info_map: parsed.quest_info_map.0,
@@ -52,7 +52,7 @@ pub(all) struct NxQuestInfo {
 } derive(Debug)
 
 ///|
-pub impl @json.FromJson for NxQuestInfo with from_json(json, path) {
+pub impl @json.FromJson for NxQuestInfo with fn from_json(json, path) {
   match json {
     Object(
       {
@@ -284,7 +284,7 @@ using @resource {type Nullable}
 priv struct NumbericInt(Int)
 
 ///|
-impl @json.FromJson for NumbericInt with from_json(json, path) {
+impl @json.FromJson for NumbericInt with fn from_json(json, path) {
   match json {
     Number(n, ..) => n.to_int()
     String(s) =>
@@ -302,7 +302,7 @@ struct MonHuntCheck {
 } derive(Debug, @json.FromJson)
 
 ///|
-impl @json.FromJson for NxQuestPhaseChecks with from_json(json, path) {
+impl @json.FromJson for NxQuestPhaseChecks with fn from_json(json, path) {
   let obj = match json {
     Null => return NxQuestPhaseChecks::default()
     Object(obj) => obj
@@ -389,7 +389,7 @@ priv struct NxQuestStatusCheck {
 }
 
 ///|
-impl @json.FromJson for NxQuestStatusCheck with from_json(json, path) {
+impl @json.FromJson for NxQuestStatusCheck with fn from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expect object"))
   }
@@ -423,7 +423,7 @@ pub fn NxQuestStatus::from_int(int_value : Int) -> NxQuestStatus? {
 }
 
 ///|
-impl @json.FromJson for NxQuestStatus with from_json(json, path) {
+impl @json.FromJson for NxQuestStatus with fn from_json(json, path) {
   let int_value = @json.from_json(json, path~)
   if NxQuestStatus::from_int(int_value) is Some(status) {
     status
@@ -641,7 +641,7 @@ priv struct ItemCount {
 } derive(Debug)
 
 ///|
-impl @json.FromJson for ItemCount with from_json(json, path) {
+impl @json.FromJson for ItemCount with fn from_json(json, path) {
   match json {
     { "id": Number(id, ..), "count": Number(count, ..), .. } =>
       { id: id.to_int(), count: count.to_int() }
@@ -680,7 +680,7 @@ pub(all) struct NxLost {
 } derive(Debug)
 
 ///|
-pub impl @json.FromJson for NxQuestPhaseSays with from_json(json, path) {
+pub impl @json.FromJson for NxQuestPhaseSays with fn from_json(json, path) {
   let obj = match json {
     Null => return NxQuestPhaseSays::default() // TODO: figure out the meaning of this
     Object(obj) => obj
@@ -719,7 +719,7 @@ pub impl @json.FromJson for NxQuestPhaseSays with from_json(json, path) {
 }
 
 ///|
-impl @json.FromJson for NxHints with from_json(json, path) {
+impl @json.FromJson for NxHints with fn from_json(json, path) {
   let base : @resource.MapBasedArray[NxHint] = @json.from_json(json, path~)
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expect object"))
@@ -740,7 +740,7 @@ impl @json.FromJson for NxHints with from_json(json, path) {
 }
 
 ///|
-impl @json.FromJson for NxHint with from_json(json, path) {
+impl @json.FromJson for NxHint with fn from_json(json, path) {
   let obj = match json {
     Null => return NxHint::default() // TODO: figure out the meaning of this
     Object(obj) => obj
@@ -755,7 +755,7 @@ impl @json.FromJson for NxHint with from_json(json, path) {
 }
 
 ///|
-impl @json.FromJson for NxLost with from_json(json, path) {
+impl @json.FromJson for NxLost with fn from_json(json, path) {
   let says : @resource.MapBasedArray[String] = @json.from_json(json, path~)
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expect object"))
@@ -783,7 +783,7 @@ priv struct ActItem {
 } derive(Debug)
 
 ///|
-pub impl @json.FromJson for NxQuestPhaseAct with from_json(json, path) {
+pub impl @json.FromJson for NxQuestPhaseAct with fn from_json(json, path) {
   let obj = match json {
     Null => return NxQuestPhaseAct::default()
     Object(obj) => obj
@@ -818,7 +818,7 @@ pub impl @json.FromJson for NxQuestPhaseAct with from_json(json, path) {
 }
 
 ///|
-impl @json.FromJson for ActItem with from_json(json, path) {
+impl @json.FromJson for ActItem with fn from_json(json, path) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expect object"))
   }

@@ -42,11 +42,13 @@ pub(all) struct QuestLogSnapshotRaw {
 } derive(Debug)
 
 ///|
-/// 异步加载 Quest 资源,返回 (QuestResource, Json)
-pub async fn load_quest_resource() -> (QuestResource, Json) {
+/// 加载 Quest 资源,返回 (QuestResource, Json)
+pub fn load_quest_resource() -> (QuestResource, Json) {
   let quest_resource_loader = @resource.require_async_loader("quest")
-  let raw = quest_resource_loader.load_resource(["nx"])
-  let quests_resource : QuestResource = @json.from_json(raw)
+  let raw = quest_resource_loader.require_resource(["nx"])
+  let quests_resource : QuestResource = @json.from_json(raw) catch {
+    _ => abort("invalid quest resource")
+  }
   let quest_checks_raw = match raw {
     { "Check.img": check_raw, .. } => check_raw
     _ => Json::null()

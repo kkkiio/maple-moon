@@ -44,7 +44,7 @@ fn skill_sfx_stage_name(stage : SkillSfxStage) -> String {
 
 ///|
 fn skill_sfx_path(skill_id : Int, stage : SkillSfxStage) -> String {
-  "/assets/sound/Skill.img/\{skill_id.to_string()}/\{skill_sfx_stage_name(stage)}.mp3"
+  "assets/sound/Skill.img/\{skill_id.to_string()}/\{skill_sfx_stage_name(stage)}.mp3"
 }
 
 ///|

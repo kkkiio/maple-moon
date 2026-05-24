@@ -60,7 +60,7 @@ pub fn CharLook::get_stance(Self) -> @char_stance.StanceId
 pub fn CharLook::getnextframe(Self, @char_stance.StanceId, Int) -> Int
 pub fn CharLook::is_animation_finished(Self) -> Bool
 pub fn CharLook::is_twohanded(Self, @char_stance.StanceId) -> Bool
-pub async fn CharLook::load(@entity.Entity, @server_proto.LookEntry, FullBody, Hair, Face, @character_body.BodyDrawInfo) -> Self
+pub fn CharLook::load(@entity.Entity, @server_proto.LookEntry, FullBody, Hair, Face, @character_body.BodyDrawInfo) -> Self
 pub fn CharLook::new(@entity.Entity, Map[Int, @item.ItemData], FullBody, Hair, Face, @character_body.BodyDrawInfo) -> Self
 pub fn CharLook::play_animations(Self) -> Unit
 pub fn CharLook::remove_equip(Self, @slot.Id) -> Unit
@@ -79,10 +79,10 @@ pub struct CharacterPresentationResource {
   face_types : Map[Int, Face]
   body_cache : Map[Int, FullBody]
 }
-pub async fn CharacterPresentationResource::load() -> Self
+pub fn CharacterPresentationResource::load() -> Self
 pub fn CharacterPresentationResource::load_body_by_skin_id(Self, Int) -> FullBody
-pub async fn CharacterPresentationResource::load_face_by_id(Self, Int) -> Face
-pub async fn CharacterPresentationResource::load_hair_by_id(Self, Int) -> Hair
+pub fn CharacterPresentationResource::load_face_by_id(Self, Int) -> Face
+pub fn CharacterPresentationResource::load_hair_by_id(Self, Int) -> Hair
 pub fn CharacterPresentationResource::new(@character_body.NxStanceLooks[@character_body.NxStanceBody], @character_body.NxStanceLooks[@character_body.NxMultiPartFrame], @character_body.BodyDrawInfo) -> Self
 
 pub(all) enum ExpressionId {
@@ -117,7 +117,7 @@ pub impl ToJson for ExpressionId
 type Face derive(Default)
 pub fn Face::get_delay(Self, ExpressionId, Int) -> Int
 pub fn Face::get_name(Self) -> String
-pub async fn Face::load(Int) -> Self
+pub fn Face::load(Int) -> Self
 pub fn Face::new(Int, Json) -> Self raise
 pub fn Face::nextframe(Self, ExpressionId, Int) -> Int
 pub impl ToJson for Face
@@ -136,7 +136,7 @@ pub impl ToJson for FullBody
 type Hair
 pub fn Hair::get_name(Self) -> String
 pub fn Hair::getcolor(Self) -> String
-pub async fn Hair::load(Int, @character_body.BodyDrawInfo) -> Self
+pub fn Hair::load(Int, @character_body.BodyDrawInfo) -> Self
 pub fn Hair::parse(Int, @character_body.NxStanceLooks[@character_body.NxMultiPartFrame], @character_body.BodyDrawInfo) -> Self
 pub impl ToJson for Hair
 

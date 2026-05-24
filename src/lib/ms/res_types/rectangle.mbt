@@ -94,7 +94,7 @@ pub fn Rectangle::flip_x(self : Rectangle[Int]) -> Rectangle[Int] {
 }
 
 ///|
-pub impl @json.FromJson for Rectangle[Int] with from_json(value, path) {
+pub impl @json.FromJson for Rectangle[Int] with fn from_json(value, path) {
   match value {
     { "lt"? : lt_value, "rb"? : rb_value, .. } => {
       let lt = match lt_value {

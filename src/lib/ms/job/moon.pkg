@@ -5,6 +5,5 @@ import {
   "KKKIIO/maple-moon/lib/ms/weapon",
   "KKKIIO/maple-moon/lib/resource",
   "KKKIIO/maple-moon/lib/utils",
-  "moonbitlang/async",
   "moonbitlang/core/string",
 }

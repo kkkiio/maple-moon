@@ -39,12 +39,12 @@ pub(all) enum StanceId {
 } derive(Eq, Compare, Hash, Debug)
 
 ///|
-pub impl Show for StanceId with output(self, logger) {
+pub impl Show for StanceId with fn output(self, logger) {
   logger.write_string(self.name())
 }
 
 ///|
-pub impl ToJson for StanceId with to_json(self) {
+pub impl ToJson for StanceId with fn to_json(self) {
   self.to_string().to_json()
 }
 
@@ -52,7 +52,7 @@ pub impl ToJson for StanceId with to_json(self) {
 pub fn StanceId::int_value(self : StanceId) -> Int = "%identity"
 
 ///|
-pub impl Default for StanceId with default() -> StanceId {
+pub impl Default for StanceId with fn default() -> StanceId {
   StanceId::NONE
 }
 

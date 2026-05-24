@@ -15,7 +15,7 @@ fn bgm_asset_path(bgm_key : String) -> String? {
   if !group.has_prefix("Bgm") || !group.has_suffix(".img") || name.is_empty() {
     return None
   }
-  Some("/assets/sound/\{group}/\{name}.mp3")
+  Some("assets/sound/\{group}/\{name}.mp3")
 }
 
 ///|

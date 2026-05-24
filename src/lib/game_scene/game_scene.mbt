@@ -249,7 +249,7 @@ pub fn scene_transition_system(world : @ecs.World) -> Unit {
           "inventory_item_count": inventory_entry.items.length(),
         })
         set_loading_data(
-          @io_service.submit_background_task(async fn() {
+          @io_service.submit_background_task(fn() {
             let hair = @char_look.Hair::load(30000, draw_info)
             let face = @char_look.Face::load(20000)
             let weapon_data = match weapon_id {
@@ -286,8 +286,10 @@ pub fn scene_transition_system(world : @ecs.World) -> Unit {
               Some(after_image_name) => {
                 let after_image_res = @resource.require_async_loader(
                   "afterimage",
-                ).load_resource(["\{after_image_name}.img"])
-                let after_images = @json.from_json(after_image_res)
+                ).require_resource(["\{after_image_name}.img"])
+                let after_images = @json.from_json(after_image_res) catch {
+                  _ => abort("invalid afterimage resource: \{after_image_name}")
+                }
                 @char_look.set_after_images(after_image_name, after_images)
               }
               None => ()
@@ -428,9 +430,11 @@ pub fn scene_transition_system(world : @ecs.World) -> Unit {
       let stage = stage_ref.val.unwrap()
       guard transiting_loading_ref.val is Some(fut) else {
         transiting_loading_ref.val = Some(
-          @io_service.submit_background_task(async fn() {
+          @io_service.submit_background_task(fn() {
             let map_resources = @map.load_map_resources_by_id(map_id)
-            @map.create_scene_map(map_resources, stage.map_portals_animations)
+            @map.create_scene_map(map_resources, stage.map_portals_animations) catch {
+              _ => abort("failed to create scene map: \{map_id}")
+            }
           }),
         )
         return

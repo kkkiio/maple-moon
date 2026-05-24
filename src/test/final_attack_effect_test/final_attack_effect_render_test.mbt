@@ -1,5 +1,5 @@
 ///|
-async fn load_test_mob() -> @monster.Mob {
+fn load_test_mob() -> @monster.Mob {
   @monster.Mob::load(
     1001,
     100101,
@@ -13,7 +13,7 @@ async fn load_test_mob() -> @monster.Mob {
 }
 
 ///|
-async test "final attack hit effect with EFFECT_ZINDEX stays visible" {
+test "final attack hit effect with EFFECT_ZINDEX stays visible" {
   @local_loader.install_resource_env_for_test()
   let previous_world = @ecs.current_world()
   let world = @ecs.World()
@@ -27,7 +27,7 @@ async test "final attack hit effect with EFFECT_ZINDEX stays visible" {
 
   let data = @skill.SkillData::load(1100002)
   let skill_loader = @resource.require_async_loader("skill")
-  let skill_base_path = "/assets/Skill/110.img.json"
+  let skill_base_path = "assets/Skill/110.img.json"
   let hit_effect = @combat_system.make_hit_effect(
     data.src,
     skill_loader,
@@ -41,8 +41,7 @@ async test "final attack hit effect with EFFECT_ZINDEX stays visible" {
     flip: false,
   }
 
-  @capture_app.init_app(
-    @app.App()
+  let app = @app.App()
     .with_world(world)
     .with_viewport_width(220.0)
     .with_viewport_height(160.0)
@@ -57,8 +56,7 @@ async test "final attack hit effect with EFFECT_ZINDEX stays visible" {
       Update,
       fn(world) { @ms_camera.camera_follow_system(world) },
       system_name="camera_follow_system",
-    ),
-  )
+    )
 
   let camera_anchor = @entity.Entity()
   @transform2d.set_xy(camera_anchor, @math.Vec2(110.0, 80.0))
@@ -72,12 +70,11 @@ async test "final attack hit effect with EFFECT_ZINDEX stays visible" {
 
   hit_effect(user, mob)
 
-  for _ in 0..<2 {
-    @capture_app.run_loop(0.016)
-  }
+  let captures = app.run_frames_capture(2, raw_delta=0.016)
 
   @capture_app.snapshot(
     "src/test/final_attack_effect_test/__snapshot__/final_attack_hit_z_effect_layer.png",
+    captures[captures.length() - 1].png,
     visual_desc="A attack hit effect rendered on top of the monster",
   )
 }

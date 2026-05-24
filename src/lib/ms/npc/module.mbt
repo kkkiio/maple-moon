@@ -62,7 +62,7 @@ pub fn TalkType::int_value(self : TalkType) -> Int {
 }
 
 ///|
-pub impl Hash for TalkType with hash_combine(self, hasher) {
+pub impl Hash for TalkType with fn hash_combine(self, hasher) {
   hasher.combine(self.int_value())
 }
 

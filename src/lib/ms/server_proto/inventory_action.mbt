@@ -8,7 +8,7 @@ pub(all) struct UseItemMessage {
 } derive(Debug, ToJson, FromJson)
 
 ///|
-pub impl ClientMessage for UseItemMessage with type_code() {
+pub impl ClientMessage for UseItemMessage with fn type_code() {
   ClientOpcode::USE_ITEM.int_value()
 }
 
@@ -26,6 +26,6 @@ pub(all) struct MoveItemMessage {
 } derive(Debug, ToJson, FromJson)
 
 ///|
-pub impl ClientMessage for MoveItemMessage with type_code() {
+pub impl ClientMessage for MoveItemMessage with fn type_code() {
   ClientOpcode::MOVE_ITEM.int_value()
 }

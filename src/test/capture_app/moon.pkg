@@ -1,24 +1,12 @@
 import {
-  "Milky2018/selene/asset",
-  "Milky2018/selene/math",
-  "Milky2018/selene/render",
-  "Milky2018/selene/render2d_types",
-  "Milky2018/selene/render_pipeline",
-  "Milky2018/selene/system",
-  "Milky2018/selene/ecs",
-  "Milky2018/selene/time",
-  "Milky2018/selene/app" @app,
-  "Milky2018/selene/event",
-  "Milky2018/selene/commands",
-  "Milky2018/selene/entity",
-  "Milky2018/selene/system_set",
   "KKKIIO/maple-moon/lib/ms/server_proto",
-  "KKKIIO/maple-moon/lib/log",
-  "moonbitlang/core/cmp",
+  "moonbitlang/core/env",
   "moonbitlang/core/json",
-  "moonbitlang/core/set",
   "moonbitlang/x/fs",
-  "moonbitlang/x/path",
-  "moonbitlang/x/sys",
-  "moonbitlang/async/js_async",
 }
+
+supported_targets = "native+js"
+
+options(
+  targets: { "snapshot_defer.js.mbt": [ "js" ] },
+)

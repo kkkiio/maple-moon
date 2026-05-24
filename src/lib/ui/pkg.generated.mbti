@@ -11,7 +11,7 @@ import {
 }
 
 // Values
-pub async fn load_ui_slice_resource(@resource.AsyncLoader, String) -> UiSliceResource
+pub fn load_ui_slice_resource(@resource.AsyncLoader, String) -> UiSliceResource
 
 pub fn number_system(@ecs.World) -> Unit
 
@@ -92,7 +92,7 @@ pub(all) struct NumberSet {
   violet_skins : Skins
   blue_skins : Skins
 } derive(Default)
-pub async fn NumberSet::load() -> Self
+pub fn NumberSet::load() -> Self
 pub fn NumberSet::show_number(Self, NumberType, Int, Int, x? : Int) -> Unit
 
 pub(all) enum NumberType {
@@ -120,7 +120,7 @@ pub struct UIMod {
   number_set : NumberSet
 }
 pub fn UIMod::get_number_set(Self) -> NumberSet
-pub async fn UIMod::load() -> Self
+pub fn UIMod::load() -> Self
 
 pub(all) struct UIModel {
   mut position : @res_types.Point[Int]

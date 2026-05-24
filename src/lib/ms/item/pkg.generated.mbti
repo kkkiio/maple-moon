@@ -23,7 +23,7 @@ pub fn parse_category1(Int) -> Category1?
 
 pub fn parse_equip_category(Int) -> String?
 
-pub async fn preload_item_text_bundles(@resource.AsyncLoader) -> Unit
+pub fn preload_item_text_bundles(@resource.AsyncLoader) -> Unit
 
 pub fn request_item_data(Int) -> ItemData
 
@@ -45,7 +45,7 @@ pub struct BasicItemResource {
 }
 pub fn BasicItemResource::ids(Self) -> Array[Int]
 pub fn BasicItemResource::install(Self) -> Unit
-pub async fn BasicItemResource::load(@resource.AsyncLoader, @resource.AsyncLoader) -> Self
+pub fn BasicItemResource::load(@resource.AsyncLoader, @resource.AsyncLoader) -> Self
 
 pub enum Category1 {
   EQUIP
@@ -79,9 +79,9 @@ pub fn ItemData::add_item_data(Int, Self) -> Unit
 pub fn ItemData::get_category(Self) -> String
 pub fn ItemData::get_icon(Self, Bool) -> @resource.NxTexture
 pub fn ItemData::get_info(Self) -> Map[String, Json]
-pub async fn ItemData::load(Int, @resource.AsyncLoader, @resource.AsyncLoader) -> Self
-pub async fn ItemData::load_item_data(Int) -> Self
-pub async fn ItemData::load_item_data_with_loader(Int, @resource.AsyncLoader) -> Self
+pub fn ItemData::load(Int, @resource.AsyncLoader, @resource.AsyncLoader) -> Self
+pub fn ItemData::load_item_data(Int) -> Self
+pub fn ItemData::load_item_data_with_loader(Int, @resource.AsyncLoader) -> Self
 
 pub struct ItemDataSystem {
   item_loader : @resource.AsyncLoader

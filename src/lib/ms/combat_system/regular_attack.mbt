@@ -82,7 +82,7 @@ pub fn get_regular_attack_bullet(bulletid : Int) -> @ms_animation.Animation {
 struct RegularAction {} derive(Default)
 
 ///|
-pub impl SkillAction for RegularAction with apply(
+pub impl SkillAction for RegularAction with fn apply(
   _ : RegularAction,
   target : @character.Character,
   atype : @combat_proto.AttackType,

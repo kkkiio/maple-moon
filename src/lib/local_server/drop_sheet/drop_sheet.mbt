@@ -60,7 +60,7 @@ pub fn build_drop_row_map(
 
 ///|
 /// Load and parse drop rows through registered TSV loader.
-pub async fn load_drop_row_map(
+pub fn load_drop_row_map(
   tsv_loader : @resource.CsvLoader,
   path : String,
 ) -> Map[Int, Array[NxMobDropRow]] {

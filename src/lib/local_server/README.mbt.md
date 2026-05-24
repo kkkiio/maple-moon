@@ -11,17 +11,18 @@ it is burdensome to implement full client features, so this package provides an 
 
 ```moonbit nocheck
 ///|
-let server = @local_server.LocalServer::new(db=@local_server.BrowserDB::new())
+let server = @local_server.LocalServer::new(db=@local_server.FileDB::new())
 ```
 
 - Character snapshot data is persisted by local server through `save_character/load_character`.
 - The storage backend contract is `DB` in this package.
+- Native builds use `FileDB`; JS/WebGPU builds use `BrowserDB` through the `local_server_workaround` bridge package.
 - Client preference storage (UI layout/size etc.) should use a separate client-side DB package.
 
 ## Runtime Integration
 
 ```moonbit nocheck
-let server = @local_server.LocalServer::new(db=@local_server.BrowserDB::new())
+let server = @local_server.LocalServer::new(db=@local_server.FileDB::new())
 @local_server.init_server(server)
 
 @system.App::new()

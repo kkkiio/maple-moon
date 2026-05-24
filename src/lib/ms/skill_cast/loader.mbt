@@ -1,6 +1,6 @@
 ///|
 /// Load a skill and convert it into `SpecialMove` for cast/attack pipeline.
-pub async fn load_skill_move(move_id : Int) -> @combat_system.CombatAction {
+pub fn load_skill_move(move_id : Int) -> @combat_system.CombatAction {
   let it = @combat_system.Skill::load(move_id)
   {
     id: it.get_id(),

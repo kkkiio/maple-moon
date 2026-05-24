@@ -20,17 +20,17 @@ fn SwordFaFighterPassive::new() -> SwordFaFighterPassive {
 }
 
 ///|
-pub impl Default for SwordFaFighterPassive with default() {
+pub impl Default for SwordFaFighterPassive with fn default() {
   SwordFaFighterPassive::new()
 }
 
 ///|
-pub impl PassiveSkill for SwordFaFighterPassive with id(_self) -> Int {
+pub impl PassiveSkill for SwordFaFighterPassive with fn id(_self) -> Int {
   @skill.SkillId::SWORD_FA_FIGHTER.int_value()
 }
 
 ///|
-pub impl PassiveSkill for SwordFaFighterPassive with on_hit(
+pub impl PassiveSkill for SwordFaFighterPassive with fn on_hit(
   _self : SwordFaFighterPassive,
   ctx : PassiveContext,
   event : @combat_system.HitEvent,

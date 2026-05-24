@@ -4,7 +4,7 @@ fn parse_json_file(path : String) -> Json raise {
 }
 
 ///|
-async fn make_test_equips(weapon_item_id : Int?) -> @equip.CharEquips {
+fn make_test_equips(weapon_item_id : Int?) -> @equip.CharEquips raise {
   let res = @character_presentation.CharacterPresentationResource::load()
   let draw_info = res.draw_info
   let equips = @equip.CharEquips::new()
@@ -77,7 +77,7 @@ fn make_hit_event(source : @combat_system.HitSource) -> @combat_system.HitEvent 
 }
 
 ///|
-async test "sword_fa_fighter_triggers_with_sword_1h" {
+test "sword_fa_fighter_triggers_with_sword_1h" {
   @local_loader.install_resource_env_for_test()
   let equips = make_test_equips(Some(1302000))
   let trigger_count = Ref(0)
@@ -98,7 +98,7 @@ async test "sword_fa_fighter_triggers_with_sword_1h" {
 }
 
 ///|
-async test "sword_fa_fighter_does_not_trigger_with_axe_1h" {
+test "sword_fa_fighter_does_not_trigger_with_axe_1h" {
   let equips = make_test_equips(Some(1312001))
   let trigger_count = Ref(0)
   let passive = SwordFaFighterPassive::default()
@@ -116,7 +116,7 @@ async test "sword_fa_fighter_does_not_trigger_with_axe_1h" {
 }
 
 ///|
-async test "sword_fa_fighter_does_not_trigger_with_sword_2h" {
+test "sword_fa_fighter_does_not_trigger_with_sword_2h" {
   let equips = make_test_equips(Some(1402000))
   let trigger_count = Ref(0)
   let passive = SwordFaFighterPassive::default()
@@ -149,7 +149,7 @@ test "sword_fa_fighter_does_not_trigger_when_attacker_missing" {
 }
 
 ///|
-async test "sword_fa_fighter_does_not_trigger_for_passive_source" {
+test "sword_fa_fighter_does_not_trigger_for_passive_source" {
   let equips = make_test_equips(Some(1302000))
   let trigger_count = Ref(0)
   let passive = SwordFaFighterPassive::default()

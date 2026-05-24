@@ -35,38 +35,38 @@ pub let hit_event_bus : @event.Events[HitEvent]
 
 pub fn is_empty() -> Bool
 
-pub async fn load_teleport_use_effect() -> ((@character.Character) -> Unit)
+pub fn load_teleport_use_effect() -> (@character.Character) -> Unit
 
 #callsite(autofill(loc))
 pub fn[E : Show] log_background_err(@utils.Future[Result[Unit, E]], loc~ : SourceLoc) -> @utils.Future[Unit]
 
 pub fn make_attack_range(@combat_proto.Attack) -> @res_types.Rectangle[Int]
 
-pub async fn make_hit_effect(Json, @resource.AsyncLoader, String) -> ((@combat_proto.AttackUser, @monster.Mob) -> Unit)
+pub fn make_hit_effect(Json, @resource.AsyncLoader, String) -> (@combat_proto.AttackUser, @monster.Mob) -> Unit
 
 pub fn make_regular_attack(@character.Character, Int, @combat_proto.AttackType, Bool, max_target_count? : Int) -> @combat_proto.Attack
 
-pub async fn make_use_effect(Json, Int, @resource.AsyncLoader, String) -> UseEffect
+pub fn make_use_effect(Json, Int, @resource.AsyncLoader, String) -> UseEffect
 
-pub async fn new_by_level_hit_effect(Json, @resource.AsyncLoader, String) -> ((@combat_proto.AttackUser, @monster.Mob) -> Unit)
+pub fn new_by_level_hit_effect(Json, @resource.AsyncLoader, String) -> (@combat_proto.AttackUser, @monster.Mob) -> Unit
 
-pub async fn new_by_level_twohanded_hit_effect(Json, @resource.AsyncLoader, String) -> ((@combat_proto.AttackUser, @monster.Mob) -> Unit)
+pub fn new_by_level_twohanded_hit_effect(Json, @resource.AsyncLoader, String) -> (@combat_proto.AttackUser, @monster.Mob) -> Unit
 
-pub async fn new_by_level_use_effect(Json, @resource.AsyncLoader, String) -> ((@character.Character) -> Unit)
+pub fn new_by_level_use_effect(Json, @resource.AsyncLoader, String) -> (@character.Character) -> Unit
 
-pub async fn new_by_skill_level_hit_effect(Json, @resource.AsyncLoader, String) -> ((@combat_proto.AttackUser, @monster.Mob) -> Unit)
+pub fn new_by_skill_level_hit_effect(Json, @resource.AsyncLoader, String) -> (@combat_proto.AttackUser, @monster.Mob) -> Unit
 
 pub fn new_iron_body_use_effect() -> (@character.Character) -> Unit
 
-pub async fn new_multi_use_effect(Json, @resource.AsyncLoader, String) -> ((@character.Character) -> Unit)
+pub fn new_multi_use_effect(Json, @resource.AsyncLoader, String) -> (@character.Character) -> Unit
 
-pub async fn new_single_hit_effect(NxHitEffect, @resource.AsyncLoader, String) -> ((@combat_proto.AttackUser, @monster.Mob) -> Unit)
+pub fn new_single_hit_effect(NxHitEffect, @resource.AsyncLoader, String) -> (@combat_proto.AttackUser, @monster.Mob) -> Unit
 
-pub async fn new_single_use_effect(Json, @resource.AsyncLoader, String) -> ((@character.Character) -> Unit)
+pub fn new_single_use_effect(Json, @resource.AsyncLoader, String) -> (@character.Character) -> Unit
 
-pub async fn new_twohanded_hit_effect(NxHitEffect, NxHitEffect, @resource.AsyncLoader, String) -> ((@combat_proto.AttackUser, @monster.Mob) -> Unit)
+pub fn new_twohanded_hit_effect(NxHitEffect, NxHitEffect, @resource.AsyncLoader, String) -> (@combat_proto.AttackUser, @monster.Mob) -> Unit
 
-pub async fn new_twohanded_use_effect(Json, @resource.AsyncLoader, String) -> ((@character.Character) -> Unit)
+pub fn new_twohanded_use_effect(Json, @resource.AsyncLoader, String) -> (@character.Character) -> Unit
 
 pub fn push_event(HitEvent) -> Unit
 
@@ -195,9 +195,9 @@ pub fn Skill::get_afterimage(Self) -> Map[String, @vfx_afterimage.NxAfterImage]
 pub fn Skill::get_bullet(Self, @character.Character, Int) -> @animation.Animation
 pub fn Skill::get_id(Self) -> Int
 pub fn Skill::is_attack(Self) -> Bool
-pub async fn Skill::load(Int) -> Self
+pub fn Skill::load(Int) -> Self
 pub fn Skill::make_attack(Self, @character.Character, Int, @combat_proto.AttackType) -> @combat_proto.Attack
-pub async fn Skill::new(Int, Json, @resource.AsyncLoader, String, Bool, Int, Map[Int, @skill.Stats], @weapon.Type, SkillSound) -> Self
+pub fn Skill::new(Int, Json, @resource.AsyncLoader, String, Bool, Int, Map[Int, @skill.Stats], @weapon.Type, SkillSound) -> Self
 
 type SkillSound
 
@@ -210,18 +210,18 @@ pub struct UseEffect((@character.Character) -> Unit)
 
 // Traits
 pub(open) trait CombatCharacter {
-  get_character(Self) -> @character.Character
-  get_stats(Self) -> @char_stats.CharStats
-  get_inventory(Self) -> &@legacy_types.Inventory
-  get_skill_book(Self) -> &@legacy_types.SkillBook
-  can_attack(Self) -> Bool
-  rush(Self, Double) -> Unit
+  fn get_character(Self) -> @character.Character
+  fn get_stats(Self) -> @char_stats.CharStats
+  fn get_inventory(Self) -> &@legacy_types.Inventory
+  fn get_skill_book(Self) -> &@legacy_types.SkillBook
+  fn can_attack(Self) -> Bool
+  fn rush(Self, Double) -> Unit
 }
 
 pub(open) trait DamagableCharacter {
-  is_invincible(Self) -> Bool
-  get_phobj(Self) -> @physics.PhysicsObject
-  damage(Self, @combat_proto.MobAttack) -> @combat_proto.MobAttackResult
+  fn is_invincible(Self) -> Bool
+  fn get_phobj(Self) -> @physics.PhysicsObject
+  fn damage(Self, @combat_proto.MobAttack) -> @combat_proto.MobAttackResult
 }
 
 trait SkillAction

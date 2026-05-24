@@ -31,7 +31,7 @@ fn LocalServer::on_select_char(self : LocalServer, json : Json) -> Unit raise {
     })
     return
   }
-  @io_service.execute_background(async fn() {
+  @io_service.execute_background(fn() {
     let has_save_data = default_server.load_character(
       default_server.current_character_id,
     )

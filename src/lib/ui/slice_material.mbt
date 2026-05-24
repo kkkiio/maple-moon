@@ -31,7 +31,7 @@ let ui_slice_cache : Map[String, UiSliceResource] = Map([])
 
 ///|
 /// Load and cache one UI slice resource from an exported `slice.json`.
-pub async fn load_ui_slice_resource(
+pub fn load_ui_slice_resource(
   loader : @resource.AsyncLoader,
   slice_json_path : String,
 ) -> UiSliceResource {
@@ -39,8 +39,10 @@ pub async fn load_ui_slice_resource(
   match ui_slice_cache.get(cache_key) {
     Some(cached) => cached
     None => {
-      let source = loader.load_data(slice_json_path)
-      let parsed = parse_ui_slice_json(loader, slice_json_path, source)
+      let source = loader.require_data(slice_json_path)
+      let parsed = parse_ui_slice_json(loader, slice_json_path, source) catch {
+        _ => abort("invalid ui slice json: \{slice_json_path}")
+      }
       ui_slice_cache.set(cache_key, parsed)
       parsed
     }
@@ -172,16 +174,11 @@ fn resolve_meta_image_path(
 
 ///|
 fn path_parent(path : String) -> String {
-  js_path_parent(path)
+  match path.rev_find("/") {
+    Some(i) => path.view(end_offset=i).to_owned()
+    None => ""
+  }
 }
-
-///|
-extern "js" fn js_path_parent(path : String) -> String =
-  #| (path) => {
-  #|   const idx = path.lastIndexOf("/")
-  #|   if (idx < 0) return ""
-  #|   return path.slice(0, idx)
-  #| }
 
 ///|
 fn push_image(

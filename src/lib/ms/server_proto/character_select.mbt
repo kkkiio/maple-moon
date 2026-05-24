@@ -16,7 +16,7 @@ pub(all) struct CharacterListRequestMessage(Unit) derive (
 )
 
 ///|
-pub impl ClientMessage for CharacterListRequestMessage with type_code() {
+pub impl ClientMessage for CharacterListRequestMessage with fn type_code() {
   ClientOpcode::CHAR_LIST_REQUEST.int_value()
 }
 
@@ -48,7 +48,7 @@ pub(all) struct CreateCharacterMessage {
 } derive(Debug, ToJson, FromJson)
 
 ///|
-pub impl ClientMessage for CreateCharacterMessage with type_code() {
+pub impl ClientMessage for CreateCharacterMessage with fn type_code() {
   ClientOpcode::CREATE_CHAR.int_value()
 }
 
@@ -71,7 +71,7 @@ pub(all) struct CharacterListMessage {
 } derive(Debug, ToJson, FromJson)
 
 ///|
-pub impl ServerMessage for CharacterListMessage with type_code() {
+pub impl ServerMessage for CharacterListMessage with fn type_code() {
   LOCAL_OPCODE_CHARACTER_LIST
 }
 
@@ -87,7 +87,7 @@ pub(all) struct CreateCharacterResultMessage {
 } derive(Debug, ToJson, FromJson)
 
 ///|
-pub impl ServerMessage for CreateCharacterResultMessage with type_code() {
+pub impl ServerMessage for CreateCharacterResultMessage with fn type_code() {
   LOCAL_OPCODE_CREATE_CHARACTER_RESULT
 }
 
@@ -103,7 +103,7 @@ pub(all) struct LookEntry {
 } derive(Debug, ToJson, Default)
 
 ///|
-pub impl @json.FromJson for LookEntry with from_json(json, path) {
+pub impl @json.FromJson for LookEntry with fn from_json(json, path) {
   fn parse_int_map(
     value : Json,
     path : @json.JsonPath,

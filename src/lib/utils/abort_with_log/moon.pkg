@@ -1,7 +1,0 @@
-import {
-  "KKKIIO/maple-moon/lib/log",
-}
-
-options(
-  implement: "moonbitlang/core/abort",
-)

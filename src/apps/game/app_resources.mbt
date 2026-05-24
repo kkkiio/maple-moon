@@ -8,7 +8,7 @@ pub(all) struct AppResources {
 }
 
 ///|
-pub async fn AppResources::load() -> AppResources {
+pub fn AppResources::load() -> AppResources {
   let basic_item_resource = @item.BasicItemResource::load(
     @resource.require_async_loader("item"),
     @resource.require_async_loader("string"),

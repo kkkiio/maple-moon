@@ -12,13 +12,17 @@ import {
 }
 
 // Values
+pub fn fetch_json(String) -> Json?
+
 pub fn get_csv_loader() -> CsvLoader
 
 pub fn get_csv_loader_by_name(String) -> CsvLoader
 
 pub fn get_text_loader(String) -> TextLoader
 
-pub async fn load_tiled_map_from_mx(AsyncLoader, Array[String]) -> (String, @tiled.TiledMap)
+pub fn load_image(String) -> @asset_types.ImageHandle
+
+pub fn load_tiled_map_from_mx(AsyncLoader, Array[String]) -> (String, @tiled.TiledMap)
 
 pub fn[K : Eq + Hash + @json.FromJson, V : @json.FromJson] parse_enum_map(Json, path~ : @json.JsonPath) -> Map[K, V] raise @json.JsonDecodeError
 
@@ -48,14 +52,16 @@ pub fn set_csv_loader(CsvLoader) -> Unit
 pub(all) struct AnimationLoader {
   loader : AsyncLoader
 }
-pub async fn AnimationLoader::load(Self, String) -> LoadedAnimations
+pub fn AnimationLoader::load(Self, String) -> LoadedAnimations
 pub fn AnimationLoader::new(AsyncLoader) -> Self
 
 type AsyncLoader
-pub async fn AsyncLoader::load_data(Self, String) -> Json
+pub fn AsyncLoader::load_data(Self, String) -> Json
 pub fn AsyncLoader::load_image(Self, String) -> @asset_types.ImageHandle
-pub async fn AsyncLoader::load_resource(Self, ArrayView[String]) -> Json
+pub fn AsyncLoader::load_resource(Self, ArrayView[String]) -> Json
 pub fn AsyncLoader::new(String, loader~ : &AsyncResourceLoader) -> Self
+pub fn AsyncLoader::require_data(Self, String) -> Json
+pub fn AsyncLoader::require_resource(Self, ArrayView[String]) -> Json
 pub fn AsyncLoader::resolve_json_path(Self, String) -> String
 
 type CompositeAsyncResourceLoader
@@ -65,7 +71,7 @@ pub impl AsyncResourceLoader for CompositeAsyncResourceLoader
 pub struct CsvLoader {
   inner : TextLoader
 }
-pub async fn CsvLoader::load_text(Self, String) -> String
+pub fn CsvLoader::load_text(Self, String) -> String
 pub fn CsvLoader::new(loader~ : &CsvTextLoader) -> Self
 
 type DirResourceLoader
@@ -81,15 +87,6 @@ type FileJsonResourceLoader
 pub fn FileJsonResourceLoader::new(String) -> Self
 pub impl AsyncResourceLoader for FileJsonResourceLoader
 
-#external
-pub type Image
-pub fn Image::new_pending() -> Self
-pub fn Image::poll(Self) -> LoadedImage?
-
-type ImageLoader
-pub fn ImageLoader::get_path_image_loader() -> Self
-pub fn ImageLoader::load_image(Self, Int) -> Image
-
 pub struct IntMap[T](Map[Int, T]) derive(@debug.Debug)
 pub impl[T : @json.FromJson] @json.FromJson for IntMap[T]
 
@@ -99,11 +96,6 @@ pub(all) struct LoadedAnimations {
 }
 pub fn LoadedAnimations::clip(Self, String) -> SeleneClip raise
 pub fn LoadedAnimations::list_tags(Self) -> Array[String]
-
-#external
-pub type LoadedImage
-pub fn LoadedImage::height(Self) -> Int
-pub fn LoadedImage::width(Self) -> Int
 
 pub struct MapBasedArray[T](Array[T]) derive(@debug.Debug)
 pub impl[T : @json.FromJson] @json.FromJson for MapBasedArray[T]
@@ -154,21 +146,21 @@ pub(all) struct SeleneClip {
 pub struct TextLoader {
   loader : &TextResourceLoader
 }
-pub async fn TextLoader::load_text(Self, String) -> String
+pub fn TextLoader::load_text(Self, String) -> String
 pub fn TextLoader::new(loader~ : &TextResourceLoader) -> Self
 
 // Type aliases
 
 // Traits
 pub(open) trait AsyncResourceLoader {
-  async load_data(Self, StringView) -> Json
+  fn load_data(Self, StringView) -> Json?
 }
 
 pub(open) trait CsvTextLoader {
-  async load_text(Self, String) -> String
+  fn load_text(Self, String) -> String
 }
 
 pub(open) trait TextResourceLoader {
-  async load_text(Self, String) -> String
+  fn load_text(Self, String) -> String
 }
 

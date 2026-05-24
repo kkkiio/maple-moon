@@ -134,7 +134,7 @@ fn parse_int_like(
 }
 
 ///|
-pub impl @json.FromJson for MxMobAnimNode with from_json(json, path) {
+pub impl @json.FromJson for MxMobAnimNode with fn from_json(json, path) {
   guard json is Object(root) else {
     raise @json.JsonDecodeError((path, "MxMobAnimNode must be an object"))
   }
@@ -176,7 +176,7 @@ pub impl @json.FromJson for MxMobAnimNode with from_json(json, path) {
 }
 
 ///|
-pub impl @json.FromJson for MxMobEffectNode with from_json(json, path) {
+pub impl @json.FromJson for MxMobEffectNode with fn from_json(json, path) {
   guard json is Object(root) else {
     raise @json.JsonDecodeError((path, "MxMobEffectNode must be an object"))
   }
@@ -200,7 +200,7 @@ pub impl @json.FromJson for MxMobEffectNode with from_json(json, path) {
 }
 
 ///|
-pub impl @json.FromJson for MxMobAttackInfo with from_json(json, path) {
+pub impl @json.FromJson for MxMobAttackInfo with fn from_json(json, path) {
   guard json is Object(root) else {
     raise @json.JsonDecodeError((path, "MxMobAttackInfo must be an object"))
   }
@@ -226,7 +226,7 @@ pub impl @json.FromJson for MxMobAttackInfo with from_json(json, path) {
 }
 
 ///|
-pub impl @json.FromJson for MxMobAttackNode with from_json(json, path) {
+pub impl @json.FromJson for MxMobAttackNode with fn from_json(json, path) {
   guard json is Object(root) else {
     raise @json.JsonDecodeError((path, "MxMobAttackNode must be an object"))
   }
@@ -255,7 +255,7 @@ pub impl @json.FromJson for MxMobAttackNode with from_json(json, path) {
 }
 
 ///|
-pub impl @json.FromJson for MxMobSkillNode with from_json(json, path) {
+pub impl @json.FromJson for MxMobSkillNode with fn from_json(json, path) {
   guard json is Object(root) else {
     raise @json.JsonDecodeError((path, "MxMobSkillNode must be an object"))
   }
@@ -306,7 +306,7 @@ fn parse_string_map(
 }
 
 ///|
-pub impl @json.FromJson for MxMob with from_json(json, path) {
+pub impl @json.FromJson for MxMob with fn from_json(json, path) {
   guard json is Object(root) else {
     raise @json.JsonDecodeError((path, "MxMob must be an object"))
   }

@@ -27,7 +27,7 @@ pub(all) struct AppResources {
   map_quests_resource : @quest_icon.MapQuestsResource
 }
 pub fn AppResources::install(Self) -> Unit
-pub async fn AppResources::load() -> Self
+pub fn AppResources::load() -> Self
 
 pub enum ResourceEnvMode {
   Prod

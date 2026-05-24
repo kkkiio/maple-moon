@@ -19,7 +19,7 @@ pub(all) struct OpenNpcShopMessage {
 } derive(Debug, ToJson, FromJson)
 
 ///|
-pub impl ServerMessage for OpenNpcShopMessage with type_code() {
+pub impl ServerMessage for OpenNpcShopMessage with fn type_code() {
   Opcode::OPEN_NPC_SHOP.int_value()
 }
 
@@ -30,7 +30,7 @@ pub(all) struct ConfirmShopTransactionMessage {
 } derive(Debug, ToJson, FromJson)
 
 ///|
-pub impl ServerMessage for ConfirmShopTransactionMessage with type_code() {
+pub impl ServerMessage for ConfirmShopTransactionMessage with fn type_code() {
   Opcode::CONFIRM_SHOP_TRANSACTION.int_value()
 }
 
@@ -46,6 +46,6 @@ pub(all) struct NpcShopActionMessage {
 } derive(Debug, ToJson, FromJson)
 
 ///|
-pub impl ClientMessage for NpcShopActionMessage with type_code() {
+pub impl ClientMessage for NpcShopActionMessage with fn type_code() {
   ClientOpcode::NPC_SHOP_ACTION.int_value()
 }

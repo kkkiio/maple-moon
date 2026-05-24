@@ -14,6 +14,6 @@ pub(all) enum AdminCommandMessage {
 } derive(Debug, ToJson, FromJson)
 
 ///|
-pub impl ClientMessage for AdminCommandMessage with type_code() {
+pub impl ClientMessage for AdminCommandMessage with fn type_code() {
   ClientOpcode::ADMIN_COMMAND.int_value()
 }

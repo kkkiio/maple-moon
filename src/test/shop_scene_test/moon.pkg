@@ -1,7 +1,6 @@
 import {
   "moonbitlang/core/json",
   "moonbitlang/core/string",
-  "moonbitlang/async",
   "moonbitlang/x/fs",
   "KKKIIO/maple-moon/lib/io_service",
   "KKKIIO/maple-moon/lib/ms/map",
@@ -11,16 +10,24 @@ import {
   "KKKIIO/maple-moon/test/capture_app",
   "KKKIIO/maple-moon/test/local_loader",
   "Milky2018/selene/entity",
-  "Milky2018/selene/math" @math,
+  "Milky2018/selene/math",
   "Milky2018/selene/plugins",
-  "KKKIIO/maple-moon/lib/ms/transform2d" @transform2d,
+  "KKKIIO/maple-moon/lib/ms/transform2d",
   "KKKIIO/maple-moon/lib/ms/camera" @ms_camera,
   "Milky2018/selene/sprite",
   "Milky2018/selene/system",
-  "Milky2018/selene/app" @app,
+  "Milky2018/selene/app",
   "Milky2018/selene/ecs",
 } for "test"
 
+supported_targets = "js"
+
 options(
-  overrides: [ "KKKIIO/maple-moon/test/capture_backend" ],
+  overrides: [
+    "Milky2018/selene_webgpu/platform_window",
+    "Milky2018/selene_webgpu/platform_input",
+    "Milky2018/selene_webgpu/platform_render",
+    "Milky2018/selene_webgpu/platform_audio",
+    "Milky2018/selene_webgpu/platform_asset_io",
+  ],
 )

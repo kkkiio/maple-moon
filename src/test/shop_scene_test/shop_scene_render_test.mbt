@@ -9,10 +9,10 @@ pub fn FlatJsonFileLoader::new(root : String) -> FlatJsonFileLoader {
 }
 
 ///|
-pub impl @resource.AsyncResourceLoader for FlatJsonFileLoader with load_data(
+pub impl @resource.AsyncResourceLoader for FlatJsonFileLoader with fn load_data(
   self,
   path,
-) -> Json {
+) -> Json? {
   let root = self.root.strip_suffix("/").unwrap_or(self.root)
   let raw_rel = path
     .to_owned()
@@ -21,8 +21,8 @@ pub impl @resource.AsyncResourceLoader for FlatJsonFileLoader with load_data(
     .to_owned()
   let rel = normalize_test_resource_path(root.to_owned(), raw_rel)
   let full_path = "\{root}/\{rel}"
-  (@fs.read_file_to_string(full_path) |> @json.parse) catch {
-    _ => null
+  Some(@fs.read_file_to_string(full_path) |> @json.parse) catch {
+    _ => None
   }
 }
 
@@ -133,7 +133,7 @@ fn spawn_npc_from_life(
 }
 
 ///|
-async fn setup_shop_scene_npcs() -> Unit {
+fn setup_shop_scene_npcs() -> @app.App raise {
   setup_resource_loaders()
   let app = @app.App()
     .with_viewport_width(800.0)
@@ -160,7 +160,8 @@ async fn setup_shop_scene_npcs() -> Unit {
       fn(world) { @io_service.io_system(world) },
       system_name="io_system",
     )
-  @capture_app.init_app(app)
+  @ecs.set_current_world(app.world())
+  @system.configure_display(800.0, 600.0, 1.0)
 
   let raw = @map.load_map_resources_by_id(102000001)
   let scene_map = @map.create_scene_map(
@@ -181,7 +182,7 @@ async fn setup_shop_scene_npcs() -> Unit {
   )
   @map.set_runtime_context(scene_map.map_info, scene_map.physics)
 
-  setup_camera(@math.Vec2(380.0, 460.0), scene_map.map_info)
+  setup_camera(@math.Vec2(-500.0, 320.0), scene_map.map_info)
 
   let map_npcs = @npc.MapNpcs::new(
     fn(_args) {  },
@@ -201,34 +202,23 @@ async fn setup_shop_scene_npcs() -> Unit {
     )
   }
 
-  for _ in 0..<120 {
-    @capture_app.run_loop(0.016)
-  }
-  let anchors = @npc.list_npc_anchors()
-  if anchors.is_empty() {
-    panic()
-  }
-  setup_camera(@math.Vec2(-500.0, 320.0), scene_map.map_info)
-  for _ in 0..<30 {
-    @capture_app.run_loop(0.016)
-  }
+  app
 }
 
 ///|
-async test "shop scene npc render snapshot on map 102000001" {
+test "shop scene npc render snapshot on map 102000001" {
   defer @map.clear_runtime_context()
   defer @map.clear_tiled_map(@ecs.require_current_world())
   defer @npc.clear_map_npcs()
   defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
   defer @sprite.sprites().clear()
 
-  setup_shop_scene_npcs()
-  for _ in 0..<4 {
-    @capture_app.run_loop(0.016)
-  }
+  let app = setup_shop_scene_npcs()
+  let captures = app.run_frames_capture(154, raw_delta=0.016)
 
   @capture_app.snapshot(
     "src/test/shop_scene_test/__snapshot__/shop_scene_map_102000001_npcs.png",
+    captures[captures.length() - 1].png,
     visual_desc="Shop scene, two NPCs standing on the left, behind the counter.",
   )
 }

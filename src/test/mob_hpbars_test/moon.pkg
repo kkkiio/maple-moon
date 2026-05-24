@@ -1,5 +1,4 @@
 import {
-  "moonbitlang/async",
   "moonbitlang/core/random",
   "KKKIIO/maple-moon/lib/ms/monster",
   "KKKIIO/maple-moon/lib/ms/animation" @ms_animation,
@@ -18,6 +17,14 @@ import {
   "Milky2018/selene/ecs",
 } for "test"
 
+supported_targets = "js"
+
 options(
-  overrides: [ "KKKIIO/maple-moon/test/capture_backend" ],
+  overrides: [
+    "Milky2018/selene_webgpu/platform_window",
+    "Milky2018/selene_webgpu/platform_input",
+    "Milky2018/selene_webgpu/platform_render",
+    "Milky2018/selene_webgpu/platform_audio",
+    "Milky2018/selene_webgpu/platform_asset_io",
+  ],
 )

@@ -13,16 +13,16 @@ fn reset_npc_talk_ui_test_state() -> Unit {
 
 ///|
 fn load_quest_2090_quiz_text() -> String raise {
-  let say_2090 = @fs.read_file_to_string("assets/Quest/Say.img/2090.json")
-    |> @json.parse
-  match say_2090 {
-    { "1": { "0": String(text), .. }, .. } => text
-    _ => fail("assets/Quest/Say.img/2090.json missing phase 1 quiz text")
+  let quest = @fs.read_file_to_string("assets/Quest/nx.json") |> @json.parse
+  match quest {
+    { "Say.img": { "2090": { "1": { "0": String(text), .. }, .. }, .. }, .. } =>
+      text
+    _ => fail("assets/Quest/nx.json missing Say.img/2090 phase 1 quiz text")
   }
 }
 
 ///|
-async fn setup_npc_talk_resource_cache() -> Unit {
+fn setup_npc_talk_resource_cache() -> Unit raise {
   let util_dlg_ex = @resource.require_async_loader("ui_window_2").load_resource([
       "UtilDlgEx",
     ],
@@ -40,7 +40,8 @@ async fn setup_npc_talk_resource_cache() -> Unit {
 }
 
 ///|
-async fn setup_scene() -> Unit {
+fn setup_scene() -> @app.App raise {
+  let fixed_mouse_input_set = @system_set.named("fixed_mouse_input")
   let app = @app.App()
     .with_viewport_width(800.0)
     .with_viewport_height(540.0)
@@ -52,8 +53,18 @@ async fn setup_scene() -> Unit {
     )
     .add_system(
       Update,
+      fn(_world) {
+        @inputs.mouse.pos = @math.Vec2(360.0, 260.0)
+        @inputs.mouse.left_button = false
+      },
+      system_name="aaa_fixed_mouse_position_system",
+      in_set=fixed_mouse_input_set,
+    )
+    .add_system(
+      Update,
       fn(world) { @cursor.cursor_system(world) },
       system_name="cursor_system",
+      after=[fixed_mouse_input_set],
     )
     .add_system(
       Update,
@@ -65,7 +76,8 @@ async fn setup_scene() -> Unit {
       fn(world) { @ms_camera.camera_follow_system(world) },
       system_name="camera_follow_system",
     )
-  @capture_app.init_app(app)
+  @ecs.set_current_world(app.world())
+  @system.configure_display(800.0, 540.0, 1.0)
   @game_state.init_state(@game_state.GamePhase::GameSetup)
   let camera_anchor = @entity.Entity()
   @ms_camera.setup_camera_entity(camera_anchor, center=@math.Vec2(0.0, 0.0))
@@ -91,20 +103,16 @@ async fn setup_scene() -> Unit {
     },
     talk_action: @npc.TalkAction::SEND_SIMPLE(fn(_selection) { () }),
   })
-
-  for _ in 0..<12 {
-    @inputs.mouse.pos = @math.Vec2(360.0, 260.0)
-    @inputs.mouse.left_button = false
-    @capture_app.run_loop(0.016)
-  }
+  app
 }
 
 ///|
-async test "npc_talk_ui quest 2090 keeps cursor above ui and grows with content" {
+test "npc_talk_ui quest 2090 keeps cursor above ui and grows with content" {
   reset_npc_talk_ui_test_state()
   defer reset_npc_talk_ui_test_state()
 
-  setup_scene()
+  let app = setup_scene()
+  let captures = app.run_frames_capture(12, raw_delta=0.016)
 
   let desc = @npc_talk_ui.describe_npc_talk_ui()
   json_inspect(desc, content={
@@ -166,6 +174,7 @@ async test "npc_talk_ui quest 2090 keeps cursor above ui and grows with content"
 
   @capture_app.snapshot(
     "src/test/npc_talk_ui_test/__snapshot__/npc_talk_ui_quest_2090.png",
+    captures[captures.length() - 1].png,
     visual_desc="NPC talk UI for quest 2090 quiz is open with multiple options. The cursor rendered by cursor_system is visible on top of the dialog and not occluded by UI layers. The window is tall enough to avoid clipping the content.",
   )
 }

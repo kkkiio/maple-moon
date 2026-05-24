@@ -18,23 +18,29 @@ fn LocalCsvTextLoader::new() -> LocalCsvTextLoader {
 }
 
 ///|
-impl @resource.AsyncResourceLoader for LocalJsonResourceLoader with load_data(
+impl @resource.AsyncResourceLoader for LocalJsonResourceLoader with fn load_data(
   self,
   path,
-) -> Json {
+) -> Json? {
   let (file_path, node_path) = @resource.resolve_json_resource_path(
     self.source,
     path.to_owned(),
   )
-  let root_value = load_json_from_local_path(file_path)
-  get_by_path(root_value, node_path)
+  let root_value = load_json_from_local_path(file_path) catch {
+    _ => abort("failed to load local json resource: \{file_path}")
+  }
+  get_by_path(root_value, node_path) |> Some
 }
 
 ///|
-impl @resource.CsvTextLoader for LocalCsvTextLoader with load_text(self, path) -> String {
+impl @resource.CsvTextLoader for LocalCsvTextLoader with fn load_text(
+  self,
+  path,
+) -> String {
   ignore(self)
-  let fs_path = path.strip_prefix("/").unwrap_or(path)
-  @fs.read_file_to_string(fs_path.to_owned())
+  @fs.read_file_to_string(path) catch {
+    _ => abort("failed to load local text resource: \{path}")
+  }
 }
 
 ///|
@@ -93,8 +99,7 @@ pub fn install_resource_env_for_test() -> Unit {
 
 ///|
 fn load_json_from_local_path(path : String) -> Json raise {
-  let file_path = path.strip_prefix("/").unwrap_or(path)
-  let text = @fs.read_file_to_string(file_path.to_owned())
+  let text = @fs.read_file_to_string(path)
   @json.parse(text)
 }
 

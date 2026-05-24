@@ -1,5 +1,5 @@
 ///|
-async fn load_test_mob() -> @monster.Mob {
+fn load_test_mob() -> @monster.Mob {
   @monster.Mob::load(
     1001,
     100101,
@@ -15,7 +15,7 @@ async fn load_test_mob() -> @monster.Mob {
 ///|
 fn attach_visible_mob_sprite(entity : @entity.Entity) -> Unit {
   let stand = @ms_animation.Animation::single_frame(
-    "/assets/mob/0100101.img_stand.png",
+    "assets/mob/0100101.img_stand.png",
     @math.Vec2(35.0, 34.0),
     pivot=@math.Vec2(16.0, 34.0),
   )
@@ -23,7 +23,7 @@ fn attach_visible_mob_sprite(entity : @entity.Entity) -> Unit {
 }
 
 ///|
-async test "mob hpbar render snapshot" {
+test "mob hpbar render snapshot" {
   @local_loader.install_resource_env_for_test()
   defer @monster.clear_map_monsters()
   defer @monster.mob_hpbars_system(@ecs.require_current_world())
@@ -44,7 +44,8 @@ async test "mob hpbar render snapshot" {
       fn(world) { @ms_camera.camera_follow_system(world) },
       system_name="camera_follow_system",
     )
-  @capture_app.init_app(app)
+  @ecs.set_current_world(app.world())
+  @system.configure_display(160.0, 120.0, 1.0)
   let mob_pos = @math.Vec2(80.0, 86.0)
   let camera_center = @math.Vec2(80.0, 62.0)
   let camera_anchor = @entity.Entity()
@@ -62,12 +63,11 @@ async test "mob hpbar render snapshot" {
 
   @monster.enqueue_hp_event(1001, 75, 0)
 
-  for _ in 0..<3 {
-    @capture_app.run_loop(0.016)
-  }
+  let captures = app.run_frames_capture(3, raw_delta=0.016)
 
   @capture_app.snapshot(
     "src/test/mob_hpbars_test/__snapshot__/mob_hpbar_default.png",
+    captures[captures.length() - 1].png,
     visual_desc="A mob is visible and its HP bar is rendered above the mob, horizontally centered.",
   )
 }

@@ -1,5 +1,5 @@
 ///|
-async fn setup_tiled_background_scene_101010102() -> Unit {
+fn setup_tiled_background_scene_101010102() -> @app.App raise {
   @local_loader.install_resource_env_for_test()
   let app = @app.App()
     .with_viewport_width(800.0)
@@ -15,7 +15,8 @@ async fn setup_tiled_background_scene_101010102() -> Unit {
       fn(world) { @io_service.io_system(world) },
       system_name="io_system",
     )
-  @capture_app.init_app(app)
+  @ecs.set_current_world(app.world())
+  @system.configure_display(800.0, 600.0, 1.0)
   let raw = @map.load_map_resources_by_id(101010102)
   @map.set_tiled_map(
     @ecs.require_current_world(),
@@ -30,6 +31,7 @@ async fn setup_tiled_background_scene_101010102() -> Unit {
   )
   @ms_camera.set_follow_target(camera_anchor)
   @ms_camera.camera_follow_system(@ecs.require_current_world())
+  app
 }
 
 ///|
@@ -60,33 +62,39 @@ fn visible_sprite_count() -> Int {
 }
 
 ///|
-async test "map 101010102 tween lighting alpha background" {
+test "map 101010102 tween lighting alpha background start" {
   defer @map.clear_tiled_map(@ecs.require_current_world())
   defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
   defer @sprite.sprites().clear()
 
-  setup_tiled_background_scene_101010102()
-  for _ in 0..<80 {
-    @capture_app.run_loop(0.016)
-  }
+  let app = setup_tiled_background_scene_101010102()
+  let captures = app.run_frames_capture(80, raw_delta=0.016)
 
   let start_alpha = min_sprite_alpha()
   assert_true(start_alpha >= 0.0)
   assert_true(visible_sprite_count() > 0)
   @capture_app.snapshot(
     "src/test/map_background_test/__snapshot__/map_101010102_bg_alpha_start.png",
+    captures[captures.length() - 1].png,
     visual_desc="Large green tree trunks and vines fill most of the screen, with lighter tree layers visible in the far background.",
   )
+}
 
-  for _ in 0..<78 {
-    @capture_app.run_loop(0.016)
-  }
+///|
+test "map 101010102 tween lighting alpha background mid" {
+  defer @map.clear_tiled_map(@ecs.require_current_world())
+  defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
+  defer @sprite.sprites().clear()
+
+  let app = setup_tiled_background_scene_101010102()
+  let captures = app.run_frames_capture(158, raw_delta=0.016)
 
   let after_motion_alpha = min_sprite_alpha()
   assert_true(after_motion_alpha >= 0.0)
   assert_true(visible_sprite_count() > 0)
   @capture_app.snapshot(
     "src/test/map_background_test/__snapshot__/map_101010102_bg_alpha_mid.png",
+    captures[captures.length() - 1].png,
     visual_desc="Overlapping foreground and background tree layers create a dense forest view, with thick trunks crossing the center of the screen.",
   )
 }

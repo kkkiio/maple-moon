@@ -22,6 +22,8 @@ pub fn get_text_loader(String) -> TextLoader
 
 pub fn load_image(String) -> @asset_types.ImageHandle
 
+pub fn load_json(String) -> Json? raise
+
 pub fn load_tiled_map_from_mx(AsyncLoader, Array[String]) -> (String, @tiled.TiledMap)
 
 pub fn[K : Eq + Hash + @json.FromJson, V : @json.FromJson] parse_enum_map(Json, path~ : @json.JsonPath) -> Map[K, V] raise @json.JsonDecodeError
@@ -36,6 +38,10 @@ pub fn register_text_loader(String, TextLoader) -> Unit
 
 pub fn require_async_loader(String) -> AsyncLoader
 
+pub fn require_image(String) -> @asset_types.ImageHandle
+
+pub fn require_json(String) -> Json
+
 pub fn resolve_json_resource_path(String, String) -> (String, Array[String])
 
 pub fn resolve_ref(String, String) -> String
@@ -47,6 +53,10 @@ pub fn resolve_resource_path(String, String) -> String
 pub fn set_csv_loader(CsvLoader) -> Unit
 
 // Errors
+pub(all) suberror ResourceLoadError {
+  InvalidPath(String)
+  InvalidJson(String)
+} derive(@debug.Debug)
 
 // Types and methods
 pub(all) struct AnimationLoader {

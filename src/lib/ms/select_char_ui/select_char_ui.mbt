@@ -60,7 +60,7 @@ pub fn SelectCharUIResource::load() -> SelectCharUIResource {
       "delay": 2500,
       "origin": [216, 221],
       "z": 0,
-      "__i": "assets/ui/login.img/char_select/light18.png",
+      "__i": "assets/UI/Login.img/char_select/light18.png",
     },
     "1": {
       "__h": 442,
@@ -71,7 +71,7 @@ pub fn SelectCharUIResource::load() -> SelectCharUIResource {
       "delay": 2500,
       "origin": [216, 221],
       "z": 0,
-      "__i": "assets/ui/login.img/char_select/light18.png",
+      "__i": "assets/UI/Login.img/char_select/light18.png",
     },
   }
   let bt_new_res : Json = {
@@ -82,7 +82,7 @@ pub fn SelectCharUIResource::load() -> SelectCharUIResource {
         "__off": [110, 37],
         "origin": [0, 0],
         "z": 0,
-        "__i": "assets/ui/login.img/char_select/bt_new.png",
+        "__i": "assets/UI/Login.img/char_select/bt_new.png",
       },
     },
     "mouseOver": {
@@ -92,7 +92,7 @@ pub fn SelectCharUIResource::load() -> SelectCharUIResource {
         "__off": [0, 37],
         "origin": [0, 0],
         "z": 0,
-        "__i": "assets/ui/login.img/char_select/bt_new.png",
+        "__i": "assets/UI/Login.img/char_select/bt_new.png",
       },
     },
     "normal": {
@@ -102,7 +102,7 @@ pub fn SelectCharUIResource::load() -> SelectCharUIResource {
         "__off": [0, 0],
         "origin": [0, 0],
         "z": 0,
-        "__i": "assets/ui/login.img/char_select/bt_new.png",
+        "__i": "assets/UI/Login.img/char_select/bt_new.png",
       },
     },
     "pressed": {
@@ -112,7 +112,7 @@ pub fn SelectCharUIResource::load() -> SelectCharUIResource {
         "__off": [110, 0],
         "origin": [0, 0],
         "z": 0,
-        "__i": "assets/ui/login.img/char_select/bt_new.png",
+        "__i": "assets/UI/Login.img/char_select/bt_new.png",
       },
     },
   }
@@ -126,7 +126,7 @@ pub fn SelectCharUIResource::load() -> SelectCharUIResource {
         "__w": 140,
         "origin": [0, 0],
         "z": 0,
-        "__i": "assets/ui/login.img/char_select/bt_select.png",
+        "__i": "assets/UI/Login.img/char_select/bt_select.png",
       },
     },
     "mouseOver": {
@@ -135,7 +135,7 @@ pub fn SelectCharUIResource::load() -> SelectCharUIResource {
         "__w": 140,
         "origin": [0, 0],
         "z": 0,
-        "__i": "assets/ui/login.img/char_select/bt_select.png",
+        "__i": "assets/UI/Login.img/char_select/bt_select.png",
       },
     },
     "pressed": {
@@ -144,7 +144,7 @@ pub fn SelectCharUIResource::load() -> SelectCharUIResource {
         "__w": 140,
         "origin": [0, 0],
         "z": 0,
-        "__i": "assets/ui/login.img/char_select/bt_select.png",
+        "__i": "assets/UI/Login.img/char_select/bt_select.png",
       },
     },
     "disabled": {
@@ -153,7 +153,7 @@ pub fn SelectCharUIResource::load() -> SelectCharUIResource {
         "__w": 140,
         "origin": [0, 0],
         "z": 0,
-        "__i": "assets/ui/login.img/char_select/bt_select.png",
+        "__i": "assets/UI/Login.img/char_select/bt_select.png",
       },
     },
   }
@@ -186,13 +186,13 @@ pub fn SelectCharUI::new(
   on_new_character? : () -> Unit = fn() {  },
 ) -> SelectCharUI {
   let back13 = @ms_animation.Animation::single_frame(
-    "assets/ui/login.img/char_select/back13.png",
+    "assets/UI/Login.img/char_select/back13.png",
     @selene_math.Vec2(800, 600),
     //   "origin": [392, 297]
   )
   let ani17 = @ms_animation.Animation::new([
     @ms_animation.AnimationFrame::{
-      image: @resource.load_image("assets/ui/login.img/char_select/light17.png"),
+      image: @resource.load_image("assets/UI/Login.img/char_select/light17.png"),
       size: @selene_math.Vec2(505, 242),
       offset: @selene_math.Vec2(0, 0),
       pivot: @selene_math.Vec2(121, 252), // origin
@@ -203,7 +203,7 @@ pub fn SelectCharUI::new(
       //     "delay": 3000,
     },
     @ms_animation.AnimationFrame::{
-      image: @resource.load_image("assets/ui/login.img/char_select/light17.png"),
+      image: @resource.load_image("assets/UI/Login.img/char_select/light17.png"),
       size: @selene_math.Vec2(505, 242),
       offset: @selene_math.Vec2(0, 0),
       pivot: @selene_math.Vec2(121, 252), // origin
@@ -216,7 +216,7 @@ pub fn SelectCharUI::new(
   ])
   let ani19 : @ms_animation.Animation = @ms_animation.Animation::new([
     @ms_animation.AnimationFrame::{
-      image: @resource.load_image("assets/ui/login.img/char_select/light19.png"),
+      image: @resource.load_image("assets/UI/Login.img/char_select/light19.png"),
       size: @selene_math.Vec2(355, 312),
       offset: @selene_math.Vec2(0, 0),
       pivot: @selene_math.Vec2(156, 177), // origin
@@ -228,7 +228,7 @@ pub fn SelectCharUI::new(
       // "origin": [156, 177],
     },
     @ms_animation.AnimationFrame::{
-      image: @resource.load_image("assets/ui/login.img/char_select/light19.png"),
+      image: @resource.load_image("assets/UI/Login.img/char_select/light19.png"),
       offset: @selene_math.Vec2(312, 0),
       size: @selene_math.Vec2(355, 312),
       pivot: @selene_math.Vec2(156, 177), // origin
@@ -239,7 +239,7 @@ pub fn SelectCharUI::new(
       // "origin": [156, 177],
     },
     @ms_animation.AnimationFrame::{
-      image: @resource.load_image("assets/ui/login.img/char_select/light19.png"),
+      image: @resource.load_image("assets/UI/Login.img/char_select/light19.png"),
       offset: @selene_math.Vec2(312, 0),
       size: @selene_math.Vec2(355, 312),
       pivot: @selene_math.Vec2(156, 177), // origin
@@ -252,12 +252,12 @@ pub fn SelectCharUI::new(
     },
   ])
   let frame = @ms_animation.Animation::single_frame(
-    "assets/ui/login.img/char_select/frame.png",
+    "assets/UI/Login.img/char_select/frame.png",
     @selene_math.Vec2(800, 600),
     //   "origin": [400, 300]
   )
   let step2 = @ms_animation.Animation::single_frame(
-    "assets/ui/login.img/char_select/select_character_btn.png",
+    "assets/UI/Login.img/char_select/select_character_btn.png",
     @selene_math.Vec2(127, 45),
     //   "origin": [0, 0]
   )

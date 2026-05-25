@@ -1,8 +1,9 @@
 import {
   "KKKIIO/maple-moon/lib/utils",
+  "moonbitlang/core/env",
 }
 
 options(
   link: { "wasm-gc": { "use-js-builtin-string": true } },
-  targets: { "out.js.mbt": [ "js" ] },
+  targets: { "out.js.mbt": [ "js" ], "out.native.mbt": [ "native" ] },
 )

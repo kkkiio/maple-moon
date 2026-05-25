@@ -11,8 +11,8 @@
 
 资源依赖：
 
-- `assets/ui/UIWindow2.img/WorldMap.json`
-- `assets/ui/UIWindow2.img/ToolTip.json`
+- `assets/UI/UIWindow2.img/WorldMap.json`
+- `assets/UI/UIWindow2.img/ToolTip.json`
 - `assets/spritesheets/Map/MapHelper.img/worldMap.json`
 - `assets/map/WorldMap/*.img.json`
 

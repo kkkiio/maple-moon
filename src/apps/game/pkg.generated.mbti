@@ -3,6 +3,7 @@ package "KKKIIO/maple-moon/apps/game"
 
 import {
   "KKKIIO/maple-moon/lib/ms/character_presentation",
+  "KKKIIO/maple-moon/lib/ms/cursor",
   "KKKIIO/maple-moon/lib/ms/item",
   "KKKIIO/maple-moon/lib/ms/quest",
   "KKKIIO/maple-moon/lib/ms/quest_icon",
@@ -25,9 +26,10 @@ pub(all) struct AppResources {
   quest_resource : @quest.QuestResource
   quest_progress : Json
   map_quests_resource : @quest_icon.MapQuestsResource
+  cursor_animation_data : @cursor.CursorAnimationData
 }
 pub fn AppResources::install(Self) -> Unit
-pub fn AppResources::load() -> Self
+pub fn AppResources::load() -> Self raise
 
 pub enum ResourceEnvMode {
   Prod

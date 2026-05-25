@@ -5,31 +5,30 @@ using @ui {type CursorState}
 const CURSOR_ZINDEX : Int = @graphics.CURSOR_ZINDEX
 
 ///|
-const CAN_CLICK_FRAME_WIDTH : Double = 30.0
-
-///|
-const CAN_CLICK_FRAME_HEIGHT : Double = 30.0
-
-///|
-const CAN_CLICK_FRAME_COUNT : Int = 2
-
-///|
-const CAN_CLICK_FRAME_SECONDS : Double = 0.15
-
-///|
 pub(all) struct Cursor {
   mut state : CursorState
   mut inactive_seconds : Double
   mut state_seconds : Double
   mut last_mouse_pos : @math.Vec2
   entity : @entity.Entity
+  animation_data : CursorAnimationData
 }
 
 ///|
 pub const HIDE_SECONDS : Int = 12
 
 ///|
-pub fn Cursor::new() -> Cursor {
+/// 创建 cursor 实例。
+///
+/// # Example
+/// ```moonbit nocheck
+/// let data = try! CursorAnimationData::load(
+///   "assets/UI/Basic.img/Cursor/cursor_animation.json",
+/// )
+///
+/// let cursor = Cursor::new(data)
+/// ```
+pub fn Cursor::new(data : CursorAnimationData) -> Cursor {
   let entity = @entity.Entity()
   {
     state: CursorState::IDLE,
@@ -37,6 +36,7 @@ pub fn Cursor::new() -> Cursor {
     state_seconds: 0.0,
     last_mouse_pos: @math.Vec2(-9999999.0, -9999999.0),
     entity,
+    animation_data: data,
   }
 }
 
@@ -46,6 +46,32 @@ pub fn Cursor::set_state(self : Cursor, state : CursorState) -> Unit {
   self.state = state
   self.inactive_seconds = 0.0
   self.state_seconds = 0.0
+}
+
+///|
+fn cursor_state_tag(state : CursorState) -> String {
+  match state {
+    CursorState::IDLE => "idle"
+    CursorState::CAN_CLICK => "can_click"
+    CursorState::GAME => "game"
+    CursorState::HOUSE => "house"
+    CursorState::CAN_CLICK2 => "can_click2"
+    CursorState::CAN_GRAB => "can_grab"
+    CursorState::GIFT => "gift"
+    CursorState::VSCROLL => "vscroll"
+    CursorState::HSCROLL => "hscroll"
+    CursorState::VSCROLL_IDLE => "vscroll_idle"
+    CursorState::HSCROLL_IDLE => "hscroll_idle"
+    CursorState::GRABBING => "grabbing"
+    CursorState::CLICKING => "clicking"
+    CursorState::RCLICK => "rclick"
+    CursorState::LEAF => "leaf"
+    CursorState::CHAT_BAR_VDRAG => "chat_bar_vdrag"
+    CursorState::CHAT_BAR_HDRAG => "chat_bar_hdrag"
+    CursorState::CHAT_BAR_BLTRDRAG => "chat_bar_bltrdrag"
+    CursorState::CHAT_BAR_MOVE => "chat_bar_move"
+    CursorState::CHAT_BAR_BRTLDRAG => "chat_bar_brtldrag"
+  }
 }
 
 ///|
@@ -89,96 +115,82 @@ fn hide_cursor_entity(entity : @entity.Entity) -> Unit {
 }
 
 ///|
-fn cursor_texture_path(state : CursorState) -> String {
-  match state {
-    CursorState::CAN_CLICK => "assets/ui/cursor/cursor_can_click.png"
-    CursorState::CLICKING => "assets/ui/cursor/cursor_clicking.png"
-    _ => "assets/ui/cursor/cursor_idle.png"
+fn sync_cursor_ui(cursor : Cursor, mouse_pos : @math.Vec2) -> Unit raise {
+  let tag = cursor_state_tag(cursor.state)
+  let data = cursor.animation_data
+  let frame = match data.current_frame(tag, cursor.state_seconds) {
+    Some(f) => f
+    None => fail("cursor animation tag not found: " + tag)
   }
-}
 
-///|
-fn cursor_size(state : CursorState) -> @math.Vec2 {
-  match state {
-    CursorState::CAN_CLICK =>
-      @math.Vec2(CAN_CLICK_FRAME_WIDTH, CAN_CLICK_FRAME_HEIGHT)
-    _ => @math.Vec2(24.0, 28.0)
-  }
-}
-
-///|
-fn cursor_offset(state : CursorState) -> @math.Vec2 {
-  match state {
-    CursorState::CAN_CLICK => @math.Vec2(-4.0, -6.0)
-    CursorState::IDLE => @math.Vec2(0.0, -3.0)
-    _ => @math.Vec2::zero()
-  }
-}
-
-///|
-fn cursor_frame_index(cursor : Cursor) -> Int {
-  if cursor.state != CursorState::CAN_CLICK {
-    return 0
-  }
-  let frame = (cursor.state_seconds / CAN_CLICK_FRAME_SECONDS).to_int()
-  frame % CAN_CLICK_FRAME_COUNT
-}
-
-///|
-fn sync_cursor_ui(cursor : Cursor, mouse_pos : @math.Vec2) -> Unit {
-  let size = cursor_size(cursor.state)
-  let position = mouse_pos + cursor_offset(cursor.state)
+  let size = frame.rect.size
+  let position = mouse_pos + @math.Vec2(-frame.anchor.0, -frame.anchor.1)
   @selene_ui.nodes().set(
     cursor.entity,
     @selene_ui.Node::absolute(position, size~),
   )
   @selene_ui.z_indexes().set(cursor.entity, @selene_ui.ZIndex(CURSOR_ZINDEX))
-  let frame = cursor_frame_index(cursor)
-  let frame_pos_x = if cursor.state == CursorState::CAN_CLICK {
-    frame.to_double() * CAN_CLICK_FRAME_WIDTH
-  } else {
-    0.0
-  }
   @selene_ui.ui_images().set(
     cursor.entity,
     @selene_ui.UiImage::from_image(
       size,
-      @resource.load_image(cursor_texture_path(cursor.state)),
-      source=Some({ position: @math.Vec2(frame_pos_x, 0.0), size }),
+      data.atlas_image,
+      source=Some({ position: frame.rect.position, size }),
     ),
   )
 }
 
 ///|
-let cursor : Cursor = Cursor::new()
+let cursor : Ref[Cursor?] = Ref(None)
+
+///|
+/// 初始化 cursor，在 app resource preload 完成后调用。
+///
+/// # Example
+/// ```moonbit nocheck
+/// let data = try! CursorAnimationData::load("assets/UI/Basic.img/Cursor/cursor_animation.json")
+/// init_cursor(Cursor::new(data))
+/// ```
+pub fn init_cursor(c : Cursor) -> Unit {
+  cursor.val = Some(c)
+}
 
 ///|
 pub fn cursor_system(_world : @ecs.World) -> Unit {
+  let c = match cursor.val {
+    Some(c) => c
+    None => return
+  }
   let delta = @time.delta()
-  if !cursor.entity.is_alive() {
-    cursor.entity.respawn()
-    cursor.state_seconds = 0.0
-    cursor.inactive_seconds = 0.0
-    cursor.last_mouse_pos = @math.Vec2(-9999999.0, -9999999.0)
+  if !c.entity.is_alive() {
+    c.entity.respawn()
+    c.state_seconds = 0.0
+    c.inactive_seconds = 0.0
+    c.last_mouse_pos = @math.Vec2(-9999999.0, -9999999.0)
   }
   let mouse_pos = @inputs.mouse.pos
-  if mouse_pos != cursor.last_mouse_pos {
-    cursor.last_mouse_pos = mouse_pos
-    cursor.inactive_seconds = 0.0
+  if mouse_pos != c.last_mouse_pos {
+    c.last_mouse_pos = mouse_pos
+    c.inactive_seconds = 0.0
   }
-  cursor.set_state(resolve_cursor_state())
-  cursor.state_seconds += @cmp.maximum(0.0, delta)
-  match cursor.state {
+  c.set_state(resolve_cursor_state())
+  c.state_seconds += @cmp.maximum(0.0, delta)
+  match c.state {
     CursorState::CAN_CLICK
     | CursorState::CAN_CLICK2
     | CursorState::CAN_GRAB
     | CursorState::CLICKING
-    | CursorState::GRABBING => cursor.inactive_seconds = 0.0
-    _ => cursor.inactive_seconds += delta
+    | CursorState::GRABBING => c.inactive_seconds = 0.0
+    _ => c.inactive_seconds += delta
   }
-  if cursor.inactive_seconds >= HIDE_SECONDS.to_double() {
-    hide_cursor_entity(cursor.entity)
+  if c.inactive_seconds >= HIDE_SECONDS.to_double() {
+    hide_cursor_entity(c.entity)
   } else {
-    sync_cursor_ui(cursor, mouse_pos)
+    sync_cursor_ui(c, mouse_pos) catch {
+      err =>
+        abort(
+          "cursor_system failed: state=\{cursor_state_tag(c.state)}, error=\{err}",
+        )
+    }
   }
 }

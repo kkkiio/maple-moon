@@ -17,24 +17,10 @@ pub fn MiniMapUIResource::load() -> MiniMapUIResource {
   let mini_map_json : Json = @resource.require_async_loader("ui_window_2").require_resource([
       "MiniMap",
     ],
-  ) catch {
-    e => {
-      @log.error("failed to load UIWindow2 MiniMap resource", data={
-        "error": e,
-      })
-      panic()
-    }
-  }
+  )
   let map_helper_minimap_json : Json = @resource.require_async_loader(
     "map_latest",
-  ).require_resource(["MapHelper.img", "minimap"]) catch {
-    e => {
-      @log.error("failed to load MapHelper minimap resource", data={
-        "error": e,
-      })
-      panic()
-    }
-  }
+  ).require_resource(["MapHelper.img", "minimap"])
   mini_map_ui_resource_from_json(mini_map_json, map_helper_minimap_json)
 }
 

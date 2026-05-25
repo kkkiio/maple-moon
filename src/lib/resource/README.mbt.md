@@ -5,8 +5,13 @@
 约束：
 
 - 通用树形资源（`AsyncLoader::load_resource`）不做业务缓存。
-- 文件路径资源可使用 `AsyncLoader::load_data` 直接读取 JSON。
+- 文件路径资源如果必须存在，使用 `AsyncLoader::require_data` 直接读取 JSON；
+  `AsyncLoader::load_data` 是兼容别名。
 - 图片资源统一通过 `AsyncLoader::load_image` 加载。
+- 直接读取 JSON 文件时，使用 `load_json(path)` 让错误向上抛；使用
+  `require_json(path)` 表示资源必须存在且允许立即终止程序。
+- 直接读取图片文件时，使用 `require_image(path)` 表示资源必须存在；
+  `load_image(path)` 仅作为兼容别名保留。
 - 路径解析统一由 package 内部 resolver 处理：resolved asset path 使用 `assets/...`，禁止 leading-slash 路径(`/...`)和 `http(s)` 路径。
 - source-relative 输入（例如 `Consume/0200.img`）由对应 loader source 映射到 `assets/...`。
 - file-relative 引用（例如 Aseprite `animation.png`、Tiled `../../tilesets/foo.tsj`）相对声明文件路径解析。
@@ -32,11 +37,26 @@ let anim_path = @resource.resolve_ref(
   npc_loader.resolve_json_path(mx_path),
   "animation.json",
 )
-let image = npc_loader.load_image("Npc/Npc/0002007.img/animation.png")
+let image = @resource.require_image("assets/UI/Basic.img/Cursor/cursor_animation.png")
 ignore(mx)
 ignore(image)
 ignore(anim_path)
 ```
+
+## 错误处理边界
+
+```moonbit nocheck
+let optional = try! @resource.load_json("assets/UI/Basic.img/Cursor/cursor_animation.json")
+let required = @resource.require_json("assets/UI/Basic.img/Cursor/cursor_animation.json")
+ignore(optional)
+ignore(required)
+```
+
+- `load_json(path)` 返回 `Json? raise`：文件不存在返回 `None`，路径非法或 JSON
+  损坏时抛错，适合底层 loader 或需要由 system 统一记录上下文的调用链。
+- `require_json(path)` 返回 `Json`：路径非法、文件不存在、JSON 损坏都会终止程序，
+  只用于预定义且不可缺失的运行时资源。
+- `fetch_json(path)` 是旧接口；新代码优先选择 `load_json` 或 `require_json`。
 
 ## JSON 资源路径
 

@@ -1,11 +1,20 @@
 ///|
+let debug_log_ref : Ref[Bool] = Ref(false)
+
+///|
+fn init {
+  let debug = @env.get_env_var("MAPLE_DEBUG") is Some("true" | "TRUE" | "1")
+  debug_log_ref.val = debug
+}
+
+///|
 fn log_debug(msg : String) -> Unit {
-  println("[debug] " + msg)
+  println("DEBUG: " + msg)
 }
 
 ///|
 fn log_info(msg : String) -> Unit {
-  println("[info] " + msg)
+  println("INFO: " + msg)
 }
 
 ///|

@@ -326,7 +326,7 @@ fn get_item_loader() -> @resource.AsyncLoader {
 let ui_window_2_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
   @resource.AsyncLoader::new(
     "ui_window_2",
-    loader=@resource.DirResourceLoader::new("assets/ui/UIWindow2.img"),
+    loader=@resource.DirResourceLoader::new("assets/UI/UIWindow2.img"),
   )
 })
 
@@ -339,7 +339,7 @@ fn get_ui_window_2_loader() -> @resource.AsyncLoader {
 let ui_window_4_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
   @resource.AsyncLoader::new(
     "ui_window_4",
-    loader=@resource.DirResourceLoader::new("assets/ui/UIWindow4.img"),
+    loader=@resource.DirResourceLoader::new("assets/UI/UIWindow4.img"),
   )
 })
 

@@ -59,6 +59,16 @@ pub fn[T : Compare] my_maximum(xs : Array[T]) -> T {
 
 MoonBit 允许 `test` 直接传播错误, 用 `fail` 函数抛出错误.
 
+### 错误处理边界
+
+写底层或基础函数时, 不要直接 `abort`/`panic`/`unwrap`, 除非函数名已经明确表达必须成功, 例如 `require_*` 或 `must_*`.
+
+加载预定义且不可缺失的资源时, 优先在 `resource` package 使用显式 require API, 例如 `require_json(path)`.
+
+写普通 `load`/`parse`/`from_*` 函数时, 使用 `raise` 和 `fail` 把错误往上传递, 直到 system 函数或明确的 require 边界. 在 system 函数里带上业务上下文记录日志, 再决定 `abort`.
+
+不要写 `option.unwrap_or(abort(...))` 或 `result.unwrap_or(panic(...))`; `unwrap_or` 的 fallback 会先求值. 需要延迟终止时, 使用 `unwrap_or_else(fn() { abort(...) })`, 或直接写 `match`.
+
 ### 只写黑盒测试
 
 `*_test.mbt` 文件是黑盒测试. 不写 helper 函数.
@@ -92,7 +102,7 @@ MoonBit 允许 `test` 直接传播错误, 用 `fail` 函数抛出错误.
 
 ### Testing & Automated Checks
 
-修改完 moonbit 代码后, 执行编译命令, 确保页面能读到最新 js 内容:
+修改完 moonbit 代码后, 执行编译命令:
 
 ```bash
 moon check
@@ -109,6 +119,10 @@ source scripts/test-env.sh && moon test
 ```
 
 ## Utilities & Tips
+
+### `moon.work` 本地工作区
+
+优先检查项目根目录有没有`moon.work`文件, 如果有, 分析依赖库代码时, 要用`moon.work`里配置的相对路径, 而不是`.mooncakes`.
 
 ### 使用 Js 模块
 

@@ -47,7 +47,9 @@ pub fn ui_system(_world : @ecs.World) -> Unit {
   // Check if loading is in progress
   guard loading_mod_future.val is Some(fut) else {
     // Start loading
-    loading_mod_future.val = Some(submit_background_task(UIMod::load))
+    loading_mod_future.val = Some(
+      submit_background_task(fn() { UIMod::load() }),
+    )
     return
   }
 

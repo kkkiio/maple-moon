@@ -101,7 +101,7 @@ test "resolve_json_resource_path resolves ui bundle node path" {
   let (file_path, node_path) = resolve_json_resource_path(
     "ui_window_2", "ToolTip/WorldMap",
   )
-  inspect(file_path, content="assets/ui/UIWindow2.img/ToolTip.json")
+  inspect(file_path, content="assets/UI/UIWindow2.img/ToolTip.json")
   json_inspect(node_path, content=["WorldMap"])
 }
 

@@ -1,5 +1,5 @@
 ///|
-async test "weapon afterimage coverage: crossbow" {
+test "weapon afterimage coverage: crossbow" {
   snapshot_afterimage_case(
     1462000,
     @char_stance.StanceId::SHOOT2,

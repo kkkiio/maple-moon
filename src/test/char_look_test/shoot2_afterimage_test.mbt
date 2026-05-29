@@ -1,5 +1,5 @@
 ///|
-async test "crossbow shoot2 afterimage without range should render" {
+test "crossbow shoot2 afterimage without range should render" {
   let previous_world = @ecs.current_world()
   let world = @ecs.World()
   @ecs.set_current_world(world)
@@ -7,8 +7,7 @@ async test "crossbow shoot2 afterimage without range should render" {
     Some(previous) => @ecs.set_current_world(previous)
     None => @ecs.clear_current_world()
   })
-  @capture_app.init_app(
-    @app.App()
+  let captures = @app.App()
     .with_world(world)
     .with_viewport_width(200.0)
     .with_viewport_height(200.0)
@@ -22,8 +21,8 @@ async test "crossbow shoot2 afterimage without range should render" {
       Update,
       fn(world) { @char_look.update_after_image_system(world) },
       system_name="after_image_system",
-    ),
-  )
+    )
+    .run_frames_capture(4, raw_delta=0.016)
 
   let host = @entity.Entity()
   defer host.destroy()
@@ -122,16 +121,15 @@ async test "crossbow shoot2 afterimage without range should render" {
   let mut ticks = 0
   while look.get_frame() < shoot2_resource.first_frame && ticks < 60 {
     @time.set_delta(0.016)
-    @capture_app.run_loop(0.016)
     ticks = ticks + 1
   }
   @time.set_delta(0.016)
-  @capture_app.run_loop(0.016)
   let sprites = @sprite.sprites().iter().collect()
   assert_true(sprites.length() > 0)
 
   @capture_app.snapshot(
     "src/test/char_look_test/__snapshot__/crossbow_shoot2_afterimage_left.png",
+    captures[3].png,
     visual_desc="A character faces left and fires a crossbow held in front of the body, with a translucent attack effect rendered just ahead of the weapon.",
   )
 }

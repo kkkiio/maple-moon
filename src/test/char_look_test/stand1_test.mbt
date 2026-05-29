@@ -5,7 +5,7 @@ using @char_look {type NxStanceLooks}
 using @types {type NxStanceBody}
 
 ///|
-async test "character stand1" {
+test "character stand1" {
   let previous_world = @ecs.current_world()
   let world = @ecs.World()
   @ecs.set_current_world(world)
@@ -178,16 +178,15 @@ async test "character stand1" {
   look.add_equip(shoes_item, @slot.Id::SHOES)
   look.play_animations()
   // Initialize test app and run one loop
-  @capture_app.init_app(
-    @app.App()
+  let captures = @app.App()
     .with_world(world)
     .with_viewport_width(200.0)
     .with_viewport_height(200.0)
-    .add_plugin(@plugins.default_plugin),
-  )
-  @capture_app.run_loop(0.016)
+    .add_plugin(@plugins.default_plugin)
+    .run_frames_capture(1, raw_delta=0.016)
   @capture_app.snapshot(
     "src/test/char_look_test/__snapshot__/stand1.png",
+    captures[0].png,
     visual_desc="A 2D side-view game screenshot showing a standing character facing left, with black hair, light blue top, dark shorts, and red boots.",
   )
 }

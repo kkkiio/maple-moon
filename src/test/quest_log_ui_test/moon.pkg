@@ -1,6 +1,5 @@
 import {
   "moonbitlang/core/json",
-  "moonbitlang/async",
   "KKKIIO/maple-moon/lib/console",
   "KKKIIO/maple-moon/lib/game_state",
   "KKKIIO/maple-moon/lib/io_service",
@@ -19,5 +18,4 @@ import {
 } for "test"
 
 options(
-  overrides: [ "KKKIIO/maple-moon/test/capture_backend" ],
 )

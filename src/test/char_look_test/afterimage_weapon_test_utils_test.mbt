@@ -95,7 +95,7 @@ fn load_weapon_item(item_id : Int) -> @item.ItemData raise {
 }
 
 ///|
-async fn snapshot_afterimage_case(
+fn snapshot_afterimage_case(
   item_id : Int,
   stance : @char_stance.StanceId,
   stance_key : String,
@@ -104,7 +104,7 @@ async fn snapshot_afterimage_case(
   host_shift_x : Double,
   snapshot_path : String,
   visual_desc : String,
-) -> Unit {
+) -> Unit raise {
   let previous_world = @ecs.current_world()
   let world = @ecs.World()
   @ecs.set_current_world(world)
@@ -112,8 +112,7 @@ async fn snapshot_afterimage_case(
     Some(previous) => @ecs.set_current_world(previous)
     None => @ecs.clear_current_world()
   })
-  @capture_app.init_app(
-    @app.App()
+  let _captures = @app.App()
     .with_world(world)
     .with_viewport_width(220.0)
     .with_viewport_height(220.0)
@@ -127,8 +126,8 @@ async fn snapshot_afterimage_case(
       Update,
       fn(world) { @char_look.update_after_image_system(world) },
       system_name="after_image_system",
-    ),
-  )
+    )
+    .run_frames_capture(5, raw_delta=0.016)
 
   let host = @entity.Entity()
   defer host.destroy()
@@ -161,12 +160,8 @@ async fn snapshot_afterimage_case(
 
   let mut ticks = 0
   while look.get_frame() < resource.first_frame && ticks < 60 {
-    @time.set_delta(0.016)
-    @capture_app.run_loop(0.016)
     ticks = ticks + 1
   }
-  @time.set_delta(0.016)
-  @capture_app.run_loop(0.016)
 
-  @capture_app.snapshot(snapshot_path, visual_desc~)
+  @capture_app.snapshot(snapshot_path, _captures[_captures.length()-1].png, visual_desc~)
 }

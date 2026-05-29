@@ -1,10 +1,8 @@
 import {
-  "moonbitlang/async",
   "KKKIIO/maple-moon/lib/ms/markup_text",
   "KKKIIO/maple-moon/lib/resource",
   "KKKIIO/maple-moon/test/local_loader",
 } for "test"
 
 options(
-  overrides: [ "KKKIIO/maple-moon/test/capture_backend" ],
 )

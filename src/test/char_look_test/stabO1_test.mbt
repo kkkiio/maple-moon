@@ -1,5 +1,5 @@
 ///|
-async test "character stabO1" {
+test "character stabO1" {
   let previous_world = @ecs.current_world()
   let world = @ecs.World()
   @ecs.set_current_world(world)
@@ -8,13 +8,12 @@ async test "character stabO1" {
     None => @ecs.clear_current_world()
   })
   // Initialize test app
-  @capture_app.init_app(
-    @app.App()
+  let captures = @app.App()
     .with_world(world)
     .with_viewport_width(200.0)
     .with_viewport_height(200.0)
-    .add_plugin(@plugins.default_plugin),
-  )
+    .add_plugin(@plugins.default_plugin)
+    .run_frames_capture(2, raw_delta=0.016)
   defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
   defer @sprite.sprites().clear()
   let bodynode = @fs.read_file_to_string(
@@ -90,18 +89,9 @@ async test "character stabO1" {
   look.add_equip(weapon_item, @slot.Id::WEAPON)
   look.play_animations()
 
-  // Frame 0
-  @capture_app.run_loop(0.016)
   @capture_app.snapshot(
     "src/test/char_look_test/__snapshot__/stabO1_0.png",
+    captures[1].png,
     visual_desc="2D game frame from animation test.",
   )
-
-  // still frame 0
-  @capture_app.run_loop(0.1)
-  // let buffer1 = @capture_app.to_buffer().to_bytes()
-  // assert_eq(buffer0, buffer1, msg="frame 0 not sync")
-  for i = 0; i < 1; i = i + 1 {
-    @capture_app.run_loop(0.1)
-  }
 }

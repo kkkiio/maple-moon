@@ -4,7 +4,6 @@ import {
   "moonbitlang/core/json",
   "KKKIIO/maple-moon/lib/ms/char_look",
   "KKKIIO/maple-moon/lib/ms/character_presentation" @cp,
-  "moonbitlang/async",
   "KKKIIO/maple-moon/lib/ms/char_look/types",
   "KKKIIO/maple-moon/lib/ms/item",
   "KKKIIO/maple-moon/lib/ms/equip/slot",
@@ -22,5 +21,4 @@ import {
 } for "test"
 
 options(
-  overrides: [ "KKKIIO/maple-moon/test/capture_backend" ],
 )

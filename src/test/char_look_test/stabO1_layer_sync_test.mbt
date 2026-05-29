@@ -1,5 +1,5 @@
 ///|
-async test "stabO1 frame layering stays synchronized with animation frame" {
+test "stabO1 frame layering stays synchronized with animation frame" {
   let previous_world = @ecs.current_world()
   let world = @ecs.World()
   @ecs.set_current_world(world)
@@ -8,8 +8,7 @@ async test "stabO1 frame layering stays synchronized with animation frame" {
     None => @ecs.clear_current_world()
   })
 
-  @capture_app.init_app(
-    @app.App()
+  let app = @app.App()
     .with_world(world)
     .with_viewport_width(220.0)
     .with_viewport_height(220.0)
@@ -18,8 +17,7 @@ async test "stabO1 frame layering stays synchronized with animation frame" {
       Update,
       fn(world) { @char_look.char_look_system(world) },
       system_name="char_look_system",
-    ),
-  )
+    )
 
   let host = @entity.Entity()
   defer host.destroy()
@@ -42,12 +40,7 @@ async test "stabO1 frame layering stays synchronized with animation frame" {
     }
   }
 
-  let mut ticks = 0
-  while look.get_frame() < 1 && ticks < 60 {
-    @time.set_delta(0.016)
-    @capture_app.run_loop(0.016)
-    ticks = ticks + 1
-  }
+  app.run_frames(1, raw_delta=0.016)
   inspect(look.get_frame(), content="1")
   let mut changed_layer_count = 0
   for child in @entity.Entity::get_children(host) {

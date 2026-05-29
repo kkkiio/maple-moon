@@ -1,5 +1,4 @@
 import {
-  "moonbitlang/async",
   "moonbitlang/core/json",
   "moonbitlang/x/fs",
   "KKKIIO/maple-moon/lib/ms/map",
@@ -14,5 +13,4 @@ import {
 } for "test"
 
 options(
-  overrides: [ "KKKIIO/maple-moon/test/capture_backend" ],
 )

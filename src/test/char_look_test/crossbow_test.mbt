@@ -1,7 +1,7 @@
 // No using here to avoid duplicate declaration in the same package
 
 ///|
-async test "character with crossbow equipment" {
+test "character with crossbow equipment" {
   let previous_world = @ecs.current_world()
   let world = @ecs.World()
   @ecs.set_current_world(world)
@@ -96,19 +96,16 @@ async test "character with crossbow equipment" {
   look.set_stance(StanceId::STAND2)
   look.play_animations()
 
-  // Initialize test app and run one loop
-  @capture_app.init_app(
-    @app.App()
+  // Capture
+  let captures = @app.App()
     .with_world(world)
     .with_viewport_width(200.0)
     .with_viewport_height(200.0)
-    .add_plugin(@plugins.default_plugin),
-  )
-  @capture_app.run_loop(0.016)
-
-  // Snapshot
+    .add_plugin(@plugins.default_plugin)
+    .run_frames_capture(1, raw_delta=0.016)
   @capture_app.snapshot(
     "src/test/char_look_test/__snapshot__/crossbow_stand1.png",
+    captures[0].png,
     visual_desc="A character stands facing left while holding and firing a crossbow, with a shooting effect rendered in front of the weapon.",
   )
 }

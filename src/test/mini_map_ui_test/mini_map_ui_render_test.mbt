@@ -44,7 +44,7 @@ fn setup_mini_map_ui_scene_with_data(
   map_name : String,
   street_name : String,
   mini_map_resource : @map.MiniMapRuntimeResource?,
-) -> Unit raise {
+) -> @app.App raise {
   @local_loader.install_resource_env_for_test()
   @mini_map_ui.set_minimap_json_for_test(load_real_mini_map_ui_json())
   @mini_map_ui.set_map_helper_minimap_json_for_test(
@@ -56,19 +56,16 @@ fn setup_mini_map_ui_scene_with_data(
     .with_viewport_height(240.0)
     .add_plugin(@plugins.default_plugin)
     .add_system(Update, fn(world) { @mini_map_ui.mini_map_ui_system(world) })
-  @capture_app.init_app(app)
   @mini_map_ui.set_current_map(map_id, map_name, street_name, mini_map_resource)
-
-  for _ in 0..<300 {
-    @capture_app.run_loop(0.016)
-  }
+  app.run_frames(300, raw_delta=0.016)
+  app
 }
 
 ///|
-async test "mini map ui renders normal frame" {
+test "mini map ui renders normal frame" {
   defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
   defer @sprite.sprites().clear()
-  setup_mini_map_ui_scene_with_data(
+  let app = setup_mini_map_ui_scene_with_data(
     120010000,
     "Nautilus",
     "120010000",
@@ -78,8 +75,10 @@ async test "mini map ui renders normal frame" {
       ),
     ),
   )
+  let captures = app.run_frames_capture(1, raw_delta=0.016)
   @capture_app.snapshot(
     "src/test/mini_map_ui_test/__snapshot__/mini_map_ui_normal.png",
+    captures[captures.length() - 1].png,
     visual_desc="Mini map UI is displayed showing the map layout, player position, and other standard elements.",
   )
 }
@@ -127,17 +126,19 @@ fn load_real_minimap_runtime_resource_100030000() -> @map.MiniMapRuntimeResource
 }
 
 ///|
-async test "mini map ui renders portal marker from real map 100030000" {
+test "mini map ui renders portal marker from real map 100030000" {
   defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
   defer @sprite.sprites().clear()
-  setup_mini_map_ui_scene_with_data(
+  let app = setup_mini_map_ui_scene_with_data(
     100030000,
     "Henesys",
     "Victoria Road",
     Some(load_real_minimap_runtime_resource_100030000()),
   )
+  let captures = app.run_frames_capture(1, raw_delta=0.016)
   @capture_app.snapshot(
     "src/test/mini_map_ui_test/__snapshot__/mini_map_ui_with_portal_marker.png",
+    captures[captures.length() - 1].png,
     visual_desc="Mini map UI is displayed with portal markers visible on the map.",
   )
 }

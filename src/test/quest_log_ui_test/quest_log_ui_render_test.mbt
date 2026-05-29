@@ -1,5 +1,5 @@
 ///|
-async fn setup_local_loaders() -> Unit {
+fn setup_local_loaders() -> Unit {
   @local_loader.install_resource_env_for_test()
   let (quest_resource, _) = @quest.load_quest_resource()
   @quest_log.setup(quest_resource)
@@ -17,8 +17,8 @@ fn reset_quest_log_ui_test_state() -> Unit {
 }
 
 ///|
-async fn setup_scene() -> Unit {
-  let app = @app.App::new()
+fn create_app() -> @app.App {
+  @app.App()
     .with_viewport_width(800.0)
     .with_viewport_height(540.0)
     .add_plugin(@plugins.default_plugin)
@@ -37,7 +37,10 @@ async fn setup_scene() -> Unit {
       fn(world) { @io_service.io_system(world) },
       system_name="io_system",
     )
-  @capture_app.init_app(app)
+}
+
+///|
+fn setup_scene(app : @app.App) -> Unit {
   @game_state.init_state(@game_state.GamePhase::GameSetup)
 
   @inputs.apply_input_snapshot(@inputs.empty_input_snapshot())
@@ -53,21 +56,23 @@ async fn setup_scene() -> Unit {
   )
   // Flush one frame of empty input before opening UI to avoid stale key edge states.
   @inputs.apply_input_snapshot(@inputs.empty_input_snapshot())
-  @capture_app.run_loop(0.016)
+  app.run_frames(1, raw_delta=0.016)
   @quest_log_ui.open_quest_log_ui()
-  for _ in 0..<12 {
-    @capture_app.run_loop(0.016)
-  }
 }
 
 ///|
-async test "quest_log_ui renders in-progress & completed tab" {
+test "quest_log_ui renders in-progress & completed tab" {
   reset_quest_log_ui_test_state()
   defer reset_quest_log_ui_test_state()
-  setup_scene()
+
+  let app = create_app()
+  setup_scene(app)
+
+  let captures = app.run_frames_capture(12, raw_delta=0.016)
 
   @capture_app.snapshot(
     "src/test/quest_log_ui_test/__snapshot__/quest_log_ui_in_progress.png",
+    captures[captures.length() - 1].png,
     visual_desc="Quest log UI showing the in-progress tab with a list of active quests.",
   )
 
@@ -75,21 +80,19 @@ async test "quest_log_ui renders in-progress & completed tab" {
     "quest_log", "row.in_progress.3",
   )
   assert_true(click_row_ok is { "ok": true, .. })
-  for _ in 0..<3 {
-    @capture_app.run_loop(0.016)
-  }
+  let captures2 = app.run_frames_capture(3, raw_delta=0.016)
   @capture_app.snapshot(
     "src/test/quest_log_ui_test/__snapshot__/quest_log_ui_in_progress_second_selected.png",
+    captures2[captures2.length() - 1].png,
     visual_desc="Quest log UI with the second quest in the in-progress list selected, displaying its details.",
   )
 
   let click_ok = @console.click_registered_ui("quest_log", "tab.completed")
   assert_true(click_ok is { "ok": true, .. })
-  for _ in 0..<3 {
-    @capture_app.run_loop(0.016)
-  }
+  let captures3 = app.run_frames_capture(3, raw_delta=0.016)
   @capture_app.snapshot(
     "src/test/quest_log_ui_test/__snapshot__/quest_log_ui_completed.png",
+    captures3[captures3.length() - 1].png,
     visual_desc="Quest log UI showing the completed tab with a list of finished quests.",
   )
 }

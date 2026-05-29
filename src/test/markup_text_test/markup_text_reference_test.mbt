@@ -1,20 +1,16 @@
 ///|
-async test "resolve reference requires preload" {
+test "resolve reference requires preload" {
   @markup_text.clear_reference_data()
-  let mut raised = false
-  ignore(
-    @markup_text.resolve_npc_name("1002001"[:]) catch {
-      _ => {
-        raised = true
-        ""
-      }
-    },
+  debug_inspect(
+    try? @markup_text.resolve_npc_name("1002001"[:]),
+    content=(
+      #|Err(DataNotReady)
+    ),
   )
-  inspect(raised, content="true")
 }
 
 ///|
-async test "resolve reference after preload" {
+test "resolve reference after preload" {
   @resource.register_async_loader(
     "string",
     @local_loader.make_local_string_loader(),
@@ -33,22 +29,17 @@ async test "resolve reference after preload" {
 }
 
 ///|
-async test "resolve reference invalid id raises" {
+test "resolve reference invalid id raises" {
   @resource.register_async_loader(
     "string",
     @local_loader.make_local_string_loader(),
   )
   @markup_text.clear_reference_data()
   @markup_text.preload_reference_data()
-
-  let mut raised = false
-  ignore(
-    @markup_text.resolve_item_name("-1"[:]) catch {
-      _ => {
-        raised = true
-        ""
-      }
-    },
+  debug_inspect(
+    try? @markup_text.resolve_item_name("-1"[:]),
+    content=(
+      #|Err(InvalidId("unknown item category: -1"))
+    ),
   )
-  inspect(raised, content="true")
 }

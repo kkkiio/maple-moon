@@ -27,8 +27,7 @@ fn new_loading_future() -> @utils.Future[Result[MapDrops, Error]] {
 
 ///|
 pub fn Module::load() -> Module {
-  let special_item_loader = @resource.require_async_loader("item_special")
-  let src = special_item_loader.require_resource(["0900.img"])
+  let src = @resource.require_json("assets/Item/Special/0900.img.json")
   {
     map_drops: MapDrops::new(src) catch {
       err => abort("failed to load drop module: \{err}")

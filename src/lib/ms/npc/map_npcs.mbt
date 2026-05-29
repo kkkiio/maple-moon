@@ -5,8 +5,6 @@ struct MapNpcs {
   npcs : Map[Int, Npc]
   loading_npcs : Array[@utils.Future[Result[Npc, Error]]]
   spawns : @queue.Queue[NpcSpawn]
-  npc_loader : @resource.AsyncLoader
-  string_loader : @resource.AsyncLoader
   pointer_reader : @event.EventReader[@physics2d.PointerEvent]
 }
 
@@ -146,8 +144,6 @@ pub fn MapNpcs::apply_spawn_npc_controller_message(
 pub fn MapNpcs::new(
   open_npc_talk_ui : (TalkArgs) -> Unit,
   is_npc_talk_ui_open : () -> Bool,
-  npc_loader~ : @resource.AsyncLoader,
-  string_loader~ : @resource.AsyncLoader,
 ) -> MapNpcs {
   {
     open_npc_talk_ui,
@@ -155,8 +151,6 @@ pub fn MapNpcs::new(
     npcs: Map([]),
     loading_npcs: Array::new(),
     spawns: @queue.Queue([]),
-    npc_loader,
-    string_loader,
     pointer_reader: @event.EventReader(),
   }
 }
@@ -171,7 +165,7 @@ pub fn MapNpcs::update(self : MapNpcs, physics : @physics.Physics) -> Unit {
     if !self.npcs.contains(oid) {
       self.loading_npcs.push(
         @io_service.submit_background_task(fn() {
-          spawn.instantiate(self.npc_loader, self.string_loader, physics)
+          spawn.instantiate(physics)
         }),
       )
     }
@@ -279,14 +273,10 @@ pub fn NpcSpawn::get_oid(self : NpcSpawn) -> Int {
 ///|
 pub fn NpcSpawn::instantiate(
   self : NpcSpawn,
-  npc_loader : @resource.AsyncLoader,
-  string_loader : @resource.AsyncLoader,
   physics : @physics.Physics,
-) -> Npc {
+) -> Npc raise {
   let spawnposition = physics.get_y_below(self.position)
   Npc::load(
-    npc_loader,
-    string_loader,
     self.id,
     self.oid,
     self.flip,
@@ -367,36 +357,34 @@ pub fn Npc::talk(self : Npc) -> TalkArgs? {
 
 ///|
 pub fn Npc::load(
-  npc_loader : @resource.AsyncLoader,
-  string_loader : @resource.AsyncLoader,
   id : Int,
   o : Int,
   fl : Bool,
   f : Int,
   position : @struct.Point[Int],
-) -> Npc {
+) -> Npc raise {
   let entity = @entity.Entity()
   let phobj = @physics.PhysicsObject::new(on_pos_change=fn(pos) {
     @transform2d.set_xy(entity, pos)
   })
   let strid = @utils.stoi_left_pad0(id, 7) + ".img"
-  let mut mx_path = "Npc/Npc/\{strid}/mx.json"
-  let mut src = npc_loader.require_data(mx_path)
-  let strsrc = string_loader.require_resource(["Npc.img", id.to_string()])
+  let mut mx_path = "assets/Npc/Npc/" + strid + "/mx.json"
+  let mut src = @resource.require_json(mx_path)
+  let strsrc = @resource.json_navigate("assets/String/Npc.img.json", [id.to_string()])
   let mut mx_npc : MxNpc = @json.from_json(src) catch {
-    _ => abort("invalid npc mx data: \{mx_path}")
+    _ => abort("invalid npc mx data: " + mx_path)
   }
   if mx_npc.info.link is Some(link) {
-    mx_path = "Npc/Npc/\{link}.img/mx.json"
-    src = npc_loader.require_data(mx_path)
+    mx_path = "assets/Npc/Npc/" + link + ".img/mx.json"
+    src = @resource.require_json(mx_path)
     mx_npc = @json.from_json(src) catch {
-      _ => abort("invalid linked npc mx data: \{mx_path}")
+      _ => abort("invalid linked npc mx data: " + mx_path)
     }
   }
-  let animation_loader = @resource.AnimationLoader::new(npc_loader)
+  let animation_loader = @resource.AnimationLoader::new()
   let loaded_aseprite = animation_loader.load(
     @resource.resolve_ref(
-      npc_loader.resolve_json_path(mx_path),
+      mx_path,
       mx_npc.animations_path,
     ),
   )

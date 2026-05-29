@@ -28,14 +28,13 @@ fn read_effect_z(src : Json) -> Int {
 fn load_skill_use_effect(
   src : Json,
   tag : String,
-  skill_loader : @resource.AsyncLoader,
   base_path : String,
 ) -> SkillUseEffect {
   let ref_path = read_mx_animation_ref(src) catch {
     _ => abort("missing mx_animation in skill use effect node")
   }
   let resolved = @resource.resolve_ref(base_path, ref_path)
-  let animation_loader = @resource.AnimationLoader::new(skill_loader)
+  let animation_loader = @resource.AnimationLoader::new()
   let loaded = animation_loader.load(resolved)
   let clip = loaded.clip(tag) catch {
     _ => abort("missing skill use effect animation tag '\{tag}': \{resolved}")
@@ -62,13 +61,11 @@ fn apply_skill_use_effect(
 /// An effect which displays an animation over the character's position
 pub fn new_single_use_effect(
   src : Json,
-  skill_loader : @resource.AsyncLoader,
   base_path : String,
 ) -> (@character.Character) -> Unit {
   let effect = load_skill_use_effect(
     use_effect_get_path(src, ["effect"]),
     skill_animation_tag(["effect"]),
-    skill_loader,
     base_path,
   )
   apply_skill_use_effect(effect)
@@ -79,7 +76,6 @@ pub fn new_single_use_effect(
 /// The effect changes based on whether the character uses a two-handed weapon
 pub fn new_twohanded_use_effect(
   src : Json,
-  skill_loader : @resource.AsyncLoader,
   base_path : String,
 ) -> (@character.Character) -> Unit {
   let effects = @utils.BoolPair::new(
@@ -87,7 +83,6 @@ pub fn new_twohanded_use_effect(
       load_skill_use_effect(
         use_effect_get_path(src, ["effect", "0"]),
         skill_animation_tag(["effect", "0"]),
-        skill_loader,
         base_path,
       ),
     ),
@@ -95,7 +90,6 @@ pub fn new_twohanded_use_effect(
       load_skill_use_effect(
         use_effect_get_path(src, ["effect", "1"]),
         skill_animation_tag(["effect", "1"]),
-        skill_loader,
         base_path,
       ),
     ),
@@ -110,7 +104,6 @@ pub fn new_twohanded_use_effect(
 /// An effect which displays multiple animations over the character's position
 pub fn new_multi_use_effect(
   src : Json,
-  skill_loader : @resource.AsyncLoader,
   base_path : String,
 ) -> (@character.Character) -> Unit {
   let effects = []
@@ -124,7 +117,7 @@ pub fn new_multi_use_effect(
     }
     effects.push(
       apply_skill_use_effect(
-        load_skill_use_effect(sub, tag, skill_loader, base_path),
+        load_skill_use_effect(sub, tag, base_path),
       ),
     )
     no += 1
@@ -141,7 +134,6 @@ pub fn new_multi_use_effect(
 /// The animation changes with the character level
 pub fn new_by_level_use_effect(
   src : Json,
-  skill_loader : @resource.AsyncLoader,
   base_path : String,
 ) -> (@character.Character) -> Unit {
   let effects = []
@@ -151,7 +143,6 @@ pub fn new_by_level_use_effect(
         load_skill_use_effect(
           use_effect_get_path(sub, ["effect"]),
           skill_animation_tag(["CharLevel", level, "effect"]),
-          skill_loader,
           base_path,
         ),
       )

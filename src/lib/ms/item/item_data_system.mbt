@@ -1,17 +1,13 @@
 ///|
 pub struct ItemDataSystem {
-  item_loader : @resource.AsyncLoader
   pending_item_loads : Ref[Map[Int, @utils.Future[Result[ItemData, Error]]]]
   item_load_errors : Ref[Map[Int, String]]
 }
 
 ///|
-/// Creates an item-data system with an injected item loader.
-pub fn ItemDataSystem::new(
-  item_loader : @resource.AsyncLoader,
-) -> ItemDataSystem {
+/// Creates an item-data system.
+pub fn ItemDataSystem::new() -> ItemDataSystem {
   {
-    item_loader,
     pending_item_loads: Ref(Map([])),
     item_load_errors: Ref(Map([])),
   }
@@ -32,7 +28,7 @@ pub fn get_item_data_system() -> ItemDataSystem {
   if item_data_system_ref.val is Some(system) {
     return system
   }
-  let system = ItemDataSystem::new(@resource.require_async_loader("item"))
+  let system = ItemDataSystem::new()
   item_data_system_ref.val = Some(system)
   system
 }
@@ -61,11 +57,10 @@ pub fn ItemDataSystem::request(self : ItemDataSystem, id : Int) -> Unit {
     self.item_load_errors.val.contains(id) {
     return
   }
-  let item_loader = self.item_loader
   self.pending_item_loads.val.set(
     id,
     @io_service.submit_background_task(fn() {
-      ItemData::load_item_data_with_loader(id, item_loader)
+      ItemData::load_item_data(id)
     }),
   )
 }

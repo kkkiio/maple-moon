@@ -45,7 +45,6 @@ fn setup_mini_map_ui_scene_with_data(
   street_name : String,
   mini_map_resource : @map.MiniMapRuntimeResource?,
 ) -> @app.App raise {
-  @local_loader.install_resource_env_for_test()
   @mini_map_ui.set_minimap_json_for_test(load_real_mini_map_ui_json())
   @mini_map_ui.set_map_helper_minimap_json_for_test(
     load_real_map_helper_minimap_json(),

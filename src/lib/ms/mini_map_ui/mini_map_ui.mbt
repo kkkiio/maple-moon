@@ -14,13 +14,8 @@ pub struct MiniMapUIResource {
 ///|
 /// Loads the necessary graphical resources for displaying the MiniMap UI.
 pub fn MiniMapUIResource::load() -> MiniMapUIResource {
-  let mini_map_json : Json = @resource.require_async_loader("ui_window_2").require_resource([
-      "MiniMap",
-    ],
-  )
-  let map_helper_minimap_json : Json = @resource.require_async_loader(
-    "map_latest",
-  ).require_resource(["MapHelper.img", "minimap"])
+  let mini_map_json : Json = @resource.require_json("assets/UI/UIWindow2.img/MiniMap.json")
+  let map_helper_minimap_json : Json = @resource.require_json("assets/spritesheets/Map/MapHelper.img/minimap.json")
   mini_map_ui_resource_from_json(mini_map_json, map_helper_minimap_json)
 }
 

@@ -87,16 +87,15 @@ pub fn preload_reference_data() -> Unit {
   if reference_data_ref.val is Some(_) {
     return
   }
-  let loader = @resource.require_async_loader("string")
   reference_data_ref.val = Some({
-    npc_img: loader.require_resource(["Npc.img"]),
-    mob_img: loader.require_resource(["Mob.img"]),
-    map_img: loader.require_resource(["Map.img"]),
-    eqp_img: loader.require_resource(["Eqp.img"]),
-    consume_img: loader.require_resource(["Consume.img"]),
-    ins_img: loader.require_resource(["Ins.img"]),
-    etc_img: loader.require_resource(["Etc.img"]),
-    cash_img: loader.require_resource(["Cash.img"]),
+    npc_img: @resource.require_json("assets/String/Npc.img.json"),
+    mob_img: @resource.require_json("assets/String/Mob.img.json"),
+    map_img: @resource.require_json("assets/String/Map.img.json"),
+    eqp_img: @resource.require_json("assets/String/Eqp.img.json"),
+    consume_img: @resource.require_json("assets/String/Consume.img.json"),
+    ins_img: @resource.require_json("assets/String/Ins.img.json"),
+    etc_img: @resource.require_json("assets/String/Etc.img.json"),
+    cash_img: @resource.require_json("assets/String/Cash.img.json"),
   })
 }
 

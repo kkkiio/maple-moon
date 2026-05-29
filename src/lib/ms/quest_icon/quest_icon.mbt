@@ -165,18 +165,14 @@ fn poll_loading_result() -> Unit {
 
 ///|
 fn load_resources() -> QuestIconResources {
-  let loader = @resource.require_async_loader("ui_window_2")
-  let available_json = loader.require_resource(["QuestIcon", "0"])
-  let inprogress_json = loader.require_resource(["QuestIcon", "1"])
-  let completed_json = loader.require_resource(["QuestIcon", "2"])
   {
-    available: @json.from_json(available_json) catch {
+    available: @json.from_json(@resource.json_navigate("assets/UI/UIWindow2.img/QuestIcon.json", ["0"])) catch {
       _ => abort("invalid available quest icon")
     },
-    in_progress: @json.from_json(inprogress_json) catch {
+    in_progress: @json.from_json(@resource.json_navigate("assets/UI/UIWindow2.img/QuestIcon.json", ["1"])) catch {
       _ => abort("invalid in-progress quest icon")
     },
-    completed: @json.from_json(completed_json) catch {
+    completed: @json.from_json(@resource.json_navigate("assets/UI/UIWindow2.img/QuestIcon.json", ["2"])) catch {
       _ => abort("invalid completed quest icon")
     },
   }

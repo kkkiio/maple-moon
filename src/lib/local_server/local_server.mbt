@@ -961,10 +961,8 @@ fn LocalServer::spawn_mobs_for_map(self : LocalServer, map_id : Int) -> Unit {
             fh,
             team: -1,
           }
-          let mob_loader = @resource.require_async_loader("mob")
           let mob_strid = @utils.stoi_left_pad0(monster_id, 7)
-          let mob_path = ["\{mob_strid}.img"]
-          let mob_node = mob_loader.require_resource(mob_path)
+          let mob_node = @resource.require_json("assets/mob/" + mob_strid + ".img.json")
           guard mob_node is { "info": { "maxHP": Number(max_hp, ..), .. }, .. } else {
             continue
           }

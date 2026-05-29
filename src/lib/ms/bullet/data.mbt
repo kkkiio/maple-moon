@@ -9,19 +9,11 @@ pub(all) struct BulletData {
 pub fn BulletData::load(strid : String) -> BulletData {
   guard strid.length() == 8 else { abort("Invalid bullet id: \{strid}") }
   let prefix = strid[:4]
-  let src = @resource.require_async_loader("item").require_resource([
-    "Consume",
-    prefix.to_owned() + ".img",
-    strid,
-  ])
+  let src = @resource.json_navigate("assets/Item/Consume/" + prefix.to_owned() + ".img.json", [strid])
   let id = (strid.trim_start(chars="0") |> @string.parse_int) catch {
     _ => abort("Invalid bullet id: \{strid}")
   }
-  let item_data = @item.ItemData::load(
-    id,
-    @resource.require_async_loader("character"),
-    @resource.require_async_loader("item"),
-  )
+  let item_data = @item.ItemData::load(id)
   BulletData::new(src, item_data, strid)
 }
 
@@ -35,7 +27,6 @@ fn read_mx_animation_ref(src : Json) -> String raise {
 
 ///|
 fn load_bullet_native_animation(
-  loader : @resource.AsyncLoader,
   strid : String,
   bullet_src : Json,
 ) -> @ms_animation.Animation {
@@ -45,7 +36,7 @@ fn load_bullet_native_animation(
     _ => abort("missing mx_animation in bullet node: \{strid}")
   }
   let resolved = @resource.resolve_ref(base_path, ref_path)
-  let animation_loader = @resource.AnimationLoader::new(loader)
+  let animation_loader = @resource.AnimationLoader::new()
   let loaded = animation_loader.load(resolved)
   let clip = loaded.clip("main") catch {
     _ => abort("missing main clip in bullet animation: \{strid}")
@@ -65,11 +56,7 @@ fn BulletData::new(
         { "incPAD": Number(watk, ..), .. } => watk.to_int()
         _ => 0
       }
-      let bullet = load_bullet_native_animation(
-        @resource.require_async_loader("item_anim"),
-        strid,
-        bullet_src,
-      )
+      let bullet = load_bullet_native_animation(strid, bullet_src)
       { item_data, bullet, watk }
     }
     _ => abort("Invalid bullet data")

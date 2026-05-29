@@ -22,11 +22,9 @@ pub fn Skill::load(skill_id : Int) -> Skill {
   let strid = @utils.stoi_left_pad0(skill_id, 7)
   let jobid = strid.view(end_offset=3)
   let skill_base_path = "assets/Skill/\{jobid}.img.json"
-  let skill_loader = @resource.require_async_loader("skill")
   Skill::new(
     skill_id,
     data.src,
-    skill_loader,
     skill_base_path,
     data.is_attack,
     data.master_level,
@@ -40,7 +38,6 @@ pub fn Skill::load(skill_id : Int) -> Skill {
 pub fn Skill::new(
   skill_id : Int,
   src : Json,
-  skill_loader : @resource.AsyncLoader,
   skill_base_path : String,
   is_attack : Bool,
   master_level : Int,
@@ -50,17 +47,6 @@ pub fn Skill::new(
 ) -> Skill {
   let mut projectile = true
   let mut over_regular = false
-  // let strid = if skill_id < 10000000 {
-  //   @string_format.extend_id(skill_id, 7)
-  // } else {
-  //   skill_id.to_string()
-  // }
-  // let has_affected_effect = src["affected"].get_children_count() > 0
-  // let affected_effects = if has_affected_effect {
-  //   SingleAffectedEffect::new!(src) as &SkillAffectedEffect
-  // } else {
-  //   NoAffectedEffect::new() as &SkillAffectedEffect
-  // }
   let has_action0 = json_get_string(skill_get_path(src, ["action", "0"]))
     is Some(_)
   let has_action1 = json_get_string(skill_get_path(src, ["action", "1"]))
@@ -102,13 +88,13 @@ pub fn Skill::new(
   )
   let bullet = if by_level_ball {
     let bullet = BySkillLevelBullet::new(
-      src, skill_id, skill_loader, skill_base_path,
+      src, skill_id, skill_base_path,
     )
     fn(user : @character.Character, bulletid : Int) {
       bullet.get(user, bulletid)
     }
   } else if has_ball {
-    let bullet = SingleBullet::new(src, skill_loader, skill_base_path)
+    let bullet = SingleBullet::new(src, skill_base_path)
     fn(user : @character.Character, bulletid : Int) {
       bullet.get(user, bulletid)
     }
@@ -138,8 +124,8 @@ pub fn Skill::new(
     action,
     bullet,
     sound,
-    use_effect: make_use_effect(src, skill_id, skill_loader, skill_base_path),
-    hit_effect: make_hit_effect(src, skill_loader, skill_base_path),
+    use_effect: make_use_effect(src, skill_id, skill_base_path),
+    hit_effect: make_hit_effect(src, skill_base_path),
     is_attack,
     master_level,
     stats,
@@ -353,7 +339,6 @@ pub struct UseEffect((@character.Character) -> Unit)
 pub fn make_use_effect(
   src : Json,
   skill_id : Int,
-  skill_loader : @resource.AsyncLoader,
   skill_base_path : String,
 ) -> UseEffect {
   let by_level_effect = json_has_children(
@@ -361,16 +346,16 @@ pub fn make_use_effect(
   )
   let multi_effect = json_has_children(skill_get_path(src, ["effect0"]))
   if by_level_effect {
-    new_by_level_use_effect(src, skill_loader, skill_base_path)
+    new_by_level_use_effect(src, skill_base_path)
   } else if multi_effect {
-    new_multi_use_effect(src, skill_loader, skill_base_path)
+    new_multi_use_effect(src, skill_base_path)
   } else {
     let is_animation = is_texture_node(skill_get_path(src, ["effect", "0"]))
     let has_effect1 = is_texture_node(skill_get_path(src, ["effect", "1"]))
     if is_animation {
-      new_single_use_effect(src, skill_loader, skill_base_path)
+      new_single_use_effect(src, skill_base_path)
     } else if has_effect1 {
-      new_twohanded_use_effect(src, skill_loader, skill_base_path)
+      new_twohanded_use_effect(src, skill_base_path)
     } else {
       match @skill.SkillId::from_int(skill_id) {
         Some(@skill.SkillId::IRON_BODY) | Some(@skill.SkillId::MAGIC_ARMOR) =>
@@ -402,7 +387,6 @@ pub impl @json.FromJson for NxSkill with fn from_json(json, path) {
 ///|
 pub fn make_hit_effect(
   src : Json,
-  skill_loader : @resource.AsyncLoader,
   skill_base_path : String,
 ) -> (@combat_proto.AttackUser, @monster.Mob) -> Unit {
   let by_level_hit = json_has_children(
@@ -418,21 +402,20 @@ pub fn make_hit_effect(
   let has_hit1 = res.hit.get(1) is Some(_)
   if by_level_hit {
     if has_hit0 && has_hit1 {
-      new_by_level_twohanded_hit_effect(src, skill_loader, skill_base_path)
+      new_by_level_twohanded_hit_effect(src, skill_base_path)
     } else {
-      new_by_level_hit_effect(src, skill_loader, skill_base_path)
+      new_by_level_hit_effect(src, skill_base_path)
     }
   } else if by_skill_level_hit {
-    new_by_skill_level_hit_effect(src, skill_loader, skill_base_path)
+    new_by_skill_level_hit_effect(src, skill_base_path)
   } else if has_hit0 && has_hit1 {
     new_twohanded_hit_effect(
       res.hit[0],
       res.hit[1],
-      skill_loader,
       skill_base_path,
     )
   } else if has_hit0 {
-    new_single_hit_effect(res.hit[0], skill_loader, skill_base_path)
+    new_single_hit_effect(res.hit[0], skill_base_path)
   } else {
     fn(_ : @combat_proto.AttackUser, _ : @monster.Mob) -> Unit {  }
   }

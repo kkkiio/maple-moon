@@ -78,7 +78,6 @@ fn make_hit_event(source : @combat_system.HitSource) -> @combat_system.HitEvent 
 
 ///|
 test "sword_fa_fighter_triggers_with_sword_1h" {
-  @local_loader.install_resource_env_for_test()
   let equips = make_test_equips(Some(1302000))
   let trigger_count = Ref(0)
   let passive = SwordFaFighterPassive::default()

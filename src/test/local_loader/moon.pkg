@@ -1,5 +1,3 @@
 import {
   "moonbitlang/core/json",
-  "moonbitlang/x/fs",
-  "KKKIIO/maple-moon/lib/resource",
 }

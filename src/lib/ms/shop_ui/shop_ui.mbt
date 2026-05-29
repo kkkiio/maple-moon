@@ -464,7 +464,7 @@ impl @json.FromJson for NxShop with fn from_json(json, path) {
 
 ///|
 fn load_ui_resources() -> UiResources {
-  let shop2 = @ui.ui_window_2_loader().require_resource(["Shop2"])
+  let shop2 = @resource.require_json("assets/UI/UIWindow2.img/Shop2.json")
   parse_ui_resources_from_shop2_json(shop2) catch {
     _ => abort("invalid Shop2 ui resource")
   }

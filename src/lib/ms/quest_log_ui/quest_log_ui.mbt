@@ -439,10 +439,7 @@ fn parse_quest_ui_resource(json : Json) -> QuestLogUiResource raise {
 
 ///|
 fn load_quest_ui_resource() -> QuestLogUiResource {
-  let raw : Json = @resource.require_async_loader("ui_window_2").require_resource([
-      "Quest",
-    ],
-  )
+  let raw : Json = @resource.require_json("assets/UI/UIWindow2.img/Quest.json")
   parse_quest_ui_resource(raw) catch {
     _ => abort("invalid UIWindow2 Quest resource")
   }

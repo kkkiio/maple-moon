@@ -38,9 +38,7 @@ pub fn load_skill(id : Int) -> SkillData {
   let bundle_json = match bundle_cache.get(bundle_key) {
     Some(cached) => cached
     None => {
-      let loader = @resource.require_async_loader("skill")
-      // Load the full bundle: [bundle_key] -> returns { "skill": { "2101002": {...} } }
-      let json = loader.require_resource([bundle_key])
+      let json = @resource.require_json("assets/Skill/" + bundle_key + ".json")
       bundle_cache.set(bundle_key, json)
       json
     }
@@ -57,9 +55,7 @@ pub fn load_skill(id : Int) -> SkillData {
   }
 
   // 5. Load text data (skill name, description)
-  let text_json = @resource.require_async_loader("string").require_resource([
-    "Skill.img", strid,
-  ])
+  let text_json = @resource.json_navigate("assets/String/Skill.img.json", [strid])
 
   // 6. Parse and cache
   let data = parse_skill_data(id, skill_json, text_json)
@@ -91,9 +87,7 @@ pub fn preload_skills(skill_ids : Array[Int]) -> Unit {
   for bundle_key, ids in by_bundle {
     // Preload bundle if not cached
     if !bundle_cache.contains(bundle_key) {
-      let loader = @resource.require_async_loader("skill")
-      // Load full bundle
-      let json = loader.require_resource([bundle_key])
+      let json = @resource.require_json("assets/Skill/" + bundle_key + ".json")
       bundle_cache.set(bundle_key, json)
     }
 

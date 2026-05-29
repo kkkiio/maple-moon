@@ -51,11 +51,10 @@ priv struct LoadedHitEffect {
 fn load_hit_effect(
   src : NxHitEffect,
   tag : String,
-  skill_loader : @resource.AsyncLoader,
   base_path : String,
 ) -> LoadedHitEffect {
   let resolved = @resource.resolve_ref(base_path, src.mx_animation)
-  let animation_loader = @resource.AnimationLoader::new(skill_loader)
+  let animation_loader = @resource.AnimationLoader::new()
   let loaded = animation_loader.load(resolved)
   let clip = loaded.clip(tag) catch {
     _ => abort("missing animation tag '\{tag}': \{resolved}")
@@ -143,10 +142,9 @@ pub impl @json.FromJson for NxSkillLevelHit with fn from_json(json, path) {
 fn new_hit_effect(
   res : NxHitEffect,
   tag : String,
-  skill_loader : @resource.AsyncLoader,
   base_path : String,
 ) -> (@monster.Mob, Bool) -> Unit {
-  let loaded = load_hit_effect(res, tag, skill_loader, base_path)
+  let loaded = load_hit_effect(res, tag, base_path)
   fn(target : @monster.Mob, flip : Bool) -> Unit {
     target.show_effect(loaded.effect, loaded.pos, loaded.z, flip)
   }
@@ -156,13 +154,11 @@ fn new_hit_effect(
 /// A single animation
 pub fn new_single_hit_effect(
   res : NxHitEffect,
-  skill_loader : @resource.AsyncLoader,
   base_path : String,
 ) -> (@combat_proto.AttackUser, @monster.Mob) -> Unit {
   let f = new_hit_effect(
     res,
     skill_animation_tag(["hit", "0"]),
-    skill_loader,
     base_path,
   )
   fn(user : @combat_proto.AttackUser, target : @monster.Mob) -> Unit {
@@ -175,20 +171,17 @@ pub fn new_single_hit_effect(
 pub fn new_twohanded_hit_effect(
   hit0 : NxHitEffect,
   hit1 : NxHitEffect,
-  skill_loader : @resource.AsyncLoader,
   base_path : String,
 ) -> (@combat_proto.AttackUser, @monster.Mob) -> Unit {
   let effects = @utils.BoolPair::new(
     new_hit_effect(
       hit0,
       skill_animation_tag(["hit", "0"]),
-      skill_loader,
       base_path,
     ),
     new_hit_effect(
       hit1,
       skill_animation_tag(["hit", "1"]),
-      skill_loader,
       base_path,
     ),
   )
@@ -201,7 +194,6 @@ pub fn new_twohanded_hit_effect(
 /// The animation changes with the character level
 pub fn new_by_level_hit_effect(
   src : Json,
-  skill_loader : @resource.AsyncLoader,
   base_path : String,
 ) -> (@combat_proto.AttackUser, @monster.Mob) -> Unit {
   let effects = []
@@ -219,7 +211,6 @@ pub fn new_by_level_hit_effect(
             new_hit_effect(
               hit0,
               skill_animation_tag(["CharLevel", level.to_string(), "hit", "0"]),
-              skill_loader,
               base_path,
             ),
           ),
@@ -247,7 +238,6 @@ pub fn new_by_level_hit_effect(
 /// The animation changes with the character level and weapon used
 pub fn new_by_level_twohanded_hit_effect(
   src : Json,
-  skill_loader : @resource.AsyncLoader,
   base_path : String,
 ) -> (@combat_proto.AttackUser, @monster.Mob) -> Unit {
   let effects = []
@@ -266,13 +256,11 @@ pub fn new_by_level_twohanded_hit_effect(
               new_hit_effect(
                 pair.main,
                 skill_animation_tag(["CharLevel", level.to_string(), "hit", "0"]),
-                skill_loader,
                 base_path,
               ),
               new_hit_effect(
                 pair.second,
                 skill_animation_tag(["CharLevel", level.to_string(), "hit", "1"]),
-                skill_loader,
                 base_path,
               ),
             ),
@@ -301,7 +289,6 @@ pub fn new_by_level_twohanded_hit_effect(
 /// The animation changes with the skill level
 pub fn new_by_skill_level_hit_effect(
   src : Json,
-  skill_loader : @resource.AsyncLoader,
   base_path : String,
 ) -> (@combat_proto.AttackUser, @monster.Mob) -> Unit {
   let effects = Map([])
@@ -318,7 +305,6 @@ pub fn new_by_skill_level_hit_effect(
           new_hit_effect(
             hit0,
             skill_animation_tag(["level", level.to_string(), "hit", "0"]),
-            skill_loader,
             base_path,
           ),
         )

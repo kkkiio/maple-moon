@@ -1,6 +1,5 @@
 ///|
 fn setup_local_loaders() -> Unit {
-  @local_loader.install_resource_env_for_test()
   let (quest_resource, _) = @quest.load_quest_resource()
   @quest_log.setup(quest_resource)
 }

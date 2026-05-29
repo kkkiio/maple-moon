@@ -1,20 +1,3 @@
-///|
-/// Global registry for async resource loaders.
-let async_loader_registry : Map[String, AsyncLoader] = {}
-
-///|
-/// Register an async loader by name.
-pub fn register_async_loader(name : String, loader : AsyncLoader) -> Unit {
-  async_loader_registry.set(name, loader)
-}
-
-///|
-/// Get a registered async loader by name.
-pub fn require_async_loader(name : String) -> AsyncLoader {
-  async_loader_registry.get(name).unwrap()
-}
-
-///|
 /// Loader interface for text resources.
 pub(open) trait TextResourceLoader {
   fn load_text(self : Self, path : String) -> String

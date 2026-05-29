@@ -28,8 +28,7 @@ fn setup_npc_talk_resource_cache() -> Unit raise {
     ],
   )
   let window_slice = @ui.load_ui_slice_resource(
-    @resource.require_async_loader("ui_slice"),
-    "ui/UIWindow2.img/UtilDlgEx/slice.json",
+    "assets/UI/UIWindow2.img/UtilDlgEx/slice.json",
   )
   let resource = @npc_talk_ui.NpcTalkResource::from_resource(
     util_dlg_ex, window_slice,

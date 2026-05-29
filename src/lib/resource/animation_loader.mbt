@@ -48,14 +48,12 @@ pub fn LoadedAnimations::list_tags(self : LoadedAnimations) -> Array[String] {
 
 ///|
 /// Loader entrypoint for `mx.json.animations_path` -> Selene clips.
-pub(all) struct AnimationLoader {
-  loader : AsyncLoader
-}
+pub(all) struct AnimationLoader {} derive(Default)
 
 ///|
 /// Create an animation loader from an existing resource async loader.
-pub fn AnimationLoader::new(loader : AsyncLoader) -> AnimationLoader {
-  { loader, }
+pub fn AnimationLoader::new() -> AnimationLoader {
+  AnimationLoader::default()
 }
 
 ///|
@@ -68,12 +66,12 @@ pub fn AnimationLoader::load(
   self : AnimationLoader,
   animations_path : String,
 ) -> LoadedAnimations {
-  let json_url = self.loader.resolve_json_path(animations_path)
+  let json_url = animations_path
   match animation_cache.get(json_url) {
     Some(cached) => cached
     None => {
-      let src = self.loader.require_data(animations_path)
-      let compiled = compile_loaded_animations(self.loader, src, json_url) catch {
+      let src = require_json(json_url)
+      let compiled = compile_loaded_animations(src, json_url) catch {
         err => abort("failed to load animation: \{json_url}, error=\{err}")
       }
       animation_cache.set(json_url, compiled)
@@ -111,7 +109,6 @@ priv struct TagRange {
 
 ///|
 fn compile_loaded_animations(
-  loader : AsyncLoader,
   src : Json,
   json_url : String,
 ) -> LoadedAnimations raise {
@@ -164,7 +161,7 @@ fn compile_loaded_animations(
     ),
   )
 
-  let image = load_meta_image(loader, json_url, image_ref)
+  let image = load_meta_image(json_url, image_ref)
 
   let clip_handles : Array[@selene_animation.AnimationClipHandle] = []
   let tag_names : Array[String] = []
@@ -586,14 +583,13 @@ test "parse frame alpha by index applies layer and cel opacity" {
 
 ///|
 fn load_meta_image(
-  loader : AsyncLoader,
   json_url : String,
   image_ref : String,
 ) -> @asset.ImageHandle {
   let normalized_ref = image_ref.replace(old="\\", new="/")
   if is_resolved_asset_path(normalized_ref) {
-    loader.load_image(image_ref)
+    require_image(image_ref)
   } else {
-    loader.load_image(resolve_ref(json_url, image_ref))
+    require_image(resolve_ref(json_url, image_ref))
   }
 }

@@ -118,9 +118,7 @@ pub fn FaceFrame::from_resource(src : Json) -> FaceFrame raise {
 ///|
 pub fn Face::load(faceid : Int) -> Face {
   let strid = "000" + faceid.to_string()
-  let facenode = @resource.require_async_loader("face").require_resource([
-    "\{strid}.img",
-  ])
+  let facenode = @resource.require_json("assets/Character/Face/" + strid + ".img.json")
   Face::new(faceid, facenode) catch {
     err => abort("failed to load face: \{faceid}, error=\{err}")
   }

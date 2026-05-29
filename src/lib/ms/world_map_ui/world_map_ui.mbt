@@ -695,23 +695,17 @@ fn load_ui_resources(
   let ui_json = match ui_json {
     Some(json) => json
     None =>
-      @resource.require_async_loader("ui_window_2").require_resource([
-        "WorldMap",
-      ])
+      @resource.require_json("assets/UI/UIWindow2.img/WorldMap.json")
   }
   let tooltip_json = match tooltip_json {
     Some(json) => json
     None =>
-      @resource.require_async_loader("ui_window_2").require_resource([
-        "ToolTip", "WorldMap",
-      ])
+      @resource.json_navigate("assets/UI/UIWindow2.img/ToolTip.json", ["WorldMap"])
   }
   let map_helper_json = match map_helper_json {
     Some(json) => json
     None =>
-      @resource.require_async_loader("map_latest").require_resource([
-        "MapHelper.img", "worldMap",
-      ])
+      @resource.require_json("assets/spritesheets/Map/MapHelper.img/worldMap.json")
   }
   let ui = parse_world_map_ui_resource(ui_json) catch {
     _ => abort("invalid WorldMap ui resource")
@@ -734,9 +728,7 @@ fn load_world_map_page(
   let json = match injected_json {
     Some(json) => json
     None =>
-      @resource.require_async_loader("map_world_map").require_resource([
-        "\{name}.img",
-      ])
+      @resource.require_json("assets/map/WorldMap/" + name + ".img.json")
   }
   let page = parse_world_map_page_resource(name, json, marker) catch {
     _ => abort("invalid world map page resource: \{name}")

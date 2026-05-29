@@ -8,13 +8,9 @@ pub(all) struct JobData {
 ///|
 pub fn JobData::load(id : Int) -> JobData {
   let strid = @utils.stoi_left_pad0(id, 3)
-  let src = @resource.require_async_loader("skill").require_resource([
-    strid + ".img",
-  ])
+  let src = @resource.require_json("assets/Skill/" + strid + ".img.json")
   let name = match
-    @resource.require_async_loader("string").require_resource([
-      "Skill.img", strid,
-    ]) {
+    @resource.json_navigate("assets/String/Skill.img.json", [strid]) {
     { "bookName": String(name), .. } => name
     _ => ""
   }

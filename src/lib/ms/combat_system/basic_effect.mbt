@@ -20,15 +20,12 @@ fn read_basic_effect_z(src : Json) -> Int {
 
 ///|
 pub fn load_teleport_use_effect() -> (@character.Character) -> Unit {
-  let effect_loader = @resource.require_async_loader("effect")
-  let teleport_node = effect_loader.require_resource([
-    "BasicEff.img", "Teleport",
-  ])
+  let teleport_node = @resource.require_json("assets/Effect/BasicEff.img/Teleport.json")
   let ref_path = read_basic_mx_animation_ref(teleport_node)
   let resolved = @resource.resolve_ref(
     "assets/Effect/BasicEff.img/Teleport.json", ref_path,
   )
-  let animation_loader = @resource.AnimationLoader::new(effect_loader)
+  let animation_loader = @resource.AnimationLoader::new()
   let loaded = animation_loader.load(resolved)
   let clip = loaded.clip("main") catch {
     _ => abort("missing animation tag 'main': \{resolved}")

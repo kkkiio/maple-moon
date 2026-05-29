@@ -31,19 +31,20 @@ let ui_slice_cache : Map[String, UiSliceResource] = Map([])
 
 ///|
 /// Load and cache one UI slice resource from an exported `slice.json`.
+///
+/// `slice_json_path` must be a resolved asset path such as
+/// `"assets/UI/UIWindow2.img/UtilDlgEx/slice.json"`.
 pub fn load_ui_slice_resource(
-  loader : @resource.AsyncLoader,
   slice_json_path : String,
 ) -> UiSliceResource {
-  let cache_key = loader.resolve_json_path(slice_json_path)
-  match ui_slice_cache.get(cache_key) {
+  match ui_slice_cache.get(slice_json_path) {
     Some(cached) => cached
     None => {
-      let source = loader.require_data(slice_json_path)
-      let parsed = parse_ui_slice_json(loader, slice_json_path, source) catch {
+      let source = @resource.require_json(slice_json_path)
+      let parsed = parse_ui_slice_json(slice_json_path, source) catch {
         _ => abort("invalid ui slice json: \{slice_json_path}")
       }
-      ui_slice_cache.set(cache_key, parsed)
+      ui_slice_cache.set(slice_json_path, parsed)
       parsed
     }
   }
@@ -51,7 +52,6 @@ pub fn load_ui_slice_resource(
 
 ///|
 fn parse_ui_slice_json(
-  loader : @resource.AsyncLoader,
   slice_json_path : String,
   source : Json,
 ) -> UiSliceResource raise {
@@ -125,8 +125,8 @@ fn parse_ui_slice_json(
     UiSliceKind::NineSlice
   }
 
-  let image_path = resolve_meta_image_path(loader, slice_json_path, image_ref)
-  let image = loader.load_image(image_path)
+  let image_path = resolve_meta_image_path(slice_json_path, image_ref)
+  let image = @resource.require_image(image_path)
 
   let handle = @selene_ui.register_ui_material_asset(
     @selene_ui.UiMaterialAsset::from_draw(fn(context) {
@@ -157,7 +157,6 @@ fn parse_ui_slice_json(
 
 ///|
 fn resolve_meta_image_path(
-  loader : @resource.AsyncLoader,
   slice_json_path : String,
   image_ref : String,
 ) -> String {
@@ -166,7 +165,7 @@ fn resolve_meta_image_path(
   }
   let base = path_parent(slice_json_path)
   if base == "" {
-    loader.resolve_json_path(image_ref)
+    image_ref
   } else {
     "\{base}/\{image_ref}"
   }

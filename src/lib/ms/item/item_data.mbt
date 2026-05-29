@@ -1,5 +1,5 @@
 ///|
-using @resource {type AsyncLoader}
+
 
 ///|
 /// Class that represents an item loaded from the game's files
@@ -37,11 +37,10 @@ fn EquipId::parse(item_id : Int) -> EquipId raise LoadDataError {
 
 ///|
 fn load_item_text_src(
-  string_loader : AsyncLoader,
   bundle : String,
   path : Array[String],
 ) -> Json {
-  let bundle_json = load_item_text_bundle_cached(string_loader, bundle)
+  let bundle_json = load_item_text_bundle_cached(bundle)
   get_json_by_path(bundle_json, path)
 }
 
@@ -50,13 +49,12 @@ let item_text_bundle_cache : Map[String, Json] = Map([])
 
 ///|
 fn load_item_text_bundle_cached(
-  string_loader : AsyncLoader,
   bundle : String,
 ) -> Json {
   if item_text_bundle_cache.get(bundle) is Some(cached) {
     return cached
   }
-  let bundle_json = string_loader.require_resource([bundle])
+  let bundle_json = @resource.require_json("assets/String/" + bundle + ".json")
   item_text_bundle_cache.set(bundle, bundle_json)
   bundle_json
 }
@@ -73,21 +71,18 @@ fn get_json_by_path(root : Json, path : Array[String]) -> Json {
 
 ///|
 /// Preload item text bundles into in-memory cache.
-pub fn preload_item_text_bundles(string_loader : AsyncLoader) -> Unit {
+pub fn preload_item_text_bundles() -> Unit {
   let bundles = ["Eqp.img", "Consume.img", "Ins.img", "Etc.img", "Cash.img"]
   for bundle in bundles {
-    ignore(load_item_text_bundle_cached(string_loader, bundle))
+    ignore(load_item_text_bundle_cached(bundle))
   }
 }
 
 ///|
 pub fn ItemData::load(
   item_id : Int,
-  character_loader : AsyncLoader,
-  item_loader : AsyncLoader,
 ) -> ItemData {
   let zid = "0\{item_id}"
-  let string_loader = @resource.require_async_loader("string")
   let category1 = parse_category1(item_id).unwrap_or_else(fn() {
     abort("invalid item id: \{item_id}")
   })
@@ -98,8 +93,8 @@ pub fn ItemData::load(
       }
       let category = equip_id.category
       let equip_zid = equip_id.zid
-      let src = character_loader.require_resource([category, "\{equip_zid}.img"])
-      let strsrc = load_item_text_src(string_loader, "Eqp.img", [
+      let src = @resource.require_json("assets/Character/" + category + "/" + equip_zid + ".img.json")
+      let strsrc = load_item_text_src("Eqp.img", [
         "Eqp",
         category,
         item_id.to_string(),
@@ -110,11 +105,11 @@ pub fn ItemData::load(
       let category = "Consume"
       let strprefix = "0" + ItemData::get_item_prefix(item_id).to_string()
       let bundle = strprefix + ".img"
-      let bundle_json = load_item_bundle_cached(category, bundle, item_loader)
+      let bundle_json = load_item_bundle_cached(category, bundle)
       let src = get_item_data_from_bundle(bundle_json, item_id, zid) catch {
         _ => abort("item data not found: \{item_id}")
       }
-      let strsrc = load_item_text_src(string_loader, "Consume.img", [
+      let strsrc = load_item_text_src("Consume.img", [
         item_id.to_string(),
       ])
       (category, src, strsrc)
@@ -123,11 +118,11 @@ pub fn ItemData::load(
       let category = "Install"
       let strprefix = "0" + ItemData::get_item_prefix(item_id).to_string()
       let bundle = strprefix + ".img"
-      let bundle_json = load_item_bundle_cached(category, bundle, item_loader)
+      let bundle_json = load_item_bundle_cached(category, bundle)
       let src = get_item_data_from_bundle(bundle_json, item_id, zid) catch {
         _ => abort("item data not found: \{item_id}")
       }
-      let strsrc = load_item_text_src(string_loader, "Ins.img", [
+      let strsrc = load_item_text_src("Ins.img", [
         item_id.to_string(),
       ])
       (category, src, strsrc)
@@ -136,11 +131,11 @@ pub fn ItemData::load(
       let category = "Etc"
       let strprefix = "0" + ItemData::get_item_prefix(item_id).to_string()
       let bundle = strprefix + ".img"
-      let bundle_json = load_item_bundle_cached(category, bundle, item_loader)
+      let bundle_json = load_item_bundle_cached(category, bundle)
       let src = get_item_data_from_bundle(bundle_json, item_id, zid) catch {
         _ => abort("item data not found: \{item_id}")
       }
-      let strsrc = load_item_text_src(string_loader, "Etc.img", [
+      let strsrc = load_item_text_src("Etc.img", [
         "Etc",
         item_id.to_string(),
       ])
@@ -150,11 +145,11 @@ pub fn ItemData::load(
       let category = "Cash"
       let strprefix = "0" + ItemData::get_item_prefix(item_id).to_string()
       let bundle = strprefix + ".img"
-      let bundle_json = load_item_bundle_cached(category, bundle, item_loader)
+      let bundle_json = load_item_bundle_cached(category, bundle)
       let src = get_item_data_from_bundle(bundle_json, item_id, zid) catch {
         _ => abort("item data not found: \{item_id}")
       }
-      let strsrc = load_item_text_src(string_loader, "Cash.img", [
+      let strsrc = load_item_text_src("Cash.img", [
         item_id.to_string(),
       ])
       (category, src, strsrc)
@@ -228,13 +223,12 @@ let bundle_cache : Map[String, Json] = Map([])
 fn load_item_bundle_cached(
   category : String,
   bundle : String,
-  item_loader : AsyncLoader,
 ) -> Json {
   let key = "\{category}/\{bundle}"
   if bundle_cache.get(key) is Some(cached) {
     return cached
   }
-  let bundle_json = item_loader.require_resource([category, bundle])
+  let bundle_json = @resource.require_json("assets/Item/" + category + "/" + bundle + ".json")
   bundle_cache.set(key, bundle_json)
   bundle_json
 }
@@ -262,25 +256,10 @@ fn ItemData::get_loaded(id : Int) -> ItemData? {
 
 ///|
 pub fn ItemData::load_item_data(id : Int) -> ItemData {
-  ItemData::load_item_data_with_loader(
-    id,
-    @resource.require_async_loader("item"),
-  )
-}
-
-///|
-pub fn ItemData::load_item_data_with_loader(
-  id : Int,
-  item_loader : AsyncLoader,
-) -> ItemData {
   if cache.get(id) is Some(data) {
     return data
   }
-  let data = ItemData::load(
-    id,
-    @resource.require_async_loader("character"),
-    item_loader,
-  )
+  let data = ItemData::load(id)
   cache.set(id, data)
   data
 }

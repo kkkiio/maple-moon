@@ -28,11 +28,9 @@ pub fn load_map_resources_by_id(map_id : Int) -> MapRawResources {
   let strid = @utils.stoi_left_pad0(map_id, 9)
   let mx_path = ["Map", "Map\{prefix}", "\{strid}.img", "mx.json"]
   @log.info("loading map mx resource", data={ "path": mx_path })
-  let loader = @resource.require_async_loader("mapx")
-  let (tiled_path, tiled_map) = @resource.load_tiled_map_from_mx(
-    loader, mx_path,
+  let (tiled_path, tiled_map) = @resource.load_tiled_map_from_mx(mx_path,
   )
-  let animation_loader = @resource.AnimationLoader::new(loader)
+  let animation_loader = @resource.AnimationLoader::new()
   let background_animations = load_tiled_background_animations(
     tiled_path, tiled_map, animation_loader,
   )

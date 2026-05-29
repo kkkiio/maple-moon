@@ -161,7 +161,7 @@ fn clear_entities(entities : Array[@entity.Entity]) -> Unit {
 
 ///|
 fn load_ui_resources() -> UiResources {
-  let item = @ui.ui_window_2_loader().require_resource(["Item"])
+  let item = @resource.require_json("assets/UI/UIWindow2.img/Item.json")
   parse_ui_resources_from_item_json(item) catch {
     _ => abort("invalid UIWindow2 Item resource")
   }

@@ -1,9 +1,4 @@
 ///|
-pub(open) trait AsyncResourceLoader {
-  fn load_data(self : Self, path : StringView) -> Json?
-}
-
-///|
 /// Errors raised while loading raw resource files.
 pub(all) suberror ResourceLoadError {
   /// The path is forbidden or is not a resolved asset path.
@@ -12,83 +7,7 @@ pub(all) suberror ResourceLoadError {
   InvalidJson(String)
 } derive(Debug)
 
-///|
-struct AsyncLoader {
-  source : String
-  loader : &AsyncResourceLoader
-}
 
-///|
-pub fn AsyncLoader::new(
-  name : String,
-  loader~ : &AsyncResourceLoader,
-) -> AsyncLoader {
-  { source: name, loader }
-}
-
-///|
-pub fn AsyncLoader::require_resource(
-  self : AsyncLoader,
-  path : ArrayView[String],
-) -> Json {
-  self.require_data(join_path(path))
-}
-
-///|
-/// Load a JSON object by resource path segments.
-///
-/// This is an alias of `require_resource`.
-///
-/// # Example
-/// ```moonbit nocheck
-/// let json = loader.load_resource(["Item", "Consume"])
-/// ignore(json)
-/// ```
-pub fn AsyncLoader::load_resource(
-  self : AsyncLoader,
-  path : ArrayView[String],
-) -> Json {
-  self.require_resource(path)
-}
-
-///|
-/// Load a JSON object by source-relative or resolved asset path.
-pub fn AsyncLoader::require_data(self : AsyncLoader, path : String) -> Json {
-  let loader_path = self.loader_data_path(path)
-  match self.loader.load_data(loader_path) {
-    Some(json) => json
-    None => abort("resource not found: \{path}")
-  }
-}
-
-///|
-/// Load a JSON object by source-relative or resolved asset path.
-///
-/// This is an alias of `require_data`.
-///
-/// # Example
-/// ```moonbit nocheck
-/// let json = loader.load_data("Consume/0200.img")
-/// ignore(json)
-/// ```
-pub fn AsyncLoader::load_data(self : AsyncLoader, path : String) -> Json {
-  self.require_data(path)
-}
-
-///|
-/// Resolve a JSON resource path to a fetchable URL/path.
-///
-/// Rules:
-/// - Resolved asset paths(`assets/...`) are passed through.
-/// - Relative paths are resolved by internal source rules.
-/// - Leading-slash paths(`/...`) are forbidden.
-/// - `http(s)` is forbidden and will fail.
-pub fn AsyncLoader::resolve_json_path(
-  self : AsyncLoader,
-  path : String,
-) -> String {
-  resolve_resource_path(self.source, path)
-}
 
 ///|
 /// Require an image by resolved asset path.
@@ -121,91 +40,17 @@ pub fn load_image(path : String) -> @asset.ImageHandle {
   require_image(path)
 }
 
-///|
-/// Load an image by source-relative or resolved asset path.
-///
-/// Rules:
-/// - Resolved asset paths(`assets/...`) are passed through.
-/// - Relative paths are resolved by internal source rules.
-/// - Leading-slash paths(`/...`) are forbidden.
-/// - `http(s)` is forbidden and will fail.
-pub fn AsyncLoader::load_image(
-  self : AsyncLoader,
-  path : String,
-) -> @asset.ImageHandle {
-  let resolved = resolve_resource_path(self.source, path)
-  load_image(resolved)
-}
+
+
+
 
 ///|
-fn AsyncLoader::loader_data_path(self : AsyncLoader, path : String) -> String {
-  guard_allowed_resource_path("loader data", path)
-  let normalized = path.replace(old="\\", new="/")
-  guard is_resolved_asset_path(normalized) else { return path }
-  let resolved = normalize_resolved_asset_path(normalized)
-  let root = normalize_resolved_asset_path(source_root(self.source, path))
-  let resolved_parts = split_ref_path(resolved)
-  let root_parts = split_ref_path(root)
-  let relative_parts = match strip_prefix_parts(resolved_parts, root_parts) {
-    Some(parts) => parts
-    None =>
-      abort(
-        "resolved resource path is outside source root: source=\{self.source}, path=\{path}, root=\{root}",
-      )
+fn join_dir(root : String, path : String) -> String {
+  if path.has_prefix("/") {
+    abort("path must be relative when joining resource path: \{path}")
   }
-  join_path(relative_parts)
-}
-
-///|
-struct CompositeAsyncResourceLoader {
-  prefixLoaderMap : Map[String, &AsyncResourceLoader]
-}
-
-///|
-pub fn CompositeAsyncResourceLoader::new(
-  prefixLoaderMap : Map[String, &AsyncResourceLoader],
-) -> CompositeAsyncResourceLoader {
-  { prefixLoaderMap, }
-}
-
-///|
-pub impl AsyncResourceLoader for CompositeAsyncResourceLoader with fn load_data(
-  self,
-  path,
-) -> Json? {
-  let (path, loader) = for prefix, loader in self.prefixLoaderMap {
-    if path.strip_prefix(prefix) is Some(path) {
-      break (path, loader)
-    }
-  } nobreak {
-    return None
-  }
-  loader.load_data(path)
-}
-
-///|
-/// A resource loader that loads resources from a directory.
-/// The directory splits resources by first level of the path and stores them in json files.
-/// For example, if we want to load grassySoil/ani/0, it will load $rootPath/grassySoil.img.json and then get the value of "ani/0".
-struct DirResourceLoader {
-  rootPath : String
-}
-
-///|
-pub fn DirResourceLoader::new(rootPath : String) -> DirResourceLoader {
-  { rootPath, }
-}
-
-///|
-pub impl AsyncResourceLoader for DirResourceLoader with fn load_data(self, path) -> Json? {
-  let (child, rest) = if path.find("/") is Some(i) {
-    (path.view(start_offset=0, end_offset=i), path.view(start_offset=i + 1))
-  } else {
-    (path, "")
-  }
-  let path = join_dir(self.rootPath, child.to_owned() + ".json")
-  guard fetch_json(path) is Some(root_value) else { return None }
-  Some(get_by_path(root_value, rest.to_owned()))
+  let root = root.strip_suffix("/").unwrap_or(root)
+  return "\{root}/\{path}"
 }
 
 ///|
@@ -270,6 +115,25 @@ pub fn require_json(path : String) -> Json {
 }
 
 ///|
+/// Load a JSON file, then navigate to nested keys.
+/// With empty keys, returns the full JSON tree.
+///
+/// # Panics
+/// Panics if the file is not found, JSON is invalid, or a key is not found.
+pub fn json_navigate(json_path : String, keys : Array[String]) -> Json {
+  let root = require_json(json_path)
+  keys.fold(init=root, fn(acc, key) {
+    match acc {
+      Object(obj) => match obj.get(key) {
+        Some(v) => v
+        None => abort("key not found: \{key} in \{json_path}")
+      }
+      _ => abort("expected JSON object at key \{key} in \{json_path}")
+    }
+  })
+}
+
+///|
 fn ensure_resolved_asset_io_path(kind : String, path : String) -> Unit {
   check_resolved_asset_io_path(kind, path) catch {
     err => abort("\{to_repr(err)}")
@@ -298,28 +162,4 @@ fn check_resolved_asset_io_path(
   }
 }
 
-///|
-fn join_dir(root : String, path : String) -> String {
-  if path.has_prefix("/") {
-    abort("path must be relative when joining resource path: \{path}")
-  }
-  let root = root.strip_suffix("/").unwrap_or(root)
-  return "\{root}/\{path}"
-}
 
-///|
-fn get_by_path(obj : Json, path : String) -> Json {
-  if path.is_empty() {
-    return obj
-  }
-  let parts = path.split("/")
-  parts.fold(init=obj, fn(acc, part) {
-    guard acc is Object(obj) else {
-      null // TODO: throw error
-    }
-    guard obj.get(part.to_owned()) is Some(value) else {
-      null // TODO: throw error
-    }
-    value
-  })
-}

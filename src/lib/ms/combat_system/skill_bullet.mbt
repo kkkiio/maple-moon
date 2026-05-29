@@ -7,7 +7,6 @@ priv struct Ball {
 fn load_ball_animation(
   src : Json,
   tag : String,
-  skill_loader : @resource.AsyncLoader,
   base_path : String,
 ) -> @ms_animation.Animation {
   let ref_path = match src {
@@ -15,7 +14,7 @@ fn load_ball_animation(
     _ => abort("missing mx_animation in skill ball")
   }
   let resolved = @resource.resolve_ref(base_path, ref_path)
-  let animation_loader = @resource.AnimationLoader::new(skill_loader)
+  let animation_loader = @resource.AnimationLoader::new()
   let loaded = animation_loader.load(resolved)
   let clip = loaded.clip(tag) catch {
     _ => abort("missing skill ball animation tag '\{tag}': \{resolved}")
@@ -27,10 +26,9 @@ fn load_ball_animation(
 fn Ball::new(
   src : Json,
   tag : String,
-  skill_loader : @resource.AsyncLoader,
   base_path : String,
 ) -> Ball {
-  let animation = load_ball_animation(src, tag, skill_loader, base_path)
+  let animation = load_ball_animation(src, tag, base_path)
   Ball::{ animation, }
 }
 
@@ -60,12 +58,11 @@ priv struct SingleBullet {
 ///|
 fn SingleBullet::new(
   src : Json,
-  skill_loader : @resource.AsyncLoader,
   base_path : String,
 ) -> SingleBullet {
   let ball = match src {
     { "ball": ball, .. } =>
-      Ball::new(ball, skill_animation_tag(["ball"]), skill_loader, base_path)
+      Ball::new(ball, skill_animation_tag(["ball"]), base_path)
     _ => abort("missing skill ball")
   }
   { ball, }
@@ -90,7 +87,6 @@ priv struct BySkillLevelBullet {
 fn BySkillLevelBullet::new(
   src : Json,
   id : Int,
-  skill_loader : @resource.AsyncLoader,
   base_path : String,
 ) -> BySkillLevelBullet {
   let bullets = Map([])
@@ -105,7 +101,6 @@ fn BySkillLevelBullet::new(
           Ball::new(
             ball,
             skill_animation_tag(["level", level, "ball"]),
-            skill_loader,
             base_path,
           ),
         )

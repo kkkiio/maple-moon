@@ -130,17 +130,15 @@ pub fn Mob::load(
   position : @struct.Point[Int],
   randomizer : @random.Rand,
 ) -> Mob {
-  let mob_loader = @resource.require_async_loader("mob")
   let strid = @utils.stoi_left_pad0(mid, 7)
-  let mx_path = "Mob/\{strid}.img/mx.json"
-  let mx_src = mob_loader.require_data(mx_path)
+  let mx_path = "assets/mob/Mob/\{strid}.img/mx.json"
+  let mx_src = @resource.require_json(mx_path)
   let mx_mob : MxMob = @json.from_json(mx_src) catch {
     err => abort("failed to decode mob mx: \{mid}, error=\{err}")
   }
   let runtime = load_mx_runtime(
     mx_mob,
-    mob_loader,
-    mob_loader.resolve_json_path(mx_path),
+    mx_path,
   )
   Mob::new(
     mx_mob,
@@ -167,10 +165,9 @@ priv struct MxMobRuntime {
 ///|
 fn load_mx_runtime(
   mx_mob : MxMob,
-  mob_loader : @resource.AsyncLoader,
   base_path : String,
 ) -> MxMobRuntime {
-  let animation_loader = @resource.AnimationLoader::new(mob_loader)
+  let animation_loader = @resource.AnimationLoader::new()
   let effect_animations : Map[String, MobAnimation] = {}
   for path_key, animation_path in mx_mob.mx_animations {
     let clip = load_mx_clip(

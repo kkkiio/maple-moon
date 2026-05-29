@@ -163,16 +163,15 @@ pub(all) struct NumberSet {
 
 ///|
 pub fn NumberSet::load() -> NumberSet {
-  let loader = @resource.require_async_loader("effect")
   // 'No' for Number
-  let no_red_1 = load_damage_skin(loader, "NoRed1")
-  let no_red_0 = load_damage_skin(loader, "NoRed0")
-  let no_cri_1 = load_damage_skin(loader, "NoCri1")
-  let no_cri_0 = load_damage_skin(loader, "NoCri0")
-  let no_violet_1 = load_damage_skin(loader, "NoViolet1")
-  let no_violet_0 = load_damage_skin(loader, "NoViolet0")
-  let no_blue_1 = load_damage_skin(loader, "NoBlue1")
-  let no_blue_0 = load_damage_skin(loader, "NoBlue0")
+  let no_red_1 = load_damage_skin("NoRed1")
+  let no_red_0 = load_damage_skin("NoRed0")
+  let no_cri_1 = load_damage_skin("NoCri1")
+  let no_cri_0 = load_damage_skin("NoCri0")
+  let no_violet_1 = load_damage_skin("NoViolet1")
+  let no_violet_0 = load_damage_skin("NoViolet0")
+  let no_blue_1 = load_damage_skin("NoBlue1")
+  let no_blue_0 = load_damage_skin("NoBlue0")
   let red_skins : Skins = { big: no_red_1, small: no_red_0 }
   let cri_skins : Skins = { big: no_cri_1, small: no_cri_0 }
   let violet_skins : Skins = { big: no_violet_1, small: no_violet_0 }
@@ -181,11 +180,8 @@ pub fn NumberSet::load() -> NumberSet {
 }
 
 ///|
-fn load_damage_skin(
-  loader : @resource.AsyncLoader,
-  name : String,
-) -> DamageSkin {
-  (loader.require_resource(["BasicEff.img", name]) |> @json.from_json) catch {
+fn load_damage_skin(name : String) -> DamageSkin {
+  (@resource.require_json("assets/Effect/BasicEff.img/" + name + ".json") |> @json.from_json) catch {
     _ => abort("invalid damage skin resource: BasicEff.img/\{name}")
   }
 }

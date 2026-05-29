@@ -203,13 +203,9 @@ fn current_player_name() -> String {
 
 ///|
 fn load_npc_talk_resource() -> NpcTalkResource {
-  let src : Json = @resource.require_async_loader("ui_window_2").require_resource([
-      "UtilDlgEx",
-    ],
-  )
+  let src : Json = @resource.require_json("assets/UI/UIWindow2.img/UtilDlgEx.json")
   let window_slice = @ui.load_ui_slice_resource(
-    @ui.ui_slice_loader(),
-    "ui/UIWindow2.img/UtilDlgEx/slice.json",
+    "assets/UI/UIWindow2.img/UtilDlgEx/slice.json",
   )
   NpcTalkResource::from_resource(src, window_slice) catch {
     _ => abort("invalid UtilDlgEx NPC talk resource")

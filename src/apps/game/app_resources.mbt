@@ -17,10 +17,7 @@ pub(all) struct AppResources {
 /// resources.install()
 /// ```
 pub fn AppResources::load() -> AppResources raise {
-  let basic_item_resource = @item.BasicItemResource::load(
-    @resource.require_async_loader("item"),
-    @resource.require_async_loader("string"),
-  )
+  let basic_item_resource = @item.BasicItemResource::load()
   let char_presentation_resource = @char_look.CharacterPresentationResource::load()
   let quest_result = @quest.load_quest_resource()
   let map_quests_resource = @quest_icon.MapQuestsResource::load()

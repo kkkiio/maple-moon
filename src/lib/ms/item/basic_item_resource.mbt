@@ -29,16 +29,14 @@ fn collect_item_ids_from_bundle(json : Json, id_set : Map[Int, Bool]) -> Unit {
 }
 
 ///|
-fn discover_consume_and_etc_item_ids(
-  item_loader : @resource.AsyncLoader,
-) -> Array[Int] {
+fn discover_consume_and_etc_item_ids() -> Array[Int] {
   let id_set : Map[Int, Bool] = Map([])
   for bundle in consume_bundle_files {
-    let bundle_json = load_item_bundle_cached("Consume", bundle, item_loader)
+    let bundle_json = load_item_bundle_cached("Consume", bundle)
     collect_item_ids_from_bundle(bundle_json, id_set)
   }
   for bundle in etc_bundle_files {
-    let bundle_json = load_item_bundle_cached("Etc", bundle, item_loader)
+    let bundle_json = load_item_bundle_cached("Etc", bundle)
     collect_item_ids_from_bundle(bundle_json, id_set)
   }
   let ids : Array[Int] = []
@@ -50,15 +48,12 @@ fn discover_consume_and_etc_item_ids(
 
 ///|
 /// Loads consume/etc basic item resources and keeps a full in-memory item-data map.
-pub fn BasicItemResource::load(
-  item_loader : @resource.AsyncLoader,
-  string_loader : @resource.AsyncLoader,
-) -> BasicItemResource {
-  preload_item_text_bundles(string_loader)
-  let ids = discover_consume_and_etc_item_ids(item_loader)
+pub fn BasicItemResource::load() -> BasicItemResource {
+  preload_item_text_bundles()
+  let ids = discover_consume_and_etc_item_ids()
   let items_by_id : Map[Int, ItemData] = Map([])
   for item_id in ids {
-    let item_data = ItemData::load_item_data_with_loader(item_id, item_loader)
+    let item_data = ItemData::load_item_data(item_id)
     items_by_id.set(item_id, item_data)
   }
   { ids, items_by_id }

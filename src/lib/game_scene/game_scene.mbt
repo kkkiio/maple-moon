@@ -283,9 +283,9 @@ pub fn scene_transition_system(world : @ecs.World) -> Unit {
             }
             match after_image_name {
               Some(after_image_name) => {
-                let after_image_res = @resource.require_async_loader(
-                  "afterimage",
-                ).require_resource(["\{after_image_name}.img"])
+                let after_image_res = @resource.require_json(
+                  "assets/Character/Afterimage/\{after_image_name}.img.json",
+                )
                 let after_images = @json.from_json(after_image_res) catch {
                   _ => abort("invalid afterimage resource: \{after_image_name}")
                 }
@@ -313,11 +313,8 @@ pub fn scene_transition_system(world : @ecs.World) -> Unit {
               @log.fatal("markup_text reference data is not ready")
               panic()
             }
-            let npc_loader = @resource.require_async_loader("npc")
-            let string_loader = @resource.require_async_loader("string")
             (
-              weapon_data, top_data, bottom_data, shoes_data, hair, face, npc_loader,
-              string_loader,
+              weapon_data, top_data, bottom_data, shoes_data, hair, face,
             )
           }),
         )
@@ -335,8 +332,6 @@ pub fn scene_transition_system(world : @ecs.World) -> Unit {
         shoes_data,
         hair,
         face,
-        npc_loader,
-        string_loader,
       ) = match res {
         Ok(data) => data
         Err(e) => {
@@ -389,7 +384,7 @@ pub fn scene_transition_system(world : @ecs.World) -> Unit {
       // 5. 初始化 Stage 并切换到 GameTransiting 状态
       match stage_ref.val {
         Some(_) => ()
-        None => ignore(new_stage(char_look, stats, npc_loader, string_loader))
+        None => ignore(new_stage(char_look, stats))
       }
       @item_use_events.clear_intents()
       @quest_log.handle_player_quest_info(quests)
@@ -507,8 +502,6 @@ pub fn scene_transition_system(world : @ecs.World) -> Unit {
 fn new_stage(
   char_look : @char_look.CharLook,
   stats_entry : StatsEntry,
-  npc_loader : @resource.AsyncLoader,
-  string_loader : @resource.AsyncLoader,
 ) -> Stage {
   let map_module = @map.Module::load()
   let stats : @char_stats.CharStats = @char_stats.CharStats::new(
@@ -538,8 +531,6 @@ fn new_stage(
   let map_npcs = @npc.MapNpcs::new(
     @npc_talk_ui.open_npc_talk_ui,
     @npc_talk_ui.is_npc_talk_ui_open,
-    npc_loader~,
-    string_loader~,
   )
   let monster_module = @monster.Module::new()
   let stage = Stage::new(

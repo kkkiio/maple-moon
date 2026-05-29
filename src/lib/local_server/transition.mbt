@@ -82,10 +82,10 @@ fn load_tiled_map_by_map_id(map_id : Int) -> @tiled.TiledMap? {
   if map_id <= 0 {
     return None
   }
-  let loader = @resource.require_async_loader("mapx")
+  
   let prefix = (map_id / 100000000).to_string()
   let strid = @utils.stoi_left_pad0(map_id, 9)
-  let (_tiled_path, tiled_map) = @resource.load_tiled_map_from_mx(loader, [
+  let (_tiled_path, tiled_map) = @resource.load_tiled_map_from_mx( [
     "Map",
     "Map\{prefix}",
     "\{strid}.img",

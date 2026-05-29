@@ -105,10 +105,9 @@ MoonBit 允许 `test` 直接传播错误, 用 `fail` 函数抛出错误.
 修改完 moonbit 代码后, 执行编译命令:
 
 ```bash
-moon check
-moon fmt
-moon info
-moon build --release
+just check
+just fmt
+just build
 ```
 
 执行 `moon test` 前先加载测试环境变量，避免 `selene-webgpu` 在 Node.js 下因缺少 DOM 报错：

@@ -3,7 +3,6 @@ fn game_start() -> Unit {
   @passive.set_passive_randomizer(@random.Rand::new())
   @game_server.init_server()
   @select_char_ui.setup_game_server_handlers()
-  @explorer_creation_ui.setup_game_server_handlers()
   @game_scene.setup_game_server_handlers()
   @npc.setup_game_server_handlers()
   @monster.setup_game_server_handlers()
@@ -140,11 +139,6 @@ fn main {
       Update,
       fn(world) { @select_char_ui.select_char_ui_system(world) },
       system_name="select_char_ui_system",
-    )
-    .add_system(
-      Update,
-      fn(world) { @explorer_creation_ui.explorer_creation_ui_system(world) },
-      system_name="explorer_creation_ui_system",
     )
     .add_system(
       Update,

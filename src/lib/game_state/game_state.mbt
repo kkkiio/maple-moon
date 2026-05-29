@@ -2,7 +2,6 @@
 pub(all) enum GamePhase {
   GameSetup
   SelectCharacter
-  ExplorerCharacterCreation
   GameStart(
     map_id~ : Int,
     portal_id~ : Int,
@@ -79,7 +78,6 @@ fn current_phase_name() -> String {
   match current_phase() {
     GamePhase::GameSetup => "GameSetup"
     GamePhase::SelectCharacter => "SelectCharacter"
-    GamePhase::ExplorerCharacterCreation => "ExplorerCharacterCreation"
     GamePhase::GameStart(..) => "GameStart"
     GamePhase::GameTransiting(..) => "GameTransiting"
     GamePhase::GameActive(..) => "GameActive"

@@ -237,16 +237,7 @@ fn get_body_loader() -> @resource.AsyncLoader {
 let effect_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
   @resource.AsyncLoader::new(
     "effect",
-    loader=@resource.CompositeAsyncResourceLoader::new({
-      "BasicEff.img/": @resource.DirResourceLoader::new(
-        // "https://maple-res.kkkiiox.work/Effect/BasicEff.img",
-        "assets/Effect/BasicEff.img",
-      ),
-      "CharacterEff.img/": @resource.DirResourceLoader::new(
-        // "https://maple-res.kkkiiox.work/Effect/CharacterEff.img",
-        "assets/Effect/CharacterEff.img",
-      ),
-    }),
+    loader=@resource.FileJsonResourceLoader::new("assets/Effect"),
   )
 })
 
@@ -301,25 +292,6 @@ let item_special_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
 ///|
 fn get_item_special_loader() -> @resource.AsyncLoader {
   item_special_loader.get()
-}
-
-///|
-let item_loader : Lazy[@resource.AsyncLoader] = Lazy::new(fn() {
-  @resource.AsyncLoader::new(
-    "item",
-    loader=@resource.CompositeAsyncResourceLoader::new({
-      "Consume/": @resource.DirResourceLoader::new("assets/Item/Consume"),
-      "Cash/": @resource.DirResourceLoader::new("assets/Item/Cash"),
-      "Etc/": @resource.DirResourceLoader::new("assets/Item/Etc"),
-      "Install/": @resource.DirResourceLoader::new("assets/Item/Install"),
-      "Pet/": @resource.DirResourceLoader::new("assets/Item/Pet"),
-    }),
-  )
-})
-
-///|
-fn get_item_loader() -> @resource.AsyncLoader {
-  item_loader.get()
 }
 
 ///|
@@ -405,7 +377,26 @@ pub fn install_builtin_resource_loaders() -> Unit {
   @resource.register_async_loader("face", get_face_loader())
   @resource.register_async_loader("hair", get_hair_loader())
   @resource.register_async_loader("item_special", get_item_special_loader())
-  @resource.register_async_loader("item", get_item_loader())
+  @resource.register_async_loader(
+    "item",
+    @resource.AsyncLoader::new(
+      "item",
+      loader=@resource.CompositeAsyncResourceLoader::new({
+        "Consume/": @resource.DirResourceLoader::new("assets/Item/Consume"),
+        "Cash/": @resource.DirResourceLoader::new("assets/Item/Cash"),
+        "Etc/": @resource.DirResourceLoader::new("assets/Item/Etc"),
+        "Install/": @resource.DirResourceLoader::new("assets/Item/Install"),
+        "Pet/": @resource.DirResourceLoader::new("assets/Item/Pet"),
+      }),
+    ),
+  )
+  @resource.register_async_loader(
+    "item_anim",
+    @resource.AsyncLoader::new(
+      "item",
+      loader=@resource.FileJsonResourceLoader::new("assets/Item"),
+    ),
+  )
   @resource.register_async_loader("ui_window_2", get_ui_window_2_loader())
   @resource.register_async_loader("ui_window_4", get_ui_window_4_loader())
   @resource.register_async_loader("ui_slice", get_ui_slice_loader())

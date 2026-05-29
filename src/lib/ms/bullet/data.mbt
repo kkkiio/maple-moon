@@ -35,7 +35,7 @@ fn read_mx_animation_ref(src : Json) -> String raise {
 
 ///|
 fn load_bullet_native_animation(
-  item_loader : @resource.AsyncLoader,
+  loader : @resource.AsyncLoader,
   strid : String,
   bullet_src : Json,
 ) -> @ms_animation.Animation {
@@ -45,7 +45,7 @@ fn load_bullet_native_animation(
     _ => abort("missing mx_animation in bullet node: \{strid}")
   }
   let resolved = @resource.resolve_ref(base_path, ref_path)
-  let animation_loader = @resource.AnimationLoader::new(item_loader)
+  let animation_loader = @resource.AnimationLoader::new(loader)
   let loaded = animation_loader.load(resolved)
   let clip = loaded.clip("main") catch {
     _ => abort("missing main clip in bullet animation: \{strid}")
@@ -65,8 +65,11 @@ fn BulletData::new(
         { "incPAD": Number(watk, ..), .. } => watk.to_int()
         _ => 0
       }
-      let item_loader = @resource.require_async_loader("item")
-      let bullet = load_bullet_native_animation(item_loader, strid, bullet_src)
+      let bullet = load_bullet_native_animation(
+        @resource.require_async_loader("item_anim"),
+        strid,
+        bullet_src,
+      )
       { item_data, bullet, watk }
     }
     _ => abort("Invalid bullet data")

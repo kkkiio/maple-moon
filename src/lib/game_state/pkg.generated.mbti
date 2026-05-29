@@ -29,7 +29,6 @@ pub fn transition(from~ : (GamePhase) -> Bool, to~ : (GamePhase) -> Bool) -> () 
 pub(all) enum GamePhase {
   GameSetup
   SelectCharacter
-  ExplorerCharacterCreation
   GameStart(map_id~ : Int, portal_id~ : Int, set_field_message~ : @server_proto.SetFieldMessage)
   GameTransiting(map_id~ : Int, portal_id~ : Int)
   GameActive(map_id~ : Int, portal_id~ : Int)

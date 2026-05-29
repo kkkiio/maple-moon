@@ -5,13 +5,14 @@ using @char_look {type CharacterPresentationResource}
 using @server_proto {
   type CharacterListMessage,
   type CharacterListRequestMessage,
+  type CreateCharacterMessage,
+  type CreateCharacterResultMessage,
   type SelectCharMessage,
   type SetFieldMessage,
   type LookEntry,
 }
 
 ///|
-using @explorer_creation_ui {open_explorer_creation_ui}
 
 ///|
 using @game_state {type GamePhase}
@@ -473,6 +474,9 @@ let character_list_requested_ref : Ref[Bool] = Ref(false)
 let select_char_requested_ref : Ref[Bool] = Ref(false)
 
 ///|
+let char_name_counter_ref : Ref[Int] = Ref(0)
+
+///|
 fn send_select_char_once(character_id : Int) -> Unit {
   if select_char_requested_ref.val {
     return
@@ -515,11 +519,21 @@ fn add_select_char_ui(
       send_select_char_once(ui.characters[slot].cid)
     },
     on_new_character=fn() {
-      reset_select_char_ui_runtime_state()
-      @game_state.set_next_phase(
-        @game_state.GamePhase::ExplorerCharacterCreation,
-      )
-      open_explorer_creation_ui(resource)
+      char_name_counter_ref.val = char_name_counter_ref.val + 1
+      let name = "explorer" + char_name_counter_ref.val.to_string()
+      @game_server.send(CreateCharacterMessage::{
+        name,
+        job: 1,
+        face: 20000,
+        hair: 30030,
+        hairc: 0,
+        skin: 0,
+        top: 1040002,
+        bot: 1060002,
+        shoes: 1072001,
+        weapon: 1302000,
+        female: false,
+      })
     },
     resource,
   )
@@ -694,6 +708,18 @@ pub fn setup_game_server_handlers() -> Unit {
         ),
       )
       reset_select_char_ui_runtime_state()
+    },
+  )
+  @game_server.add_server_message_handler(
+    "select_char_create_result",
+    CreateCharacterResultMessage::type_code(),
+    json => {
+      let message : CreateCharacterResultMessage = @json.from_json(json)
+      if message.success {
+        character_list_ref.val = None
+        character_list_requested_ref.val = false
+        clear_select_char_ui_runtime()
+      }
     },
   )
 }

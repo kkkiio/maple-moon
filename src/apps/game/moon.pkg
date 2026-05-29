@@ -6,7 +6,6 @@ import {
   "Milky2018/selene/plugins",
   "Milky2018/selene/audio",
   "KKKIIO/maple-moon/lib/ms/cursor",
-  "KKKIIO/maple-moon/lib/ms/explorer_creation_ui",
   "KKKIIO/maple-moon/lib/ms/npc_talk_ui",
   "KKKIIO/maple-moon/lib/ms/select_char_ui",
   "KKKIIO/maple-moon/lib/ms/status_bar_ui",

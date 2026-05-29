@@ -341,11 +341,6 @@ fn LocalServer::on_create_char(self : LocalServer, json : Json) -> Unit raise {
   ignore(request.job)
   @io_service.execute_background(
     fn() {
-      if self.character_roster.is_empty() {
-        let entry = default_character_entry()
-        self.character_roster.push(entry)
-        self.init_character_storage(entry)
-      }
       let normalized_hair_id = request.hair + request.hairc
       for entry in self.character_roster {
         if entry.name == request.name {

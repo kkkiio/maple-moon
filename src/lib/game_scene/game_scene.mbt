@@ -195,8 +195,7 @@ pub fn get_stage() -> Stage? {
 pub fn scene_transition_system(world : @ecs.World) -> Unit {
   match @game_state.current_phase() {
     @game_state.GamePhase::GameSetup => ()
-    @game_state.GamePhase::SelectCharacter
-    | @game_state.GamePhase::ExplorerCharacterCreation => {
+    @game_state.GamePhase::SelectCharacter => {
       stage_ref.val = None
       @bgm.clear_bgm()
       clear_active_scene_map()

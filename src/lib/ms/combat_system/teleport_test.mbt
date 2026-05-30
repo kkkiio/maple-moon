@@ -1,7 +1,7 @@
 ///|
 fn load_map_physics_from_assets(map_id : Int) -> @physics.Physics raise {
   let prefix = map_id / 100000000
-  let path = "assets/map/map\{prefix}/\{map_id}.img.json"
+  let path = "assets/Map/map\{prefix}/\{map_id}.img.json"
   let map_text = @fs.read_file_to_string(path)
   let map_json = @json.parse(map_text)
   let foothold_json = match map_json {

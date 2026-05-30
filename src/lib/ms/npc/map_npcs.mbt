@@ -360,14 +360,14 @@ pub fn Npc::load(
     @transform2d.set_xy(entity, pos)
   })
   let strid = @utils.stoi_left_pad0(id, 7) + ".img"
-  let mut mx_path = "assets/Npc/Npc/" + strid + "/mx.json"
+  let mut mx_path = "assets/Npc/" + strid + "/mx.json"
   let mut src = @resource.require_json(mx_path)
   let strsrc = @resource.json_navigate("assets/String/Npc.img.json", [
     id.to_string(),
   ])
   let mut mx_npc : MxNpc = @json.from_json(src)
   if mx_npc.info.link is Some(link) {
-    mx_path = "assets/Npc/Npc/" + link + ".img/mx.json"
+    mx_path = "assets/Npc/" + link + ".img/mx.json"
     src = @resource.require_json(mx_path)
     mx_npc = @json.from_json(src)
   }

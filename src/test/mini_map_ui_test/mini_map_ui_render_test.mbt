@@ -82,36 +82,32 @@ test "mini map ui renders normal frame" {
 
 ///|
 fn load_real_minimap_runtime_resource_100030000() -> @map.MiniMapRuntimeResource raise {
-  let map_json = @fs.read_file_to_string("assets/map/map1/100030000.img.json")
-    |> @json.parse
-  let mini_map_resource : @map.MiniMapResource = match map_json {
-    { "miniMap": mini_map_json, .. } => @json.from_json(mini_map_json)
-    _ => fail("miniMap key not found in map_json")
+  let mx_path = ["Map", "Map1", "100030000.img.mx.json"]
+  let (_, tiled_map) = @resource.load_tiled_map_from_mx(mx_path)
+  let mini_opt = @map.from_tiled_mini_map_resource(tiled_map) catch {
+    _ => None
+  }
+  let mini_map_resource = match mini_opt {
+    Some(m) => m
+    None => fail("miniMap not found in map 100030000")
   }
   let portals : Array[@map.MiniMapPortal] = []
-  match map_json {
-    { "portal": Object(portal_obj), .. } =>
-      for _, portal_json in portal_obj {
-        match portal_json {
-          {
-            "x": Number(x, ..),
-            "y": Number(y, ..),
-            "tm": Number(tm, ..),
-            "pt": Number(pt, ..),
-            ..
-          } =>
-            portals.push(
-              @map.MiniMapPortal::new(
-                x.to_int(),
-                y.to_int(),
-                tm.to_int(),
-                @map.MiniMapPortalType::from_int(pt.to_int()),
-              ),
-            )
-          _ => fail("malformed portal JSON")
+  match tiled_map.object_layer("portal") {
+    Some(layer) =>
+      for obj in layer.objects {
+        let x = obj.x.to_int()
+        let y = obj.y.to_int()
+        let tm = match obj.property("tm") {
+          Some(@tiled.TiledPropertyValue::Int(v)) => v
+          _ => 0
         }
+        let pt = match obj.property("pt") {
+          Some(@tiled.TiledPropertyValue::Int(v)) => v
+          _ => 0
+        }
+        portals.push(@map.MiniMapPortal::new(x, y, tm, @map.MiniMapPortalType::from_int(pt)))
       }
-    _ => fail("portal key not found in map_json")
+    None => fail("portal layer not found in map 100030000")
   }
   @map.MiniMapRuntimeResource::load(mini_map_resource, portals)
 }

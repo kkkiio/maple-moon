@@ -84,7 +84,7 @@ fn make_test_player(oid : Int) -> @player.Player raise {
 ///|
 fn load_map_runtime(map_id : Int) -> (@map.MapInfo, @physics.Physics) raise {
   let prefix = map_id / 100000000
-  let path = "assets/map/map\{prefix}/\{map_id}.img.json"
+  let path = "assets/Map/map\{prefix}/\{map_id}.img.json"
   let map_json = parse_json_file(path)
   let foothold_json = match map_json {
     { "foothold": foothold, .. } => foothold

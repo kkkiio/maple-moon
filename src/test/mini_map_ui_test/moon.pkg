@@ -3,6 +3,8 @@ import {
   "moonbitlang/x/fs",
   "KKKIIO/maple-moon/lib/ms/map",
   "KKKIIO/maple-moon/lib/ms/mini_map_ui",
+  "KKKIIO/maple-moon/lib/resource",
+  "Milky2018/selene/tiled",
   "KKKIIO/maple-moon/test/capture_app",
   "Milky2018/selene/entity",
   "Milky2018/selene/plugins",

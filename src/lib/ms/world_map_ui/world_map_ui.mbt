@@ -730,7 +730,7 @@ fn load_world_map_page(
 ) -> (String, WorldMapPageResource) {
   let json = match injected_json {
     Some(json) => json
-    None => @resource.require_json("assets/map/WorldMap/" + name + ".img.json")
+    None => @resource.require_json("assets/Map/WorldMap/" + name + ".img.json")
   }
   let page = parse_world_map_page_resource(name, json, marker) catch {
     _ => abort("invalid world map page resource: \{name}")

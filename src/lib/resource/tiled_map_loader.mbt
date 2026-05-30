@@ -67,7 +67,7 @@ fn resolve_external_tilesets_in_tmj_json(
     match tileset_ref.get("source") {
       Some(String(source)) if source.length() > 0 => {
         let source_path = resolve_relative_resource_path(tiled_path, source)
-        let tsj_json = require_json("assets/map/" + join_path(source_path))
+        let tsj_json = require_json("assets/Map/" + join_path(source_path))
         guard tsj_json is Object(tsj_obj) else {
           abort(
             "failed to load external tileset: \{source}, tiled_path=\{join_path(tiled_path)}",
@@ -101,7 +101,7 @@ fn resolve_external_tilesets_in_tmj_json(
 pub fn load_tiled_map_from_mx(
   mx_path : Array[String],
 ) -> (String, @tiled.TiledMap) {
-  let mx_json = require_json("assets/map/" + join_path(mx_path))
+  let mx_json = require_json("assets/Map/" + join_path(mx_path))
   if mx_json is Null {
     abort("mx.json not found, path=\{to_repr(mx_path)}")
   }
@@ -114,7 +114,7 @@ pub fn load_tiled_map_from_mx(
   guard !tiled_path_parts.is_empty() else {
     abort("invalid tiled_path in mx.json: \{tiled_path}")
   }
-  let tmj_json = require_json("assets/map/" + join_path(tiled_path_parts))
+  let tmj_json = require_json("assets/Map/" + join_path(tiled_path_parts))
   if tmj_json is Null {
     abort("map.tmj not found, tiled_path=\{tiled_path}")
   }
@@ -123,7 +123,7 @@ pub fn load_tiled_map_from_mx(
   )
   let tiled_map = @tiled.TiledMap::from_tiled_json(resolved_tmj_json)
   (
-    "assets/map/" + join_path(tiled_path_parts),
-    @tiled.with_tiled_map_source_path(tiled_map, "assets/map/" + join_path(tiled_path_parts)),
+    "assets/Map/" + join_path(tiled_path_parts),
+    @tiled.with_tiled_map_source_path(tiled_map, "assets/Map/" + join_path(tiled_path_parts)),
   )
 }

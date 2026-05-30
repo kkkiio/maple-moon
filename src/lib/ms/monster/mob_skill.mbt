@@ -17,7 +17,9 @@ pub(all) struct MobSkill {
 
 ///|
 pub fn MobSkill::load(id : Int, level : Int) -> MobSkill {
-  let src = @resource.json_navigate("assets/Skill/MobSkill.img.json", [id.to_string()])
+  let src = @resource.json_navigate("assets/Skill/MobSkill.img.json", [
+    id.to_string(),
+  ])
   MobSkill::new(id, level, src) catch {
     err => abort("failed to load mob skill: \{id}/\{level}, error=\{err}")
   }

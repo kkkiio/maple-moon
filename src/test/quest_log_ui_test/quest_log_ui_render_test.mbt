@@ -18,24 +18,24 @@ fn reset_quest_log_ui_test_state() -> Unit {
 ///|
 fn create_app() -> @app.App {
   @app.App()
-    .with_viewport_width(800.0)
-    .with_viewport_height(540.0)
-    .add_plugin(@plugins.default_plugin)
-    .add_system(
-      First,
-      fn(world) { @console.console_input_injection_system(world) },
-      system_name="console_input_injection_system",
-    )
-    .add_system(
-      Update,
-      fn(world) { @quest_log_ui.quest_log_ui_system(world) },
-      system_name="quest_log_ui_system",
-    )
-    .add_system(
-      Update,
-      fn(world) { @io_service.io_system(world) },
-      system_name="io_system",
-    )
+  .with_viewport_width(800.0)
+  .with_viewport_height(540.0)
+  .add_plugin(@plugins.default_plugin)
+  .add_system(
+    First,
+    fn(world) { @console.console_input_injection_system(world) },
+    system_name="console_input_injection_system",
+  )
+  .add_system(
+    Update,
+    fn(world) { @quest_log_ui.quest_log_ui_system(world) },
+    system_name="quest_log_ui_system",
+  )
+  .add_system(
+    Update,
+    fn(world) { @io_service.io_system(world) },
+    system_name="io_system",
+  )
 }
 
 ///|

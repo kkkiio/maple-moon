@@ -45,7 +45,7 @@ fn min_sprite_alpha() -> Double {
     }
   }
   if !found {
-    panic()
+    abort("map background resource not set in test")
   }
   min_alpha
 }

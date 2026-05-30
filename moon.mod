@@ -27,3 +27,5 @@ options(
   source: "src",
   link: { "native": { "cc": "clang" } },
 )
+
+warnings = "-28"

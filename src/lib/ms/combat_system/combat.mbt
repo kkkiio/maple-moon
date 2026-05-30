@@ -171,7 +171,7 @@ fn Combat::apply_attack_afterimage(
       "available": after_images.keys().collect(),
     })
     if strict_afterimage {
-      panic()
+      abort("unexpected bullet type")
     }
     return false
   }
@@ -299,7 +299,7 @@ fn find_closest_mob(
   objcount : Int,
 ) -> Array[Int] {
   if objcount <= 0 {
-    panic()
+    abort("unexpected damage number type")
   }
   let arr = Array::new()
   mobs.for_each_mob(fn(_oid, mob) {

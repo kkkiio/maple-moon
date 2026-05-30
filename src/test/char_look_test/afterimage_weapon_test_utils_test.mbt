@@ -154,7 +154,9 @@ fn snapshot_afterimage_case(
   @char_look.set_after_images(after_image_name, after_images)
 
   let collection = @char_look.AfterImage::get_collection(after_image_name, 0)
-  guard collection.get(stance_key) is Some(resource) else { panic() }
+  guard collection.get(stance_key) is Some(resource) else {
+    fail("missing stance_key \{stance_key} in afterimage \{after_image_name}")
+  }
 
   @char_look.add_after_image(after_image_host, look, resource, facing_right)
 
@@ -163,5 +165,9 @@ fn snapshot_afterimage_case(
     ticks = ticks + 1
   }
 
-  @capture_app.snapshot(snapshot_path, _captures[_captures.length()-1].png, visual_desc~)
+  @capture_app.snapshot(
+    snapshot_path,
+    _captures[_captures.length() - 1].png,
+    visual_desc~,
+  )
 }

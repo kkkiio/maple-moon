@@ -38,9 +38,7 @@ fn cleanup_for_leave_world(_world : @ecs.World) -> Unit {
 
 ///|
 fn main {
-  @item.set_item_data_system(
-    @item.ItemDataSystem::new(),
-  )
+  @item.set_item_data_system(@item.ItemDataSystem::new())
   let app = @app.App()
     .with_image_smooth(false)
     .with_viewport_width(@graphics.view_size.0 |> Double::from_int)

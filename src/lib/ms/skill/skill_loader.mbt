@@ -55,7 +55,9 @@ pub fn load_skill(id : Int) -> SkillData {
   }
 
   // 5. Load text data (skill name, description)
-  let text_json = @resource.json_navigate("assets/String/Skill.img.json", [strid])
+  let text_json = @resource.json_navigate("assets/String/Skill.img.json", [
+    strid,
+  ])
 
   // 6. Parse and cache
   let data = parse_skill_data(id, skill_json, text_json)

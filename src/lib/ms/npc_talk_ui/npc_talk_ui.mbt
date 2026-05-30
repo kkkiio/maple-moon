@@ -203,7 +203,9 @@ fn current_player_name() -> String {
 
 ///|
 fn load_npc_talk_resource() -> NpcTalkResource {
-  let src : Json = @resource.require_json("assets/UI/UIWindow2.img/UtilDlgEx.json")
+  let src : Json = @resource.require_json(
+    "assets/UI/UIWindow2.img/UtilDlgEx.json",
+  )
   let window_slice = @ui.load_ui_slice_resource(
     "assets/UI/UIWindow2.img/UtilDlgEx/slice.json",
   )

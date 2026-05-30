@@ -71,7 +71,7 @@ fn parse_body_animations_by_stance(
           "stance": stance,
           "frame": frame,
         })
-        panic()
+        abort("unexpected head part: stance=\{stance}, frame=\{frame}")
       }
       guard partnode.z is Some(layer) else {
         @log.error("Unknown BodyLayer", data={
@@ -79,7 +79,9 @@ fn parse_body_animations_by_stance(
           "stance": stance,
           "frame": frame,
         })
-        panic()
+        abort(
+          "Unknown BodyLayer: partname=\{partname}, stance=\{stance}, frame=\{frame}",
+        )
       }
       let shift = match layer {
         @types.BodyLayer::HAND_BELOW_WEAPON =>
@@ -157,8 +159,7 @@ fn parse_body_animations_by_stance(
         })
         head_layers.push(@types.BodyLayer::HEAD)
       } else {
-        @log.error("head not found", data={ "stance": stance, "frame": frame })
-        panic()
+        abort("head not found: stance=\{stance}, frame=\{frame}")
       }
     }
   }

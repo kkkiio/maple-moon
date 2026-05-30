@@ -34,9 +34,7 @@ let ui_slice_cache : Map[String, UiSliceResource] = Map([])
 ///
 /// `slice_json_path` must be a resolved asset path such as
 /// `"assets/UI/UIWindow2.img/UtilDlgEx/slice.json"`.
-pub fn load_ui_slice_resource(
-  slice_json_path : String,
-) -> UiSliceResource {
+pub fn load_ui_slice_resource(slice_json_path : String) -> UiSliceResource {
   match ui_slice_cache.get(slice_json_path) {
     Some(cached) => cached
     None => {
@@ -218,7 +216,7 @@ fn draw_ui_slice_material(
   let dst_w = dst.size[@selene_math.X].to_int()
   let dst_h = dst.size[@selene_math.Y].to_int()
   if dst_w < fixed_w || dst_h < fixed_h {
-    panic()
+    abort("ui slice dst size is smaller than fixed size")
   }
 
   let bx = bounds.position[@selene_math.X]

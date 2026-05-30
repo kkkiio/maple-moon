@@ -107,7 +107,7 @@ fn setup_camera(position : @math.Vec2, map_info : @map.MapInfo) -> Unit {
 ///|
 fn spawn_npc_from_json(map_npcs : @npc.MapNpcs, json : Json) -> Unit {
   let msg : @server_proto.NpcSpawnControllerMessage = @json.from_json(json) catch {
-    _ => panic()
+    _ => abort("unexpected shop item type in test")
   }
   map_npcs.apply_spawn_npc_controller_message(msg)
 }
@@ -120,7 +120,9 @@ fn spawn_npc_from_life(
   x : Int,
   y : Int,
 ) -> Unit {
-  let npc_id = @string.parse_int(life.id) catch { _ => panic() }
+  let npc_id = @string.parse_int(life.id) catch {
+    _ => abort("failed to parse life id in test: " + life.id)
+  }
   spawn_npc_from_json(map_npcs, {
     "mode": 1,
     "oid": oid,
@@ -174,7 +176,7 @@ fn setup_shop_scene_npcs() -> @app.App raise {
       npc_lives.push(life)
     }
   }
-  guard npc_lives.length() > 0 else { panic() }
+  assert_true(npc_lives.length() > 0)
   @map.set_tiled_map(
     @ecs.require_current_world(),
     scene_map.tiled_map,

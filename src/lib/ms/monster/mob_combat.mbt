@@ -35,6 +35,7 @@ pub fn MobCombat::use_move(
         //   let mov = @io_service.wait_future(fut).unwrap_or_error()
         //   apply_move_skill(mov, mob)
         // })
+        ignore(level)
         ...
       }
     None => ()

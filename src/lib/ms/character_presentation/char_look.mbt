@@ -530,7 +530,9 @@ pub fn CharLook::play_animations(self : CharLook) -> Unit {
           "frames": frames.length(),
           "layers": layers.length(),
         })
-        panic()
+        abort(
+          "frames.length() != layers.length() for stance: \{stance}, action: \{name}",
+        )
       }
       let nx_anim = @resource.NxAnimation::{
         frames,
@@ -1257,7 +1259,7 @@ fn CharLook::play_climbing_animations(
           "frames": frames.length(),
           "layers": layers.length(),
         })
-        panic()
+        abort("frames.length() != layers.length() for body action: \{name}")
       }
       let nx_anim = @resource.NxAnimation::{
         frames,

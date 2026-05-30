@@ -14,8 +14,12 @@ pub struct MiniMapUIResource {
 ///|
 /// Loads the necessary graphical resources for displaying the MiniMap UI.
 pub fn MiniMapUIResource::load() -> MiniMapUIResource {
-  let mini_map_json : Json = @resource.require_json("assets/UI/UIWindow2.img/MiniMap.json")
-  let map_helper_minimap_json : Json = @resource.require_json("assets/spritesheets/Map/MapHelper.img/minimap.json")
+  let mini_map_json : Json = @resource.require_json(
+    "assets/UI/UIWindow2.img/MiniMap.json",
+  )
+  let map_helper_minimap_json : Json = @resource.require_json(
+    "assets/spritesheets/Map/MapHelper.img/minimap.json",
+  )
   mini_map_ui_resource_from_json(mini_map_json, map_helper_minimap_json)
 }
 
@@ -32,12 +36,7 @@ fn mini_map_ui_resource_from_json(
     let portal_marker = first_frame_texture(map_helper_minimap.portal)
     { portal_marker, min_map: nx_mini_map_ui.min_map }
   } catch {
-    e => {
-      @log.error("error loading mini map ui resource", data={
-        "error": e.to_string(),
-      })
-      panic()
-    }
+    e => abort("error loading mini map ui resource, err=\{e}")
   }
 }
 
@@ -46,7 +45,7 @@ fn first_frame_texture(
   animation : @resource.NxAnimation,
 ) -> @resource.NxTexture {
   if animation.frames.is_empty() {
-    panic()
+    abort("mini map ui resource not set")
   }
   animation.frames[0].texture
 }

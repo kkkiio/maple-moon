@@ -114,7 +114,9 @@ test "crossbow shoot2 afterimage without range should render" {
   @char_look.set_after_images("crossBow", after_images)
 
   let collection = @char_look.AfterImage::get_collection("crossBow", 0)
-  guard collection.get("shoot2") is Some(shoot2_resource) else { panic() }
+  guard collection.get("shoot2") is Some(shoot2_resource) else {
+    abort("shoot2 resource not found in test")
+  }
 
   @char_look.add_after_image(after_image_host, look, shoot2_resource, false)
   // Drive character animation to the frame where shoot2 afterimage should appear.

@@ -26,10 +26,9 @@ pub fn load_map_resources_by_id(map_id : Int) -> MapRawResources {
   guard map_id >= 0 else { abort("invalid map_id=\{map_id}") }
   let prefix = (map_id / 100000000).to_string()
   let strid = @utils.stoi_left_pad0(map_id, 9)
-  let mx_path = ["Map", "Map\{prefix}", "\{strid}.img", "mx.json"]
+  let mx_path = ["Map", "Map\{prefix}", "\{strid}.img.mx.json"]
   @log.info("loading map mx resource", data={ "path": mx_path })
-  let (tiled_path, tiled_map) = @resource.load_tiled_map_from_mx(mx_path,
-  )
+  let (tiled_path, tiled_map) = @resource.load_tiled_map_from_mx(mx_path)
   let animation_loader = @resource.AnimationLoader::new()
   let background_animations = load_tiled_background_animations(
     tiled_path, tiled_map, animation_loader,

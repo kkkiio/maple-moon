@@ -13,10 +13,6 @@ import {
 // Values
 pub fn app_resource_setup_system(@ecs.World) -> Unit
 
-pub fn install_builtin_resource_loaders() -> Unit
-
-pub fn install_resource_env(ResourceEnvMode) -> Unit
-
 // Errors
 
 // Types and methods
@@ -30,11 +26,6 @@ pub(all) struct AppResources {
 }
 pub fn AppResources::install(Self) -> Unit
 pub fn AppResources::load() -> Self raise
-
-pub enum ResourceEnvMode {
-  Prod
-  Test
-}
 
 // Type aliases
 

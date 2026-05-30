@@ -20,7 +20,9 @@ fn read_basic_effect_z(src : Json) -> Int {
 
 ///|
 pub fn load_teleport_use_effect() -> (@character.Character) -> Unit {
-  let teleport_node = @resource.require_json("assets/Effect/BasicEff.img/Teleport.json")
+  let teleport_node = @resource.require_json(
+    "assets/Effect/BasicEff.img/Teleport.json",
+  )
   let ref_path = read_basic_mx_animation_ref(teleport_node)
   let resolved = @resource.resolve_ref(
     "assets/Effect/BasicEff.img/Teleport.json", ref_path,

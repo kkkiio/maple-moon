@@ -22,7 +22,10 @@ pub fn info(String, data? : Map[String, &@debug.Debug], loc~ : SourceLoc) -> Uni
 pub fn log(Level, String, data? : Map[String, &@debug.Debug], loc~ : SourceLoc) -> Unit
 
 #callsite(autofill(loc))
-pub fn[T] unwrap_err(Result[T, Error], loc~ : SourceLoc) -> T
+pub fn[T] unwrap_opt(T?, loc~ : SourceLoc) -> T
+
+#callsite(autofill(loc))
+pub fn[T] unwrap_rst(Result[T, Error], loc~ : SourceLoc) -> T
 
 #callsite(autofill(loc))
 pub fn warn(String, data? : Map[String, &@debug.Debug], loc~ : SourceLoc) -> Unit

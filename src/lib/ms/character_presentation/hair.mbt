@@ -49,7 +49,9 @@ pub let layers_by_name : @immut/sorted_map.SortedMap[String, HairLayer] = @immut
 ///|
 pub fn Hair::load(hairid : Int, drawinfo : @types.BodyDrawInfo) -> Hair {
   let strid = "000" + hairid.to_string()
-  let hairnode = @resource.require_json("assets/Character/Hair/" + strid + ".img.json")
+  let hairnode = @resource.require_json(
+    "assets/Character/Hair/" + strid + ".img.json",
+  )
   let hairnode : NxStanceLooks[@types.NxMultiPartFrame] = @json.from_json(
     hairnode,
   ) catch {

@@ -63,10 +63,7 @@ pub fn CursorAnimationData::current_frame(
 pub fn CursorAnimationData::load(
   json_path : String,
 ) -> CursorAnimationData raise {
-  let json = match @resource.load_json(json_path) {
-    Some(json) => json
-    None => fail("cursor animation file not found: " + json_path)
-  }
+  let json = @resource.require_json(json_path)
   guard json
     is {
       "frames": Array(frames_json),
@@ -189,10 +186,7 @@ pub fn CursorAnimationData::load(
     animations.set(tag, { frames: tag_frames, total_duration })
   }
 
-  let atlas_path = json_path.replace(
-    old="cursor_animation.json",
-    new="cursor_animation.png",
-  )
+  let atlas_path = json_path.replace(old=".json", new=".png")
   let atlas_image = @resource.require_image(atlas_path)
 
   { atlas_image, animations }

@@ -1,19 +1,15 @@
 ///|
-fn load_map_physics_from_assets(map_id : Int) -> @physics.Physics {
+fn load_map_physics_from_assets(map_id : Int) -> @physics.Physics raise {
   let prefix = map_id / 100000000
   let path = "assets/map/map\{prefix}/\{map_id}.img.json"
-  let map_text = @fs.read_file_to_string(path) catch { _ => panic() }
-  let map_json = @json.parse(map_text) catch { _ => panic() }
+  let map_text = @fs.read_file_to_string(path)
+  let map_json = @json.parse(map_text)
   let foothold_json = match map_json {
     { "foothold": foothold, .. } => foothold
-    _ => panic()
+    _ => fail("foothold not found in map_json")
   }
-  let foothold_tree : @physics.NxFootholdTree = @json.from_json(foothold_json) catch {
-    _ => panic()
-  }
-  @physics.Physics::from_resource(foothold_tree) catch {
-    _ => panic()
-  }
+  let foothold_tree : @physics.NxFootholdTree = @json.from_json(foothold_json)
+  @physics.Physics::from_resource(foothold_tree)
 }
 
 ///|

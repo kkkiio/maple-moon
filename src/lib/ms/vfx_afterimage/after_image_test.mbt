@@ -86,7 +86,7 @@ test "AfterImage display logic" {
   let host = @entity.Entity()
   let entity = host.spawn_child()
   let resource = create_test_resource(0)
-  let look = load_test_look(host) catch { _ => panic() }
+  let look = load_test_look(host)
   look.set_stance(@char_stance.StanceId::STAND1)
   look.play_animations()
 
@@ -106,7 +106,7 @@ test "AfterImage display logic" {
 test "AfterImage with first_frame > 0" {
   let host = @entity.Entity()
   let entity = host.spawn_child()
-  let look = load_test_look(host) catch { _ => panic() }
+  let look = load_test_look(host)
   look.set_stance(@char_stance.StanceId::STAND1)
   look.play_animations()
   let initial_frame = look.get_frame()

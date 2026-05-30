@@ -109,7 +109,8 @@ pub fn load_tiled_map_from_mx(
     { "tiled_path": String(path), .. } if path.length() > 0 => path
     _ => abort("invalid mx.json, path=\{to_repr(mx_path)}")
   }
-  let tiled_path_parts = split_resource_path(tiled_path)
+  // Resolve tiled_path relative to mx.json directory (handles ../tiles/...)
+  let tiled_path_parts = resolve_relative_resource_path(mx_path, tiled_path)
   guard !tiled_path_parts.is_empty() else {
     abort("invalid tiled_path in mx.json: \{tiled_path}")
   }
@@ -122,10 +123,7 @@ pub fn load_tiled_map_from_mx(
   )
   let tiled_map = @tiled.TiledMap::from_tiled_json(resolved_tmj_json)
   (
-    tiled_path,
-    @tiled.with_tiled_map_source_path(
-      tiled_map,
-      join_path(tiled_path_parts),
-    ),
+    "assets/map/" + join_path(tiled_path_parts),
+    @tiled.with_tiled_map_source_path(tiled_map, "assets/map/" + join_path(tiled_path_parts)),
   )
 }

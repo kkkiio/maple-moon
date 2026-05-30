@@ -9,7 +9,10 @@ pub(all) struct BulletData {
 pub fn BulletData::load(strid : String) -> BulletData {
   guard strid.length() == 8 else { abort("Invalid bullet id: \{strid}") }
   let prefix = strid[:4]
-  let src = @resource.json_navigate("assets/Item/Consume/" + prefix.to_owned() + ".img.json", [strid])
+  let src = @resource.json_navigate(
+    "assets/Item/Consume/" + prefix.to_owned() + ".img.json",
+    [strid],
+  )
   let id = (strid.trim_start(chars="0") |> @string.parse_int) catch {
     _ => abort("Invalid bullet id: \{strid}")
   }

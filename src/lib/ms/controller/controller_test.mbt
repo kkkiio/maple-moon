@@ -180,7 +180,7 @@ fn advance_controller_frames(
 ///|
 fn find_rope_or_fail(map_info : @map.MapInfo, x : Int, y : Int) -> @map.Ladder {
   guard map_info.find_ladder(@struct.Point::new(x, y), true) is Some(rope) else {
-    panic()
+    abort("unexpected input state in controller test")
   }
   rope
 }
@@ -188,7 +188,7 @@ fn find_rope_or_fail(map_info : @map.MapInfo, x : Int, y : Int) -> @map.Ladder {
 ///|
 test "105040000 rope 10 should hold at top when climbing into empty air" {
   let start_y = rope_hold_empty_air_bottom - 20
-  let (player, map_info) = try! setup_controller_env(
+  let (player, map_info) = setup_controller_env(
     rope_hold_map_id, rope_hold_empty_air_x, start_y,
   )
   let rope = find_rope_or_fail(map_info, rope_hold_empty_air_x, start_y)
@@ -224,7 +224,7 @@ test "105040000 rope 10 should hold at top when climbing into empty air" {
 ///|
 test "105040000 rope 11 should exit rope onto platform" {
   let start_y = rope_exit_platform_bottom - 20
-  let (player, _map_info) = try! setup_controller_env(
+  let (player, _map_info) = setup_controller_env(
     rope_hold_map_id, rope_exit_platform_x, start_y,
   )
 
@@ -244,7 +244,7 @@ test "105040000 rope 11 should exit rope onto platform" {
 ///|
 test "rope bottom exit still falls" {
   let start_y = rope_hold_empty_air_bottom - 60
-  let (player, _map_info) = try! setup_controller_env(
+  let (player, _map_info) = setup_controller_env(
     rope_hold_map_id, rope_hold_empty_air_x, start_y,
   )
 
@@ -269,7 +269,7 @@ test "rope bottom exit still falls" {
 ///|
 test "held at empty-air top can still jump off" {
   let start_y = rope_hold_empty_air_bottom - 20
-  let (player, _map_info) = try! setup_controller_env(
+  let (player, _map_info) = setup_controller_env(
     rope_hold_map_id, rope_hold_empty_air_x, start_y,
   )
 

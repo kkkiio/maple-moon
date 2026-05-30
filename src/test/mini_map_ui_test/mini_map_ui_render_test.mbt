@@ -19,7 +19,7 @@ fn make_test_runtime_resource_with_canvas(
   canvas_w : Int,
   canvas_h : Int,
   portals? : Array[@map.MiniMapPortal] = [],
-) -> @map.MiniMapRuntimeResource {
+) -> @map.MiniMapRuntimeResource raise {
   let mini_map_json : Json = {
     "mag": 0,
     "centerX": 0,
@@ -32,9 +32,7 @@ fn make_test_runtime_resource_with_canvas(
       "origin": [0, 0],
     },
   }
-  let mini_map_resource : @map.MiniMapResource = @json.from_json(mini_map_json) catch {
-    _ => panic()
-  }
+  let mini_map_resource : @map.MiniMapResource = @json.from_json(mini_map_json)
   @map.MiniMapRuntimeResource::load(mini_map_resource, portals)
 }
 
@@ -83,18 +81,12 @@ test "mini map ui renders normal frame" {
 }
 
 ///|
-fn load_real_minimap_runtime_resource_100030000() -> @map.MiniMapRuntimeResource {
-  let map_json = (@fs.read_file_to_string("assets/map/map1/100030000.img.json")
-  |> @json.parse) catch {
-    _ => panic()
-  }
-  let mini_map_resource : @map.MiniMapResource = try {
-    match map_json {
-      { "miniMap": mini_map_json, .. } => @json.from_json(mini_map_json)
-      _ => panic()
-    }
-  } catch {
-    _ => panic()
+fn load_real_minimap_runtime_resource_100030000() -> @map.MiniMapRuntimeResource raise {
+  let map_json = @fs.read_file_to_string("assets/map/map1/100030000.img.json")
+    |> @json.parse
+  let mini_map_resource : @map.MiniMapResource = match map_json {
+    { "miniMap": mini_map_json, .. } => @json.from_json(mini_map_json)
+    _ => fail("miniMap key not found in map_json")
   }
   let portals : Array[@map.MiniMapPortal] = []
   match map_json {
@@ -116,10 +108,10 @@ fn load_real_minimap_runtime_resource_100030000() -> @map.MiniMapRuntimeResource
                 @map.MiniMapPortalType::from_int(pt.to_int()),
               ),
             )
-          _ => panic()
+          _ => fail("malformed portal JSON")
         }
       }
-    _ => panic()
+    _ => fail("portal key not found in map_json")
   }
   @map.MiniMapRuntimeResource::load(mini_map_resource, portals)
 }

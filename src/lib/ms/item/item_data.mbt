@@ -1,6 +1,5 @@
 ///|
 
-
 ///|
 /// Class that represents an item loaded from the game's files
 /// Contains all shared data between concrete items
@@ -36,10 +35,7 @@ fn EquipId::parse(item_id : Int) -> EquipId raise LoadDataError {
 }
 
 ///|
-fn load_item_text_src(
-  bundle : String,
-  path : Array[String],
-) -> Json {
+fn load_item_text_src(bundle : String, path : Array[String]) -> Json {
   let bundle_json = load_item_text_bundle_cached(bundle)
   get_json_by_path(bundle_json, path)
 }
@@ -48,9 +44,7 @@ fn load_item_text_src(
 let item_text_bundle_cache : Map[String, Json] = Map([])
 
 ///|
-fn load_item_text_bundle_cached(
-  bundle : String,
-) -> Json {
+fn load_item_text_bundle_cached(bundle : String) -> Json {
   if item_text_bundle_cache.get(bundle) is Some(cached) {
     return cached
   }
@@ -79,9 +73,7 @@ pub fn preload_item_text_bundles() -> Unit {
 }
 
 ///|
-pub fn ItemData::load(
-  item_id : Int,
-) -> ItemData {
+pub fn ItemData::load(item_id : Int) -> ItemData {
   let zid = "0\{item_id}"
   let category1 = parse_category1(item_id).unwrap_or_else(fn() {
     abort("invalid item id: \{item_id}")
@@ -93,7 +85,9 @@ pub fn ItemData::load(
       }
       let category = equip_id.category
       let equip_zid = equip_id.zid
-      let src = @resource.require_json("assets/Character/" + category + "/" + equip_zid + ".img.json")
+      let src = @resource.require_json(
+        "assets/Character/" + category + "/" + equip_zid + ".img.json",
+      )
       let strsrc = load_item_text_src("Eqp.img", [
         "Eqp",
         category,
@@ -109,9 +103,7 @@ pub fn ItemData::load(
       let src = get_item_data_from_bundle(bundle_json, item_id, zid) catch {
         _ => abort("item data not found: \{item_id}")
       }
-      let strsrc = load_item_text_src("Consume.img", [
-        item_id.to_string(),
-      ])
+      let strsrc = load_item_text_src("Consume.img", [item_id.to_string()])
       (category, src, strsrc)
     }
     INSTALL => {
@@ -122,9 +114,7 @@ pub fn ItemData::load(
       let src = get_item_data_from_bundle(bundle_json, item_id, zid) catch {
         _ => abort("item data not found: \{item_id}")
       }
-      let strsrc = load_item_text_src("Ins.img", [
-        item_id.to_string(),
-      ])
+      let strsrc = load_item_text_src("Ins.img", [item_id.to_string()])
       (category, src, strsrc)
     }
     ETC => {
@@ -135,10 +125,7 @@ pub fn ItemData::load(
       let src = get_item_data_from_bundle(bundle_json, item_id, zid) catch {
         _ => abort("item data not found: \{item_id}")
       }
-      let strsrc = load_item_text_src("Etc.img", [
-        "Etc",
-        item_id.to_string(),
-      ])
+      let strsrc = load_item_text_src("Etc.img", ["Etc", item_id.to_string()])
       (category, src, strsrc)
     }
     CASH => {
@@ -149,9 +136,7 @@ pub fn ItemData::load(
       let src = get_item_data_from_bundle(bundle_json, item_id, zid) catch {
         _ => abort("item data not found: \{item_id}")
       }
-      let strsrc = load_item_text_src("Cash.img", [
-        item_id.to_string(),
-      ])
+      let strsrc = load_item_text_src("Cash.img", [item_id.to_string()])
       (category, src, strsrc)
     }
   }
@@ -220,15 +205,14 @@ let cache : Map[Int, ItemData] = Map([])
 let bundle_cache : Map[String, Json] = Map([])
 
 ///|
-fn load_item_bundle_cached(
-  category : String,
-  bundle : String,
-) -> Json {
+fn load_item_bundle_cached(category : String, bundle : String) -> Json {
   let key = "\{category}/\{bundle}"
   if bundle_cache.get(key) is Some(cached) {
     return cached
   }
-  let bundle_json = @resource.require_json("assets/Item/" + category + "/" + bundle + ".json")
+  let bundle_json = @resource.require_json(
+    "assets/Item/" + category + "/" + bundle + ".json",
+  )
   bundle_cache.set(key, bundle_json)
   bundle_json
 }

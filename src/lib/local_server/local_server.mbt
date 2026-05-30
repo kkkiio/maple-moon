@@ -233,29 +233,6 @@ priv struct CreateCharRequest {
 } derive(FromJson)
 
 ///|
-fn default_character_look() -> LookEntry {
-  {
-    female: false,
-    skin: 0,
-    faceid: 20000,
-    hairid: 30030,
-    equips: Map::from_array([
-      (@slot.Id::TOP.int_value(), 1040002),
-      (@slot.Id::BOTTOM.int_value(), 1060002),
-      (@slot.Id::SHOES.int_value(), 1072001),
-      (@slot.Id::WEAPON.int_value(), 1302000),
-    ]),
-    maskedequips: {},
-    petids: [],
-  }
-}
-
-///|
-fn default_character_entry() -> CharacterListEntry {
-  { character_id: 1, name: "kkkiio", look: default_character_look() }
-}
-
-///|
 fn make_equipped_inventory_entry(
   slot_id : @slot.Id,
   item_id : Int,
@@ -740,13 +717,7 @@ fn new_inventory_item_entry(
   count : Int,
 ) -> InventoryItemEntry {
   if invtype == InventoryType::EQUIP || invtype == InventoryType::EQUIPPED {
-    let item_data = @item.ItemData::load_item_data(item_id) catch {
-      err =>
-        @log.fatal("failed to load item data for new equip", data={
-          "item_id": item_id,
-          "error": err.to_string(),
-        })
-    }
+    let item_data = @item.ItemData::load_item_data(item_id)
     let equip_data = @data.EquipData::parse_item_data(item_data) catch {
       err =>
         @log.fatal("failed to parse equip data for new equip", data={
@@ -962,7 +933,9 @@ fn LocalServer::spawn_mobs_for_map(self : LocalServer, map_id : Int) -> Unit {
             team: -1,
           }
           let mob_strid = @utils.stoi_left_pad0(monster_id, 7)
-          let mob_node = @resource.require_json("assets/mob/" + mob_strid + ".img.json")
+          let mob_node = @resource.require_json(
+            "assets/mob/" + mob_strid + ".img.json",
+          )
           guard mob_node is { "info": { "maxHP": Number(max_hp, ..), .. }, .. } else {
             continue
           }
@@ -1091,16 +1064,15 @@ pub fn server_system(server : LocalServer) -> Unit {
 ///|
 /// 加载怪物掉落数据库
 fn LocalServer::load_drop_databases(self : LocalServer) -> Unit {
-  let tsv_loader = @resource.get_csv_loader()
   // 加载怪物特定掉落
   @io_service.execute_background(fn() {
-    let text : String = tsv_loader.load_text("assets/data/mob_drops.tsv")
+    let text = @resource.load_text("assets/data/mob_drops.tsv")
     self.drop_db = Some(MobDropDatabase::from_tsv(text))
     @log.info("Loaded mob_drops.tsv", data={})
   })
   // 加载全局掉落
   @io_service.execute_background(fn() {
-    let text : String = tsv_loader.load_text("assets/data/drop_data_global.tsv")
+    let text = @resource.load_text("assets/data/drop_data_global.tsv")
     self.global_drop_db = Some(MobDropDatabase::from_tsv(text))
     @log.info("Loaded drop_data_global.tsv", data={})
   })

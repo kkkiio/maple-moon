@@ -694,18 +694,21 @@ fn load_ui_resources(
 ) -> UiResources {
   let ui_json = match ui_json {
     Some(json) => json
-    None =>
-      @resource.require_json("assets/UI/UIWindow2.img/WorldMap.json")
+    None => @resource.require_json("assets/UI/UIWindow2.img/WorldMap.json")
   }
   let tooltip_json = match tooltip_json {
     Some(json) => json
     None =>
-      @resource.json_navigate("assets/UI/UIWindow2.img/ToolTip.json", ["WorldMap"])
+      @resource.json_navigate("assets/UI/UIWindow2.img/ToolTip.json", [
+        "WorldMap",
+      ])
   }
   let map_helper_json = match map_helper_json {
     Some(json) => json
     None =>
-      @resource.require_json("assets/spritesheets/Map/MapHelper.img/worldMap.json")
+      @resource.require_json(
+        "assets/spritesheets/Map/MapHelper.img/worldMap.json",
+      )
   }
   let ui = parse_world_map_ui_resource(ui_json) catch {
     _ => abort("invalid WorldMap ui resource")
@@ -727,8 +730,7 @@ fn load_world_map_page(
 ) -> (String, WorldMapPageResource) {
   let json = match injected_json {
     Some(json) => json
-    None =>
-      @resource.require_json("assets/map/WorldMap/" + name + ".img.json")
+    None => @resource.require_json("assets/map/WorldMap/" + name + ".img.json")
   }
   let page = parse_world_map_page_resource(name, json, marker) catch {
     _ => abort("invalid world map page resource: \{name}")
@@ -812,7 +814,7 @@ fn ensure_page_loading(state : State, resources : UiResources) -> Unit {
       json,
       resources.marker,
     ) catch {
-      _ => panic()
+      _ => abort("unexpected world map tooltip type")
     }
     state.page_cache[state.current_world_name] = page
     state.current_page = Some(page)
@@ -840,7 +842,7 @@ fn poll_ui_resources(state : State) -> Bool {
       marker: parse_world_map_marker_resource(map_helper_json),
       tooltip: parse_world_map_tooltip_resource(tooltip_json),
     } catch {
-      _ => panic()
+      err => abort("error loading world map ui resources, err=\{err}")
     }
     state.ui_resources = Some(resources)
     state.ui_loading = None

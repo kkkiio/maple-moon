@@ -156,11 +156,7 @@ pub fn new_single_hit_effect(
   res : NxHitEffect,
   base_path : String,
 ) -> (@combat_proto.AttackUser, @monster.Mob) -> Unit {
-  let f = new_hit_effect(
-    res,
-    skill_animation_tag(["hit", "0"]),
-    base_path,
-  )
+  let f = new_hit_effect(res, skill_animation_tag(["hit", "0"]), base_path)
   fn(user : @combat_proto.AttackUser, target : @monster.Mob) -> Unit {
     f(target, user.flip)
   }
@@ -174,16 +170,8 @@ pub fn new_twohanded_hit_effect(
   base_path : String,
 ) -> (@combat_proto.AttackUser, @monster.Mob) -> Unit {
   let effects = @utils.BoolPair::new(
-    new_hit_effect(
-      hit0,
-      skill_animation_tag(["hit", "0"]),
-      base_path,
-    ),
-    new_hit_effect(
-      hit1,
-      skill_animation_tag(["hit", "1"]),
-      base_path,
-    ),
+    new_hit_effect(hit0, skill_animation_tag(["hit", "0"]), base_path),
+    new_hit_effect(hit1, skill_animation_tag(["hit", "1"]), base_path),
   )
   fn(user : @combat_proto.AttackUser, target : @monster.Mob) -> Unit {
     effects[user.second_weapon](target, user.flip)

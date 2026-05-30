@@ -166,7 +166,7 @@ pub fn MapInfo::from_resource(
 ) -> MapInfo {
   let info = match src {
     { "info": info, .. } => info
-    _ => panic()
+    _ => abort("unexpected map life type")
   }
   let seat = match src {
     { "seat": seat, .. } => seat
@@ -190,7 +190,7 @@ pub fn MapInfo::from_resource(
       )
     _ => (walls, borders)
   }
-  guard info is Object(info_obj) else { panic() }
+  guard info is Object(info_obj) else { abort("map info is not an object") }
   let bgmpath = json_get_string(info_obj, "bgm")
   let bgm = match bgmpath.to_array().search('/') {
     Some(split) =>
@@ -202,14 +202,18 @@ pub fn MapInfo::from_resource(
   let seats = Array::new()
   if seat is Object(seat_obj) {
     for _, it in seat_obj {
-      let nx_seat : NxSeat = @json.from_json(it) catch { _ => panic() }
+      let nx_seat : NxSeat = @json.from_json(it) catch {
+        _ => abort("failed to parse NxSeat")
+      }
       seats.push(Seat::from_resource(nx_seat))
     }
   }
   let ladders = Array::new()
   if ladder_rope is Object(ladder_obj) {
     for _, it in ladder_obj {
-      let nx_ladder : NxLadder = @json.from_json(it) catch { _ => panic() }
+      let nx_ladder : NxLadder = @json.from_json(it) catch {
+        _ => abort("failed to parse NxLadder")
+      }
       ladders.push(Ladder::from_resource(nx_ladder))
     }
   }

@@ -6,7 +6,6 @@ import {
   "KKKIIO/maple-moon/lib/ms/physics",
   "KKKIIO/maple-moon/lib/ms/res_types",
   "KKKIIO/maple-moon/lib/ms/server_proto",
-  "KKKIIO/maple-moon/lib/resource",
   "Milky2018/selene/ecs",
   "Milky2018/selene/entity",
   "moonbitlang/core/debug",
@@ -46,7 +45,7 @@ type MapNpcs
 pub fn MapNpcs::apply_spawn_npc_controller_message(Self, @server_proto.NpcSpawnControllerMessage) -> Unit
 pub fn MapNpcs::apply_spawn_npc_message(Self, @server_proto.NpcSpawnMessage) -> Unit
 pub fn MapNpcs::clear(Self) -> Unit
-pub fn MapNpcs::new((TalkArgs) -> Unit, () -> Bool, npc_loader~ : @resource.AsyncLoader, string_loader~ : @resource.AsyncLoader) -> Self
+pub fn MapNpcs::new((TalkArgs) -> Unit, () -> Bool) -> Self
 pub fn MapNpcs::remove(Self, Int) -> Unit
 pub fn MapNpcs::spawn(Self, NpcSpawn) -> Unit
 pub fn MapNpcs::update(Self, @physics.Physics) -> Unit
@@ -77,7 +76,7 @@ pub fn Npc::get_npc_id(Self) -> Int
 pub fn Npc::get_npc_object(Self) -> @physics.MovingObject
 pub fn Npc::get_oid(Self) -> Int
 pub fn Npc::is_scripted(Self) -> Bool
-pub fn Npc::load(@resource.AsyncLoader, @resource.AsyncLoader, Int, Int, Bool, Int, @res_types.Point[Int]) -> Self
+pub fn Npc::load(Int, Int, Bool, Int, @res_types.Point[Int]) -> Self raise
 pub fn Npc::set_stance(Self, String) -> Unit
 pub fn Npc::talk(Self) -> TalkArgs?
 pub fn Npc::update(Self, @physics.Physics) -> Unit
@@ -98,7 +97,7 @@ pub struct NpcDialogue {
 
 type NpcSpawn derive(ToJson, @debug.Debug)
 pub fn NpcSpawn::get_oid(Self) -> Int
-pub fn NpcSpawn::instantiate(Self, @resource.AsyncLoader, @resource.AsyncLoader, @physics.Physics) -> Npc
+pub fn NpcSpawn::instantiate(Self, @physics.Physics) -> Npc raise
 
 pub struct SpawnNpcController {
   mode : Int

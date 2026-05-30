@@ -17,7 +17,3 @@ import {
   "Milky2018/selene/ecs",
   "moonbitlang/core/string",
 }
-
-import {
-  "KKKIIO/maple-moon/test/local_loader",
-} for "test"

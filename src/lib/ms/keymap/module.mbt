@@ -40,7 +40,7 @@ pub fn get_keymap() -> Keymap? {
 fn expect_keymap() -> Keymap {
   match get_keymap() {
     Some(mapping) => mapping
-    None => panic()
+    None => abort("keymap not found")
   }
 }
 

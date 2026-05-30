@@ -11,19 +11,13 @@ import {
 }
 
 // Values
-pub fn load_ui_slice_resource(@resource.AsyncLoader, String) -> UiSliceResource
+pub fn load_ui_slice_resource(String) -> UiSliceResource
 
 pub fn number_system(@ecs.World) -> Unit
 
 pub fn show_number(NumberType, Int, Int, x? : Int) -> Unit
 
-pub fn ui_slice_loader() -> @resource.AsyncLoader
-
 pub fn ui_system(@ecs.World) -> Unit
-
-pub fn ui_window_2_loader() -> @resource.AsyncLoader
-
-pub fn ui_window_4_loader() -> @resource.AsyncLoader
 
 // Errors
 

@@ -582,10 +582,7 @@ test "parse frame alpha by index applies layer and cel opacity" {
 }
 
 ///|
-fn load_meta_image(
-  json_url : String,
-  image_ref : String,
-) -> @asset.ImageHandle {
+fn load_meta_image(json_url : String, image_ref : String) -> @asset.ImageHandle {
   let normalized_ref = image_ref.replace(old="\\", new="/")
   if is_resolved_asset_path(normalized_ref) {
     require_image(image_ref)

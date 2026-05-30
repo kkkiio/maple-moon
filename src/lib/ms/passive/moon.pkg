@@ -14,7 +14,6 @@ import {
 }
 
 import {
-  "KKKIIO/maple-moon/test/local_loader",
   "KKKIIO/maple-moon/lib/ms/combat_proto",
   "KKKIIO/maple-moon/lib/ms/character_presentation",
   "KKKIIO/maple-moon/lib/ms/item",

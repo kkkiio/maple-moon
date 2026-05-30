@@ -87,9 +87,7 @@ pub fn Skill::new(
     skill_get_path(src, ["level", "1", "ball"]),
   )
   let bullet = if by_level_ball {
-    let bullet = BySkillLevelBullet::new(
-      src, skill_id, skill_base_path,
-    )
+    let bullet = BySkillLevelBullet::new(src, skill_id, skill_base_path)
     fn(user : @character.Character, bulletid : Int) {
       bullet.get(user, bulletid)
     }
@@ -409,11 +407,7 @@ pub fn make_hit_effect(
   } else if by_skill_level_hit {
     new_by_skill_level_hit_effect(src, skill_base_path)
   } else if has_hit0 && has_hit1 {
-    new_twohanded_hit_effect(
-      res.hit[0],
-      res.hit[1],
-      skill_base_path,
-    )
+    new_twohanded_hit_effect(res.hit[0], res.hit[1], skill_base_path)
   } else if has_hit0 {
     new_single_hit_effect(res.hit[0], skill_base_path)
   } else {

@@ -3,11 +3,9 @@
 pub(all) suberror ResourceLoadError {
   /// The path is forbidden or is not a resolved asset path.
   InvalidPath(String)
-  /// The resource file exists but its JSON payload cannot be parsed.
-  InvalidJson(String)
+  /// The resource file does not exist.
+  NotFound(String)
 } derive(Debug)
-
-
 
 ///|
 /// Require an image by resolved asset path.
@@ -40,9 +38,18 @@ pub fn load_image(path : String) -> @asset.ImageHandle {
   require_image(path)
 }
 
-
-
-
+///|
+/// Read a text file from a resolved asset path.
+///
+/// # Panics
+/// Panics if the file does not exist or cannot be read.
+pub fn load_text(path : String) -> String {
+  ensure_resolved_asset_io_path("text", path)
+  match @asset.read_bytes(path) {
+    Some(bytes) => bytes.to_unchecked_string()
+    None => abort("text resource not found: \{path}")
+  }
+}
 
 ///|
 fn join_dir(root : String, path : String) -> String {
@@ -54,38 +61,22 @@ fn join_dir(root : String, path : String) -> String {
 }
 
 ///|
-/// Fetch a JSON object from a path.
-///
-/// Returns `None` if the path is not found.
-/// Panics if the JSON is invalid.
-pub fn fetch_json(path : String) -> Json? {
-  load_json(path) catch {
-    err => abort("failed to fetch JSON resource: path=\{path}, error=\{err}")
-  }
-}
-
-///|
 /// Load a JSON object from a resolved asset path.
 ///
-/// Returns `None` if the path is not found. Raises if the path is invalid or
-/// the JSON payload is malformed.
+/// Raises if the path is invalid, the file is missing, or the JSON payload
+/// is malformed.
 ///
 /// # Example
 /// ```moonbit nocheck
 /// let json = @resource.load_json("assets/UI/Basic.img/Cursor/cursor_animation.json")
 /// ignore(json)
 /// ```
-pub fn load_json(path : String) -> Json? raise {
+pub fn load_json(path : String) -> Json raise {
   check_resolved_asset_io_path("JSON", path)
-  guard @asset.read_bytes(path) is Some(bytes) else { return None }
-  Some(
-    @json.parse(@encoding/utf8.decode(bytes)) catch {
-      err =>
-        raise ResourceLoadError::InvalidJson(
-          "invalid JSON resource: path=\{path}, error=\{err}",
-        )
-    },
-  )
+  guard @asset.read_bytes(path) is Some(bytes) else {
+    raise ResourceLoadError::NotFound(path)
+  }
+  @json.parse(@encoding/utf8.decode(bytes))
 }
 
 ///|
@@ -100,17 +91,11 @@ pub fn load_json(path : String) -> Json? raise {
 /// ignore(json)
 /// ```
 pub fn require_json(path : String) -> Json {
-  try load_json(path) catch {
+  load_json(path) catch {
     err =>
       abort(
         "failed to require JSON resource: path=\{path}, error=\{to_repr(err)}",
       )
-  } noraise {
-    value =>
-      match value {
-        Some(json) => json
-        None => abort("required JSON resource not found: \{path}")
-      }
   }
 }
 
@@ -124,10 +109,11 @@ pub fn json_navigate(json_path : String, keys : Array[String]) -> Json {
   let root = require_json(json_path)
   keys.fold(init=root, fn(acc, key) {
     match acc {
-      Object(obj) => match obj.get(key) {
-        Some(v) => v
-        None => abort("key not found: \{key} in \{json_path}")
-      }
+      Object(obj) =>
+        match obj.get(key) {
+          Some(v) => v
+          None => abort("key not found: \{key} in \{json_path}")
+        }
       _ => abort("expected JSON object at key \{key} in \{json_path}")
     }
   })
@@ -161,5 +147,3 @@ fn check_resolved_asset_io_path(
     )
   }
 }
-
-

@@ -70,13 +70,19 @@ pub fn MapQuestsResource::new(
 /// Loads the graphical resources for quest icons.
 pub fn MapQuestsResource::load() -> MapQuestsResource {
   {
-    available_quest_icon: @json.from_json(@resource.json_navigate("assets/UI/UIWindow2.img/QuestIcon.json", ["0"])) catch {
+    available_quest_icon: @json.from_json(
+      @resource.json_navigate("assets/UI/UIWindow2.img/QuestIcon.json", ["0"]),
+    ) catch {
       _ => abort("invalid available quest icon")
     },
-    inprogress_quest_icon: @json.from_json(@resource.json_navigate("assets/UI/UIWindow2.img/QuestIcon.json", ["1"])) catch {
+    inprogress_quest_icon: @json.from_json(
+      @resource.json_navigate("assets/UI/UIWindow2.img/QuestIcon.json", ["1"]),
+    ) catch {
       _ => abort("invalid in-progress quest icon")
     },
-    completed_quest_icon: @json.from_json(@resource.json_navigate("assets/UI/UIWindow2.img/QuestIcon.json", ["2"])) catch {
+    completed_quest_icon: @json.from_json(
+      @resource.json_navigate("assets/UI/UIWindow2.img/QuestIcon.json", ["2"]),
+    ) catch {
       _ => abort("invalid completed quest icon")
     },
   }

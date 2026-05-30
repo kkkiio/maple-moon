@@ -1,14 +1,7 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "KKKIIO/maple-moon/test/local_loader"
 
-import {
-  "KKKIIO/maple-moon/lib/resource",
-}
-
 // Values
-pub fn install_resource_env_for_test() -> Unit
-
-pub fn make_local_string_loader() -> @resource.AsyncLoader
 
 // Errors
 

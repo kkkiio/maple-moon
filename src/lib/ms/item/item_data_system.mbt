@@ -7,10 +7,7 @@ pub struct ItemDataSystem {
 ///|
 /// Creates an item-data system.
 pub fn ItemDataSystem::new() -> ItemDataSystem {
-  {
-    pending_item_loads: Ref(Map([])),
-    item_load_errors: Ref(Map([])),
-  }
+  { pending_item_loads: Ref(Map([])), item_load_errors: Ref(Map([])) }
 }
 
 ///|
@@ -59,9 +56,7 @@ pub fn ItemDataSystem::request(self : ItemDataSystem, id : Int) -> Unit {
   }
   self.pending_item_loads.val.set(
     id,
-    @io_service.submit_background_task(fn() {
-      ItemData::load_item_data(id)
-    }),
+    @io_service.submit_background_task(fn() { ItemData::load_item_data(id) }),
   )
 }
 

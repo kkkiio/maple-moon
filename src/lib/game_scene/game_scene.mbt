@@ -272,12 +272,7 @@ pub fn scene_transition_system(world : @ecs.World) -> Unit {
                 match w_data.get_info() {
                   { "afterImage": Json::String(after_image), .. } =>
                     Some(after_image)
-                  _ => {
-                    @log.fatal("weapon missing afterImage", data={
-                      "item_id": weapon_id.unwrap_or(0),
-                    })
-                    panic()
-                  }
+                  _ => abort("weapon missing afterImage")
                 }
               None => None
             }
@@ -310,12 +305,9 @@ pub fn scene_transition_system(world : @ecs.World) -> Unit {
             }
             @markup_text.preload_reference_data()
             if !@markup_text.is_reference_data_ready() {
-              @log.fatal("markup_text reference data is not ready")
-              panic()
+              abort("markup_text reference data is not ready")
             }
-            (
-              weapon_data, top_data, bottom_data, shoes_data, hair, face,
-            )
+            (weapon_data, top_data, bottom_data, shoes_data, hair, face)
           }),
         )
         return
@@ -325,20 +317,8 @@ pub fn scene_transition_system(world : @ecs.World) -> Unit {
       guard fut.poll() is Some(res) else { return }
 
       // 3. 数据加载完成，处理结果
-      let (
-        weapon_data,
-        top_data,
-        bottom_data,
-        shoes_data,
-        hair,
-        face,
-      ) = match res {
-        Ok(data) => data
-        Err(e) => {
-          @log.error("fail to load game start data", data={ "error": e })
-          panic()
-        }
-      }
+      let (weapon_data, top_data, bottom_data, shoes_data, hair, face) = res
+        |> @log.unwrap_rst
 
       // 4. 创建 Character Look 并装备武器
       let char_look = try {
@@ -427,20 +407,14 @@ pub fn scene_transition_system(world : @ecs.World) -> Unit {
           @io_service.submit_background_task(fn() {
             let map_resources = @map.load_map_resources_by_id(map_id)
             @map.create_scene_map(map_resources, stage.map_portals_animations) catch {
-              _ => abort("failed to create scene map: \{map_id}")
+              err => abort("failed to create scene map: \{map_id}, err=\{err}")
             }
           }),
         )
         return
       }
       guard fut.poll() is Some(res) else { return }
-      let sence_map = match res {
-        Ok(sence_map) => sence_map
-        Err(e) => {
-          @log.error("fail to load map", data={ "error": e, "map_id": map_id })
-          panic()
-        }
-      }
+      let sence_map = res |> @log.unwrap_rst
       set_active_scene_map(sence_map)
       @map.set_tiled_map(
         world,
@@ -529,8 +503,7 @@ fn new_stage(
   // TODO: reset cooldowns
   // self.combat.set_cooldowns(cooldowns)
   let map_npcs = @npc.MapNpcs::new(
-    @npc_talk_ui.open_npc_talk_ui,
-    @npc_talk_ui.is_npc_talk_ui_open,
+    @npc_talk_ui.open_npc_talk_ui, @npc_talk_ui.is_npc_talk_ui_open,
   )
   let monster_module = @monster.Module::new()
   let stage = Stage::new(

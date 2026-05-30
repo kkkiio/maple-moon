@@ -99,12 +99,11 @@ pub fn build_npc_shop_map(
 ///|
 /// Load and build NPC shop map through registered TSV loader.
 pub fn load_npc_shop_map(
-  tsv_loader : @resource.CsvLoader,
   shops_path? : String = "assets/data/shops.tsv",
   shopitems_path? : String = "assets/data/shopitems.tsv",
 ) -> Map[Int, @server_proto.OpenNpcShopMessage] {
-  let shops_tsv = tsv_loader.load_text(shops_path)
-  let shopitems_tsv = tsv_loader.load_text(shopitems_path)
+  let shops_tsv = @resource.load_text(shops_path)
+  let shopitems_tsv = @resource.load_text(shopitems_path)
   build_npc_shop_map(shops_tsv, shopitems_tsv) catch {
     err => abort("failed to load NPC shop map: \{err}")
   }

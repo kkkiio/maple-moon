@@ -166,13 +166,19 @@ fn poll_loading_result() -> Unit {
 ///|
 fn load_resources() -> QuestIconResources {
   {
-    available: @json.from_json(@resource.json_navigate("assets/UI/UIWindow2.img/QuestIcon.json", ["0"])) catch {
+    available: @json.from_json(
+      @resource.json_navigate("assets/UI/UIWindow2.img/QuestIcon.json", ["0"]),
+    ) catch {
       _ => abort("invalid available quest icon")
     },
-    in_progress: @json.from_json(@resource.json_navigate("assets/UI/UIWindow2.img/QuestIcon.json", ["1"])) catch {
+    in_progress: @json.from_json(
+      @resource.json_navigate("assets/UI/UIWindow2.img/QuestIcon.json", ["1"]),
+    ) catch {
       _ => abort("invalid in-progress quest icon")
     },
-    completed: @json.from_json(@resource.json_navigate("assets/UI/UIWindow2.img/QuestIcon.json", ["2"])) catch {
+    completed: @json.from_json(
+      @resource.json_navigate("assets/UI/UIWindow2.img/QuestIcon.json", ["2"]),
+    ) catch {
       _ => abort("invalid completed quest icon")
     },
   }

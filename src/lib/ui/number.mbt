@@ -181,7 +181,8 @@ pub fn NumberSet::load() -> NumberSet {
 
 ///|
 fn load_damage_skin(name : String) -> DamageSkin {
-  (@resource.require_json("assets/Effect/BasicEff.img/" + name + ".json") |> @json.from_json) catch {
+  (@resource.require_json("assets/Effect/BasicEff.img/" + name + ".json")
+  |> @json.from_json) catch {
     _ => abort("invalid damage skin resource: BasicEff.img/\{name}")
   }
 }

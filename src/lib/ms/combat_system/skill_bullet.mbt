@@ -23,11 +23,7 @@ fn load_ball_animation(
 }
 
 ///|
-fn Ball::new(
-  src : Json,
-  tag : String,
-  base_path : String,
-) -> Ball {
+fn Ball::new(src : Json, tag : String, base_path : String) -> Ball {
   let animation = load_ball_animation(src, tag, base_path)
   Ball::{ animation, }
 }
@@ -56,10 +52,7 @@ priv struct SingleBullet {
 }
 
 ///|
-fn SingleBullet::new(
-  src : Json,
-  base_path : String,
-) -> SingleBullet {
+fn SingleBullet::new(src : Json, base_path : String) -> SingleBullet {
   let ball = match src {
     { "ball": ball, .. } =>
       Ball::new(ball, skill_animation_tag(["ball"]), base_path)

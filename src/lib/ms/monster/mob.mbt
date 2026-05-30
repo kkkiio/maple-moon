@@ -136,10 +136,7 @@ pub fn Mob::load(
   let mx_mob : MxMob = @json.from_json(mx_src) catch {
     err => abort("failed to decode mob mx: \{mid}, error=\{err}")
   }
-  let runtime = load_mx_runtime(
-    mx_mob,
-    mx_path,
-  )
+  let runtime = load_mx_runtime(mx_mob, mx_path)
   Mob::new(
     mx_mob,
     runtime,
@@ -163,10 +160,7 @@ priv struct MxMobRuntime {
 }
 
 ///|
-fn load_mx_runtime(
-  mx_mob : MxMob,
-  base_path : String,
-) -> MxMobRuntime {
+fn load_mx_runtime(mx_mob : MxMob, base_path : String) -> MxMobRuntime {
   let animation_loader = @resource.AnimationLoader::new()
   let effect_animations : Map[String, MobAnimation] = {}
   for path_key, animation_path in mx_mob.mx_animations {

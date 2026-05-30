@@ -116,9 +116,7 @@ pub fn new_multi_use_effect(
       skill_animation_tag(["effect\{no}"])
     }
     effects.push(
-      apply_skill_use_effect(
-        load_skill_use_effect(sub, tag, base_path),
-      ),
+      apply_skill_use_effect(load_skill_use_effect(sub, tag, base_path)),
     )
     no += 1
     sub = use_effect_get_path(src, ["effect" + no.to_string()])

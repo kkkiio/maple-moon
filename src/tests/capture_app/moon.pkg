@@ -1,0 +1,13 @@
+import {
+  "KKKIIO/maple-moon/game/server_proto",
+  "Milky2018/selene/platform_window",
+  "moonbitlang/core/env",
+  "moonbitlang/core/json",
+  "moonbitlang/x/fs",
+}
+
+supported_targets = "js"
+
+options(
+  targets: { "snapshot_defer.js.mbt": [ "js" ] },
+)

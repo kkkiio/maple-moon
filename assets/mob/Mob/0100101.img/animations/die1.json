@@ -1,0 +1,109 @@
+{
+  "frames": [
+    {
+      "filename": "die1/0",
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 56,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 56,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 56,
+        "h": 32
+      },
+      "duration": 180
+    },
+    {
+      "filename": "die1/1",
+      "frame": {
+        "x": 56,
+        "y": 0,
+        "w": 56,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 56,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 56,
+        "h": 32
+      },
+      "duration": 180
+    },
+    {
+      "filename": "die1/2",
+      "frame": {
+        "x": 112,
+        "y": 0,
+        "w": 56,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 56,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 56,
+        "h": 32
+      },
+      "duration": 300
+    }
+  ],
+  "meta": {
+    "app": "nx-maple-res",
+    "version": "1.0",
+    "image": "die1.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 168,
+      "h": 32
+    },
+    "scale": "1",
+    "frameTags": [
+      {
+        "name": "die1",
+        "from": 0,
+        "to": 2,
+        "direction": "forward"
+      }
+    ],
+    "slices": [
+      {
+        "name": "anchor_die1",
+        "keys": [
+          {
+            "frame": 0,
+            "bounds": {
+              "x": 0,
+              "y": 0,
+              "w": 56,
+              "h": 32
+            },
+            "pivot": {
+              "x": 30,
+              "y": 32
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,62 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/game/ui/npc_talk_ui"
+
+import {
+  "KKKIIO/maple-moon/engine/resource",
+  "KKKIIO/maple-moon/engine/ui",
+  "KKKIIO/maple-moon/game/npc",
+  "Milky2018/selene/ecs",
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn cache_npc_talk_resource(NpcTalkResource) -> Unit
+
+pub fn close_npc_talk_ui() -> Unit
+
+pub fn describe_npc_talk_ui() -> Json
+
+pub fn is_npc_talk_ui_open() -> Bool
+
+pub fn npc_talk_ui_system(@ecs.World) -> Unit
+
+pub fn open_npc_talk_ui(@npc.TalkArgs) -> Unit
+
+// Errors
+pub(all) suberror ParseTalkError {
+  ParseTalkError(String)
+} derive(@debug.Debug)
+
+// Types and methods
+pub(all) struct NpcTalkButtonResource {
+  normal : @resource.NxTexture
+  mouse_over : @resource.NxTexture
+  pressed : @resource.NxTexture
+  disabled : @resource.NxTexture
+}
+
+pub(all) struct NpcTalkResource {
+  window_slice : @ui.UiSliceResource
+  bar : @resource.NxTexture
+  bt_yes : NpcTalkButtonResource
+  bt_no : NpcTalkButtonResource
+  bt_ok : NpcTalkButtonResource
+  bt_next : NpcTalkButtonResource
+  bt_prev : NpcTalkButtonResource
+  bt_close : NpcTalkButtonResource
+  bt_qstart : NpcTalkButtonResource
+  bt_qyes : NpcTalkButtonResource
+  bt_qno : NpcTalkButtonResource
+  bt_qcyes : NpcTalkButtonResource
+  bt_qcno : NpcTalkButtonResource
+  bt_qgiveup : NpcTalkButtonResource
+  bt_qafter : NpcTalkButtonResource
+  bt_my_level : NpcTalkButtonResource
+  bt_all_level : NpcTalkButtonResource
+}
+pub fn NpcTalkResource::from_resource(Json, @ui.UiSliceResource) -> Self raise
+
+// Type aliases
+
+// Traits
+

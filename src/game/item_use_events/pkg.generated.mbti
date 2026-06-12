@@ -1,0 +1,27 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/game/item_use_events"
+
+import {
+  "KKKIIO/maple-moon/game/server_proto",
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn clear_intents() -> Unit
+
+pub fn drain_intents() -> Array[ItemUseIntent]
+
+pub fn push_intent(ItemUseIntent) -> Unit
+
+// Errors
+
+// Types and methods
+pub(all) enum ItemUseIntent {
+  TryEquip(type_id~ : @server_proto.InventoryType, slot_no~ : Int, item_id~ : Int)
+  TryUse(type_id~ : @server_proto.InventoryType, slot_no~ : Int, item_id~ : Int)
+} derive(ToJson, @debug.Debug)
+
+// Type aliases
+
+// Traits
+

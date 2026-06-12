@@ -1,5 +1,5 @@
 import {
-  "KKKIIO/maple-moon/lib/game_app",
+  "KKKIIO/maple-moon/engine/game_app",
 }
 
 supported_targets = "native"
@@ -13,7 +13,7 @@ options(
     "Milky2018/selene_raylib/platform_render",
     "Milky2018/selene_raylib/platform_audio",
     "Milky2018/selene_raylib/platform_asset_io",
-    "KKKIIO/maple-moon/lib/local_server/local_server_workaround",
+    "KKKIIO/maple-moon/engine/local_server/local_server_workaround",
   ],
   targets: { "main.mbt": [ "native" ] },
 )

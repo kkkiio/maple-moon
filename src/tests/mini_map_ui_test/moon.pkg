@@ -1,0 +1,26 @@
+import {
+  "moonbitlang/core/json",
+  "moonbitlang/x/fs",
+  "KKKIIO/maple-moon/game/map",
+  "KKKIIO/maple-moon/game/ui/mini_map_ui",
+  "KKKIIO/maple-moon/engine/resource",
+  "Milky2018/selene/tiled",
+  "KKKIIO/maple-moon/tests/capture_app",
+  "Milky2018/selene/entity",
+  "Milky2018/selene/plugins",
+  "Milky2018/selene/sprite",
+  "Milky2018/selene/system",
+  "Milky2018/selene/app",
+} for "test"
+
+supported_targets = "js"
+
+options(
+  overrides: [
+    "Milky2018/selene_webgpu/platform_window",
+    "Milky2018/selene_webgpu/platform_input",
+    "Milky2018/selene_webgpu/platform_render",
+    "Milky2018/selene_webgpu/platform_audio",
+    "Milky2018/selene_webgpu/platform_asset_io",
+  ],
+)

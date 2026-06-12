@@ -1,0 +1,162 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/game/npc"
+
+import {
+  "KKKIIO/maple-moon/game/markup_text",
+  "KKKIIO/maple-moon/game/physics",
+  "KKKIIO/maple-moon/game/res_types",
+  "KKKIIO/maple-moon/game/server_proto",
+  "Milky2018/selene/ecs",
+  "Milky2018/selene/entity",
+  "moonbitlang/core/debug",
+  "moonbitlang/core/json",
+}
+
+// Values
+pub fn clear_map_npcs() -> Unit
+
+pub fn handle_npc_dialogue((TalkArgs) -> Unit, NpcDialogue) -> Unit
+
+pub fn handle_spawn_npc_controller_parsed(MapNpcs, SpawnNpcController) -> Unit
+
+pub fn list_npc_anchors() -> Array[NpcAnchor]
+
+pub fn map_npcs_fixed_system(@ecs.World) -> Unit
+
+pub fn map_npcs_pointer_system(@ecs.World) -> Unit
+
+pub fn on_npc_talk_choice(TalkChoice) -> Unit
+
+pub fn parse_talk_content(String, mod_provider? : (@markup_text.Style, StringView) -> String raise, npc_provider? : (@markup_text.Style, StringView) -> String raise, map_provider? : (@markup_text.Style, StringView) -> String raise, item_provider? : (@markup_text.Style, StringView) -> String raise, player_name_provider? : (@markup_text.Style, StringView) -> String raise) -> TalkContent raise
+
+pub fn request_quest_talk(TalkArgs) -> Unit
+
+pub fn set_npcs(MapNpcsContext) -> Unit
+
+pub fn setup_game_server_handlers() -> Unit
+
+// Errors
+pub(all) suberror ParseTalkError {
+  ParseTalkError(String)
+} derive(@debug.Debug)
+
+// Types and methods
+type MapNpcs
+pub fn MapNpcs::apply_spawn_npc_controller_message(Self, @server_proto.NpcSpawnControllerMessage) -> Unit
+pub fn MapNpcs::apply_spawn_npc_message(Self, @server_proto.NpcSpawnMessage) -> Unit
+pub fn MapNpcs::clear(Self) -> Unit
+pub fn MapNpcs::new((TalkArgs) -> Unit, () -> Bool) -> Self
+pub fn MapNpcs::remove(Self, Int) -> Unit
+pub fn MapNpcs::spawn(Self, NpcSpawn) -> Unit
+pub fn MapNpcs::update(Self, @physics.Physics) -> Unit
+
+pub(all) struct MapNpcsContext {
+  map_npcs : MapNpcs
+  physics : @physics.Physics
+}
+
+pub struct MxNpc {
+  info : MxNpcInfo
+  animations_path : String
+}
+pub impl @json.FromJson for MxNpc
+
+pub struct MxNpcInfo {
+  link : String?
+  scripted : Bool
+  speak_keys : Array[String]
+}
+pub impl @json.FromJson for MxNpcInfo
+
+type Npc
+pub fn Npc::destroy(Self) -> Unit
+pub fn Npc::get_func(Self) -> String
+pub fn Npc::get_name(Self) -> String
+pub fn Npc::get_npc_id(Self) -> Int
+pub fn Npc::get_npc_object(Self) -> @physics.MovingObject
+pub fn Npc::get_oid(Self) -> Int
+pub fn Npc::is_scripted(Self) -> Bool
+pub fn Npc::load(Int, Int, Bool, Int, @res_types.Point[Int]) -> Self raise
+pub fn Npc::set_stance(Self, String) -> Unit
+pub fn Npc::talk(Self) -> TalkArgs?
+pub fn Npc::update(Self, @physics.Physics) -> Unit
+
+pub(all) struct NpcAnchor {
+  oid : Int
+  npc_id : Int
+  entity : @entity.Entity
+  npc_object : @physics.MovingObject
+}
+
+pub struct NpcDialogue {
+  npcid : Int
+  t : TalkType
+  speaker : Speaker
+  text : String
+} derive(ToJson, @debug.Debug)
+
+type NpcSpawn derive(ToJson, @debug.Debug)
+pub fn NpcSpawn::get_oid(Self) -> Int
+pub fn NpcSpawn::instantiate(Self, @physics.Physics) -> Npc raise
+
+pub struct SpawnNpcController {
+  mode : Int
+  oid : Int
+  npc : NpcSpawn?
+} derive(ToJson, @debug.Debug)
+
+pub(all) enum Speaker {
+  NPC_LEFT
+  NPC_RIGHT
+  PLAYER_LEFT
+  PLAYER_RIGHT
+} derive(ToJson, @debug.Debug)
+pub fn Speaker::from_int(Int) -> Self?
+pub fn Speaker::int_value(Self) -> Int
+
+pub(all) enum TalkAction {
+  SEND_YESNO((Bool?) -> Unit)
+  SEND_OK((Unit?) -> Unit)
+  SEND_NEXT((Unit?) -> Unit)
+  SEND_PREV((Unit?) -> Unit)
+  SEND_SIMPLE((Int?) -> Unit)
+  SEND_NEXT_PREV((Bool?) -> Unit)
+} derive(@debug.Debug)
+
+pub(all) struct TalkArgs {
+  npc_id : Int
+  speaker : Speaker
+  str : String
+  talk_action : TalkAction
+}
+
+pub(all) enum TalkChoice {
+  SEND_YESNO(answer~ : Bool?)
+  SEND_SIMPLE(option~ : Int?)
+  SEND_OK(ok~ : Unit?)
+  SEND_NEXT(next~ : Unit?)
+  SEND_NEXT_PREV(next~ : Bool?)
+  SEND_PREV(prev~ : Unit?)
+} derive(@debug.Debug)
+
+pub(all) struct TalkContent {
+  text_html : String
+  selections : Array[(@res_types.ColorName, Int, String)]
+} derive(@debug.Debug)
+
+pub enum TalkType {
+  SEND_YESNO
+  SEND_SIMPLE
+  SEND_OK
+  SEND_NEXT
+  SEND_NEXT_PREV
+  SEND_PREV
+} derive(Eq, ToJson, @debug.Debug)
+pub fn TalkType::from_int(Int, Int, Int) -> Self?
+pub fn TalkType::int_value(Self) -> Int
+pub impl Hash for TalkType
+
+// Type aliases
+
+// Traits
+

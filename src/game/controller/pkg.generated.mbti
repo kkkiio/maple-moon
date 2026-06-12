@@ -1,0 +1,27 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/game/controller"
+
+import {
+  "KKKIIO/maple-moon/game/map",
+  "KKKIIO/maple-moon/game/physics",
+  "KKKIIO/maple-moon/game/player",
+  "Milky2018/selene/ecs",
+}
+
+// Values
+pub fn player_controller_fixed_system(@ecs.World) -> Unit
+
+pub fn player_controller_input_system(@ecs.World) -> Unit
+
+pub fn try_trigger_auto_portal(@player.Player, @map.MapInfo, @physics.Physics) -> Bool
+
+pub fn try_trigger_manual_portal(@player.Player, @map.MapInfo, @physics.Physics) -> Bool
+
+// Errors
+
+// Types and methods
+
+// Type aliases
+
+// Traits
+

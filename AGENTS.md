@@ -1,12 +1,6 @@
 # AGENTS.md
 
-## 目标
-
-这个项目的目的是学习图形学、游戏引擎、游戏开发.
-
-使用 `moonbit`, 一个现代的类 `Rust` 带 GC 的编程语言.
-
-使用 `selene`, 非常新且小巧的 2D 游戏引擎, 便于学习. 缺少功能时, 先停下, 对比其他现代游戏引擎的实现, 提出改进方案.
+这个项目的目的是学习图形学、游戏引擎、游戏开发. 使用 [MoonBit](https://www.moonbitlang.com/), 一个现代的类 Rust 带 GC 的编程语言. 使用 [Selene](https://github.com/Yoorkin/selene), 非常新且小巧的 2D 游戏引擎. 缺少功能时, 先停下, 对比其他现代游戏引擎的实现, 提出改进方案.
 
 ## Policies & Mandatory Rules
 
@@ -81,25 +75,64 @@ MoonBit 允许 `test` 直接传播错误, 用 `fail` 函数抛出错误.
 
 `new` 函数不要带`async`, 如果需要异步初始化, 使用 `load` 作为函数名.
 
-## Project Structure
+### 文档与代码的关系
+
+文档描述项目**应当**处于的状态，代码是实现。两者不一致时，以文档为准——要么补代码，要么更新文档。
+
+## Project Structure Guide
 
 ### Repo Structure & Important Files
 
-- `docs/`: 游戏策划文档.
-- `docs/adr/`: 架构决策记录.
-- `src/lib/ms`: 游戏模块源码.
-- `src/test/`: 集成测试用例.
-- `assets/`: 资源文件.
-- `.env.test`: 测试环境配置文件. 包含 API Key 等敏感信息.
-- `src/lib/local_server/`: 本地服务器实现.
-- `src/lib/ms/server_proto/`: 客户端与(本地)服务器通信的协议定义.
-- `src/lib/console/`: 游戏调试控制台, agent 调试时使用.
-
-### Agents Core Runtime Guidelines
-
-- `src/lib/game_app/` 是共享游戏运行时, 负责注册 game systems.
-- `src/apps/game_web/` 是 WebGPU/JS 入口, 主要用于快速验证和浏览器调试.
-- `src/apps/game_native/` 是 raylib/native 入口, 主要用于玩家游玩和分发.
+```
+├── gdd.md                     ← 一页纸设计文档
+├── CONTEXT.md                 ← 术语表
+├── docs/
+│   ├── specs/                 ← 功能规格
+│   ├── narrative/             ← 叙事素材
+│   ├── tuning/                ← 数值参数
+│   ├── adr/                   ← 架构决策记录
+│   └── pipeline.md            ← 资源管线
+├── src/
+│   ├── apps/
+│   │   ├── game_web/          ← WebGPU/JS 入口, 日常开发和测试
+│   │   └── game_native/       ← raylib/native 入口, 本地游玩
+│   ├── engine/                ← 引擎/框架层
+│   │   ├── game_app/          ← 共享运行时, 注册 systems
+│   │   ├── game_server/       ← 服务器通信
+│   │   ├── game_scene/        ← 场景管理
+│   │   ├── game_state/        ← 状态管理
+│   │   ├── graphics/          ← 图形工具 (z_index)
+│   │   ├── ui/                ← 可复用的 UI 原语
+│   │   ├── local_server/      ← 本地服务器
+│   │   ├── resource/          ← 资源加载
+│   │   ├── console/           ← 调试控制台
+│   │   └── log/ utils/ io_service/ randx/ fsx/ lazy/
+│   ├── game/                  ← MapleStory 游戏逻辑
+│   │   ├── combat_system/     ← 战斗主逻辑
+│   │   ├── combat_proto/      ← 战斗数据结构
+│   │   ├── damage/            ← 伤害计算
+│   │   ├── hit_detection/     ← 命中判定
+│   │   ├── regular_attack/    ← 普通攻击
+│   │   ├── skill/             ← 技能数据
+│   │   ├── skill_cast/        ← 技能施放
+│   │   ├── skill_sfx/         ← 技能特效
+│   │   ├── passive/           ← 被动技能
+│   │   ├── buff/              ← Buff
+│   │   ├── bullet/            ← 投射物
+│   │   ├── vfx/ vfx_skill/ vfx_afterimage/
+│   │   ├── character/ char_look/ char_stance/ char_stats/
+│   │   ├── character_body/ character_presentation/
+│   │   ├── monster/ npc/ pet/ player/
+│   │   ├── map/ map_object/ physics/ controller/ transform2d/
+│   │   ├── inventory/ equip/ item/ quest/ drop/
+│   │   ├── clothing/ weapon/ job/ res_types/
+│   │   ├── animation/ bgm/ camera/ cursor/ logic_fps/
+│   │   ├── maple_stat/ markup_text/ server_proto/
+│   │   └── ui/                ← 游戏画面 (背包、商店、NPC 对话等)
+│   └── tests/                 ← 集成/快照测试
+├── assets/                    ← 资源文件
+└── .env.test                  ← 测试环境配置
+```
 
 ## Operation Guide
 
@@ -116,7 +149,9 @@ just build
 
 `just check` 覆盖 JS 与 native target, 但只做类型检查, 不进入 native C 编译/链接.
 
-`just test` 运行 `scripts/moon-webgpu-test.mjs`, 该脚本用 `moon test --target js --build-only` 构建选定的 WebGPU 快照测试, 再在浏览器环境执行. 不要在日常开发中直接执行裸 `moon test`, 因为 MoonBit 会生成 native 测试可执行文件, 即使 `src/apps/game_native/` 没有手写测试, 也会触发 raylib/native 编译和链接.
+`just test` 运行 `scripts/moon-webgpu-test.mjs`, 该脚本自动发现 `src/tests` 下调用 `@capture_app.snapshot(` 的 WebGPU 快照测试包，用 `moon test --target js --build-only` 构建选定测试，再在浏览器环境执行. 可用 `node scripts/moon-webgpu-test.mjs --list` review 自动发现的测试包.
+
+不要在日常开发中直接执行裸 `moon test`, 因为 MoonBit 会生成 native 测试可执行文件, 即使 `src/apps/game_native/` 没有手写测试, 也会触发 raylib/native 编译和链接.
 
 不要把全仓 `moon test --target js` 当作默认流程. 画面测试依赖浏览器侧 `XMLHttpRequest` 和脚本提供的 asset server, 直接在 Node.js 里执行会把资源加载边界变成测试失败.
 
@@ -245,7 +280,7 @@ test {
 
 ### Sprite
 
-使用 selene 的 `@sprite.Sprite` 渲染画面. 游戏的渲染层级比较多, z index 集中放在 `src/lib/graphics/z_index.mbt` 里管理.
+使用 selene 的 `@sprite.Sprite` 渲染画面. 游戏的渲染层级比较多, z index 集中放在 `src/engine/graphics/z_index.mbt` 里管理.
 
 `@entity.Entity` 不要保存到单个对象`struct`里, 而是保存到全局容器里.
 
@@ -253,3 +288,5 @@ test {
 
 local server 是可以异步读取资源的.
 客户端则要保证先 preload 资源, 避免`async`污染游戏逻辑代码.
+
+大资源根目录默认被 `.gitignore` 忽略. 测试或运行时需要的最小资源闭包要用 `git add --force` 显式纳入，并包含 JSON 引用到的图片、spritesheet、tileset、animation JSON/PNG 和对应 `.aseprite` 源文件. 不提交引用图片缺失的半成品导出 JSON.

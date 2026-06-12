@@ -1,0 +1,77 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/game/quest_log"
+
+import {
+  "KKKIIO/maple-moon/game/quest",
+  "KKKIIO/maple-moon/game/server_proto",
+  "moonbitlang/core/debug",
+  "moonbitlang/core/json",
+}
+
+// Values
+pub fn apply_forfeit_quest(Int) -> Result[Unit, String]
+
+pub fn current_player_quest_log() -> @quest.PlayerQuestLog
+
+pub fn forfeit(Int) -> Result[Unit, String]
+
+pub fn get_snapshot() -> QuestLogSnapshot
+
+pub fn handle_player_quest_info(@server_proto.PlayerQuestLogInfo) -> Unit
+
+pub fn quest_log_revision() -> Int
+
+pub fn revision() -> Int
+
+pub fn setup(@quest.QuestResource) -> Unit
+
+pub fn setup_game_server_handlers() -> Unit
+
+// Errors
+
+// Types and methods
+type Module
+pub fn Module::handle_player_quest_info(Self, @server_proto.PlayerQuestLogInfo) -> Unit
+
+pub(all) struct QuestLogCompletedRaw {
+  quest_id : Int
+  name : String
+  completion_time : Int64
+} derive(@debug.Debug)
+
+pub(all) struct QuestLogEntryCompleted {
+  quest_id : Int
+  name : String
+  completion_time : Int64
+} derive(ToJson, @debug.Debug, @json.FromJson)
+
+pub(all) struct QuestLogEntryInProgress {
+  quest_id : Int
+  name : String
+  progress_data : String
+  phase : Int
+  phase_description : String
+} derive(ToJson, @debug.Debug, @json.FromJson)
+
+pub(all) struct QuestLogInProgressRaw {
+  quest_id : Int
+  name : String
+  progress_data : String
+  phase : Int
+  phase_description : String
+} derive(@debug.Debug)
+
+pub(all) struct QuestLogSnapshot {
+  in_progress : Array[QuestLogEntryInProgress]
+  completed : Array[QuestLogEntryCompleted]
+} derive(ToJson, @debug.Debug, @json.FromJson)
+
+pub(all) struct QuestLogSnapshotRaw {
+  in_progress : Array[QuestLogInProgressRaw]
+  completed : Array[QuestLogCompletedRaw]
+} derive(@debug.Debug)
+
+// Type aliases
+
+// Traits
+

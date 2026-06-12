@@ -1,0 +1,94 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/game/char_stats"
+
+import {
+  "KKKIIO/maple-moon/game/job",
+  "KKKIIO/maple-moon/game/maple_stat",
+  "KKKIIO/maple-moon/game/res_types",
+  "KKKIIO/maple-moon/game/server_proto",
+  "KKKIIO/maple-moon/game/weapon",
+  "Milky2018/selene/event",
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub const LEVEL_CAP : Int = 201
+
+pub let char_stats_changed_event_bus : @event.Events[CharStatsChangedEvent]
+
+pub let exp_table : FixedArray[Int64]
+
+pub fn get_recommend_assign(Module) -> Assign
+
+pub fn spend_ap(Module, String) -> Unit
+
+pub fn watch_player_char_stat(Module, String, (Int, Int) -> Bool) -> Unit
+
+pub fn watch_player_total_stat(Module, String, (Int, Int) -> Bool) -> Unit
+
+// Errors
+
+// Types and methods
+pub struct Assign {
+  str : Int
+  dex : Int
+  int : Int
+  luk : Int
+} derive(Default)
+
+type CharStats
+pub fn CharStats::add_value(Self, @maple_stat.EquipStatId, Int) -> Unit
+pub fn CharStats::calculate_damage(Self, Int) -> Int
+pub fn CharStats::change_job(Self, @job.Job) -> Unit
+pub fn CharStats::close_totalstats(Self) -> Unit
+pub fn CharStats::get_attackspeed(Self) -> Int
+pub fn CharStats::get_buffdelta(Self, @maple_stat.EquipStatId) -> Int
+pub fn CharStats::get_critical(Self) -> Double
+pub fn CharStats::get_exp(Self) -> Int64
+pub fn CharStats::get_female(Self) -> Bool
+pub fn CharStats::get_i64stat(Self, @maple_stat.Id) -> Int64
+pub fn CharStats::get_ignoredef(Self) -> Double
+pub fn CharStats::get_job(Self) -> @job.Job
+pub fn CharStats::get_map_id(Self) -> Int
+pub fn CharStats::get_matk(Self) -> Int
+pub fn CharStats::get_maxdamage(Self) -> Int
+pub fn CharStats::get_mindamage(Self) -> Int
+pub fn CharStats::get_name(Self) -> String
+pub fn CharStats::get_portal(Self) -> Int
+pub fn CharStats::get_range(Self) -> @res_types.Rectangle[Int]
+pub fn CharStats::get_stance(Self) -> Double
+pub fn CharStats::get_stat(Self, @maple_stat.Id) -> Int
+pub fn CharStats::get_total(Self, @maple_stat.EquipStatId) -> Int
+pub fn CharStats::get_weapon_type(Self) -> @weapon.Type
+pub fn CharStats::init_totalstats(Self) -> Unit
+pub fn CharStats::is_damage_buffed(Self) -> Bool
+pub fn CharStats::new(@server_proto.StatsEntry, () -> @weapon.Type, @job.Job, Map[@maple_stat.Id, Array[(Int, Int) -> Bool]], Map[@maple_stat.Id, Array[(Int64, Int64) -> Bool]], Map[@maple_stat.EquipStatId, Array[(Int, Int) -> Bool]]) -> Self
+pub fn CharStats::set_exp(Self, Int64) -> Unit
+pub fn CharStats::set_i64stat(Self, @maple_stat.Id, Int64) -> Unit
+pub fn CharStats::set_map_id(Self, Int) -> Unit
+pub fn CharStats::set_stat(Self, @maple_stat.Id, Int) -> Unit
+pub fn CharStats::set_total(Self, @maple_stat.EquipStatId, Int) -> Unit
+pub fn CharStats::watch_i64stat_changes(Self, @maple_stat.Id, trigger_now? : Bool, (Int64, Int64) -> Bool) -> Unit
+pub fn CharStats::watch_stat_changes(Self, @maple_stat.Id, trigger_now? : Bool, (Int, Int) -> Bool) -> Unit
+
+pub struct CharStatsChangedEvent {
+  kind : CharStatsChangedKind
+  stat : @maple_stat.Id?
+  total_stat : @maple_stat.EquipStatId?
+} derive(Eq, @debug.Debug)
+
+pub enum CharStatsChangedKind {
+  BASE_STAT
+  I64_STAT
+  TOTAL_STAT
+} derive(Eq, @debug.Debug)
+
+type Module
+pub fn Module::load() -> Self
+pub fn Module::new_char_stats(Self, @server_proto.StatsEntry, () -> @weapon.Type, @job.Job) -> CharStats
+
+// Type aliases
+pub using @maple_stat {type Id as MapleStatId}
+
+// Traits
+

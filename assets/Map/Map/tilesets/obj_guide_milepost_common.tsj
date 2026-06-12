@@ -1,0 +1,1 @@
+{"type":"tileset","name":"obj:guide/milepost/common","tilewidth":26,"tileheight":60,"tilecount":2,"tiles":[{"id":0,"image":"../images/25353.png","imagewidth":21,"imageheight":60},{"id":1,"image":"../images/25354.png","imagewidth":26,"imageheight":42}]}

@@ -1,0 +1,87 @@
+{
+  "frames": [
+    {
+      "filename": "stand/0",
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 63,
+        "h": 58
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 63,
+        "h": 58
+      },
+      "sourceSize": {
+        "w": 63,
+        "h": 58
+      },
+      "duration": 180
+    },
+    {
+      "filename": "stand/1",
+      "frame": {
+        "x": 63,
+        "y": 0,
+        "w": 63,
+        "h": 58
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 63,
+        "h": 58
+      },
+      "sourceSize": {
+        "w": 63,
+        "h": 58
+      },
+      "duration": 180
+    }
+  ],
+  "meta": {
+    "app": "nx-maple-res",
+    "version": "1.0",
+    "image": "stand.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 126,
+      "h": 58
+    },
+    "scale": "1",
+    "frameTags": [
+      {
+        "name": "stand",
+        "from": 0,
+        "to": 1,
+        "direction": "forward"
+      }
+    ],
+    "slices": [
+      {
+        "name": "anchor_stand",
+        "keys": [
+          {
+            "frame": 0,
+            "bounds": {
+              "x": 0,
+              "y": 0,
+              "w": 63,
+              "h": 58
+            },
+            "pivot": {
+              "x": 27,
+              "y": 58
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

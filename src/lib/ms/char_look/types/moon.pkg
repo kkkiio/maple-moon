@@ -1,4 +1,0 @@
-import {
-  "KKKIIO/maple-moon/lib/ms/character_body" @cb,
-  "moonbitlang/core/json",
-}

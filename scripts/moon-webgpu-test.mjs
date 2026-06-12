@@ -11,30 +11,37 @@ import sharp from "sharp";
 const root = process.cwd();
 const rawArgs = process.argv.slice(2);
 const moon = process.env.MOON_BIN ?? path.join(os.homedir(), ".moon/bin/moon");
-const defaultTestTargets = [
-  "src/test/char_look_test",
-  "src/test/mini_map_ui_test",
-  "src/test/inventory_ui_test",
-  "src/test/map_background_test",
-  "src/test/final_attack_effect_test",
-  "src/test/npc_talk_ui_test",
-  "src/test/quest_log_ui_test",
-  "src/test/select_char_ui_test",
-  "src/test/shop_scene_test",
-  "src/test/mob_hpbars_test",
-];
+const testsRoot = "src/tests";
+const helperTestPackages = new Set(["capture_app", "mock_server"]);
 
 let updateSnapshots = process.env.UPDATE_CANVAS_SNAPS === "true";
+let listOnly = false;
 const testTargets = [];
 for (const arg of rawArgs) {
   if (arg === "--update") {
     updateSnapshots = true;
+  } else if (arg === "--list") {
+    listOnly = true;
   } else {
     testTargets.push(arg);
   }
 }
 
-const selectedTestTargets = testTargets.length > 0 ? testTargets : defaultTestTargets;
+const selectedTestTargets = testTargets.length > 0 ?
+  testTargets :
+  discoverWebGpuSnapshotTestTargets();
+
+if (selectedTestTargets.length === 0) {
+  console.error(`no WebGPU snapshot test packages found under ${testsRoot}`);
+  process.exit(1);
+}
+
+if (listOnly) {
+  for (const target of selectedTestTargets) {
+    console.log(target);
+  }
+  process.exit(0);
+}
 
 const build = spawnSync(
   moon,
@@ -96,6 +103,46 @@ function parseBuildOnlyOutput(stdout) {
   throw new Error("moon test --build-only did not print artifacts_path JSON");
 }
 
+function discoverWebGpuSnapshotTestTargets() {
+  const rootDir = path.join(root, testsRoot);
+  if (!fs.existsSync(rootDir)) {
+    return [];
+  }
+  return fs.readdirSync(rootDir, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory())
+    .map((entry) => entry.name)
+    .filter((name) => !helperTestPackages.has(name))
+    .map((name) => path.posix.join(testsRoot, name))
+    .filter((target) => fs.existsSync(path.join(root, target, "moon.pkg")))
+    .filter((target) => packageContainsSnapshotCall(path.join(root, target)))
+    .sort();
+}
+
+function packageContainsSnapshotCall(packageDir) {
+  for (const filePath of listMoonBitFiles(packageDir)) {
+    if (fs.readFileSync(filePath, "utf8").includes("@capture_app.snapshot(")) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function listMoonBitFiles(dir) {
+  const files = [];
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    if (entry.name === "__snapshot__") {
+      continue;
+    }
+    const filePath = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      files.push(...listMoonBitFiles(filePath));
+    } else if (entry.isFile() && entry.name.endsWith(".mbt")) {
+      files.push(filePath);
+    }
+  }
+  return files;
+}
+
 function flattenTestEntries(filterArg) {
   const parsed = JSON.parse(filterArg);
   const entries = [];
@@ -133,10 +180,21 @@ async function runArtifactEntries({ browser, port, artifactPath, entries, update
   const page = await browser.newPage();
   const actualResults = [];
   const pageErrors = [];
+  const resourceErrors = new Set();
   let collectingActual = false;
 
   page.on("pageerror", (err) => {
     pageErrors.push(err.stack || err.message);
+  });
+  page.on("requestfailed", (request) => {
+    resourceErrors.add(
+      `request failed: ${request.method()} ${request.url()} ${request.failure()?.errorText ?? ""}`,
+    );
+  });
+  page.on("response", (response) => {
+    if (response.status() >= 400) {
+      resourceErrors.add(`HTTP ${response.status()}: ${response.url()}`);
+    }
   });
   page.on("console", (msg) => {
     const text = msg.text();
@@ -169,6 +227,9 @@ async function runArtifactEntries({ browser, port, artifactPath, entries, update
     globalThis.exports.moonbit_test_driver_internal_execute(testEntries);
   }, entries);
   await waitForWebGpuAssets(page);
+  for (const error of await collectWebGpuImageErrors(page)) {
+    resourceErrors.add(error);
+  }
 
   collectingActual = true;
   await page.evaluate((testEntries) => {
@@ -178,12 +239,19 @@ async function runArtifactEntries({ browser, port, artifactPath, entries, update
     globalThis.exports.moonbit_test_driver_internal_execute(testEntries);
     globalThis.exports.moonbit_test_driver_finish?.();
   }, entries);
+  await waitForWebGpuAssets(page);
+  for (const error of await collectWebGpuImageErrors(page)) {
+    resourceErrors.add(error);
+  }
   await page.waitForTimeout(100);
   collectingActual = false;
 
   await page.close();
 
   for (const error of pageErrors) {
+    console.error(error);
+  }
+  for (const error of resourceErrors) {
     console.error(error);
   }
   for (const result of actualResults) {
@@ -198,8 +266,21 @@ async function runArtifactEntries({ browser, port, artifactPath, entries, update
     console.error(`no MoonBit test results captured for ${artifactPath}`);
   }
   return pageErrors.length === 0 &&
+    resourceErrors.size === 0 &&
     actualResults.length > 0 &&
     actualResults.every((result) => (result.message ?? "") === "");
+}
+
+async function collectWebGpuImageErrors(page) {
+  return await page.evaluate(() => {
+    const rt = globalThis.__selene_webgpu_runtime;
+    if (!rt?.imageCache) {
+      return [];
+    }
+    return Array.from(rt.imageCache.entries())
+      .filter(([, record]) => record?.state === "error")
+      .map(([path]) => `WebGPU image load failed: ${path}`);
+  });
 }
 
 async function installBrowserTestRuntime(page, updateSnapshots) {
@@ -444,7 +525,7 @@ function wrongSnapshotPath(snapshotPath) {
 }
 
 function html(script) {
-  return `<!doctype html><meta charset="utf-8"><canvas id="canvas" width="800" height="600"></canvas><script src="${script}"></script>`;
+  return `<!doctype html><meta charset="utf-8"><link rel="icon" href="data:,"><canvas id="canvas" width="800" height="600"></canvas><script src="${script}"></script>`;
 }
 
 function stripMoonBitAutoRun(source) {

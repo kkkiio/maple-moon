@@ -1,0 +1,66 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/game/equip/data"
+
+import {
+  "KKKIIO/maple-moon/game/equip/slot",
+  "KKKIIO/maple-moon/game/item",
+  "KKKIIO/maple-moon/game/maple_stat",
+}
+
+// Values
+pub fn get_quality(EquipData, Bool, Map[@maple_stat.EquipStatId, Int]) -> Quality
+
+pub fn int_value(Potential) -> Int
+
+// Errors
+
+// Types and methods
+pub(all) struct Equip {
+  stats : Map[@maple_stat.EquipStatId, Int]
+  item_id : Int
+  expiration : Int64
+  owner : String
+  flags : Int
+  slots : Int
+  level : Int
+  item_level : Int
+  vicious : Int
+  potential_rank : Potential
+}
+
+pub struct EquipData {
+  category : String
+  gender : Int
+  req_stats : Map[@maple_stat.Id, Int]
+  incr_stats : Map[@maple_stat.EquipStatId, Int]
+  eq_slot : @slot.Id
+}
+pub fn EquipData::get_category(Self) -> String
+pub fn EquipData::get_defstat(Self, @maple_stat.EquipStatId) -> Int
+pub fn EquipData::get_eqslot(Self) -> @slot.Id
+pub fn EquipData::get_gender(Self) -> Int
+pub fn EquipData::get_reqstat(Self, @maple_stat.Id) -> Int
+pub fn EquipData::parse_item_data(@item.ItemData) -> Self raise
+
+pub(all) enum Potential {
+  POT_NONE
+  POT_HIDDEN
+  POT_RARE
+  POT_EPIC
+  POT_UNIQUE
+  POT_LEGENDARY
+}
+
+pub(all) enum Quality {
+  GREY
+  WHITE
+  ORANGE
+  BLUE
+  VIOLET
+  GOLD
+}
+
+// Type aliases
+
+// Traits
+

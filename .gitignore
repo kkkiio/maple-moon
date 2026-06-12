@@ -13,11 +13,13 @@ output
 tools/
 .local/
 
-# ignore for now
+# Bulk generated resource roots are ignored by default. Commit the small
+# verified runtime/test closure with `git add --force`; see docs/adr/0004.
 assets/images
 # assets/spritesheets/Item
 assets/spritesheets/Map
 assets/spritesheets/UI
+assets/Map
 assets/map
 assets/map001
 assets/minimap

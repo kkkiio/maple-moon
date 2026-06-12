@@ -1,0 +1,28 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/engine/randx"
+
+import {
+  "moonbitlang/core/random",
+}
+
+// Values
+pub fn above(@random.Rand, Double) -> Bool
+
+pub fn below(@random.Rand, Double) -> Bool
+
+pub fn[T] choose(@random.Rand, Array[T]) -> T
+
+pub fn next_bool(@random.Rand) -> Bool
+
+pub fn next_int(@random.Rand, from? : Int, Int) -> Int
+
+pub fn next_real(@random.Rand, from? : Double, Double) -> Double
+
+// Errors
+
+// Types and methods
+
+// Type aliases
+
+// Traits
+

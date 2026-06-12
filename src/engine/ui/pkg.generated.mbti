@@ -1,0 +1,149 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/engine/ui"
+
+import {
+  "KKKIIO/maple-moon/engine/resource",
+  "KKKIIO/maple-moon/game/animation",
+  "KKKIIO/maple-moon/game/res_types",
+  "Milky2018/selene/ecs",
+  "moonbitlang/core/debug",
+  "moonbitlang/core/json",
+}
+
+// Values
+pub fn load_ui_slice_resource(String) -> UiSliceResource
+
+pub fn number_system(@ecs.World) -> Unit
+
+pub fn show_number(NumberType, Int, Int, x? : Int) -> Unit
+
+pub fn ui_system(@ecs.World) -> Unit
+
+// Errors
+
+// Types and methods
+pub(all) enum ButtonState {
+  NORMAL
+  DISABLED
+  MOUSEOVER
+  PRESSED
+} derive(Eq, Hash)
+
+pub(all) enum CursorState {
+  IDLE
+  CAN_CLICK
+  GAME
+  HOUSE
+  CAN_CLICK2
+  CAN_GRAB
+  GIFT
+  VSCROLL
+  HSCROLL
+  VSCROLL_IDLE
+  HSCROLL_IDLE
+  GRABBING
+  CLICKING
+  RCLICK
+  LEAF
+  CHAT_BAR_VDRAG
+  CHAT_BAR_HDRAG
+  CHAT_BAR_BLTRDRAG
+  CHAT_BAR_MOVE
+  CHAT_BAR_BRTLDRAG
+} derive(Compare, Eq, Hash, @debug.Debug)
+
+type DamageSkin
+pub impl Default for DamageSkin
+pub impl @json.FromJson for DamageSkin
+
+pub(all) struct MapleButton {
+  pos : @res_types.Point[Int]
+  resource : MapleButtonResource
+  on_click : () -> Unit
+  mut state : ButtonState
+  mut enabled : Bool
+  mut pressed : Bool
+}
+pub fn MapleButton::contains(Self, Int, Int) -> Bool
+pub fn MapleButton::current_selene_animation(Self) -> @animation.Animation
+pub fn MapleButton::new(MapleButtonResource, pos? : @res_types.Point[Int], on_click? : () -> Unit) -> Self
+pub fn MapleButton::set_enabled(Self, Bool) -> Unit
+pub fn MapleButton::update_pointer(Self, Int, Int, Bool, Bool, Bool) -> Unit
+
+pub(all) struct MapleButtonResource {
+  selene_animations : Map[ButtonState, @animation.Animation]
+  dimensions : @res_types.Point[Int]
+}
+pub fn MapleButtonResource::from_nx(NxMapleButton) -> Self
+
+type Number
+pub fn Number::row_height(Bool) -> Int
+pub fn Number::set_x(Self, Int) -> Unit
+
+pub(all) struct NumberSet {
+  red_skins : Skins
+  cri_skins : Skins
+  violet_skins : Skins
+  blue_skins : Skins
+} derive(Default)
+pub fn NumberSet::load() -> Self
+pub fn NumberSet::show_number(Self, NumberType, Int, Int, x? : Int) -> Unit
+
+pub(all) enum NumberType {
+  HIT_NORMAL
+  HIT_CRITICAL
+  HURT
+  HEAL_HP
+  HEAL_MP
+}
+
+pub(all) struct NxMapleButton {
+  normal : @resource.NxAnimation
+  mouse_over : @resource.NxAnimation
+  pressed : @resource.NxAnimation
+  disabled : @resource.NxAnimation
+}
+pub impl @json.FromJson for NxMapleButton
+
+pub(all) struct Skins {
+  big : DamageSkin
+  small : DamageSkin
+} derive(Default)
+
+pub struct UIMod {
+  number_set : NumberSet
+}
+pub fn UIMod::get_number_set(Self) -> NumberSet
+pub fn UIMod::load() -> Self
+
+pub(all) struct UIModel {
+  mut position : @res_types.Point[Int]
+  mut dimension : @res_types.Point[Int]
+  mut active : Bool
+}
+pub fn UIModel::deactivate(Self) -> Unit
+pub fn UIModel::is_active(Self) -> Bool
+pub fn UIModel::makeactive(Self) -> Unit
+pub fn UIModel::new(@res_types.Point[Int], @res_types.Point[Int], active? : Bool) -> Self
+pub fn UIModel::toggle_active(Self) -> Unit
+
+pub(all) enum UiSliceKind {
+  NineSlice
+  ThreeSliceV
+} derive(Eq, @debug.Debug)
+
+pub struct UiSliceResource {
+  material : @Milky2018/selene/ui.UiMaterialHandle
+  kind : UiSliceKind
+  width : Int
+  height : Int
+  left : Int
+  right : Int
+  top : Int
+  bottom : Int
+}
+
+// Type aliases
+
+// Traits
+

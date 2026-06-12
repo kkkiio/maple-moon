@@ -28,7 +28,7 @@ selectors.
 
 Use one shared runtime package plus two target-specific app packages:
 
-- `src/lib/game_app` owns shared resource setup, local-server handler
+- `src/engine/game_app` owns shared resource setup, local-server handler
   registration, game-state initialization, and Selene system registration.
 - `src/apps/game_web` is the JS/WebGPU main package used for fast verification,
   browser debugging, and the Vite development page.

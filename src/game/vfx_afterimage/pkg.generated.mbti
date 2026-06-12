@@ -1,0 +1,56 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/game/vfx_afterimage"
+
+import {
+  "KKKIIO/maple-moon/engine/resource",
+  "KKKIIO/maple-moon/game/animation",
+  "KKKIIO/maple-moon/game/character_presentation",
+  "KKKIIO/maple-moon/game/res_types",
+  "Milky2018/selene/ecs",
+  "Milky2018/selene/entity",
+  "moonbitlang/core/json",
+}
+
+// Values
+pub fn add_after_image(@entity.Entity, @character_presentation.CharLook, NxAfterImage, Bool) -> Unit
+
+pub fn clear_after_image(@entity.Entity) -> Unit
+
+pub fn get_after_image(@entity.Entity) -> AfterImage?
+
+pub fn set_after_images(String, NxAfterImages) -> Unit
+
+pub fn update_after_image_system(@ecs.World) -> Unit
+
+// Errors
+
+// Types and methods
+pub struct AfterImage {
+  animation : @animation.Animation
+  range : @res_types.Rectangle[Int]
+  first_frame : Int
+  facing_right : Bool
+  mut displayed : Bool
+  mut entity : @entity.Entity?
+}
+pub fn AfterImage::attach(Self, @entity.Entity) -> Unit
+pub fn AfterImage::dispose(Self) -> Unit
+pub fn AfterImage::get_collection(String, Int) -> Map[String, NxAfterImage]
+pub fn AfterImage::get_first_frame(Self) -> Int
+pub fn AfterImage::get_range(Self) -> @res_types.Rectangle[Int]
+pub fn AfterImage::update(Self, Int, Int) -> Unit
+
+pub(all) struct NxAfterImage {
+  animation : @resource.NxAnimation
+  range : @res_types.Rectangle[Int]
+  first_frame : Int
+}
+pub impl @json.FromJson for NxAfterImage
+
+type NxAfterImages
+pub impl @json.FromJson for NxAfterImages
+
+// Type aliases
+
+// Traits
+

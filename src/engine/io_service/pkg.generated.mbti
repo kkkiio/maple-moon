@@ -1,0 +1,23 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/engine/io_service"
+
+import {
+  "KKKIIO/maple-moon/engine/utils",
+  "Milky2018/selene/ecs",
+}
+
+// Values
+pub fn execute_background(() -> Unit raise, on_error? : (Error) -> Unit) -> Unit
+
+pub fn io_system(@ecs.World) -> Unit
+
+pub fn[T] submit_background_task(() -> T raise) -> @utils.Future[Result[T, Error]]
+
+// Errors
+
+// Types and methods
+
+// Type aliases
+
+// Traits
+

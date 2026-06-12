@@ -1,0 +1,13 @@
+import {
+  "moonbitlang/core/json",
+  "moonbitlang/core/random",
+  "KKKIIO/maple-moon/engine/log",
+  "KKKIIO/maple-moon/engine/local_server",
+  "KKKIIO/maple-moon/game/server_proto",
+}
+
+supported_targets = "native+js"
+
+options(
+  implement: "KKKIIO/maple-moon/engine/game_server",
+)

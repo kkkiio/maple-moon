@@ -1,0 +1,131 @@
+{
+  "frames": [
+    {
+      "filename": "main/0",
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 38,
+        "h": 21
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 38,
+        "h": 21
+      },
+      "sourceSize": {
+        "w": 38,
+        "h": 21
+      },
+      "duration": 100
+    },
+    {
+      "filename": "main/1",
+      "frame": {
+        "x": 38,
+        "y": 0,
+        "w": 38,
+        "h": 21
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 38,
+        "h": 21
+      },
+      "sourceSize": {
+        "w": 38,
+        "h": 21
+      },
+      "duration": 100
+    },
+    {
+      "filename": "main/2",
+      "frame": {
+        "x": 76,
+        "y": 0,
+        "w": 38,
+        "h": 21
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 38,
+        "h": 21
+      },
+      "sourceSize": {
+        "w": 38,
+        "h": 21
+      },
+      "duration": 100
+    },
+    {
+      "filename": "main/3",
+      "frame": {
+        "x": 114,
+        "y": 0,
+        "w": 38,
+        "h": 21
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 38,
+        "h": 21
+      },
+      "sourceSize": {
+        "w": 38,
+        "h": 21
+      },
+      "duration": 100
+    }
+  ],
+  "meta": {
+    "app": "nx-maple-res",
+    "version": "1.0",
+    "image": "02070011__bullet.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 152,
+      "h": 21
+    },
+    "scale": "1",
+    "frameTags": [
+      {
+        "name": "main",
+        "from": 0,
+        "to": 3,
+        "direction": "forward"
+      }
+    ],
+    "slices": [
+      {
+        "name": "anchor_main",
+        "keys": [
+          {
+            "frame": 0,
+            "bounds": {
+              "x": 0,
+              "y": 0,
+              "w": 38,
+              "h": 21
+            },
+            "pivot": {
+              "x": 18,
+              "y": 10
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

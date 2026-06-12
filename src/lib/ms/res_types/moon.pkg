@@ -1,5 +1,0 @@
-import {
-  "KKKIIO/maple-moon/lib/utils",
-  "Milky2018/selene/math" @selene_math,
-  "moonbitlang/core/json",
-}

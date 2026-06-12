@@ -1,8 +1,0 @@
-import {
-  "moonbitlang/core/strconv",
-  "KKKIIO/maple-moon/lib/ms/res_types" @struct,
-  "KKKIIO/maple-moon/lib/ms/map",
-  "KKKIIO/maple-moon/lib/ms/item",
-  "KKKIIO/maple-moon/lib/resource",
-  "moonbitlang/core/string",
-}

@@ -1,0 +1,38 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/game/skill_sfx"
+
+import {
+  "Milky2018/selene/event",
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn clear_events() -> Unit
+
+pub fn play_skill_hit(Int) -> Unit
+
+pub fn play_skill_use(Int) -> Unit
+
+pub let skill_sfx_event_bus : @event.Events[SkillSfxEvent]
+
+// Errors
+
+// Types and methods
+pub(all) struct SkillSfxEvent {
+  skill_id : Int
+  stage : SkillSfxStage
+  path : String
+} derive(Eq, @debug.Debug)
+pub fn SkillSfxEvent::path(Self) -> String
+pub fn SkillSfxEvent::skill_id(Self) -> Int
+pub fn SkillSfxEvent::stage(Self) -> SkillSfxStage
+
+pub(all) enum SkillSfxStage {
+  Use
+  Hit
+} derive(Eq, @debug.Debug)
+
+// Type aliases
+
+// Traits
+

@@ -1,0 +1,60 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/game/ui/mini_map_ui"
+
+import {
+  "KKKIIO/maple-moon/engine/resource",
+  "KKKIIO/maple-moon/engine/ui",
+  "KKKIIO/maple-moon/game/map",
+  "Milky2018/selene/ecs",
+  "Milky2018/selene/entity",
+  "moonbitlang/core/json",
+}
+
+// Values
+pub fn clear_current_map() -> Unit
+
+pub fn mini_map_ui_system(@ecs.World) -> Unit
+
+pub fn set_current_map(Int, String, String, @map.MiniMapRuntimeResource?) -> Unit
+
+pub fn set_map_helper_minimap_json_for_test(Json) -> Unit
+
+pub fn set_minimap_json_for_test(Json) -> Unit
+
+// Errors
+
+// Types and methods
+pub enum MiniMapType {
+  NORMAL
+}
+
+pub struct MiniMapUI {
+  resource : MiniMapUIResource
+  type_ : MiniMapType
+  entities : Array[@entity.Entity]
+  ui_model : @ui.UIModel
+  mut region_name : String
+  mut town_name : String
+}
+pub fn MiniMapUI::new(MiniMapUIResource, @ui.UIModel) -> Self
+pub fn MiniMapUI::set_map(Self, Int, String, String, @map.MiniMapRuntimeResource?) -> Unit
+
+pub struct MiniMapUIResource {
+  portal_marker : @resource.NxTexture
+  min_map : NxMiniMapFrames
+}
+pub fn MiniMapUIResource::load() -> Self
+
+type NxMapHelperMiniMap
+pub impl @json.FromJson for NxMapHelperMiniMap
+
+type NxMiniMapFrames
+pub impl @json.FromJson for NxMiniMapFrames
+
+type NxMiniMapUI
+pub impl @json.FromJson for NxMiniMapUI
+
+// Type aliases
+
+// Traits
+

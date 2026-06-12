@@ -1,0 +1,11 @@
+import {
+  "KKKIIO/maple-moon/engine/log",
+  "KKKIIO/maple-moon/game/server_proto",
+  "KKKIIO/maple-moon/tests/capture_app",
+}
+
+supported_targets = "js"
+
+options(
+  implement: "KKKIIO/maple-moon/engine/game_server",
+)

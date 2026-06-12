@@ -1,0 +1,24 @@
+import {
+  "KKKIIO/maple-moon/game/animation" @ms_animation,
+  "KKKIIO/maple-moon/game/character_presentation" @cp,
+  "moonbitlang/core/json",
+  "moonbitlang/core/strconv",
+  "KKKIIO/maple-moon/game/res_types" @struct,
+  "KKKIIO/maple-moon/engine/resource",
+  "Milky2018/selene/entity",
+  "Milky2018/selene/sprite",
+  "Milky2018/selene/math" @selene_math,
+  "KKKIIO/maple-moon/engine/graphics",
+  "Milky2018/selene/ecs",
+  "Milky2018/selene/time",
+  "moonbitlang/core/string",
+}
+
+import {
+  "Milky2018/selene/ecs",
+  "Milky2018/selene/time",
+  "Milky2018/selene/visibility",
+  "moonbitlang/x/fs",
+  "KKKIIO/maple-moon/game/character_body" @cb,
+  "KKKIIO/maple-moon/game/char_stance",
+} for "test"

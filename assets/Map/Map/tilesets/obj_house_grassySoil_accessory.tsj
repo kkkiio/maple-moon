@@ -1,0 +1,1 @@
+{"type":"tileset","name":"obj:house/grassySoil/accessory","tilewidth":76,"tileheight":50,"tilecount":3,"tiles":[{"id":0,"image":"../images/11638.png","imagewidth":19,"imageheight":21},{"id":1,"image":"../images/11639.png","imagewidth":76,"imageheight":50},{"id":2,"image":"../images/11640.png","imagewidth":40,"imageheight":27}]}

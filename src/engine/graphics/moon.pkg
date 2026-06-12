@@ -1,0 +1,19 @@
+import {
+  "KKKIIO/maple-moon/game/animation" @ms_animation,
+  "moonbitlang/core/json",
+  "moonbitlang/core/math",
+  "Milky2018/selene/sprite",
+  "Milky2018/selene/math" @selene_math,
+  "Milky2018/selene/entity",
+  "Milky2018/selene/ecs",
+  "Milky2018/selene/time",
+  "Milky2018/selene/transform",
+}
+
+options(
+  targets: {
+    "gl.js.mbt": [ "js" ],
+    "gl.mbt": [ "js", "wasm", "wasm-gc" ],
+    "text.js.mbt": [ "js" ],
+  },
+)

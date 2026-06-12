@@ -1,0 +1,87 @@
+{
+  "frames": [
+    {
+      "filename": "main/0",
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 22,
+        "h": 22
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 22,
+        "h": 22
+      },
+      "sourceSize": {
+        "w": 22,
+        "h": 22
+      },
+      "duration": 30
+    },
+    {
+      "filename": "main/1",
+      "frame": {
+        "x": 22,
+        "y": 0,
+        "w": 22,
+        "h": 22
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 22,
+        "h": 22
+      },
+      "sourceSize": {
+        "w": 22,
+        "h": 22
+      },
+      "duration": 30
+    }
+  ],
+  "meta": {
+    "app": "nx-maple-res",
+    "version": "1.0",
+    "image": "02070002__bullet.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 44,
+      "h": 22
+    },
+    "scale": "1",
+    "frameTags": [
+      {
+        "name": "main",
+        "from": 0,
+        "to": 1,
+        "direction": "forward"
+      }
+    ],
+    "slices": [
+      {
+        "name": "anchor_main",
+        "keys": [
+          {
+            "frame": 0,
+            "bounds": {
+              "x": 0,
+              "y": 0,
+              "w": 22,
+              "h": 22
+            },
+            "pivot": {
+              "x": 11,
+              "y": 11
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

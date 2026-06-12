@@ -1,0 +1,9 @@
+import {
+  "moonbitlang/core/json",
+  "moonbitlang/core/strconv",
+  "KKKIIO/maple-moon/game/maple_stat",
+  "KKKIIO/maple-moon/game/weapon",
+  "KKKIIO/maple-moon/engine/resource",
+  "KKKIIO/maple-moon/engine/utils",
+  "moonbitlang/core/string",
+}

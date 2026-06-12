@@ -1,0 +1,17 @@
+import {
+  "moonbitlang/core/cmp",
+  "moonbitlang/core/json",
+  "moonbitlang/core/hashmap",
+  "Milky2018/selene/math",
+  "Milky2018/selene/entity",
+  "Milky2018/selene/ui" @selene_ui,
+  "Milky2018/selene/physics2d",
+  "Milky2018/selene/collision",
+  "Milky2018/selene/asset",
+  "KKKIIO/maple-moon/engine/ui",
+  "KKKIIO/maple-moon/engine/resource",
+  "Milky2018/selene/inputs",
+  "KKKIIO/maple-moon/engine/graphics",
+  "Milky2018/selene/ecs",
+  "Milky2018/selene/time",
+}

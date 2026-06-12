@@ -3,7 +3,7 @@
 Maple Moon native entry package.
 
 This main package selects the Selene raylib backend and delegates the shared
-runtime setup to `KKKIIO/maple-moon/lib/game_app`. Use this entry for local
+runtime setup to `KKKIIO/maple-moon/engine/game_app`. Use this entry for local
 native play and player-facing distribution builds.
 
 ## Usage

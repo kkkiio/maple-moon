@@ -1,7 +1,0 @@
-import {
-  "moonbitlang/core/json",
-  "KKKIIO/maple-moon/lib/game_server",
-  "KKKIIO/maple-moon/lib/ms/quest",
-  "KKKIIO/maple-moon/lib/log",
-  "KKKIIO/maple-moon/lib/ms/server_proto",
-}

@@ -459,10 +459,14 @@ pub impl @json.FromJson for WeaponType with fn from_json(json, path) -> WeaponTy
       @weapon.Type::from_value(100 + v.to_int()).unwrap_or_error(
         @json.JsonDecodeError((path, "invalid weapon type")),
       )
-    String(s) if (try? @string.parse_int(s)) is Ok(v) =>
+    String(s) => {
+      let v = @string.parse_int(s) catch {
+        _ => raise @json.JsonDecodeError((path, "expect number"))
+      }
       @weapon.Type::from_value(100 + v).unwrap_or_error(
         @json.JsonDecodeError((path, "invalid weapon type")),
       )
+    }
     _ => raise @json.JsonDecodeError((path, "expect number"))
   }
 }

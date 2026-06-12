@@ -24,7 +24,6 @@ fn attach_visible_mob_sprite(entity : @entity.Entity) -> Unit {
 
 ///|
 test "mob hpbar render snapshot" {
-  @local_loader.install_resource_env_for_test()
   defer @monster.clear_map_monsters()
   defer @monster.mob_hpbars_system(@ecs.require_current_world())
   defer @entity.iter_entities().each(fn(entity) { entity.destroy() })

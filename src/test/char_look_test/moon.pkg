@@ -19,3 +19,5 @@ import {
   "Milky2018/selene/time",
   "Milky2018/selene/transform",
 } for "test"
+
+supported_targets = "js"

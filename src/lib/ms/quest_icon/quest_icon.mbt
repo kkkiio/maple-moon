@@ -18,10 +18,7 @@ priv struct QuestIconRuntime {
   quest_id : Int
   state : QuestIconState
   _npc_entity : @entity.Entity
-  npc_object : @physics.MovingObject
   icon_entity : @entity.Entity
-  icon_offset : @struct.Point[Int]
-  icon_size : @struct.Point[Int]
 }
 
 ///|
@@ -267,10 +264,7 @@ fn upsert_runtime(
       quest_id: desired.quest_id,
       state: desired.state,
       _npc_entity: anchor.entity,
-      npc_object: anchor.npc_object,
       icon_entity,
-      icon_offset: default_icon_offset(),
-      icon_size,
     })
     if previous is Some(runtime) {
       @log.debug("quest icon state changed", data={
@@ -291,7 +285,6 @@ fn upsert_runtime(
     runtime_by_oid.val.set(oid, {
       ..runtime,
       _npc_entity: anchor.entity,
-      npc_object: anchor.npc_object,
     })
   }
 }

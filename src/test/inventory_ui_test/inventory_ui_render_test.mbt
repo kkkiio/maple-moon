@@ -56,11 +56,8 @@ fn setup_inventory_ui_test_scene() -> @app.App raise {
   @ecs.set_current_world(app.world())
   @system.configure_display(800.0, 540.0, 1.0)
 
-  @local_loader.install_resource_env_for_test()
-  let character_loader = @resource.require_async_loader("character")
-  let item_loader = @resource.require_async_loader("item")
-  let equip_data = @item.ItemData::load(1060002, character_loader, item_loader)
-  let use_data = @item.ItemData::load(2000000, character_loader, item_loader)
+  let equip_data = @item.ItemData::load(1060002)
+  let use_data = @item.ItemData::load(2000000)
   @item.ItemData::add_item_data(1060002, equip_data)
   @item.ItemData::add_item_data(2000000, use_data)
 

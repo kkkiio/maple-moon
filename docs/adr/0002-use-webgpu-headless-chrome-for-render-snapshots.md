@@ -4,7 +4,7 @@ Date: 2026-05-24
 
 ## Status
 
-Accepted
+Accepted, amended by [ADR 0003](0003-use-target-specific-game-entrypoints.md)
 
 ## Context
 
@@ -29,8 +29,10 @@ turn the test harness into another rendering platform.
 Use `selene_webgpu` as the render snapshot backend and run the generated JS test
 artifacts in Headless Chrome.
 
-Keep the game executable as a single native raylib main. WebGPU is used for
-render snapshot tests, not as a second production main entrypoint.
+Use WebGPU as the primary render snapshot backend. At the time this decision was
+written, the game executable remained a single native raylib main. ADR 0003
+later splits runtime entrypoints into `game_web` and `game_native`, while keeping
+this snapshot decision intact.
 
 The test wrapper should:
 

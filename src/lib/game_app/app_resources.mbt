@@ -1,5 +1,5 @@
 ///|
-pub(all) struct AppResources {
+priv struct AppResources {
   basic_item_resource : @item.BasicItemResource
   char_presentation_resource : @char_look.CharacterPresentationResource
   quest_resource : @quest.QuestResource
@@ -9,14 +9,7 @@ pub(all) struct AppResources {
 }
 
 ///|
-/// Load all app-wide resources before entering the first interactive scene.
-///
-/// # Example
-/// ```moonbit nocheck
-/// let resources = try! AppResources::load()
-/// resources.install()
-/// ```
-pub fn AppResources::load() -> AppResources raise {
+fn AppResources::load() -> AppResources raise {
   let basic_item_resource = @item.BasicItemResource::load()
   let char_presentation_resource = @char_look.CharacterPresentationResource::load()
   let quest_result = @quest.load_quest_resource()
@@ -35,7 +28,7 @@ pub fn AppResources::load() -> AppResources raise {
 }
 
 ///|
-pub fn AppResources::install(self : AppResources) -> Unit {
+fn AppResources::install(self : AppResources) -> Unit {
   self.basic_item_resource.install()
   @item.insert_resource(self.basic_item_resource)
   @char_look.insert_resource(self.char_presentation_resource)

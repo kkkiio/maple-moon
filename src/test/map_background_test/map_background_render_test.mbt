@@ -1,6 +1,5 @@
 ///|
 fn setup_tiled_background_scene_101010102() -> @app.App raise {
-  @local_loader.install_resource_env_for_test()
   let app = @app.App()
     .with_viewport_width(800.0)
     .with_viewport_height(600.0)

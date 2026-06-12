@@ -106,13 +106,8 @@ fn tiled_object_int_optional_soft(
   match obj.property(name) {
     Some(@tiled.TiledPropertyValue::Int(value)) => Some(value)
     Some(@tiled.TiledPropertyValue::Float(value)) => Some(value.to_int())
-    Some(@tiled.TiledPropertyValue::String(value)) => {
-      let parsed = try? @string.parse_int(value)
-      match parsed {
-        Ok(parsed) => Some(parsed)
-        Err(_) => None
-      }
-    }
+    Some(@tiled.TiledPropertyValue::String(value)) =>
+      Some(@string.parse_int(value)) catch { _ => None }
     Some(_) => None
     None => None
   }
@@ -127,11 +122,7 @@ fn parse_map_layer_name(name : String) -> (Int, String)? {
   if parts[2] != "obj" && parts[2] != "tile" {
     return None
   }
-  let parsed = try? @string.parse_int(parts[1])
-  match parsed {
-    Ok(layer) => Some((layer, parts[2].to_owned()))
-    Err(_) => None
-  }
+  Some((@string.parse_int(parts[1]), parts[2].to_owned())) catch { _ => None }
 }
 
 ///|

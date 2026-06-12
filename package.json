@@ -2,16 +2,19 @@
 	"name": "maple-moon",
 	"version": "1.0.0",
 	"description": "Maple Moon Game",
-	"type": "module",
 	"main": "index.html",
 	"directories": {
 		"lib": "lib"
 	},
 	"scripts": {
-		"test": "moon test",
-		"moon:build": "moon build --target js",
+		"test": "node scripts/moon-webgpu-test.mjs",
+		"test:webgpu": "node scripts/moon-webgpu-test.mjs",
+		"test:webgpu:update": "node scripts/moon-webgpu-test.mjs --update",
+		"moon:build": "npm run moon:build:web",
+		"moon:build:web": "moon build --target js --release src/apps/game_web",
+		"moon:build:native": "moon build --target native --release src/apps/game_native",
 		"dev": "vite",
-		"build": "vite build"
+		"build": "npm run moon:build:web && vite build"
 	},
 	"repository": {
 		"type": "git",

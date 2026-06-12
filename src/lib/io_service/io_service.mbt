@@ -5,7 +5,7 @@
 pub fn[T] submit_background_task(
   task : () -> T raise,
 ) -> Future[Result[T, Error]] {
-  let res : Result[T, Error]? = Some(try? task())
+  let res : Result[T, Error]? = Some(Ok(task()) catch { err => Err(err) })
   Future::new(fn() { res })
 }
 

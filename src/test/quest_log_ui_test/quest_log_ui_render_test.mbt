@@ -1,5 +1,5 @@
 ///|
-fn setup_local_loaders() -> Unit {
+fn setup_quest_log_resource() -> Unit {
   let (quest_resource, _) = @quest.load_quest_resource()
   @quest_log.setup(quest_resource)
 }
@@ -45,7 +45,7 @@ fn setup_scene(app : @app.App) -> Unit {
   @inputs.apply_input_snapshot(@inputs.empty_input_snapshot())
   @inputs.advanced_key_system(0.0)
 
-  setup_local_loaders()
+  setup_quest_log_resource()
   @quest_log.handle_player_quest_info({
     started: [(2085, ""), (2091, "3")],
     completed: [(2000, 123456)],

@@ -63,7 +63,7 @@ pub fn AnimationLoader::new() -> AnimationLoader {
 /// - relative to resource root (for example `Npc/Npc/0002007.img/animation.json`)
 /// - a resolved asset path (`assets/...`)
 pub fn AnimationLoader::load(
-  self : AnimationLoader,
+  _self : AnimationLoader,
   animations_path : String,
 ) -> LoadedAnimations {
   let json_url = animations_path

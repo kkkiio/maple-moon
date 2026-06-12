@@ -133,7 +133,7 @@ test "calculate_mob_drops for pig with real config" {
   let tsv_content : String = @fs.read_file_to_string(
     "assets/data/mob_drops.tsv",
   ) catch {
-    err => fail("failed to read mob_drops.tsv: \{err}")
+    @fs.IOError(message) => fail("failed to read mob_drops.tsv: \{message}")
   }
   let drop_db = MobDropDatabase::from_tsv(tsv_content)
 

@@ -14,7 +14,6 @@ fn load_test_mob() -> @monster.Mob {
 
 ///|
 test "final attack hit effect with EFFECT_ZINDEX stays visible" {
-  @local_loader.install_resource_env_for_test()
   let previous_world = @ecs.current_world()
   let world = @ecs.World()
   @ecs.set_current_world(world)
@@ -26,13 +25,8 @@ test "final attack hit effect with EFFECT_ZINDEX stays visible" {
   defer @sprite.sprites().clear()
 
   let data = @skill.SkillData::load(1100002)
-  let skill_loader = @resource.require_async_loader("skill")
   let skill_base_path = "assets/Skill/110.img.json"
-  let hit_effect = @combat_system.make_hit_effect(
-    data.src,
-    skill_loader,
-    skill_base_path,
-  )
+  let hit_effect = @combat_system.make_hit_effect(data.src, skill_base_path)
 
   let user : @combat_proto.AttackUser = {
     skill_level: 0,

@@ -1,72 +1,4 @@
 ///|
-struct FlatJsonFileLoader {
-  root : String
-}
-
-///|
-pub fn FlatJsonFileLoader::new(root : String) -> FlatJsonFileLoader {
-  { root, }
-}
-
-///|
-pub impl @resource.AsyncResourceLoader for FlatJsonFileLoader with fn load_data(
-  self,
-  path,
-) -> Json? {
-  let root = self.root.strip_suffix("/").unwrap_or(self.root)
-  let raw_rel = path
-    .to_owned()
-    .strip_prefix("/")
-    .unwrap_or(path.to_owned())
-    .to_owned()
-  let rel = normalize_test_resource_path(root.to_owned(), raw_rel)
-  let full_path = "\{root}/\{rel}"
-  Some(@fs.read_file_to_string(full_path) |> @json.parse) catch {
-    _ => None
-  }
-}
-
-///|
-fn normalize_test_resource_path(root : String, path : String) -> String {
-  let normalized_root = root.strip_prefix("/").unwrap_or(root).to_owned()
-  let rel = match path.strip_prefix("\{normalized_root}/") {
-    Some(rest) => rest.to_owned()
-    None => path.strip_prefix("assets/").unwrap_or(path).to_owned()
-  }
-  normalize_mapx_test_path(rel)
-}
-
-///|
-fn normalize_mapx_test_path(path : String) -> String {
-  if path.has_prefix("Map/") {
-    return path
-  }
-  if path.length() >= 6 && path.has_prefix("Map") && path.contains(".img/") {
-    return "Map/\{path}"
-  }
-  path
-}
-
-///|
-fn setup_resource_loaders() -> Unit {
-  @resource.register_async_loader(
-    "mapx",
-    @resource.AsyncLoader::new(
-      "mapx",
-      loader=FlatJsonFileLoader::new("assets/map"),
-    ),
-  )
-  @resource.register_async_loader(
-    "npc",
-    @resource.AsyncLoader::new("npc", loader=FlatJsonFileLoader::new("assets")),
-  )
-  @resource.register_async_loader(
-    "string",
-    @local_loader.make_local_string_loader(),
-  )
-}
-
-///|
 fn normalize_camera_limits(
   left : Double,
   right : Double,
@@ -136,7 +68,6 @@ fn spawn_npc_from_life(
 
 ///|
 fn setup_shop_scene_npcs() -> @app.App raise {
-  setup_resource_loaders()
   let app = @app.App()
     .with_viewport_width(800.0)
     .with_viewport_height(600.0)
@@ -186,12 +117,7 @@ fn setup_shop_scene_npcs() -> @app.App raise {
 
   setup_camera(@math.Vec2(-500.0, 320.0), scene_map.map_info)
 
-  let map_npcs = @npc.MapNpcs::new(
-    fn(_args) {  },
-    fn() { false },
-    npc_loader=@resource.require_async_loader("npc"),
-    string_loader=@resource.require_async_loader("string"),
-  )
+  let map_npcs = @npc.MapNpcs::new(fn(_args) {  }, fn() { false })
   @npc.set_npcs({ map_npcs, physics: scene_map.physics })
 
   for idx in 0..<npc_lives.length() {

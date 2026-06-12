@@ -83,13 +83,8 @@ fn tiled_property_int_optional(
   match layer.property(name) {
     Some(@tiled.TiledPropertyValue::Int(value)) => Some(value)
     Some(@tiled.TiledPropertyValue::Float(value)) => Some(value.to_int())
-    Some(@tiled.TiledPropertyValue::String(value)) => {
-      let parsed = try? @string.parse_int(value)
-      match parsed {
-        Ok(parsed) => Some(parsed)
-        Err(_) => None
-      }
-    }
+    Some(@tiled.TiledPropertyValue::String(value)) =>
+      Some(@string.parse_int(value)) catch { _ => None }
     Some(_) => None
     None => None
   }
@@ -188,11 +183,7 @@ fn parse_background_index(name : String, prefix : String) -> Int? {
     return None
   }
   let suffix = name[prefix.length():name.length()].to_owned()
-  let parsed = try? @string.parse_int(suffix)
-  match parsed {
-    Ok(index) => Some(index)
-    Err(_) => None
-  }
+  Some(@string.parse_int(suffix)) catch { _ => None }
 }
 
 ///|

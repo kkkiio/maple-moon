@@ -1,4 +1,5 @@
 ///|
+#warnings("-struct_never_constructed")
 pub struct SpawnNpcController {
   mode : Int
   oid : Int
@@ -67,6 +68,7 @@ pub impl Hash for TalkType with fn hash_combine(self, hasher) {
 }
 
 ///|
+#warnings("-struct_never_constructed")
 pub struct NpcDialogue {
   npcid : Int
   t : TalkType

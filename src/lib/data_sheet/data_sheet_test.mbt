@@ -19,12 +19,14 @@ test "parse_tsv_sheet allows only trailing empty line" {
 ///|
 test "parse_tsv_sheet fails on middle empty line" {
   let text = "shopid\tnpcid\n1\t2\n\n3\t4\n"
-  let result : Result[@data_sheet.Sheet, Error] = try? @data_sheet.parse_tsv_sheet(
-    text, "shops.tsv",
-  )
-  guard result is Err(Failure::Failure(msg)) &&
-    msg.contains("empty tsv line at line 3") else {
-    fail("expected empty line parse error")
+  try @data_sheet.parse_tsv_sheet(text, "shops.tsv") catch {
+    Failure::Failure(msg) =>
+      if !msg.contains("empty tsv line at line 3") {
+        fail("expected empty line parse error")
+      }
+    _ => fail("expected empty line parse error")
+  } noraise {
+    _ => fail("expected empty line parse error")
   }
 }
 
@@ -33,10 +35,14 @@ test "row get_int raises on missing column" {
   let text = "shopid\tnpcid\n1\t2\n"
   let sheet = @data_sheet.parse_tsv_sheet(text, "shops.tsv")
   let row = sheet.rows().collect()[0]
-  let result : Result[Int, Error] = try? row.get_int("price")
-  guard result is Err(Failure::Failure(msg)) &&
-    msg.contains("missing tsv column 'price'") else {
-    fail("expected missing column error")
+  try row.get_int("price") catch {
+    Failure::Failure(msg) =>
+      if !msg.contains("missing tsv column 'price'") {
+        fail("expected missing column error")
+      }
+    _ => fail("expected missing column error")
+  } noraise {
+    _ => fail("expected missing column error")
   }
 }
 

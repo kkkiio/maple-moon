@@ -37,7 +37,18 @@ fn cleanup_for_leave_world(_world : @ecs.World) -> Unit {
 }
 
 ///|
-fn main {
+/// Run the Maple Moon game with the platform backend selected by the entry
+/// package.
+///
+/// The shared app installs game resources, local-server handlers, runtime
+/// systems, and starts from `GameSetup`. Platform packages decide whether the
+/// run uses WebGPU/JS or raylib/native.
+///
+/// # Example
+/// ```moonbit nocheck
+/// @game_app.run()
+/// ```
+pub fn run() -> Unit {
   @item.set_item_data_system(@item.ItemDataSystem::new())
   let app = @app.App()
     .with_image_smooth(false)

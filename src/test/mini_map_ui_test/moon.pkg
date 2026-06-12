@@ -12,3 +12,5 @@ import {
   "Milky2018/selene/system",
   "Milky2018/selene/app",
 } for "test"
+
+supported_targets = "js"

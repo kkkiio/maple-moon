@@ -6,8 +6,6 @@ import {
   "KKKIIO/maple-moon/lib/ms/skill",
   "KKKIIO/maple-moon/lib/ms/monster",
   "KKKIIO/maple-moon/lib/ms/physics",
-  "KKKIIO/maple-moon/lib/resource",
-  "KKKIIO/maple-moon/test/local_loader",
   "KKKIIO/maple-moon/test/capture_app",
   "Milky2018/selene/entity",
   "Milky2018/selene/math",

@@ -24,7 +24,6 @@ fn setup_select_char_ui_scene(
   script? : (@ecs.World) -> Unit = fn(_world) {  },
 ) -> @app.App {
   @capture_app.reset_mock_server()
-  @local_loader.install_resource_env_for_test()
   @select_char_ui.setup_game_server_handlers()
   let app = @app.App()
     .with_viewport_width(800.0)

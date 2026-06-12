@@ -4,7 +4,7 @@
 let loading_ref : Ref[@utils.Future[Result[AppResources, Error]]?] = Ref(None)
 
 ///|
-pub fn app_resource_setup_system(_world : @ecs.World) -> Unit {
+fn app_resource_setup_system(_world : @ecs.World) -> Unit {
   guard @game_state.current_phase() is @game_state.GamePhase::GameSetup else {
     return
   }

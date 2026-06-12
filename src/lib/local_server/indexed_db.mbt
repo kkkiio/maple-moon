@@ -91,9 +91,11 @@ fn ensure_dir_recursive(path : String) -> Unit {
     }
     if !@fs.path_exists(current) {
       @fs.create_dir(current) catch {
-        err =>
+        @fs.IOError(message) =>
           if !@fs.path_exists(current) {
-            abort("failed to create directory: \{current}, error=\{err}")
+            abort(
+              "failed to create directory: \{current}, error=\{message}",
+            )
           }
       }
     }
@@ -106,7 +108,10 @@ pub impl DB for FileDB with fn save_json(self, store, key, data) {
   ensure_dir_recursive(dir)
   let path = self.data_file_path(store, key)
   @fs.write_string_to_file(path, data.stringify()) catch {
-    err => abort("failed to write local server data: \{path}, error=\{err}")
+    @fs.IOError(message) =>
+      abort(
+        "failed to write local server data: \{path}, error=\{message}",
+      )
   }
 }
 
@@ -117,7 +122,10 @@ pub impl DB for FileDB with fn load_json(self, store, key) {
     return None
   }
   let content = @fs.read_file_to_string(path) catch {
-    err => abort("failed to read local server data: \{path}, error=\{err}")
+    @fs.IOError(message) =>
+      abort(
+        "failed to read local server data: \{path}, error=\{message}",
+      )
   }
   Some(
     @json.parse(content) catch {

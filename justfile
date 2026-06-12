@@ -1,10 +1,16 @@
 check:
-    moon check --deny-warn
+    moon check --target js --deny-warn --diagnostic-limit 200
+    moon check --target native --deny-warn --diagnostic-limit 200
 fmt:
-    moon fmt
+    moon fmt moon.mod src/lib src/apps src/test
     moon info
+test:
+    node scripts/moon-webgpu-test.mjs
 build:
-    moon build --target native --release
+    moon build --target js --release src/apps/game_web
+
+build-native:
+    moon build --target native --release src/apps/game_native
 
 run:
-    moon run --target native --release src/apps/game/main.mbt
+    moon run --target native --release src/apps/game_native

@@ -35,16 +35,20 @@ pub fn snapshot(
       let snapshot_dir = parent_dir(path)
       if !@fs.path_exists(snapshot_dir) {
         @fs.create_dir(snapshot_dir) catch {
-          err =>
-            fail("failed to create snapshot dir: \{snapshot_dir}, error=\{err}")
+          @fs.IOError(message) =>
+            fail(
+              "failed to create snapshot dir: \{snapshot_dir}, error=\{message}",
+            )
         }
       }
       @fs.write_bytes_to_file(path, actual) catch {
-        err => fail("failed to write snapshot: \{path}, error=\{err}")
+        @fs.IOError(message) =>
+          fail("failed to write snapshot: \{path}, error=\{message}")
       }
     } else {
       let expected = @fs.read_file_to_bytes(path) catch {
-        err => fail("failed to read snapshot: \{path}, error=\{err}")
+        @fs.IOError(message) =>
+          fail("failed to read snapshot: \{path}, error=\{message}")
       }
       if actual == expected {
         return
@@ -55,9 +59,9 @@ pub fn snapshot(
     SnapshotError::Mismatch(msg~) => {
       let wrong_img_path = wrong_snapshot_path(path)
       @fs.write_bytes_to_file(wrong_img_path, actual) catch {
-        err =>
+        @fs.IOError(message) =>
           fail(
-            "failed to write wrong snapshot: \{wrong_img_path}, error=\{err}",
+            "failed to write wrong snapshot: \{wrong_img_path}, error=\{message}",
           )
       }
       fail(msg + ", new snapshot saved to: \{wrong_img_path}")

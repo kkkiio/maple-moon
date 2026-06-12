@@ -63,7 +63,6 @@ priv struct WorldMapLink {
 priv struct WorldMapSpot {
   title : String
   description : String
-  bolded : Bool
   path_texture : @resource.NxTexture?
   spot_x : Int
   spot_y : Int
@@ -73,7 +72,6 @@ priv struct WorldMapSpot {
 
 ///|
 priv struct WorldMapPageResource {
-  name : String
   base_img_texture : @resource.NxTexture
   parent_map : String
   map_links : Array[WorldMapLink]
@@ -244,14 +242,13 @@ impl @json.FromJson for NxWorldMapLinkInner with fn from_json(json, path) -> NxW
 ///|
 priv struct NxWorldMapLink {
   link : NxWorldMapLinkInner
-  tooltip : String
 }
 
 ///|
 impl @json.FromJson for NxWorldMapLink with fn from_json(json, path) -> NxWorldMapLink raise @json.JsonDecodeError {
   match json {
-    { "link": link, "toolTip": String(tooltip), .. } =>
-      { link: @json.from_json(link, path=path.add_key("link")), tooltip }
+    { "link": link, "toolTip": String(_tooltip), .. } =>
+      { link: @json.from_json(link, path=path.add_key("link")) }
     _ => raise @json.JsonDecodeError((path, "invalid world map link"))
   }
 }
@@ -636,7 +633,6 @@ fn fallback_map_label(map_id : Int) -> (String, String) {
 
 ///|
 fn parse_world_map_page_resource(
-  name : String,
   json : Json,
   marker : WorldMapMarkerResource,
 ) -> WorldMapPageResource raise {
@@ -647,7 +643,6 @@ fn parse_world_map_page_resource(
     map_links.push({
       link_img_texture: link.link.link_img,
       link_map: link.link.link_map,
-      // tooltip: link.tooltip,
     })
   }
   let map_spots = []
@@ -656,12 +651,12 @@ fn parse_world_map_page_resource(
     if type_ < 0 || type_ >= 4 {
       fail("invalid world map spot type")
     }
-    let (title, description, bolded) = match (spot.title, spot.desc) {
-      (Some(title), Some(description)) => (title, description, false)
-      (Some(title), None) => (title, "", false)
+    let (title, description) = match (spot.title, spot.desc) {
+      (Some(title), Some(description)) => (title, description)
+      (Some(title), None) => (title, "")
       _ => {
         let (map_name, street_name) = fallback_map_label(spot.map_ids[0])
-        ("\{street_name} : \{map_name}", "", true)
+        ("\{street_name} : \{map_name}", "")
       }
     }
     let path_texture = spot.path
@@ -669,7 +664,6 @@ fn parse_world_map_page_resource(
     map_spots.push({
       title,
       description,
-      bolded,
       path_texture,
       spot_x: spot.spot_x,
       spot_y: spot.spot_y,
@@ -678,7 +672,6 @@ fn parse_world_map_page_resource(
     })
   }
   {
-    name,
     base_img_texture,
     parent_map: src.info.parent_map,
     map_links,
@@ -732,7 +725,7 @@ fn load_world_map_page(
     Some(json) => json
     None => @resource.require_json("assets/Map/WorldMap/" + name + ".img.json")
   }
-  let page = parse_world_map_page_resource(name, json, marker) catch {
+  let page = parse_world_map_page_resource(json, marker) catch {
     _ => abort("invalid world map page resource: \{name}")
   }
   (name, page)
@@ -809,11 +802,7 @@ fn ensure_page_loading(state : State, resources : UiResources) -> Unit {
   }
   if world_map_pages_for_test_ref.val.get(state.current_world_name)
     is Some(json) {
-    let page = parse_world_map_page_resource(
-      state.current_world_name,
-      json,
-      resources.marker,
-    ) catch {
+    let page = parse_world_map_page_resource(json, resources.marker) catch {
       _ => abort("unexpected world map tooltip type")
     }
     state.page_cache[state.current_world_name] = page

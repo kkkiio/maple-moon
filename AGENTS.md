@@ -26,7 +26,9 @@
 
 ### Package README
 
-每个 `package` 下都写 `README.mbt.md`, 说明包的职责和使用方法.
+Main package 使用 `README.md`, 避免 MoonBit main package 把 `README.mbt.md` 当作 blackbox test 输入并产生 warning.
+
+非 main package 使用 `README.mbt.md`, 说明包的职责和使用方法，并让文档示例继续参与 MoonBit 检查.
 
 ### Doc comments
 
@@ -84,7 +86,7 @@ MoonBit 允许 `test` 直接传播错误, 用 `fail` 函数抛出错误.
 ### Repo Structure & Important Files
 
 - `docs/`: 游戏策划文档.
-- `adrs/`: 架构决策记录.
+- `docs/adr/`: 架构决策记录.
 - `src/lib/ms`: 游戏模块源码.
 - `src/test/`: 集成测试用例.
 - `assets/`: 资源文件.
@@ -92,11 +94,12 @@ MoonBit 允许 `test` 直接传播错误, 用 `fail` 函数抛出错误.
 - `src/lib/local_server/`: 本地服务器实现.
 - `src/lib/ms/server_proto/`: 客户端与(本地)服务器通信的协议定义.
 - `src/lib/console/`: 游戏调试控制台, agent 调试时使用.
-- `src/test/local_loader/`: 本地测试资源加载器. 路径处理跟正式资源完全一致, 只是加载方式变成从本地文件读取.
 
 ### Agents Core Runtime Guidelines
 
-- `src/apps/game/game.mbt` 是游戏运行的入口, 负责注册 game systems.
+- `src/lib/game_app/` 是共享游戏运行时, 负责注册 game systems.
+- `src/apps/game_web/` 是 WebGPU/JS 入口, 主要用于快速验证和浏览器调试.
+- `src/apps/game_native/` 是 raylib/native 入口, 主要用于玩家游玩和分发.
 
 ## Operation Guide
 
@@ -107,14 +110,33 @@ MoonBit 允许 `test` 直接传播错误, 用 `fail` 函数抛出错误.
 ```bash
 just check
 just fmt
+just test
 just build
 ```
 
-执行 `moon test` 前先加载测试环境变量，避免 `selene-webgpu` 在 Node.js 下因缺少 DOM 报错：
+`just check` 覆盖 JS 与 native target, 但只做类型检查, 不进入 native C 编译/链接.
+
+`just test` 运行 `scripts/moon-webgpu-test.mjs`, 该脚本用 `moon test --target js --build-only` 构建选定的 WebGPU 快照测试, 再在浏览器环境执行. 不要在日常开发中直接执行裸 `moon test`, 因为 MoonBit 会生成 native 测试可执行文件, 即使 `src/apps/game_native/` 没有手写测试, 也会触发 raylib/native 编译和链接.
+
+不要把全仓 `moon test --target js` 当作默认流程. 画面测试依赖浏览器侧 `XMLHttpRequest` 和脚本提供的 asset server, 直接在 Node.js 里执行会把资源加载边界变成测试失败.
+
+需要直接执行某个非画面 MoonBit 测试时, 显式指定 JS target 和测试路径，并先加载测试环境变量，避免 `selene-webgpu` 在 Node.js 下因缺少 DOM 报错：
 
 ```bash
 # 在仓库根目录执行
-source scripts/test-env.sh && moon test
+source scripts/test-env.sh && moon test --target js --deny-warn --diagnostic-limit 200 <path>
+```
+
+日常构建只构建 Web 入口:
+
+```bash
+just build
+```
+
+只有需要玩家游玩或分发 native 版本时, 才构建 native 入口:
+
+```bash
+just build-native
 ```
 
 ## Utilities & Tips

@@ -1,9 +1,4 @@
 ///|
-fn setup_local_loaders() -> Unit {
-  @local_loader.install_resource_env_for_test()
-}
-
-///|
 fn reset_npc_talk_ui_test_state() -> Unit {
   @npc_talk_ui.close_npc_talk_ui()
   @inputs.apply_input_snapshot(@inputs.empty_input_snapshot())
@@ -23,9 +18,8 @@ fn load_quest_2090_quiz_text() -> String raise {
 
 ///|
 fn setup_npc_talk_resource_cache() -> Unit raise {
-  let util_dlg_ex = @resource.require_async_loader("ui_window_2").load_resource([
-      "UtilDlgEx",
-    ],
+  let util_dlg_ex = @resource.require_json(
+    "assets/UI/UIWindow2.img/UtilDlgEx.json",
   )
   let window_slice = @ui.load_ui_slice_resource(
     "assets/UI/UIWindow2.img/UtilDlgEx/slice.json",
@@ -82,7 +76,6 @@ fn setup_scene() -> @app.App raise {
   @ms_camera.setup_camera_entity(camera_anchor, center=@math.Vec2(0.0, 0.0))
   @ms_camera.set_follow_target(camera_anchor)
 
-  setup_local_loaders()
   setup_npc_talk_resource_cache()
 
   @game_state.init_state(

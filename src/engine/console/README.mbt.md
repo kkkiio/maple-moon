@@ -18,7 +18,8 @@
 
 ## Integration
 
-将 `console_input_injection_system` 注册到 `First` 调度，保证输入注入发生在输入系统 (`PreUpdate`) 之前。
+`$console.ui.click(...)` 会直接向 Selene UI click event bus 发送注册实体的点击事件。
+`console_input_injection_system` 仍可注册到 `First` 调度，用于未来需要模拟指针状态的调试入口。
 
 ## Runtime Globals
 

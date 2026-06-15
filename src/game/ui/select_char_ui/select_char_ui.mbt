@@ -486,6 +486,54 @@ fn send_select_char_once(character_id : Int) -> Unit {
 }
 
 ///|
+fn init {
+  @console.register_command("new_character", fn(_args) {
+    guard select_char_ui.val is Some(ui) else {
+      return {
+        "ok": false,
+        "code": "SELECT_CHAR_UI_NOT_READY",
+        "message": "select character UI is not ready",
+      }
+    }
+    (ui.on_new_character)()
+    { "ok": true, "code": "CREATE_CHARACTER_SENT" }
+  })
+  @console.register_command("select_char", fn(args) {
+    let slot = if args.length() > 0 {
+      @string.parse_int(args[0]) catch { _ => 0 }
+    } else {
+      0
+    }
+    guard select_char_ui.val is Some(ui) else {
+      return {
+        "ok": false,
+        "code": "SELECT_CHAR_UI_NOT_READY",
+        "message": "select character UI is not ready",
+      }
+    }
+    guard slot >= 0 && slot < ui.characters.length() else {
+      return {
+        "ok": false,
+        "code": "INVALID_SLOT",
+        "slot": slot,
+        "slot_count": ui.characters.length(),
+      }
+    }
+    guard !select_char_requested_ref.val else {
+      return { "ok": false, "code": "SELECT_CHAR_ALREADY_REQUESTED" }
+    }
+    let character_id = ui.characters[slot].cid
+    send_select_char_once(character_id)
+    {
+      "ok": true,
+      "code": "SELECT_CHAR_SENT",
+      "slot": slot,
+      "character_id": character_id,
+    }
+  })
+}
+
+///|
 fn clear_select_char_ui_runtime() -> Unit {
   select_char_loading_future.val = None
   match select_char_ui.val {

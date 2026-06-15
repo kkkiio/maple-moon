@@ -2,7 +2,7 @@ check:
     moon check --target js --deny-warn --diagnostic-limit 200
     moon check --target native --deny-warn --diagnostic-limit 200
 fmt:
-    moon fmt moon.mod src/engine src/game src/apps src/tests
+    moon fmt moon.mod src/engine src/game src/apps src/tests src/cmd
     moon info
 test:
     node scripts/moon-webgpu-test.mjs

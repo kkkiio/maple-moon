@@ -320,28 +320,47 @@ fn compile_frames_to_selene_clip(
 ) -> SeleneClip {
   guard !frames.is_empty() else { abort("animation frames must not be empty") }
   let first = frames[0]
-  guard first.size.0 > 0.0 && first.size.1 > 0.0 else {
-    abort("animation frame size must be positive")
-  }
+  let mut left = 0.0
+  let mut top = 0.0
+  let mut right = 0.0
+  let mut bottom = 0.0
   for frame in frames {
     if frame.image != first.image {
       abort("animation frames must share one image for selene atlas playback")
     }
-    if frame.size != first.size {
-      abort(
-        "animation frames must share one frame size for selene atlas playback",
-      )
+    guard frame.size.0 > 0.0 && frame.size.1 > 0.0 else {
+      abort("animation frame size must be positive")
     }
-    if frame.pivot != first.pivot {
-      abort("animation frames must share one pivot for selene anchor playback")
+    if frame.pivot.0 > left {
+      left = frame.pivot.0
     }
+    if frame.pivot.1 > top {
+      top = frame.pivot.1
+    }
+    let frame_right = frame.size.0 - frame.pivot.0
+    let frame_bottom = frame.size.1 - frame.pivot.1
+    if frame_right > right {
+      right = frame_right
+    }
+    if frame_bottom > bottom {
+      bottom = frame_bottom
+    }
+  }
+  let clip_pivot = @math.Vec2(left, top)
+  let clip_size = @math.Vec2(left + right, top + bottom)
+  guard clip_size.0 > 0.0 && clip_size.1 > 0.0 else {
+    abort("animation frame size must be positive")
   }
 
   let rects : Array[@math.Rect] = []
   let keys : Array[@selene_animation.ScalarKeyframe] = []
   let mut t = 0.0
   for idx, frame in frames {
-    rects.push({ position: frame.offset, size: frame.size })
+    let position = @math.Vec2(
+      frame.offset.0 + frame.pivot.0 - clip_pivot.0,
+      frame.offset.1 + frame.pivot.1 - clip_pivot.1,
+    )
+    rects.push({ position, size: clip_size })
     keys.push({
       time: t,
       value: idx.to_double(),
@@ -353,7 +372,7 @@ fn compile_frames_to_selene_clip(
   }
 
   let layout = @sprite.register_texture_atlas_layout(
-    @sprite.TextureAtlasLayout(first.size, rects),
+    @sprite.TextureAtlasLayout(clip_size, rects),
   )
   let clip = @selene_animation.AnimationClip(clip_name)
   clip.add_curve_to_target(
@@ -384,9 +403,9 @@ fn compile_frames_to_selene_clip(
     layout,
     graph: graph_handle,
     node: nodes[0],
-    anchor: anchor_from_origin(first.pivot, first.size),
+    anchor: anchor_from_origin(clip_pivot, clip_size),
     duration_ms: (clip.duration * 1000.0).to_int(),
-    dimensions: @struct.Point::new(first.size.0.to_int(), first.size.1.to_int()),
+    dimensions: @struct.Point::new(clip_size.0.to_int(), clip_size.1.to_int()),
     frame_durations_ms,
     frame_alphas,
   }

@@ -23,15 +23,6 @@ let ui_entries_by_entity_ref : Ref[Map[@entity.Entity, UiEntry]] = Ref(Map([]))
 let ui_entity_by_key_ref : Ref[Map[String, @entity.Entity]] = Ref(Map([]))
 
 ///|
-priv enum UiClickInjectionState {
-  PressQueued(@selene_math.Vec2)
-  ReleaseQueued(@selene_math.Vec2)
-}
-
-///|
-let pending_ui_click_ref : Ref[UiClickInjectionState?] = Ref(None)
-
-///|
 fn make_ui_key(package_name : String, ui_name : String) -> String {
   "\{package_name}::\{ui_name}"
 }
@@ -120,11 +111,14 @@ fn click_registered_ui_impl(package_name : String, ui_name : String) -> Json {
     rect.position[@selene_math.X] + rect.size[@selene_math.X] / 2.0,
     rect.position[@selene_math.Y] + rect.size[@selene_math.Y] / 2.0,
   )
-  pending_ui_click_ref.val = Some(UiClickInjectionState::PressQueued(pos))
+  @selene_ui.click_event_bus.send({
+    entity,
+    button: @inputs.MouseButton::Left,
+  })
   {
     "ok": true,
-    "code": "QUEUED",
-    "message": "click queued",
+    "code": "CLICK_SENT",
+    "message": "click event sent",
     "package": package_name,
     "name": ui_name,
     "click_pos": { "x": pos[@selene_math.X], "y": pos[@selene_math.Y] },
@@ -214,25 +208,13 @@ pub fn click_registered_ui(package_name : String, ui_name : String) -> Json {
 ///|
 /// Clears pending console UI click injection.
 pub fn clear_input_injection() -> Unit {
-  pending_ui_click_ref.val = None
+  ()
 }
 
 ///|
-/// Applies queued console UI click injection in two frames: press then release.
-pub fn console_input_injection_system(_world : @ecs.World) -> Unit {
-  match pending_ui_click_ref.val {
-    Some(UiClickInjectionState::PressQueued(pos)) => {
-      @inputs.mouse.pos = pos
-      @inputs.mouse.left_button = true
-      pending_ui_click_ref.val = Some(UiClickInjectionState::ReleaseQueued(pos))
-    }
-    Some(UiClickInjectionState::ReleaseQueued(pos)) => {
-      @inputs.mouse.pos = pos
-      @inputs.mouse.left_button = false
-      pending_ui_click_ref.val = None
-    }
-    None => ()
-  }
+/// Reserved hook for console-side input injection.
+pub fn console_input_injection_system(world : @ecs.World) -> Unit {
+  ignore(world)
 }
 
 ///|

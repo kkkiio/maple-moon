@@ -5,6 +5,7 @@
 - 输入：`resource` 层的 `NxAnimation` / `NxTexture`，以及已编译的 `SeleneClip`。
 - 输出：可直接挂到实体的 sprite 与播放控制 API。
 - 后端：仅 Selene `TextureAtlas + AnimationClip/Graph/Player`。
+- `NxAnimation` 会按每帧 origin 归一化到共享画布，兼容同一动画内裁剪框尺寸不同的 Maple/NX 帧。
 
 ## 主要 API
 

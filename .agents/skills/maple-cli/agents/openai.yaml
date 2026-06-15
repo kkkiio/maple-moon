@@ -1,0 +1,4 @@
+interface:
+  display_name: "Maple CLI"
+  short_description: "Drive Maple Moon browser checks with maple/mapled."
+  default_prompt: "Use $maple-cli to run Maple Moon browser client verification with maple/mapled."

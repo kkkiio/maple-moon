@@ -14,9 +14,9 @@
 
 项目主要用快照测试验证逻辑和画面, 使用该 skill 编写和执行测试.
 
-#### `$verify-web-game`
+#### `$maple-cli`
 
-使用该 skill 验证修改后的游戏.
+使用该 skill 通过 Maple CLI 验证修改后的游戏运行时、地图加载和资源加载.
 
 ### Package README
 

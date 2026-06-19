@@ -8,7 +8,7 @@
           -5,
           28
         ],
-        "__i": "spritesheets/Item/Special/0900.img/09000000.png",
+        "__i": "assets/spritesheets/Item/Special/0900.img/09000000.png",
         "__off": [
           25,
           0
@@ -21,7 +21,7 @@
           -4,
           28
         ],
-        "__i": "spritesheets/Item/Special/0900.img/09000000.png",
+        "__i": "assets/spritesheets/Item/Special/0900.img/09000000.png",
         "__off": [
           0,
           0
@@ -34,7 +34,7 @@
           -5,
           28
         ],
-        "__i": "spritesheets/Item/Special/0900.img/09000000.png",
+        "__i": "assets/spritesheets/Item/Special/0900.img/09000000.png",
         "__off": [
           0,
           24
@@ -47,7 +47,7 @@
           -14,
           28
         ],
-        "__i": "spritesheets/Item/Special/0900.img/09000000.png",
+        "__i": "assets/spritesheets/Item/Special/0900.img/09000000.png",
         "__off": [
           23,
           24
@@ -64,7 +64,7 @@
           -5,
           28
         ],
-        "__i": "spritesheets/Item/Special/0900.img/09000001.png",
+        "__i": "assets/spritesheets/Item/Special/0900.img/09000001.png",
         "__off": [
           25,
           0
@@ -77,7 +77,7 @@
           -4,
           28
         ],
-        "__i": "spritesheets/Item/Special/0900.img/09000001.png",
+        "__i": "assets/spritesheets/Item/Special/0900.img/09000001.png",
         "__off": [
           0,
           0
@@ -90,7 +90,7 @@
           -5,
           28
         ],
-        "__i": "spritesheets/Item/Special/0900.img/09000001.png",
+        "__i": "assets/spritesheets/Item/Special/0900.img/09000001.png",
         "__off": [
           0,
           24
@@ -103,7 +103,7 @@
           -14,
           28
         ],
-        "__i": "spritesheets/Item/Special/0900.img/09000001.png",
+        "__i": "assets/spritesheets/Item/Special/0900.img/09000001.png",
         "__off": [
           23,
           24
@@ -120,7 +120,7 @@
           -1,
           32
         ],
-        "__i": "spritesheets/Item/Special/0900.img/09000002.png",
+        "__i": "assets/spritesheets/Item/Special/0900.img/09000002.png",
         "__off": [
           32,
           30
@@ -133,7 +133,7 @@
           -1,
           31
         ],
-        "__i": "spritesheets/Item/Special/0900.img/09000002.png",
+        "__i": "assets/spritesheets/Item/Special/0900.img/09000002.png",
         "__off": [
           33,
           0
@@ -146,7 +146,7 @@
           -1,
           29
         ],
-        "__i": "spritesheets/Item/Special/0900.img/09000002.png",
+        "__i": "assets/spritesheets/Item/Special/0900.img/09000002.png",
         "__off": [
           0,
           0
@@ -159,7 +159,7 @@
           -1,
           31
         ],
-        "__i": "spritesheets/Item/Special/0900.img/09000002.png",
+        "__i": "assets/spritesheets/Item/Special/0900.img/09000002.png",
         "__off": [
           0,
           30
@@ -176,7 +176,7 @@
           0,
           32
         ],
-        "__i": "spritesheets/Item/Special/0900.img/09000003.png",
+        "__i": "assets/spritesheets/Item/Special/0900.img/09000003.png",
         "__off": [
           0,
           0
@@ -189,7 +189,7 @@
           0,
           32
         ],
-        "__i": "spritesheets/Item/Special/0900.img/09000003.png",
+        "__i": "assets/spritesheets/Item/Special/0900.img/09000003.png",
         "__off": [
           32,
           0
@@ -202,7 +202,7 @@
           0,
           32
         ],
-        "__i": "spritesheets/Item/Special/0900.img/09000003.png",
+        "__i": "assets/spritesheets/Item/Special/0900.img/09000003.png",
         "__off": [
           0,
           31
@@ -215,7 +215,7 @@
           0,
           32
         ],
-        "__i": "spritesheets/Item/Special/0900.img/09000003.png",
+        "__i": "assets/spritesheets/Item/Special/0900.img/09000003.png",
         "__off": [
           32,
           31

@@ -12,5 +12,8 @@ build:
 build-native:
     moon build --target native --release src/apps/game_native
 
-run:
+run-native:
     moon run --target native --release src/apps/game_native
+
+run-web:
+    npm run dev

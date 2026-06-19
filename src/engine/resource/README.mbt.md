@@ -29,7 +29,7 @@
 @resource.register_async_loader("npc", my_npc_loader)
 
 let map_loader = @resource.get_async_loader("mapx")
-let raw = map_loader.require_resource(["Map", "Map0", "100000000"])
+let raw = map_loader.require_resource(["Map1", "100000000.img.mx.json"])
 let npc_loader = @resource.require_async_loader("npc")
 let mx_path = "Npc/Npc/0002007.img/mx.json"
 let mx = npc_loader.require_data(mx_path)

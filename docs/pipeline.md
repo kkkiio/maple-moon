@@ -76,7 +76,7 @@ AnimationLoader::load("assets/Skill/231.img/animations/skill__2311001.json")
 
 ```mbt
 // 直接按文件路径加载
-require_json("assets/Map/Map/Map001.tmj")
+require_json("assets/Map/tiles/100000000.img.tmj")
 ```
 
 地图可能进一步引用 tileset `.tsj` 文件和图片资源，由游戏代码自行解析和加载。

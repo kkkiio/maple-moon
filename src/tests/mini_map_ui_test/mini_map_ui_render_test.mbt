@@ -59,7 +59,7 @@ fn setup_mini_map_ui_scene_with_data(
 }
 
 ///|
-test "mini map ui renders normal frame" {
+async test "mini map ui renders normal frame" {
   defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
   defer @sprite.sprites().clear()
   let app = setup_mini_map_ui_scene_with_data(
@@ -72,18 +72,23 @@ test "mini map ui renders normal frame" {
       ),
     ),
   )
-  @capture_app.ensure_webgpu_capture_runtime(420.0, 240.0)
-  let captures = app.run_frames_capture(1, raw_delta=0.016)
+  let capture = @capture_app.capture_after_frames(
+    app,
+    1,
+    width=420,
+    height=240,
+    raw_delta=0.016,
+  )
   @capture_app.snapshot(
     "src/tests/mini_map_ui_test/__snapshot__/mini_map_ui_normal.png",
-    captures[captures.length() - 1].png,
+    capture.png,
     visual_desc="Mini map UI is displayed showing the map layout, player position, and other standard elements.",
   )
 }
 
 ///|
 fn load_real_minimap_runtime_resource_100030000() -> @map.MiniMapRuntimeResource raise {
-  let mx_path = ["Map", "Map1", "100030000.img.mx.json"]
+  let mx_path = ["Map1", "100030000.img.mx.json"]
   let (_, tiled_map) = @resource.load_tiled_map_from_mx(mx_path)
   let mini_opt = @map.from_tiled_mini_map_resource(tiled_map) catch {
     _ => None
@@ -106,7 +111,14 @@ fn load_real_minimap_runtime_resource_100030000() -> @map.MiniMapRuntimeResource
           Some(@tiled.TiledPropertyValue::Int(v)) => v
           _ => 0
         }
-        portals.push(@map.MiniMapPortal::new(x, y, tm, @map.MiniMapPortalType::from_int(pt)))
+        portals.push(
+          @map.MiniMapPortal::new(
+            x,
+            y,
+            tm,
+            @map.MiniMapPortalType::from_int(pt),
+          ),
+        )
       }
     None => fail("portal layer not found in map 100030000")
   }
@@ -114,7 +126,7 @@ fn load_real_minimap_runtime_resource_100030000() -> @map.MiniMapRuntimeResource
 }
 
 ///|
-test "mini map ui renders portal marker from real map 100030000" {
+async test "mini map ui renders portal marker from real map 100030000" {
   defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
   defer @sprite.sprites().clear()
   let app = setup_mini_map_ui_scene_with_data(
@@ -123,11 +135,16 @@ test "mini map ui renders portal marker from real map 100030000" {
     "Victoria Road",
     Some(load_real_minimap_runtime_resource_100030000()),
   )
-  @capture_app.ensure_webgpu_capture_runtime(420.0, 240.0)
-  let captures = app.run_frames_capture(1, raw_delta=0.016)
+  let capture = @capture_app.capture_after_frames(
+    app,
+    1,
+    width=420,
+    height=240,
+    raw_delta=0.016,
+  )
   @capture_app.snapshot(
     "src/tests/mini_map_ui_test/__snapshot__/mini_map_ui_with_portal_marker.png",
-    captures[captures.length() - 1].png,
+    capture.png,
     visual_desc="Mini map UI is displayed with portal markers visible on the map.",
   )
 }

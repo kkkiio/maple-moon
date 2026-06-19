@@ -34,5 +34,5 @@ let server = @local_server.LocalServer::new(db=@local_server.FileDB::new())
 `local_server/transition` now resolves portal target data from exported map resources:
 
 - read `MapX/<mapId>.img/mx.json`
-- follow `tiled_path` to load `map.tmj`
+- follow `tiled_path` to load `tiles/<mapId>.img.tmj`
 - read `portal` object layer (`pn/tm/tn`) and compute `portal_id` by object order

@@ -107,7 +107,9 @@ fn tiled_object_int_optional_soft(
     Some(@tiled.TiledPropertyValue::Int(value)) => Some(value)
     Some(@tiled.TiledPropertyValue::Float(value)) => Some(value.to_int())
     Some(@tiled.TiledPropertyValue::String(value)) =>
-      Some(@string.parse_int(value)) catch { _ => None }
+      Some(@string.parse_int(value)) catch {
+        _ => None
+      }
     Some(_) => None
     None => None
   }
@@ -122,7 +124,9 @@ fn parse_map_layer_name(name : String) -> (Int, String)? {
   if parts[2] != "obj" && parts[2] != "tile" {
     return None
   }
-  Some((@string.parse_int(parts[1]), parts[2].to_owned())) catch { _ => None }
+  Some((@string.parse_int(parts[1]), parts[2].to_owned())) catch {
+    _ => None
+  }
 }
 
 ///|
@@ -147,6 +151,15 @@ fn set_entity_z(entity : @entity.Entity, z : Int) -> Unit {
 
 ///|
 fn apply_map_object_z(event : @tiled.TiledObjectSpawnedEvent) -> Unit {
+  if parse_background_index(event.layer.name, "background_back_") is Some(index) {
+    set_entity_z(event.object_entity, @graphics.BACKGROUND_ZINDEX + index)
+    return
+  }
+  if parse_background_index(event.layer.name, "background_front_")
+    is Some(index) {
+    set_entity_z(event.object_entity, @graphics.FOREGROUND_ZINDEX + index)
+    return
+  }
   guard parse_map_layer_name(event.layer.name) is Some((layer_from_name, kind)) else {
     return
   }

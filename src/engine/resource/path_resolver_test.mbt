@@ -56,9 +56,9 @@ test "resolve_ref_from_dir supports parent segments" {
 test "resolve_ref resolves tiled external tileset path" {
   inspect(
     resolve_ref(
-      "assets/Map/Map/Map1/100030000.img/map.tmj", "../../tilesets/bg_midForest.tsj",
+      "assets/Map/tiles/100030000.img.tmj", "../tilesets/bg_midForest.tsj",
     ),
-    content="assets/Map/Map/tilesets/bg_midForest.tsj",
+    content="assets/Map/tilesets/bg_midForest.tsj",
   )
 }
 

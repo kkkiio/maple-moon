@@ -28,3 +28,5 @@ import {
   "Milky2018/selene/transform",
   "moonbitlang/core/string",
 }
+
+supported_targets = "native+js"

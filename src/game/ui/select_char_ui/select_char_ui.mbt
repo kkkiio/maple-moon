@@ -500,7 +500,9 @@ fn init {
   })
   @console.register_command("select_char", fn(args) {
     let slot = if args.length() > 0 {
-      @string.parse_int(args[0]) catch { _ => 0 }
+      @string.parse_int(args[0]) catch {
+        _ => 0
+      }
     } else {
       0
     }
@@ -530,6 +532,16 @@ fn init {
       "slot": slot,
       "character_id": character_id,
     }
+  })
+  @console.register_command("char_list", fn(_args) {
+    guard character_list_ref.val is Some(chars) else {
+      return { "ok": false, "message": "character list not available" }
+    }
+    let list : Array[Json] = []
+    for i, c in chars {
+      list.push({ "slot": i, "name": c.name, "cid": c.cid })
+    }
+    { "ok": true, "characters": list.to_json() }
   })
 }
 

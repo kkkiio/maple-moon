@@ -157,21 +157,79 @@ extern "js" fn run_mapled(
   #|       await sendCdp("Page.reload", { ignoreCache: true });
   #|       return { ok: true, message: "reload requested" };
   #|     }
-  #|     if (action === "verify-map") {
+  #|     if (action === "bot-run") {
   #|       await waitForConsole(30000);
-  #|       const mapId = String(request.command || "");
-  #|       const portalId = String((request.args || [])[0] || "0");
-  #|       const frames = Math.max(1, Number.parseInt(String(request.frames || "180"), 10) || 180);
   #|       const entry = await ensureGameActive();
-  #|       const beforeErrors = logs.length;
+  #|       const timeoutMs = Math.max(1, Number.parseInt(String(request.timeoutMs || "120000"), 10) || 120000);
+  #|       const scriptPath = String(request.scriptPath || "playtest-script.js");
+  #|       const script = String(request.script || "");
+  #|       const botDeadline = Date.now() + 30000;
+  #|       while (Date.now() < botDeadline) {
+  #|         try {
+  #|           if (await evaluate("typeof globalThis.__bot", false) === "object") break;
+  #|         } catch (_) {}
+  #|         await stepGame(5);
+  #|       }
+  #|       if (await evaluate("typeof globalThis.__bot", false) !== "object") {
+  #|         throw new Error("globalThis.__bot was not installed before timeout");
+  #|       }
+  #|       const beforeLogs = logs.length;
   #|       const beforeRequests = requestOrder.length;
-  #|       const commandResult = await evaluate(`globalThis.$console.cmd("temp_set_field_enter", ${JSON.stringify(mapId)}, ${JSON.stringify(portalId)})`);
-  #|       await stepGame(frames);
-  #|       const state = await readGameState();
+  #|       const sourceUrl = scriptPath.replace(/\\/g, "/");
+  #|       const wrapped = `(async () => {\n${script}\n})()\n//# sourceURL=${sourceUrl}`;
+  #|       let result = null;
+  #|       let runError = null;
+  #|       let settled = false;
+  #|       const runPromise = evaluate(wrapped, true).then(
+  #|         (value) => { result = value; },
+  #|         (error) => { runError = error; },
+  #|       ).finally(() => { settled = true; });
+  #|       const deadline = Date.now() + timeoutMs;
+  #|       while (!settled && Date.now() < deadline) {
+  #|         await stepGame(1);
+  #|       }
+  #|       if (!settled) {
+  #|         runError = new Error(`bot script timed out after ${timeoutMs}ms`);
+  #|         try {
+  #|           await evaluate(`globalThis.__bot_cancel_pending?.(${JSON.stringify(runError.message)})`, false);
+  #|         } catch (_) {}
+  #|         await Promise.race([runPromise, sleep(1000)]).catch(() => {});
+  #|       } else {
+  #|         await runPromise;
+  #|       }
+  #|       let state = null;
+  #|       try { state = await readGameState(); } catch (error) { state = { error: error.message }; }
   #|       const entries = requestOrder.slice(beforeRequests).map((id) => requests.get(id)).filter(Boolean);
   #|       const failures = entries.filter((entry) => entry.failed || (entry.status || 0) >= 400).slice(-80);
-  #|       const recentErrors = logs.slice(beforeErrors).filter((entry) => entry.level === "error").slice(-80);
-  #|       return { ok: true, mapId, portalId, frames, entry, commandResult, failures, recentErrors, state };
+  #|       const recentErrors = logs.slice(beforeLogs).filter((entry) => entry.level === "error").slice(-80);
+  #|       const playtestLogs = logs.slice(beforeLogs).filter((entry) => entry.text.includes("[playtest]")).slice(-120);
+  #|       const passed = runError == null && failures.length === 0 && recentErrors.length === 0;
+  #|       return {
+  #|         ok: true,
+  #|         passed,
+  #|         scriptPath,
+  #|         timeoutMs,
+  #|         entry,
+  #|         result,
+  #|         error: runError ? (runError.stack || runError.message) : null,
+  #|         failures,
+  #|         recentErrors,
+  #|         playtestLogs,
+  #|         state,
+  #|       };
+  #|     }
+  #|     if (action === "wait-ready") {
+  #|       await waitForConsole(30000);
+  #|       let state = null;
+  #|       for (let i = 0; i < 90; i += 1) {
+  #|         state = await readGameState();
+  #|         if (state?.phase === "GameActive") break;
+  #|         await stepGame(10);
+  #|       }
+  #|       if (state?.phase !== "GameActive") {
+  #|         return { ok: false, error: `game not active after waiting; current phase=${state?.phase ?? "unknown"}` };
+  #|       }
+  #|       return { ok: true, phase: state.phase, map_id: state.map_id };
   #|     }
   #|     if (action === "close") {
   #|       setTimeout(() => shutdown("close requested"), 50);
@@ -330,14 +388,10 @@ extern "js" fn exit(code : Int) -> Unit =
 
 ///|
 async fn main {
-  let cmd = @argparse.Command(
-    "mapled",
-    about="Maple Moon CDP daemon",
-    options=[
-      @argparse.OptionArg("cdp-port", default_values=["9333"]),
-      @argparse.OptionArg("url", default_values=["http://localhost:8080"]),
-    ],
-  )
+  let cmd = @argparse.Command("mapled", about="Maple Moon CDP daemon", options=[
+    @argparse.OptionArg("cdp-port", default_values=["9333"]),
+    @argparse.OptionArg("url", default_values=["http://localhost:8080"]),
+  ])
   let parsed = cmd.parse(argv=program_args()) catch {
     err => {
       write_stderr(err.to_string() + "\n")

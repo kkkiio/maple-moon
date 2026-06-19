@@ -15,8 +15,14 @@
 - `console_input_injection_system`
 - `register_command`
 - `install`
+- `plugin`
 
 ## Integration
+
+`@console.plugin()` installs `$console` during Startup and registers
+`console_input_injection_system` in the `First` schedule. JS entrypoints should
+register this plugin explicitly instead of routing console through
+`engine/game_app`.
 
 `$console.ui.click(...)` 会直接向 Selene UI click event bus 发送注册实体的点击事件。
 `console_input_injection_system` 仍可注册到 `First` 调度，用于未来需要模拟指针状态的调试入口。

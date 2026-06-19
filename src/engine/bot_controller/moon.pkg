@@ -1,0 +1,17 @@
+import {
+  "Milky2018/selene/app",
+  "Milky2018/selene/ecs",
+  "Milky2018/selene/inputs",
+  "Milky2018/selene/runtime_debug",
+  "Milky2018/selene/system",
+  "moonbitlang/core/json",
+  "KKKIIO/maple-moon/engine/game_server",
+  "KKKIIO/maple-moon/engine/game_state",
+  "KKKIIO/maple-moon/game/map",
+  "KKKIIO/maple-moon/game/maple_stat",
+  "KKKIIO/maple-moon/game/monster",
+  "KKKIIO/maple-moon/game/player",
+  "KKKIIO/maple-moon/game/server_proto",
+}
+
+supported_targets = "js"

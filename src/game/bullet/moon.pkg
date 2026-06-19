@@ -17,3 +17,5 @@ import {
   "Milky2018/selene/ecs",
   "moonbitlang/core/string",
 }
+
+supported_targets = "native+js"

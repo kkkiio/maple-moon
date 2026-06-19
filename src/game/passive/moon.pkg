@@ -28,3 +28,5 @@ import {
   "KKKIIO/maple-moon/engine/legacy_types",
   "Milky2018/selene/ecs",
 } for "wbtest"
+
+supported_targets = "native+js"

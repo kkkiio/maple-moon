@@ -22,3 +22,5 @@ import {
   "Milky2018/selene/transform",
   "Milky2018/selene/math",
 }
+
+supported_targets = "native+js"

@@ -6,10 +6,10 @@ Run this development tool through MoonBit:
 
 ```bash
 moon run --target js src/cmd/maple start
+moon run --target js src/cmd/maple wait-ready
 moon run --target js src/cmd/maple cmd new_character
 moon run --target js src/cmd/maple cmd select_char 0
 moon run --target js src/cmd/maple cmd warp 100000000 0
-moon run --target js src/cmd/maple verify-map 100000000 0 --frames 300
 moon run --target js src/cmd/maple logs --level error
 ```
 

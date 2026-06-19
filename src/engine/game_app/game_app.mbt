@@ -1,63 +1,31 @@
 ///|
-fn game_start() -> Unit {
-  @passive.set_passive_randomizer(@random.Rand::new())
-  @game_server.init_server()
-  @select_char_ui.setup_game_server_handlers()
-  @game_scene.setup_game_server_handlers()
-  @npc.setup_game_server_handlers()
-  @monster.setup_game_server_handlers()
-  @drop.setup_game_server_handlers()
-  @inventory_ui.setup_game_server_handlers()
-  @inventory.setup_game_server_handlers()
-  @shop_ui.setup_game_server_handlers()
-  @quest_log.setup_game_server_handlers()
-  @inventory_ui.init_inventory_ui()
-  @shop_ui.init_shop_ui()
-  @console.install()
+/// Create a base `App` with common viewport, fps, and fixed-hz configuration.
+pub fn base_app() -> @app.App {
+  @app.App()
+  .with_image_smooth(false)
+  .with_viewport_width(@graphics.view_size.0 |> Double::from_int)
+  .with_viewport_height(@graphics.view_size.1 |> Double::from_int)
+  .with_fps(@graphics.fps)
+  .with_fixed_hz(@logic_fps.LOGIC_FPS.reinterpret_as_uint())
 }
 
 ///|
-fn cleanup_for_change_map(_world : @ecs.World) -> Unit {
-  @drop.clear_for_change_map()
-  @bullet.clear_for_change_map()
-  @monster.clear_for_change_map()
-  @inventory_ui.clear_for_change_map()
-  @shop_ui.clear_for_change_map()
-  @world_map_ui.clear_for_change_map()
-}
-
-///|
-fn cleanup_for_leave_world(_world : @ecs.World) -> Unit {
-  @drop.clear_for_leave_world()
-  @bullet.clear_for_leave_world()
-  @monster.clear_for_leave_world()
-  @inventory_ui.clear_for_leave_world()
-  @shop_ui.clear_for_leave_world()
-  @world_map_ui.clear_for_leave_world()
-}
-
-///|
-/// Run the Maple Moon game with the platform backend selected by the entry
-/// package.
-///
-/// The shared app installs game resources, local-server handlers, runtime
-/// systems, and starts from `GameSetup`. Platform packages decide whether the
-/// run uses WebGPU/JS or raylib/native.
+/// Return a `Plugin` that registers all shared game systems and startup
+/// initialization. Debug console systems are owned by `engine/console` and are
+/// installed by JS entrypoints that need browser automation.
 ///
 /// # Example
 /// ```moonbit nocheck
-/// @game_app.run()
+/// let app = @game_app.base_app()
+///   .add_plugin(@plugins.default_plugin)
+///   .add_plugin(@game_app.game_systems())
+/// @ecs.set_current_world(app.world())
+/// @game_state.init_state(@game_state.GamePhase::GameSetup)
+/// app.run()
 /// ```
-pub fn run() -> Unit {
-  @item.set_item_data_system(@item.ItemDataSystem::new())
-  let app = @app.App()
-    .with_image_smooth(false)
-    .with_viewport_width(@graphics.view_size.0 |> Double::from_int)
-    .with_viewport_height(@graphics.view_size.1 |> Double::from_int)
-    .with_fps(@graphics.fps)
-    .with_fixed_hz(@logic_fps.LOGIC_FPS.reinterpret_as_uint())
-    // .add_plugin(@plugins.debug_plugin)
-    .add_plugin(@plugins.default_plugin)
+pub fn game_systems() -> @app.Plugin {
+  fn(app : @app.App) -> @app.App {
+    app
     .add_system(
       @system.OnEnter(
         @game_state.transition(
@@ -65,7 +33,7 @@ pub fn run() -> Unit {
           to=fn(phase) { phase is @game_state.GamePhase::GameTransiting(..) },
         ),
       ),
-      cleanup_for_change_map,
+      fn(_world) { cleanup_for_change_map() },
       system_name="cleanup_for_change_map",
     )
     .add_system(
@@ -79,7 +47,7 @@ pub fn run() -> Unit {
           to=fn(phase) { phase is @game_state.GamePhase::SelectCharacter },
         ),
       ),
-      cleanup_for_leave_world,
+      fn(_world) { cleanup_for_leave_world() },
       system_name="cleanup_for_leave_world",
     )
     .add_system(
@@ -87,7 +55,22 @@ pub fn run() -> Unit {
       fn(world) { app_resource_setup_system(world) },
       system_name="app_resource_setup_system",
     )
-    .add_system(Startup, fn(_world) { game_start() })
+    .add_system(Startup, fn(_world) {
+      @item.set_item_data_system(@item.ItemDataSystem::new())
+      @passive.set_passive_randomizer(@random.Rand::new())
+      @game_server.init_server()
+      @select_char_ui.setup_game_server_handlers()
+      @game_scene.setup_game_server_handlers()
+      @npc.setup_game_server_handlers()
+      @monster.setup_game_server_handlers()
+      @drop.setup_game_server_handlers()
+      @inventory_ui.setup_game_server_handlers()
+      @inventory.setup_game_server_handlers()
+      @shop_ui.setup_game_server_handlers()
+      @quest_log.setup_game_server_handlers()
+      @inventory_ui.init_inventory_ui()
+      @shop_ui.init_shop_ui()
+    })
     .add_system(
       Update,
       fn(_world) { @audio.audio_event_playback_system(@time.delta()) },
@@ -278,12 +261,25 @@ pub fn run() -> Unit {
       fn(world) { @io_service.io_system(world) },
       system_name="io_system",
     )
-    .add_system(
-      First,
-      fn(world) { @console.console_input_injection_system(world) },
-      system_name="console_input_injection_system",
-    )
-  @ecs.set_current_world(app.world())
-  @game_state.init_state(@game_state.GamePhase::GameSetup)
-  app.run()
+  }
+}
+
+///|
+fn cleanup_for_change_map() -> Unit {
+  @drop.clear_for_change_map()
+  @bullet.clear_for_change_map()
+  @monster.clear_for_change_map()
+  @inventory_ui.clear_for_change_map()
+  @shop_ui.clear_for_change_map()
+  @world_map_ui.clear_for_change_map()
+}
+
+///|
+fn cleanup_for_leave_world() -> Unit {
+  @drop.clear_for_leave_world()
+  @bullet.clear_for_leave_world()
+  @monster.clear_for_leave_world()
+  @inventory_ui.clear_for_leave_world()
+  @shop_ui.clear_for_leave_world()
+  @world_map_ui.clear_for_leave_world()
 }

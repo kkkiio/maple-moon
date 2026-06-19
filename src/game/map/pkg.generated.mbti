@@ -20,6 +20,8 @@ pub fn clear_tiled_map(@ecs.World) -> Unit
 
 pub fn create_scene_map(MapRawResources, MapPortalAnimations) -> SceneMap raise
 
+pub fn current_portals_json() -> Json
+
 pub fn find_auto_warp_at_current(@res_types.Point[Int]) -> PortalWarpInfo?
 
 pub fn find_manual_warp_at_current(@res_types.Point[Int]) -> PortalWarpInfo?

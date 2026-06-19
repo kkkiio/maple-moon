@@ -111,10 +111,7 @@ fn click_registered_ui_impl(package_name : String, ui_name : String) -> Json {
     rect.position[@selene_math.X] + rect.size[@selene_math.X] / 2.0,
     rect.position[@selene_math.Y] + rect.size[@selene_math.Y] / 2.0,
   )
-  @selene_ui.click_event_bus.send({
-    entity,
-    button: @inputs.MouseButton::Left,
-  })
+  @selene_ui.click_event_bus.send({ entity, button: @inputs.MouseButton::Left })
   {
     "ok": true,
     "code": "CLICK_SENT",
@@ -231,4 +228,28 @@ pub fn install() -> Unit {
     list_ui_entries_text, click_registered_ui_text, render_registered_game_to_text,
     run_registered_command_text,
   )
+}
+
+///|
+/// Return a JS-only console plugin that installs browser debug bindings and
+/// registers console-side input injection hooks.
+///
+/// # Example
+/// ```moonbit nocheck
+/// let app = @app.App().add_plugin(@console.plugin())
+/// ```
+pub fn plugin() -> @app.Plugin {
+  fn(app : @app.App) -> @app.App {
+    app
+    .add_system(
+      @system.Startup,
+      fn(_world) { install() },
+      system_name="console_install",
+    )
+    .add_system(
+      @system.First,
+      console_input_injection_system,
+      system_name="console_input_injection_system",
+    )
+  }
 }

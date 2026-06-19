@@ -6,3 +6,5 @@ import {
   "KKKIIO/maple-moon/engine/resource",
   "moonbitlang/core/string",
 }
+
+supported_targets = "native+js"

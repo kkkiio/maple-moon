@@ -24,3 +24,5 @@ import {
   "Milky2018/selene/ui" @selene_ui,
   "Milky2018/selene/ecs",
 }
+
+supported_targets = "native+js"

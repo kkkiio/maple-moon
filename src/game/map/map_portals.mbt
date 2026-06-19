@@ -297,6 +297,52 @@ pub fn get_portal_pos_by_id_current(portal_id : Int) -> Point[Int]? {
 }
 
 ///|
+/// Return a JSON snapshot of the portals loaded for the current map.
+///
+/// The snapshot is empty when no map has installed a portals context yet. The
+/// fields are intended for debug tooling and playtest scripts, so callers
+/// should treat the result as read-only observation data.
+///
+/// # Example
+/// ```moonbit nocheck
+/// let portals = @map.current_portals_json()
+/// inspect(portals.stringify())
+/// ```
+pub fn current_portals_json() -> Json {
+  let entries : Array[Json] = []
+  match portals_context.val {
+    Some(ctx) =>
+      for id, portal in ctx.portals.id_portal_map {
+        let position = portal.get_position()
+        let bounds = portal.bounds()
+        let warp = portal.getwarpinfo()
+        let portal_type = portal.get_type()
+        let entry : Json = {
+          "id": id,
+          "name": portal.get_name(),
+          "type": portal_type.to_json(),
+          "x": position.x,
+          "y": position.y,
+          "targetMapId": warp.map_id,
+          "targetPortalName": warp.toname,
+          "intraMap": warp.intra_map,
+          "manualTrigger": portal_type.is_manual_trigger(),
+          "autoTrigger": portal_type.is_auto_trigger(),
+          "bounds": {
+            "left": bounds.left(),
+            "top": bounds.top(),
+            "right": bounds.right(),
+            "bottom": bounds.bottom(),
+          },
+        }
+        entries.push(entry)
+      }
+    None => ()
+  }
+  entries.to_json()
+}
+
+///|
 pub fn portal_system(_world : @ecs.World) -> Unit {
   guard portals_context.val is Some(ctx) else { return }
   if ctx.dirty {

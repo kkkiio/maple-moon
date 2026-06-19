@@ -4,11 +4,11 @@
 
 ## 资源入口
 
-- `MapX/<mapId>.img/mx.json`
+- `MapX/<mapId>.img.mx.json`
   - 仅包含 `tiled_path`
-- `map.tmj`
+- `tiles/<mapId>.img.tmj`
   - 地图主体数据（`portal` / `life` / `foothold` / `ladderRope` / `seat` / `miniMap`）
-  - Maple 背景字段保存在 `background_back_N` / `background_front_N` imagelayer 的 custom properties 中
+  - Maple 背景字段保存在 `background_back_N` / `background_front_N` layer 的 custom properties 中
 
 ## 运行时构建
 
@@ -40,9 +40,13 @@
     - 所有移动类型 `HMoveA(4)` / `VMoveA(5)` / `HMoveB(6)` / `VMoveB(7)`
     - 所有 `cx/cy` 表示 Maple 离散间隔、不能等价为连续图片平铺的背景
     - 所有带 `rx/ry` Maple 视差比率的背景
-    - 所有动画背景或 `a0/a1` alpha tween 背景
+    - 旧 `.aseprite` image layer 动画背景或 `a0/a1` alpha tween 背景
     - runtime 层会移除原 imagelayer sprite，用多个 child entity 表达 repeat
     - 动画按 layer state 采样一次当前帧，再同步到该层所有 tile child
+- Tiled animated tileset 背景：
+  - 导出为 `background_back_N` / `background_front_N` objectgroup 中的 tile object
+  - frame 动画由 Selene/Tiled animated tileset 支持播放
+  - 当前运行时不模拟 Maple moving background 的时间滚动，移动类型仍需要后续 objectgroup runtime 分支
 - `repeatx/repeaty` 可服务 Tiled 静态预览；Maple runtime branch 以 `type/cx/cy/rx/ry/ani/a0/a1` 为事实来源。
 - Maple runtime 背景：
   - `NxBackgroundType` 覆盖 `0..7`
@@ -57,3 +61,8 @@
   - `map_info`
   - `portals`
   - `mini_map_resources`
+
+## Debug 查询
+
+- `current_portals_json()` 返回当前 map 已加载 portal 的只读 JSON 快照。
+- 该接口供 `game_debug` / Playtest Bot 断言地图遍历使用，不参与普通传送逻辑。

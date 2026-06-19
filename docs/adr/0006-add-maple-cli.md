@@ -4,7 +4,7 @@ Date: 2026-06-15
 
 ## Status
 
-Proposed
+Accepted, amended by [ADR 0008](0008-testing-strategy-boundaries.md)
 
 ## Context
 
@@ -141,22 +141,30 @@ Node.js APIs used by the MoonBit JS FFI:
 
 ```bash
 moon run --target js src/cmd/maple start
+moon run --target js src/cmd/maple status
+moon run --target js src/cmd/maple wait-ready
 moon run --target js src/cmd/maple cmd warp 100000000 0
 moon run --target js src/cmd/maple cmd meso 1000000
+moon run --target js src/cmd/maple cmd char_list
+moon run --target js src/cmd/maple cmd new_character
+moon run --target js src/cmd/maple cmd select_char 0
 moon run --target js src/cmd/maple logs
 moon run --target js src/cmd/maple logs --level error
 moon run --target js src/cmd/maple network
 moon run --target js src/cmd/maple network --failed
 moon run --target js src/cmd/maple screenshot --out screenshot.png
 moon run --target js src/cmd/maple eval "globalThis.$console.render_game_to_text()"
-moon run --target js src/cmd/maple verify-map 100000000 0 --frames 300
+moon run --target js src/cmd/maple bot run playtests/henesys_traversal.js
+moon run --target js src/cmd/maple reload
 moon run --target js src/cmd/maple close
 ```
 
-`verify-map` waits for `$console`, runs `new_character` when the temporary
-browser profile has no character, runs `select_char 0`, then sends
-`temp_set_field_enter` and reports console/network failures observed during
-that map transition.
+All commands are **atomic operations** — each does exactly one thing.
+Verification workflows are composed by the caller (human or agent) from
+individual commands. The CLI itself does not provide composite verification
+routines (see ADR 0008). `maple bot run` is the ADR 0007 exception: it is a
+single playtest execution primitive that loads `game_debug.html`, injects one JS
+script, and returns a fixed pass/fail report.
 
 ## Consequences
 
@@ -203,7 +211,7 @@ that map transition.
 3. **Implement `maple` CLI** with `moonbitlang/core/argparse`, connecting to
    `mapled` and printing structured responses.
 4. **Collect console and network logs** in daemon-side ring buffers.
-5. **Validate a real map load** by driving `$console.cmd("temp_set_field_enter",
-   "100000000", "0")`, stepping frames, and checking logs/network failures.
+5. **Drive map load and verify** by sending console commands, stepping frames
+   via `eval`, and checking logs/network failures — as separate atomic steps.
 6. **Register additional debug commands later** only after their game-side
    behavior is well-defined.

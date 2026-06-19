@@ -1,8 +1,14 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "KKKIIO/maple-moon/engine/game_app"
 
+import {
+  "Milky2018/selene/app",
+}
+
 // Values
-pub fn run() -> Unit
+pub fn base_app() -> @app.App
+
+pub fn game_systems() -> (@app.App) -> @app.App
 
 // Errors
 

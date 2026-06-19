@@ -29,3 +29,5 @@ import {
   "KKKIIO/maple-moon/game/res_types" @struct,
   "Milky2018/selene/ecs",
 } for "test"
+
+supported_targets = "native+js"

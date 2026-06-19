@@ -50,3 +50,5 @@ import {
 import {
   "moonbitlang/x/fs",
 } for "test"
+
+supported_targets = "native+js"

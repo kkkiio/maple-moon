@@ -19,3 +19,5 @@ import {
   "Milky2018/selene/event",
   "moonbitlang/core/string",
 }
+
+supported_targets = "native+js"

@@ -13,3 +13,5 @@ import {
   "moonbitlang/core/json",
   "moonbitlang/core/random",
 } for "test"
+
+supported_targets = "native+js"

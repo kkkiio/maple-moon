@@ -73,32 +73,42 @@ fn setup_inventory_ui_test_scene() -> @app.App raise {
 }
 
 ///|
-test "inventory ui renders equip tab with icon count and meso" {
+async test "inventory ui renders equip tab with icon count and meso" {
   defer @inventory_ui.set_inventory_visible(false)
   defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
   defer @sprite.sprites().clear()
   let app = setup_inventory_ui_test_scene()
-  @capture_app.ensure_webgpu_capture_runtime(800.0, 540.0)
-  let captures = app.run_frames_capture(60, raw_delta=0.016)
+  let capture = @capture_app.capture_after_frames(
+    app,
+    60,
+    width=800,
+    height=540,
+    raw_delta=0.016,
+  )
   @capture_app.snapshot(
     "src/tests/inventory_ui_test/__snapshot__/inventory_ui_default.png",
-    captures[captures.length() - 1].png,
+    capture.png,
     visual_desc="Inventory UI is displayed showing the default equip tab with items.",
   )
 }
 
 ///|
-test "inventory ui renders use tab with icon count and meso" {
+async test "inventory ui renders use tab with icon count and meso" {
   defer @inventory_ui.set_inventory_visible(false)
   defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
   defer @sprite.sprites().clear()
   let app = setup_inventory_ui_test_scene()
   @inventory_ui.set_tab_index_for_test(1)
-  @capture_app.ensure_webgpu_capture_runtime(800.0, 540.0)
-  let captures = app.run_frames_capture(62, raw_delta=0.016)
+  let capture = @capture_app.capture_after_frames(
+    app,
+    62,
+    width=800,
+    height=540,
+    raw_delta=0.016,
+  )
   @capture_app.snapshot(
     "src/tests/inventory_ui_test/__snapshot__/inventory_ui_use_tab.png",
-    captures[captures.length() - 1].png,
+    capture.png,
     visual_desc="Inventory UI is displayed showing the use tab with items.",
   )
 }

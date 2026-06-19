@@ -2,8 +2,12 @@
 
 用于对 `selene` 后端离屏渲染产出的 PNG bytes 做快照断言。
 
-测试自己调用 `App::run_frames_capture` 产出 `FrameCaptureArtifact`，再把需要检查
-的 PNG bytes 传给 `snapshot`。
+测试调用 `@capture_app.capture_after_frames` 产出 `FrameCaptureArtifact`，再把需要
+检查的 PNG bytes 传给 `snapshot`。
+
+`capture_after_frames` 基于 Selene 的 `OffscreenCapture` graphics test API：
+它会初始化 WebGPU runtime，等待已 preload 的渲染资源 ready，挂载 capture plugin，
+启动 `app.run()`，并在严格帧数上返回截图 artifact。
 
 ## 快照断言
 
@@ -12,11 +16,16 @@
   当 `UPDATE_CANVAS_SNAPS=true` 或快照文件不存在时写入快照；不一致时写入 `.wrong.png` 并让测试失败。
 
 ```mbt nocheck
-@capture_app.ensure_webgpu_capture_runtime(800.0, 600.0)
-let captures = app.run_frames_capture(3, raw_delta=0.016)
+let capture = @capture_app.capture_after_frames(
+  app,
+  3,
+  width=800,
+  height=600,
+  raw_delta=0.016,
+)
 @capture_app.snapshot(
   "src/tests/example/__snapshot__/demo.png",
-  captures[captures.length() - 1].png,
+  capture.png,
   visual_desc="A panel with title text is visible at top-left.",
 )
 ```

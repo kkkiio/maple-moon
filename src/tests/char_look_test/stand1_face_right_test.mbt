@@ -1,5 +1,5 @@
 ///|
-test "character stand1 face right" {
+async test "character stand1 face right" {
   let previous_world = @ecs.current_world()
   let world = @ecs.World()
   @ecs.set_current_world(world)
@@ -83,16 +83,20 @@ test "character stand1 face right" {
   look.add_equip(weapon_item, @slot.Id::WEAPON)
   look.play_animations()
   // Initialize test app and capture one frame
-  @capture_app.ensure_webgpu_capture_runtime(200.0, 200.0)
-  let captures = @app.App()
+  let capture = @capture_app.capture_after_frames(
+    @app.App()
     .with_world(world)
     .with_viewport_width(200.0)
     .with_viewport_height(200.0)
-    .add_plugin(@plugins.default_plugin)
-    .run_frames_capture(1, raw_delta=0.016)
+    .add_plugin(@plugins.default_plugin),
+    1,
+    width=200,
+    height=200,
+    raw_delta=0.016,
+  )
   @capture_app.snapshot(
     "src/tests/char_look_test/__snapshot__/stand1_face_right.png",
-    captures[0].png,
+    capture.png,
     visual_desc="2D game snapshot with visible character-related rendering.",
   )
 }

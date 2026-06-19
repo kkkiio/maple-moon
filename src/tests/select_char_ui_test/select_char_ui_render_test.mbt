@@ -64,7 +64,7 @@ fn setup_select_char_phase() -> Unit {
 }
 
 ///|
-test "select char ui renders character and start button chooses first character" {
+async test "select char ui renders character and start button chooses first character" {
   defer @capture_app.reset_mock_server()
   let emitted_character_list = Ref(false)
   let app = setup_select_char_ui_scene(script=fn(world) {
@@ -82,8 +82,13 @@ test "select char ui renders character and start button chooses first character"
   })
   setup_select_char_phase()
   @char_look.insert_resource(@char_look.CharacterPresentationResource::load())
-  @capture_app.ensure_webgpu_capture_runtime(800.0, 600.0)
-  let captures = app.run_frames_capture(360, raw_delta=0.016)
+  let capture = @capture_app.capture_after_frames(
+    app,
+    360,
+    width=800,
+    height=600,
+    raw_delta=0.016,
+  )
 
   inspect(
     @capture_app.mock_server_sent_count(
@@ -103,7 +108,7 @@ test "select char ui renders character and start button chooses first character"
 
   @capture_app.snapshot(
     "src/tests/select_char_ui_test/__snapshot__/select_char_ui_default.png",
-    captures[captures.length() - 1].png,
+    capture.png,
     visual_desc="Select character UI is open with one character, showing character preview, name, and start button.",
   )
 }

@@ -60,19 +60,24 @@ fn setup_scene(app : @app.App) -> Unit {
 }
 
 ///|
-test "quest_log_ui renders in-progress & completed tab" {
+async test "quest_log_ui renders in-progress & completed tab" {
   reset_quest_log_ui_test_state()
   defer reset_quest_log_ui_test_state()
 
   let app = create_app()
   setup_scene(app)
 
-  @capture_app.ensure_webgpu_capture_runtime(800.0, 540.0)
-  let captures = app.run_frames_capture(12, raw_delta=0.016)
+  let capture = @capture_app.capture_after_frames(
+    app,
+    12,
+    width=800,
+    height=540,
+    raw_delta=0.016,
+  )
 
   @capture_app.snapshot(
     "src/tests/quest_log_ui_test/__snapshot__/quest_log_ui_in_progress.png",
-    captures[captures.length() - 1].png,
+    capture.png,
     visual_desc="Quest log UI showing the in-progress tab with a list of active quests.",
   )
 
@@ -80,27 +85,37 @@ test "quest_log_ui renders in-progress & completed tab" {
     "quest_log", "row.in_progress.3",
   )
   assert_true(click_row_ok is { "ok": true, .. })
-  @capture_app.ensure_webgpu_capture_runtime(800.0, 540.0)
-  let captures2 = app.run_frames_capture(3, raw_delta=0.016)
+  let capture2 = @capture_app.capture_after_frames(
+    app,
+    3,
+    width=800,
+    height=540,
+    raw_delta=0.016,
+  )
   @capture_app.snapshot(
     "src/tests/quest_log_ui_test/__snapshot__/quest_log_ui_in_progress_second_selected.png",
-    captures2[captures2.length() - 1].png,
+    capture2.png,
     visual_desc="Quest log UI with the second quest in the in-progress list selected, displaying its details.",
   )
 
   let click_ok = @console.click_registered_ui("quest_log", "tab.completed")
   assert_true(click_ok is { "ok": true, .. })
-  @capture_app.ensure_webgpu_capture_runtime(800.0, 540.0)
-  let captures3 = app.run_frames_capture(3, raw_delta=0.016)
+  let capture3 = @capture_app.capture_after_frames(
+    app,
+    3,
+    width=800,
+    height=540,
+    raw_delta=0.016,
+  )
   @capture_app.snapshot(
     "src/tests/quest_log_ui_test/__snapshot__/quest_log_ui_completed.png",
-    captures3[captures3.length() - 1].png,
+    capture3.png,
     visual_desc="Quest log UI showing the completed tab with a list of finished quests.",
   )
 }
 
 ///|
-test "quest_log_ui closes on escape" {
+async test "quest_log_ui closes on escape" {
   reset_quest_log_ui_test_state()
   defer reset_quest_log_ui_test_state()
   @game_state.init_state(

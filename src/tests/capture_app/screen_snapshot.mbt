@@ -7,10 +7,12 @@
 ///
 /// # Example
 /// ```moonbit nocheck
-/// let captures = app.run_frames_capture(3, raw_delta=0.016)
+/// let artifact = @capture_app.capture_after_frames(
+///   app, 3, width=800, height=540, raw_delta=0.016,
+/// )
 /// @capture_app.snapshot(
 ///   "src/tests/example/__snapshot__/frame.png",
-///   captures[captures.length() - 1].png,
+///   artifact.png,
 ///   visual_desc="The expected frame is rendered.",
 /// )
 /// ```

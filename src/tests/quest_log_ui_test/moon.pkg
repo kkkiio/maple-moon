@@ -1,4 +1,5 @@
 import {
+  "moonbitlang/async",
   "moonbitlang/core/json",
   "KKKIIO/maple-moon/engine/console",
   "KKKIIO/maple-moon/engine/game_state",

@@ -1,4 +1,5 @@
 import {
+  "moonbitlang/async",
   "moonbitlang/core/json",
   "moonbitlang/core/random",
   "KKKIIO/maple-moon/game/combat_proto",

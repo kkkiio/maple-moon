@@ -1,4 +1,5 @@
 import {
+  "moonbitlang/async",
   "moonbitlang/core/json",
   "KKKIIO/maple-moon/engine/io_service",
   "KKKIIO/maple-moon/game/map",

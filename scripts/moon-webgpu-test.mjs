@@ -179,6 +179,7 @@ async function runArtifact({ browser, port, artifactPath, entries, updateSnapsho
 async function runArtifactEntries({ browser, port, artifactPath, entries, updateSnapshots }) {
   const page = await browser.newPage();
   const actualResults = [];
+  const driverResults = [];
   const pageErrors = [];
   const resourceErrors = new Set();
   let collectingActual = false;
@@ -198,8 +199,12 @@ async function runArtifactEntries({ browser, port, artifactPath, entries, update
   });
   page.on("console", (msg) => {
     const text = msg.text();
-    if (collectingActual && text.startsWith("{\"package\":")) {
-      actualResults.push(JSON.parse(text));
+    if (text.startsWith("{\"package\":")) {
+      const result = JSON.parse(text);
+      driverResults.push(result);
+      if (collectingActual) {
+        actualResults.push(result);
+      }
     }
     if (msg.type() === "error" && !text.includes("Failed to load resource")) {
       console.error(text);
@@ -226,11 +231,13 @@ async function runArtifactEntries({ browser, port, artifactPath, entries, update
     globalThis.__MAPLE_DEFERRED_SNAPSHOTS = [];
     globalThis.exports.moonbit_test_driver_internal_execute(testEntries);
   }, entries);
+  await waitForMoonBitResults(driverResults, entries.length);
   await waitForWebGpuAssets(page);
   for (const error of await collectWebGpuImageErrors(page)) {
     resourceErrors.add(error);
   }
 
+  driverResults.length = 0;
   collectingActual = true;
   await page.evaluate((testEntries) => {
     globalThis.__MAPLE_DEFER_SNAPSHOTS = false;
@@ -239,11 +246,11 @@ async function runArtifactEntries({ browser, port, artifactPath, entries, update
     globalThis.exports.moonbit_test_driver_internal_execute(testEntries);
     globalThis.exports.moonbit_test_driver_finish?.();
   }, entries);
+  await waitForMoonBitResults(actualResults, entries.length);
   await waitForWebGpuAssets(page);
   for (const error of await collectWebGpuImageErrors(page)) {
     resourceErrors.add(error);
   }
-  await page.waitForTimeout(100);
   collectingActual = false;
 
   await page.close();
@@ -269,6 +276,13 @@ async function runArtifactEntries({ browser, port, artifactPath, entries, update
     resourceErrors.size === 0 &&
     actualResults.length > 0 &&
     actualResults.every((result) => (result.message ?? "") === "");
+}
+
+async function waitForMoonBitResults(results, expectedCount) {
+  const deadline = Date.now() + 30000;
+  while (results.length < expectedCount && Date.now() < deadline) {
+    await new Promise((resolve) => setTimeout(resolve, 50));
+  }
 }
 
 async function collectWebGpuImageErrors(page) {

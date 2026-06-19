@@ -1,7 +1,7 @@
 // No using here to avoid duplicate declaration in the same package
 
 ///|
-test "character with crossbow equipment" {
+async test "character with crossbow equipment" {
   let previous_world = @ecs.current_world()
   let world = @ecs.World()
   @ecs.set_current_world(world)
@@ -97,16 +97,20 @@ test "character with crossbow equipment" {
   look.play_animations()
 
   // Capture
-  @capture_app.ensure_webgpu_capture_runtime(200.0, 200.0)
-  let captures = @app.App()
+  let capture = @capture_app.capture_after_frames(
+    @app.App()
     .with_world(world)
     .with_viewport_width(200.0)
     .with_viewport_height(200.0)
-    .add_plugin(@plugins.default_plugin)
-    .run_frames_capture(1, raw_delta=0.016)
+    .add_plugin(@plugins.default_plugin),
+    1,
+    width=200,
+    height=200,
+    raw_delta=0.016,
+  )
   @capture_app.snapshot(
     "src/tests/char_look_test/__snapshot__/crossbow_stand1.png",
-    captures[0].png,
+    capture.png,
     visual_desc="A character stands facing left while holding and firing a crossbow, with a shooting effect rendered in front of the weapon.",
   )
 }

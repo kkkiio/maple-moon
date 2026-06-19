@@ -1,5 +1,5 @@
 ///|
-test "character stabO1" {
+async test "character stabO1" {
   let previous_world = @ecs.current_world()
   let world = @ecs.World()
   @ecs.set_current_world(world)
@@ -87,11 +87,16 @@ test "character stabO1" {
   look.add_equip(weapon_item, @slot.Id::WEAPON)
   look.play_animations()
 
-  @capture_app.ensure_webgpu_capture_runtime(200.0, 200.0)
-  let captures = app.run_frames_capture(2, raw_delta=0.016)
+  let capture = @capture_app.capture_after_frames(
+    app,
+    2,
+    width=200,
+    height=200,
+    raw_delta=0.016,
+  )
   @capture_app.snapshot(
     "src/tests/char_look_test/__snapshot__/stabO1_0.png",
-    captures[1].png,
+    capture.png,
     visual_desc="2D game frame from animation test.",
   )
 }

@@ -61,41 +61,51 @@ fn visible_sprite_count() -> Int {
 }
 
 ///|
-test "map 101010102 tween lighting alpha background start" {
+async test "map 101010102 tween lighting alpha background start" {
   defer @map.clear_tiled_map(@ecs.require_current_world())
   defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
   defer @sprite.sprites().clear()
 
   let app = setup_tiled_background_scene_101010102()
-  @capture_app.ensure_webgpu_capture_runtime(800.0, 600.0)
-  let captures = app.run_frames_capture(80, raw_delta=0.016)
+  let capture = @capture_app.capture_after_frames(
+    app,
+    80,
+    width=800,
+    height=600,
+    raw_delta=0.016,
+  )
 
   let start_alpha = min_sprite_alpha()
   assert_true(start_alpha >= 0.0)
   assert_true(visible_sprite_count() > 0)
   @capture_app.snapshot(
     "src/tests/map_background_test/__snapshot__/map_101010102_bg_alpha_start.png",
-    captures[captures.length() - 1].png,
+    capture.png,
     visual_desc="Large green tree trunks and vines fill most of the screen, with lighter tree layers visible in the far background.",
   )
 }
 
 ///|
-test "map 101010102 tween lighting alpha background mid" {
+async test "map 101010102 tween lighting alpha background mid" {
   defer @map.clear_tiled_map(@ecs.require_current_world())
   defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
   defer @sprite.sprites().clear()
 
   let app = setup_tiled_background_scene_101010102()
-  @capture_app.ensure_webgpu_capture_runtime(800.0, 600.0)
-  let captures = app.run_frames_capture(158, raw_delta=0.016)
+  let capture = @capture_app.capture_after_frames(
+    app,
+    158,
+    width=800,
+    height=600,
+    raw_delta=0.016,
+  )
 
   let after_motion_alpha = min_sprite_alpha()
   assert_true(after_motion_alpha >= 0.0)
   assert_true(visible_sprite_count() > 0)
   @capture_app.snapshot(
     "src/tests/map_background_test/__snapshot__/map_101010102_bg_alpha_mid.png",
-    captures[captures.length() - 1].png,
+    capture.png,
     visual_desc="Overlapping foreground and background tree layers create a dense forest view, with thick trunks crossing the center of the screen.",
   )
 }

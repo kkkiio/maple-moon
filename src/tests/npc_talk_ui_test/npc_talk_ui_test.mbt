@@ -103,13 +103,18 @@ fn setup_scene() -> @app.App raise {
 }
 
 ///|
-test "npc_talk_ui quest 2090 keeps cursor above ui and grows with content" {
+async test "npc_talk_ui quest 2090 keeps cursor above ui and grows with content" {
   reset_npc_talk_ui_test_state()
   defer reset_npc_talk_ui_test_state()
 
   let app = setup_scene()
-  @capture_app.ensure_webgpu_capture_runtime(800.0, 540.0)
-  let captures = app.run_frames_capture(12, raw_delta=0.016)
+  let capture = @capture_app.capture_after_frames(
+    app,
+    12,
+    width=800,
+    height=540,
+    raw_delta=0.016,
+  )
 
   let desc = @npc_talk_ui.describe_npc_talk_ui()
   json_inspect(desc, content={
@@ -171,7 +176,7 @@ test "npc_talk_ui quest 2090 keeps cursor above ui and grows with content" {
 
   @capture_app.snapshot(
     "src/tests/npc_talk_ui_test/__snapshot__/npc_talk_ui_quest_2090.png",
-    captures[captures.length() - 1].png,
+    capture.png,
     visual_desc="NPC talk UI for quest 2090 quiz is open with multiple options. The cursor rendered by cursor_system is visible on top of the dialog and not occluded by UI layers. The window is tall enough to avoid clipping the content.",
   )
 }

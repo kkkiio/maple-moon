@@ -2,7 +2,7 @@
 using @char_stance {type StanceId}
 
 ///|
-test "character climbing ladder" {
+async test "character climbing ladder" {
   let previous_world = @ecs.current_world()
   let world = @ecs.World()
   @ecs.set_current_world(world)
@@ -178,16 +178,20 @@ test "character climbing ladder" {
   look.play_animations()
 
   // Capture
-  @capture_app.ensure_webgpu_capture_runtime(200.0, 200.0)
-  let captures = @app.App()
+  let capture = @capture_app.capture_after_frames(
+    @app.App()
     .with_world(world)
     .with_viewport_width(200.0)
     .with_viewport_height(200.0)
-    .add_plugin(@plugins.default_plugin)
-    .run_frames_capture(1, raw_delta=0.016)
+    .add_plugin(@plugins.default_plugin),
+    1,
+    width=200,
+    height=200,
+    raw_delta=0.016,
+  )
   @capture_app.snapshot(
     "src/tests/char_look_test/__snapshot__/climb.png",
-    captures[0].png,
+    capture.png,
     visual_desc="2D game snapshot with visible character-related rendering.",
   )
 }

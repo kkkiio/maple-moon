@@ -124,6 +124,9 @@ pub fn load_tiled_map_from_mx(
   let tiled_map = @tiled.TiledMap::from_tiled_json(resolved_tmj_json)
   (
     "assets/Map/" + join_path(tiled_path_parts),
-    @tiled.with_tiled_map_source_path(tiled_map, "assets/Map/" + join_path(tiled_path_parts)),
+    @tiled.with_tiled_map_source_path(
+      tiled_map,
+      "assets/Map/" + join_path(tiled_path_parts),
+    ),
   )
 }

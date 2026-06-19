@@ -671,12 +671,7 @@ fn parse_world_map_page_resource(
       map_ids: spot.map_ids,
     })
   }
-  {
-    base_img_texture,
-    parent_map: src.info.parent_map,
-    map_links,
-    map_spots,
-  }
+  { base_img_texture, parent_map: src.info.parent_map, map_links, map_spots }
 }
 
 ///|

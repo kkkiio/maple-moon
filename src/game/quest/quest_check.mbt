@@ -131,8 +131,8 @@ impl QuestCheck for MonsterHuntCheck with fn check(self, context) {
     Some(Completed(_)) => return Err("Quest completed") // TODO: support repeatable quest
     None => return Err("Quest not started")
   }
-  check_mob_progress_data(progress_data) catch { e =>
-    return Err(e.to_string())
+  check_mob_progress_data(progress_data) catch {
+    e => return Err(e.to_string())
   }
   for i, monster_hunt in self.monster_hunts {
     // Each monster hunt uses 3 digits in the progress string

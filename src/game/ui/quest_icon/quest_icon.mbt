@@ -282,10 +282,7 @@ fn upsert_runtime(
       })
     }
   } else if runtime_by_oid.val.get(oid) is Some(runtime) {
-    runtime_by_oid.val.set(oid, {
-      ..runtime,
-      _npc_entity: anchor.entity,
-    })
+    runtime_by_oid.val.set(oid, { ..runtime, _npc_entity: anchor.entity })
   }
 }
 

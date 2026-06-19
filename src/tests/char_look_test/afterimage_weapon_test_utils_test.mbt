@@ -95,7 +95,7 @@ fn load_weapon_item(item_id : Int) -> @item.ItemData raise {
 }
 
 ///|
-fn snapshot_afterimage_case(
+async fn snapshot_afterimage_case(
   item_id : Int,
   stance : @char_stance.StanceId,
   stance_key : String,
@@ -104,7 +104,7 @@ fn snapshot_afterimage_case(
   host_shift_x : Double,
   snapshot_path : String,
   visual_desc : String,
-) -> Unit raise {
+) -> Unit {
   let previous_world = @ecs.current_world()
   let world = @ecs.World()
   @ecs.set_current_world(world)
@@ -143,13 +143,7 @@ fn snapshot_afterimage_case(
   look.set_stance(stance)
   look.play_animations()
 
-  let after_image_node = @fs.read_file_to_string(
-      "assets/Character/Afterimage/\{after_image_name}.img.json",
-    )
-    |> @json.parse
-  let after_images : @char_look.NxAfterImages = @json.from_json(
-    after_image_node,
-  )
+  let after_images = @char_look.load_after_images(after_image_name)
   @char_look.set_after_images(after_image_name, after_images)
 
   let collection = @char_look.AfterImage::get_collection(after_image_name, 0)
@@ -166,11 +160,12 @@ fn snapshot_afterimage_case(
   }
   assert_true(look.get_frame() >= resource.first_frame)
 
-  @capture_app.ensure_webgpu_capture_runtime(220.0, 220.0)
-  let captures = app.run_frames_capture(3, raw_delta=0.016)
-  @capture_app.snapshot(
-    snapshot_path,
-    captures[captures.length() - 1].png,
-    visual_desc~,
+  let capture = @capture_app.capture_after_frames(
+    app,
+    3,
+    width=220,
+    height=220,
+    raw_delta=0.016,
   )
+  @capture_app.snapshot(snapshot_path, capture.png, visual_desc~)
 }

@@ -1,0 +1,1260 @@
+{
+  "type": "afterimage",
+  "animations_path": "animation.json",
+  "levels": {
+    "0": {
+      "stabO1": {
+        "tag": "0__stabO1__1",
+        "first_frame": 1,
+        "range": {
+          "lt": [
+            -84,
+            -30
+          ],
+          "rb": [
+            -20,
+            -15
+          ]
+        }
+      },
+      "stabO2": {
+        "tag": "0__stabO2__1",
+        "first_frame": 1,
+        "range": {
+          "lt": [
+            -83,
+            -30
+          ],
+          "rb": [
+            -12,
+            -16
+          ]
+        }
+      },
+      "stabOF": {
+        "tag": "0__stabOF__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -110,
+            -32
+          ],
+          "rb": [
+            -40,
+            -11
+          ]
+        }
+      },
+      "swingO1": {
+        "tag": "0__swingO1__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -88,
+            -62
+          ],
+          "rb": [
+            -18,
+            -6
+          ]
+        }
+      },
+      "swingO2": {
+        "tag": "0__swingO2__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -73,
+            -50
+          ],
+          "rb": [
+            5,
+            17
+          ]
+        }
+      },
+      "swingO3": {
+        "tag": "0__swingO3__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -102,
+            -50
+          ],
+          "rb": [
+            -22,
+            -10
+          ]
+        }
+      },
+      "swingOF": {
+        "tag": "0__swingOF__3",
+        "first_frame": 3,
+        "range": {
+          "lt": [
+            -123,
+            -48
+          ],
+          "rb": [
+            13,
+            -1
+          ]
+        }
+      },
+      "proneStab": {
+        "tag": "0__proneStab__1",
+        "first_frame": 1,
+        "range": {
+          "lt": [
+            -74,
+            -11
+          ],
+          "rb": [
+            -15,
+            1
+          ]
+        }
+      }
+    },
+    "1": {
+      "stabO1": {
+        "tag": "1__stabO1__1",
+        "first_frame": 1,
+        "range": {
+          "lt": [
+            -84,
+            -30
+          ],
+          "rb": [
+            -20,
+            -15
+          ]
+        }
+      },
+      "stabO2": {
+        "tag": "1__stabO2__1",
+        "first_frame": 1,
+        "range": {
+          "lt": [
+            -83,
+            -30
+          ],
+          "rb": [
+            -12,
+            -16
+          ]
+        }
+      },
+      "stabOF": {
+        "tag": "1__stabOF__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -110,
+            -32
+          ],
+          "rb": [
+            -40,
+            -11
+          ]
+        }
+      },
+      "swingO1": {
+        "tag": "1__swingO1__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -88,
+            -62
+          ],
+          "rb": [
+            -18,
+            -6
+          ]
+        }
+      },
+      "swingO2": {
+        "tag": "1__swingO2__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -73,
+            -50
+          ],
+          "rb": [
+            5,
+            17
+          ]
+        }
+      },
+      "swingO3": {
+        "tag": "1__swingO3__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -102,
+            -50
+          ],
+          "rb": [
+            -22,
+            -10
+          ]
+        }
+      },
+      "swingOF": {
+        "tag": "1__swingOF__3",
+        "first_frame": 3,
+        "range": {
+          "lt": [
+            -123,
+            -48
+          ],
+          "rb": [
+            13,
+            -1
+          ]
+        }
+      },
+      "proneStab": {
+        "tag": "1__proneStab__1",
+        "first_frame": 1,
+        "range": {
+          "lt": [
+            -74,
+            -11
+          ],
+          "rb": [
+            -15,
+            1
+          ]
+        }
+      }
+    },
+    "2": {
+      "stabO1": {
+        "tag": "2__stabO1__1",
+        "first_frame": 1,
+        "range": {
+          "lt": [
+            -84,
+            -30
+          ],
+          "rb": [
+            -20,
+            -15
+          ]
+        }
+      },
+      "stabO2": {
+        "tag": "2__stabO2__1",
+        "first_frame": 1,
+        "range": {
+          "lt": [
+            -83,
+            -30
+          ],
+          "rb": [
+            -12,
+            -16
+          ]
+        }
+      },
+      "stabOF": {
+        "tag": "2__stabOF__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -110,
+            -32
+          ],
+          "rb": [
+            -40,
+            -11
+          ]
+        }
+      },
+      "swingO1": {
+        "tag": "2__swingO1__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -88,
+            -62
+          ],
+          "rb": [
+            -18,
+            -6
+          ]
+        }
+      },
+      "swingO2": {
+        "tag": "2__swingO2__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -73,
+            -50
+          ],
+          "rb": [
+            5,
+            17
+          ]
+        }
+      },
+      "swingO3": {
+        "tag": "2__swingO3__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -102,
+            -50
+          ],
+          "rb": [
+            -22,
+            -10
+          ]
+        }
+      },
+      "swingOF": {
+        "tag": "2__swingOF__3",
+        "first_frame": 3,
+        "range": {
+          "lt": [
+            -123,
+            -48
+          ],
+          "rb": [
+            13,
+            -1
+          ]
+        }
+      },
+      "proneStab": {
+        "tag": "2__proneStab__1",
+        "first_frame": 1,
+        "range": {
+          "lt": [
+            -74,
+            -11
+          ],
+          "rb": [
+            -15,
+            1
+          ]
+        }
+      }
+    },
+    "3": {
+      "stabO1": {
+        "tag": "3__stabO1__1",
+        "first_frame": 1,
+        "range": {
+          "lt": [
+            -84,
+            -30
+          ],
+          "rb": [
+            -20,
+            -15
+          ]
+        }
+      },
+      "stabO2": {
+        "tag": "3__stabO2__1",
+        "first_frame": 1,
+        "range": {
+          "lt": [
+            -83,
+            -30
+          ],
+          "rb": [
+            -12,
+            -16
+          ]
+        }
+      },
+      "stabOF": {
+        "tag": "3__stabOF__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -110,
+            -32
+          ],
+          "rb": [
+            -40,
+            -11
+          ]
+        }
+      },
+      "swingO1": {
+        "tag": "3__swingO1__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -88,
+            -62
+          ],
+          "rb": [
+            -18,
+            -6
+          ]
+        }
+      },
+      "swingO2": {
+        "tag": "3__swingO2__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -73,
+            -50
+          ],
+          "rb": [
+            5,
+            17
+          ]
+        }
+      },
+      "swingO3": {
+        "tag": "3__swingO3__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -102,
+            -50
+          ],
+          "rb": [
+            -22,
+            -10
+          ]
+        }
+      },
+      "swingOF": {
+        "tag": "3__swingOF__3",
+        "first_frame": 3,
+        "range": {
+          "lt": [
+            -123,
+            -48
+          ],
+          "rb": [
+            13,
+            -1
+          ]
+        }
+      },
+      "proneStab": {
+        "tag": "3__proneStab__1",
+        "first_frame": 1,
+        "range": {
+          "lt": [
+            -74,
+            -11
+          ],
+          "rb": [
+            -15,
+            1
+          ]
+        }
+      }
+    },
+    "4": {
+      "stabO1": {
+        "tag": "4__stabO1__1",
+        "first_frame": 1,
+        "range": {
+          "lt": [
+            -84,
+            -30
+          ],
+          "rb": [
+            -20,
+            -15
+          ]
+        }
+      },
+      "stabO2": {
+        "tag": "4__stabO2__1",
+        "first_frame": 1,
+        "range": {
+          "lt": [
+            -83,
+            -30
+          ],
+          "rb": [
+            -12,
+            -16
+          ]
+        }
+      },
+      "stabOF": {
+        "tag": "4__stabOF__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -110,
+            -32
+          ],
+          "rb": [
+            -40,
+            -11
+          ]
+        }
+      },
+      "swingO1": {
+        "tag": "4__swingO1__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -88,
+            -62
+          ],
+          "rb": [
+            -18,
+            -6
+          ]
+        }
+      },
+      "swingO2": {
+        "tag": "4__swingO2__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -73,
+            -50
+          ],
+          "rb": [
+            5,
+            17
+          ]
+        }
+      },
+      "swingO3": {
+        "tag": "4__swingO3__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -102,
+            -50
+          ],
+          "rb": [
+            -22,
+            -10
+          ]
+        }
+      },
+      "swingOF": {
+        "tag": "4__swingOF__3",
+        "first_frame": 3,
+        "range": {
+          "lt": [
+            -123,
+            -48
+          ],
+          "rb": [
+            13,
+            -1
+          ]
+        }
+      },
+      "proneStab": {
+        "tag": "4__proneStab__1",
+        "first_frame": 1,
+        "range": {
+          "lt": [
+            -74,
+            -11
+          ],
+          "rb": [
+            -15,
+            1
+          ]
+        }
+      }
+    },
+    "5": {
+      "stabO1": {
+        "tag": "5__stabO1__1",
+        "first_frame": 1,
+        "range": {
+          "lt": [
+            -84,
+            -30
+          ],
+          "rb": [
+            -20,
+            -15
+          ]
+        }
+      },
+      "stabO2": {
+        "tag": "5__stabO2__1",
+        "first_frame": 1,
+        "range": {
+          "lt": [
+            -83,
+            -30
+          ],
+          "rb": [
+            -12,
+            -16
+          ]
+        }
+      },
+      "stabOF": {
+        "tag": "5__stabOF__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -110,
+            -32
+          ],
+          "rb": [
+            -40,
+            -11
+          ]
+        }
+      },
+      "swingO1": {
+        "tag": "5__swingO1__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -88,
+            -62
+          ],
+          "rb": [
+            -18,
+            -6
+          ]
+        }
+      },
+      "swingO2": {
+        "tag": "5__swingO2__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -73,
+            -50
+          ],
+          "rb": [
+            5,
+            17
+          ]
+        }
+      },
+      "swingO3": {
+        "tag": "5__swingO3__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -102,
+            -50
+          ],
+          "rb": [
+            -22,
+            -10
+          ]
+        }
+      },
+      "swingOF": {
+        "tag": "5__swingOF__3",
+        "first_frame": 3,
+        "range": {
+          "lt": [
+            -123,
+            -48
+          ],
+          "rb": [
+            13,
+            -1
+          ]
+        }
+      },
+      "proneStab": {
+        "tag": "5__proneStab__1",
+        "first_frame": 1,
+        "range": {
+          "lt": [
+            -74,
+            -11
+          ],
+          "rb": [
+            -15,
+            1
+          ]
+        }
+      }
+    },
+    "6": {
+      "stabO1": {
+        "tag": "6__stabO1__1",
+        "first_frame": 1,
+        "range": {
+          "lt": [
+            -84,
+            -30
+          ],
+          "rb": [
+            -20,
+            -15
+          ]
+        }
+      },
+      "stabO2": {
+        "tag": "6__stabO2__1",
+        "first_frame": 1,
+        "range": {
+          "lt": [
+            -83,
+            -30
+          ],
+          "rb": [
+            -12,
+            -16
+          ]
+        }
+      },
+      "stabOF": {
+        "tag": "6__stabOF__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -110,
+            -32
+          ],
+          "rb": [
+            -40,
+            -11
+          ]
+        }
+      },
+      "swingO1": {
+        "tag": "6__swingO1__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -88,
+            -62
+          ],
+          "rb": [
+            -18,
+            -6
+          ]
+        }
+      },
+      "swingO2": {
+        "tag": "6__swingO2__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -73,
+            -50
+          ],
+          "rb": [
+            5,
+            17
+          ]
+        }
+      },
+      "swingO3": {
+        "tag": "6__swingO3__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -102,
+            -50
+          ],
+          "rb": [
+            -22,
+            -10
+          ]
+        }
+      },
+      "swingOF": {
+        "tag": "6__swingOF__3",
+        "first_frame": 3,
+        "range": {
+          "lt": [
+            -123,
+            -48
+          ],
+          "rb": [
+            13,
+            -1
+          ]
+        }
+      },
+      "proneStab": {
+        "tag": "6__proneStab__1",
+        "first_frame": 1,
+        "range": {
+          "lt": [
+            -74,
+            -11
+          ],
+          "rb": [
+            -15,
+            1
+          ]
+        }
+      }
+    },
+    "7": {
+      "stabO1": {
+        "tag": "7__stabO1__1",
+        "first_frame": 1,
+        "range": {
+          "lt": [
+            -84,
+            -30
+          ],
+          "rb": [
+            -20,
+            -15
+          ]
+        }
+      },
+      "stabO2": {
+        "tag": "7__stabO2__1",
+        "first_frame": 1,
+        "range": {
+          "lt": [
+            -83,
+            -30
+          ],
+          "rb": [
+            -12,
+            -16
+          ]
+        }
+      },
+      "stabOF": {
+        "tag": "7__stabOF__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -110,
+            -32
+          ],
+          "rb": [
+            -40,
+            -11
+          ]
+        }
+      },
+      "swingO1": {
+        "tag": "7__swingO1__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -88,
+            -62
+          ],
+          "rb": [
+            -18,
+            -6
+          ]
+        }
+      },
+      "swingO2": {
+        "tag": "7__swingO2__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -73,
+            -50
+          ],
+          "rb": [
+            5,
+            17
+          ]
+        }
+      },
+      "swingO3": {
+        "tag": "7__swingO3__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -102,
+            -50
+          ],
+          "rb": [
+            -22,
+            -10
+          ]
+        }
+      },
+      "swingOF": {
+        "tag": "7__swingOF__3",
+        "first_frame": 3,
+        "range": {
+          "lt": [
+            -123,
+            -48
+          ],
+          "rb": [
+            13,
+            -1
+          ]
+        }
+      },
+      "proneStab": {
+        "tag": "7__proneStab__1",
+        "first_frame": 1,
+        "range": {
+          "lt": [
+            -74,
+            -11
+          ],
+          "rb": [
+            -15,
+            1
+          ]
+        }
+      }
+    },
+    "8": {
+      "stabO1": {
+        "tag": "8__stabO1__1",
+        "first_frame": 1,
+        "range": {
+          "lt": [
+            -84,
+            -30
+          ],
+          "rb": [
+            -20,
+            -15
+          ]
+        }
+      },
+      "stabO2": {
+        "tag": "8__stabO2__1",
+        "first_frame": 1,
+        "range": {
+          "lt": [
+            -83,
+            -30
+          ],
+          "rb": [
+            -12,
+            -16
+          ]
+        }
+      },
+      "stabOF": {
+        "tag": "8__stabOF__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -110,
+            -32
+          ],
+          "rb": [
+            -40,
+            -11
+          ]
+        }
+      },
+      "swingO1": {
+        "tag": "8__swingO1__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -88,
+            -62
+          ],
+          "rb": [
+            -18,
+            -6
+          ]
+        }
+      },
+      "swingO2": {
+        "tag": "8__swingO2__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -73,
+            -50
+          ],
+          "rb": [
+            5,
+            17
+          ]
+        }
+      },
+      "swingO3": {
+        "tag": "8__swingO3__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -102,
+            -50
+          ],
+          "rb": [
+            -22,
+            -10
+          ]
+        }
+      },
+      "swingOF": {
+        "tag": "8__swingOF__3",
+        "first_frame": 3,
+        "range": {
+          "lt": [
+            -123,
+            -48
+          ],
+          "rb": [
+            13,
+            -1
+          ]
+        }
+      },
+      "proneStab": {
+        "tag": "8__proneStab__1",
+        "first_frame": 1,
+        "range": {
+          "lt": [
+            -74,
+            -11
+          ],
+          "rb": [
+            -15,
+            1
+          ]
+        }
+      }
+    },
+    "9": {
+      "stabO1": {
+        "tag": "9__stabO1__1",
+        "first_frame": 1,
+        "range": {
+          "lt": [
+            -84,
+            -30
+          ],
+          "rb": [
+            -20,
+            -15
+          ]
+        }
+      },
+      "stabO2": {
+        "tag": "9__stabO2__1",
+        "first_frame": 1,
+        "range": {
+          "lt": [
+            -83,
+            -30
+          ],
+          "rb": [
+            -12,
+            -16
+          ]
+        }
+      },
+      "stabOF": {
+        "tag": "9__stabOF__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -110,
+            -32
+          ],
+          "rb": [
+            -40,
+            -11
+          ]
+        }
+      },
+      "swingO1": {
+        "tag": "9__swingO1__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -88,
+            -62
+          ],
+          "rb": [
+            -18,
+            -6
+          ]
+        }
+      },
+      "swingO2": {
+        "tag": "9__swingO2__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -73,
+            -50
+          ],
+          "rb": [
+            5,
+            17
+          ]
+        }
+      },
+      "swingO3": {
+        "tag": "9__swingO3__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -102,
+            -50
+          ],
+          "rb": [
+            -22,
+            -10
+          ]
+        }
+      },
+      "swingOF": {
+        "tag": "9__swingOF__3",
+        "first_frame": 3,
+        "range": {
+          "lt": [
+            -123,
+            -48
+          ],
+          "rb": [
+            13,
+            -1
+          ]
+        }
+      },
+      "proneStab": {
+        "tag": "9__proneStab__1",
+        "first_frame": 1,
+        "range": {
+          "lt": [
+            -74,
+            -11
+          ],
+          "rb": [
+            -15,
+            1
+          ]
+        }
+      }
+    },
+    "10": {
+      "stabO1": {
+        "tag": "10__stabO1__1",
+        "first_frame": 1,
+        "range": {
+          "lt": [
+            -84,
+            -30
+          ],
+          "rb": [
+            -20,
+            -15
+          ]
+        }
+      },
+      "stabO2": {
+        "tag": "10__stabO2__1",
+        "first_frame": 1,
+        "range": {
+          "lt": [
+            -83,
+            -30
+          ],
+          "rb": [
+            -12,
+            -16
+          ]
+        }
+      },
+      "stabOF": {
+        "tag": "10__stabOF__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -113,
+            -32
+          ],
+          "rb": [
+            -40,
+            -11
+          ]
+        }
+      },
+      "swingO1": {
+        "tag": "10__swingO1__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -90,
+            -72
+          ],
+          "rb": [
+            -18,
+            -6
+          ]
+        }
+      },
+      "swingO2": {
+        "tag": "10__swingO2__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -73,
+            -50
+          ],
+          "rb": [
+            5,
+            23
+          ]
+        }
+      },
+      "swingO3": {
+        "tag": "10__swingO3__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -102,
+            -50
+          ],
+          "rb": [
+            -22,
+            -10
+          ]
+        }
+      },
+      "swingOF": {
+        "tag": "10__swingOF__3",
+        "first_frame": 3,
+        "range": {
+          "lt": [
+            -123,
+            -48
+          ],
+          "rb": [
+            13,
+            -1
+          ]
+        }
+      },
+      "proneStab": {
+        "tag": "10__proneStab__1",
+        "first_frame": 1,
+        "range": {
+          "lt": [
+            -74,
+            -11
+          ],
+          "rb": [
+            -15,
+            1
+          ]
+        }
+      }
+    }
+  }
+}

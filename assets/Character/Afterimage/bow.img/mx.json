@@ -1,0 +1,839 @@
+{
+  "type": "afterimage",
+  "animations_path": "animation.json",
+  "levels": {
+    "0": {
+      "shoot1": {
+        "tag": "0__shoot1__2",
+        "first_frame": 2,
+        "range": {}
+      },
+      "swingT1": {
+        "tag": "0__swingT1__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -30,
+            -81
+          ],
+          "rb": [
+            0,
+            5
+          ]
+        }
+      },
+      "swingT3": {
+        "tag": "0__swingT3__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -30,
+            -73
+          ],
+          "rb": [
+            0,
+            14
+          ]
+        }
+      },
+      "proneStab": {
+        "tag": "0__proneStab__1",
+        "first_frame": 1,
+        "range": {
+          "lt": [
+            -92,
+            -11
+          ],
+          "rb": [
+            -24,
+            2
+          ]
+        }
+      }
+    },
+    "1": {
+      "shoot1": {
+        "tag": "1__shoot1__2",
+        "first_frame": 2,
+        "range": {}
+      },
+      "swingT1": {
+        "tag": "1__swingT1__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -30,
+            -81
+          ],
+          "rb": [
+            0,
+            5
+          ]
+        }
+      },
+      "swingT3": {
+        "tag": "1__swingT3__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -30,
+            -73
+          ],
+          "rb": [
+            0,
+            14
+          ]
+        }
+      },
+      "proneStab": {
+        "tag": "1__proneStab__1",
+        "first_frame": 1,
+        "range": {
+          "lt": [
+            -92,
+            -11
+          ],
+          "rb": [
+            -24,
+            2
+          ]
+        }
+      }
+    },
+    "2": {
+      "shoot1": {
+        "tag": "2__shoot1__2",
+        "first_frame": 2,
+        "range": {}
+      },
+      "swingT1": {
+        "tag": "2__swingT1__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -30,
+            -81
+          ],
+          "rb": [
+            0,
+            5
+          ]
+        }
+      },
+      "swingT3": {
+        "tag": "2__swingT3__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -30,
+            -73
+          ],
+          "rb": [
+            0,
+            14
+          ]
+        }
+      },
+      "proneStab": {
+        "tag": "2__proneStab__1",
+        "first_frame": 1,
+        "range": {
+          "lt": [
+            -92,
+            -11
+          ],
+          "rb": [
+            -24,
+            2
+          ]
+        }
+      }
+    },
+    "3": {
+      "shoot1": {
+        "tag": "3__shoot1__2",
+        "first_frame": 2,
+        "range": {}
+      },
+      "swingT1": {
+        "tag": "3__swingT1__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -30,
+            -81
+          ],
+          "rb": [
+            0,
+            5
+          ]
+        }
+      },
+      "swingT3": {
+        "tag": "3__swingT3__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -30,
+            -73
+          ],
+          "rb": [
+            0,
+            14
+          ]
+        }
+      },
+      "proneStab": {
+        "tag": "3__proneStab__1",
+        "first_frame": 1,
+        "range": {
+          "lt": [
+            -92,
+            -11
+          ],
+          "rb": [
+            -24,
+            2
+          ]
+        }
+      }
+    },
+    "4": {
+      "shoot1": {
+        "tag": "4__shoot1__2",
+        "first_frame": 2,
+        "range": {}
+      },
+      "swingT1": {
+        "tag": "4__swingT1__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -30,
+            -81
+          ],
+          "rb": [
+            0,
+            5
+          ]
+        }
+      },
+      "swingT3": {
+        "tag": "4__swingT3__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -30,
+            -73
+          ],
+          "rb": [
+            0,
+            14
+          ]
+        }
+      },
+      "proneStab": {
+        "tag": "4__proneStab__1",
+        "first_frame": 1,
+        "range": {
+          "lt": [
+            -92,
+            -11
+          ],
+          "rb": [
+            -24,
+            2
+          ]
+        }
+      }
+    },
+    "5": {
+      "shoot1": {
+        "tag": "5__shoot1__2",
+        "first_frame": 2,
+        "range": {}
+      },
+      "swingT1": {
+        "tag": "5__swingT1__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -30,
+            -81
+          ],
+          "rb": [
+            0,
+            5
+          ]
+        }
+      },
+      "swingT3": {
+        "tag": "5__swingT3__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -30,
+            -73
+          ],
+          "rb": [
+            0,
+            14
+          ]
+        }
+      },
+      "proneStab": {
+        "tag": "5__proneStab__1",
+        "first_frame": 1,
+        "range": {
+          "lt": [
+            -92,
+            -11
+          ],
+          "rb": [
+            -24,
+            2
+          ]
+        }
+      }
+    },
+    "6": {
+      "shoot1": {
+        "tag": "6__shoot1__2",
+        "first_frame": 2,
+        "range": {}
+      },
+      "swingT1": {
+        "tag": "6__swingT1__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -30,
+            -81
+          ],
+          "rb": [
+            0,
+            5
+          ]
+        }
+      },
+      "swingT3": {
+        "tag": "6__swingT3__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -30,
+            -73
+          ],
+          "rb": [
+            0,
+            14
+          ]
+        }
+      },
+      "proneStab": {
+        "tag": "6__proneStab__1",
+        "first_frame": 1,
+        "range": {
+          "lt": [
+            -92,
+            -11
+          ],
+          "rb": [
+            -24,
+            2
+          ]
+        }
+      }
+    },
+    "7": {
+      "shoot1": {
+        "tag": "7__shoot1__2",
+        "first_frame": 2,
+        "range": {}
+      },
+      "swingT1": {
+        "tag": "7__swingT1__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -30,
+            -81
+          ],
+          "rb": [
+            0,
+            5
+          ]
+        }
+      },
+      "swingT3": {
+        "tag": "7__swingT3__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -30,
+            -73
+          ],
+          "rb": [
+            0,
+            14
+          ]
+        }
+      },
+      "proneStab": {
+        "tag": "7__proneStab__1",
+        "first_frame": 1,
+        "range": {
+          "lt": [
+            -92,
+            -11
+          ],
+          "rb": [
+            -24,
+            2
+          ]
+        }
+      }
+    },
+    "8": {
+      "shoot1": {
+        "tag": "8__shoot1__2",
+        "first_frame": 2,
+        "range": {}
+      },
+      "swingT1": {
+        "tag": "8__swingT1__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -30,
+            -81
+          ],
+          "rb": [
+            0,
+            5
+          ]
+        }
+      },
+      "swingT3": {
+        "tag": "8__swingT3__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -30,
+            -73
+          ],
+          "rb": [
+            0,
+            14
+          ]
+        }
+      },
+      "proneStab": {
+        "tag": "8__proneStab__1",
+        "first_frame": 1,
+        "range": {
+          "lt": [
+            -92,
+            -11
+          ],
+          "rb": [
+            -24,
+            2
+          ]
+        }
+      }
+    },
+    "9": {
+      "shoot1": {
+        "tag": "9__shoot1__2",
+        "first_frame": 2,
+        "range": {}
+      },
+      "swingT1": {
+        "tag": "9__swingT1__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -30,
+            -81
+          ],
+          "rb": [
+            0,
+            5
+          ]
+        }
+      },
+      "swingT3": {
+        "tag": "9__swingT3__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -30,
+            -73
+          ],
+          "rb": [
+            0,
+            14
+          ]
+        }
+      },
+      "proneStab": {
+        "tag": "9__proneStab__1",
+        "first_frame": 1,
+        "range": {
+          "lt": [
+            -92,
+            -11
+          ],
+          "rb": [
+            -24,
+            2
+          ]
+        }
+      }
+    },
+    "10": {
+      "shoot1": {
+        "tag": "10__shoot1__2",
+        "first_frame": 2,
+        "range": {}
+      },
+      "swingT1": {
+        "tag": "10__swingT1__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -30,
+            -81
+          ],
+          "rb": [
+            0,
+            5
+          ]
+        }
+      },
+      "swingT3": {
+        "tag": "10__swingT3__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -30,
+            -73
+          ],
+          "rb": [
+            0,
+            14
+          ]
+        }
+      },
+      "proneStab": {
+        "tag": "10__proneStab__1",
+        "first_frame": 1,
+        "range": {
+          "lt": [
+            -87,
+            -11
+          ],
+          "rb": [
+            -24,
+            2
+          ]
+        }
+      }
+    },
+    "11": {
+      "shoot1": {
+        "tag": "11__shoot1__2",
+        "first_frame": 2,
+        "range": {}
+      },
+      "swingT1": {
+        "tag": "11__swingT1__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -30,
+            -81
+          ],
+          "rb": [
+            0,
+            5
+          ]
+        }
+      },
+      "swingT3": {
+        "tag": "11__swingT3__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -30,
+            -73
+          ],
+          "rb": [
+            0,
+            14
+          ]
+        }
+      },
+      "proneStab": {
+        "tag": "11__proneStab__1",
+        "first_frame": 1,
+        "range": {
+          "lt": [
+            -87,
+            -11
+          ],
+          "rb": [
+            -24,
+            2
+          ]
+        }
+      }
+    },
+    "12": {
+      "shoot1": {
+        "tag": "12__shoot1__2",
+        "first_frame": 2,
+        "range": {}
+      },
+      "swingT1": {
+        "tag": "12__swingT1__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -30,
+            -81
+          ],
+          "rb": [
+            0,
+            5
+          ]
+        }
+      },
+      "swingT3": {
+        "tag": "12__swingT3__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -30,
+            -73
+          ],
+          "rb": [
+            0,
+            14
+          ]
+        }
+      },
+      "proneStab": {
+        "tag": "12__proneStab__1",
+        "first_frame": 1,
+        "range": {
+          "lt": [
+            -87,
+            -11
+          ],
+          "rb": [
+            -24,
+            2
+          ]
+        }
+      }
+    },
+    "13": {
+      "shoot1": {
+        "tag": "13__shoot1__2",
+        "first_frame": 2,
+        "range": {}
+      },
+      "swingT1": {
+        "tag": "13__swingT1__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -30,
+            -81
+          ],
+          "rb": [
+            0,
+            5
+          ]
+        }
+      },
+      "swingT3": {
+        "tag": "13__swingT3__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -30,
+            -73
+          ],
+          "rb": [
+            0,
+            14
+          ]
+        }
+      },
+      "proneStab": {
+        "tag": "13__proneStab__1",
+        "first_frame": 1,
+        "range": {
+          "lt": [
+            -87,
+            -11
+          ],
+          "rb": [
+            -24,
+            2
+          ]
+        }
+      }
+    },
+    "14": {
+      "shoot1": {
+        "tag": "14__shoot1__2",
+        "first_frame": 2,
+        "range": {}
+      },
+      "swingT1": {
+        "tag": "14__swingT1__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -30,
+            -81
+          ],
+          "rb": [
+            0,
+            5
+          ]
+        }
+      },
+      "swingT3": {
+        "tag": "14__swingT3__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -30,
+            -73
+          ],
+          "rb": [
+            0,
+            14
+          ]
+        }
+      },
+      "proneStab": {
+        "tag": "14__proneStab__1",
+        "first_frame": 1,
+        "range": {
+          "lt": [
+            -87,
+            -11
+          ],
+          "rb": [
+            -24,
+            2
+          ]
+        }
+      }
+    },
+    "15": {
+      "shoot1": {
+        "tag": "15__shoot1__2",
+        "first_frame": 2,
+        "range": {}
+      },
+      "swingT1": {
+        "tag": "15__swingT1__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -30,
+            -81
+          ],
+          "rb": [
+            0,
+            5
+          ]
+        }
+      },
+      "swingT3": {
+        "tag": "15__swingT3__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -30,
+            -73
+          ],
+          "rb": [
+            0,
+            14
+          ]
+        }
+      },
+      "proneStab": {
+        "tag": "15__proneStab__1",
+        "first_frame": 1,
+        "range": {
+          "lt": [
+            -87,
+            -11
+          ],
+          "rb": [
+            -24,
+            2
+          ]
+        }
+      }
+    },
+    "16": {
+      "shoot1": {
+        "tag": "16__shoot1__2",
+        "first_frame": 2,
+        "range": {}
+      },
+      "swingT1": {
+        "tag": "16__swingT1__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -30,
+            -81
+          ],
+          "rb": [
+            0,
+            5
+          ]
+        }
+      },
+      "swingT3": {
+        "tag": "16__swingT3__2",
+        "first_frame": 2,
+        "range": {
+          "lt": [
+            -30,
+            -73
+          ],
+          "rb": [
+            0,
+            14
+          ]
+        }
+      },
+      "proneStab": {
+        "tag": "16__proneStab__1",
+        "first_frame": 1,
+        "range": {
+          "lt": [
+            -87,
+            -11
+          ],
+          "rb": [
+            -24,
+            2
+          ]
+        }
+      }
+    }
+  }
+}

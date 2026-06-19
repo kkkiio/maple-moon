@@ -1,5 +1,5 @@
 ///|
-test "crossbow shoot2 afterimage without range should render" {
+async test "crossbow shoot2 afterimage without range should render" {
   let previous_world = @ecs.current_world()
   let world = @ecs.World()
   @ecs.set_current_world(world)
@@ -103,13 +103,7 @@ test "crossbow shoot2 afterimage without range should render" {
   look.set_stance(StanceId::SHOOT2)
   look.play_animations()
 
-  let after_image_node = @fs.read_file_to_string(
-      "assets/Character/Afterimage/crossBow.img.json",
-    )
-    |> @json.parse
-  let after_images : @char_look.NxAfterImages = @json.from_json(
-    after_image_node,
-  )
+  let after_images = @char_look.load_after_images("crossBow")
   @char_look.set_after_images("crossBow", after_images)
 
   let collection = @char_look.AfterImage::get_collection("crossBow", 0)
@@ -128,11 +122,16 @@ test "crossbow shoot2 afterimage without range should render" {
   let sprites = @sprite.sprites().iter().collect()
   assert_true(sprites.length() > 0)
 
-  @capture_app.ensure_webgpu_capture_runtime(200.0, 200.0)
-  let captures = app.run_frames_capture(1, raw_delta=0.016)
+  let capture = @capture_app.capture_after_frames(
+    app,
+    1,
+    width=200,
+    height=200,
+    raw_delta=0.016,
+  )
   @capture_app.snapshot(
     "src/tests/char_look_test/__snapshot__/crossbow_shoot2_afterimage_left.png",
-    captures[0].png,
+    capture.png,
     visual_desc="A character faces left and fires a crossbow held in front of the body, with a translucent attack effect rendered just ahead of the weapon.",
   )
 }

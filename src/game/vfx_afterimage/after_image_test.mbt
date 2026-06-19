@@ -1,11 +1,11 @@
 ///|
 fn create_test_resource(first_frame : Int) -> NxAfterImage {
   {
-    animation: @resource.NxAnimation::{
+    animation: @ms_animation.from_nx_animation(@resource.NxAnimation::{
       frames: [
         {
           texture: {
-            i: "test.png",
+            i: "assets/Character/Afterimage/bow.img/animation.png",
             w: 10,
             h: 10,
             offset: @struct.Point::default(),
@@ -18,7 +18,7 @@ fn create_test_resource(first_frame : Int) -> NxAfterImage {
       ],
       blend: false,
       zigzag: false,
-    },
+    }),
     range: @struct.Rectangle::from4(-50, 50, -50, 50),
     first_frame,
   }

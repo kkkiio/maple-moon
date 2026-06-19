@@ -85,6 +85,11 @@ pub fn set_after_images(name : String, after_images : NxAfterImages) -> Unit {
 }
 
 ///|
+pub fn load_after_images(name : String) -> NxAfterImages {
+  @vfx_afterimage.load_after_images(name)
+}
+
+///|
 pub fn add_after_image(
   entity : @entity.Entity,
   look : CharLook,

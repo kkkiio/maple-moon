@@ -278,12 +278,9 @@ pub fn scene_transition_system(world : @ecs.World) -> Unit {
             }
             match after_image_name {
               Some(after_image_name) => {
-                let after_image_res = @resource.require_json(
-                  "assets/Character/Afterimage/\{after_image_name}.img.json",
+                let after_images = @char_look.load_after_images(
+                  after_image_name,
                 )
-                let after_images = @json.from_json(after_image_res) catch {
-                  _ => abort("invalid afterimage resource: \{after_image_name}")
-                }
                 @char_look.set_after_images(after_image_name, after_images)
               }
               None => ()

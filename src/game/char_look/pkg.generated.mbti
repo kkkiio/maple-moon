@@ -33,6 +33,8 @@ pub fn insert_resource(@character_presentation.CharacterPresentationResource) ->
 
 pub let layers_by_name : @sorted_map.SortedMap[String, @character_presentation.HairLayer]
 
+pub fn load_after_images(String) -> @vfx_afterimage.NxAfterImages
+
 pub fn set_after_images(String, @vfx_afterimage.NxAfterImages) -> Unit
 
 pub fn update_after_image_system(@ecs.World) -> Unit

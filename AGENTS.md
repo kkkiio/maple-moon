@@ -84,6 +84,7 @@ MoonBit 允许 `test` 直接传播错误, 用 `fail` 函数抛出错误.
 ### Repo Structure & Important Files
 
 ```
+├── playtests/               ← AI 编写的 bot 场景脚本 (纯 JS, 不参与 MoonBit 编译)
 ├── gdd.md                     ← 一页纸设计文档
 ├── CONTEXT.md                 ← 术语表
 ├── docs/
@@ -94,10 +95,12 @@ MoonBit 允许 `test` 直接传播错误, 用 `fail` 函数抛出错误.
 │   └── pipeline.md            ← 资源管线
 ├── src/
 │   ├── apps/
-│   │   ├── game_web/          ← WebGPU/JS 入口, 日常开发和测试
-│   │   └── game_native/       ← raylib/native 入口, 本地游玩
+│   │   ├── game_web/          ← WebGPU/JS 入口, 日常开发
+│   │   ├── game_native/       ← raylib/native 入口, 玩家本地游玩
+│   │   └── game_debug/        ← WebGPU/JS 入口, bot 验证专用 (含 BotController)
 │   ├── engine/                ← 引擎/框架层
 │   │   ├── game_app/          ← 共享运行时, 注册 systems
+│   │   ├── bot_controller/    ← Playtest Bot 运行时 (输入注入, action 管理, globalThis.__bot)
 │   │   ├── game_server/       ← 服务器通信
 │   │   ├── game_scene/        ← 场景管理
 │   │   ├── game_state/        ← 状态管理
@@ -129,7 +132,10 @@ MoonBit 允许 `test` 直接传播错误, 用 `fail` 函数抛出错误.
 │   │   ├── animation/ bgm/ camera/ cursor/ logic_fps/
 │   │   ├── maple_stat/ markup_text/ server_proto/
 │   │   └── ui/                ← 游戏画面 (背包、商店、NPC 对话等)
-│   └── tests/                 ← 集成/快照测试
+│   ├── tests/                 ← 集成/快照测试 (视觉回归 + 数据回归)
+│   └── cmd/                   ← 命令行工具 (MoonBit JS target)
+│       ├── maple/             ← CLI (maple start / cmd / logs / bot ...)
+│       └── mapled/            ← CDP daemon (Chrome 控制, 注入, 采集)
 ├── assets/                    ← 资源文件
 └── .env.test                  ← 测试环境配置
 ```

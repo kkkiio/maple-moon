@@ -1,4 +1,4 @@
-# ADR 0002: Use WebGPU Headless Chrome For Render Snapshots
+# ADR 0002: Use WebGPU Headless Chrome For Graphics Snapshots
 
 Date: 2026-05-24
 
@@ -9,7 +9,7 @@ Accepted, amended by [ADR 0003](0003-use-target-specific-game-entrypoints.md)
 ## Context
 
 Maple Moon supports a native raylib backend for the game client and a WebGPU
-backend for browser rendering. Render snapshot tests need to be fast enough for
+backend for browser rendering. Graphics snapshot tests need to be fast enough for
 regular development, deterministic enough for pixel comparison, and close enough
 to the production rendering path to catch visual regressions.
 
@@ -26,10 +26,10 @@ turn the test harness into another rendering platform.
 
 ## Decision
 
-Use `selene_webgpu` as the render snapshot backend and run the generated JS test
+Use `selene_webgpu` as the graphics snapshot backend and run the generated JS test
 artifacts in Headless Chrome.
 
-Use WebGPU as the primary render snapshot backend. At the time this decision was
+Use WebGPU as the primary graphics snapshot backend. At the time this decision was
 written, the game executable remained a single native raylib main. ADR 0003
 later splits runtime entrypoints into `game_web` and `game_native`, while keeping
 this snapshot decision intact.
@@ -44,10 +44,10 @@ The test wrapper should:
 
 ## Consequences
 
-- Render snapshot tests avoid repeated native linking cost.
+- Graphics snapshot tests avoid repeated native linking cost.
 - Tests exercise the real browser WebGPU stack instead of a Node shim.
 - The command can stay simple through `npm run test:webgpu`.
-- A local Chrome installation is required for render snapshot tests.
+- A local Chrome installation is required for graphics snapshot tests.
 - Native raylib still needs separate compile/link verification because snapshot
   tests intentionally use WebGPU for speed.
 
@@ -56,10 +56,10 @@ The test wrapper should:
 - Run WebGPU tests directly in Node.js.
   Rejected because standard Node.js does not provide the browser WebGPU/canvas
   environment these tests need.
-- Use native raylib for all render snapshots.
+- Use native raylib for all graphics snapshots.
   Rejected for the default test loop because compile/link cost is too high for
   frequent snapshot runs.
-- Maintain separate backend-specific render snapshots.
+- Maintain separate backend-specific graphics snapshots.
   Rejected for now because it doubles snapshot churn and makes routine visual
   tests slower. Backend-specific snapshots can be added later for targeted
   raylib regressions.

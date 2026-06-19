@@ -100,7 +100,7 @@ Main package 使用 `README.md`；不要要求它提供 `README.mbt.md`。
    - 是否触发。
    - 是否已委托 `$maple-cli`。
    - 验证了哪些 map id / portal id。
-   - `verify-map` 是否通过。
+   - `maple wait-ready` / `maple cmd warp` / `maple network --failed` / `maple logs --level error` 等命令是否通过。
    - 是否存在 failed network 或 browser console error。
    - 若跳过，给出具体原因。
 5. 残留风险：例如快照测试失败、外部服务缺失、资源闭包仍不确定等。

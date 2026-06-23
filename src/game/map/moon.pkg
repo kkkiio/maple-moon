@@ -16,6 +16,7 @@ import {
   "KKKIIO/maple-moon/engine/graphics",
   "KKKIIO/maple-moon/game/physics",
   "Milky2018/selene/sprite",
+  "Milky2018/selene/parallax2d",
   "Milky2018/selene/math" @selene_math,
   "Milky2018/selene/visibility",
   "Milky2018/selene/time",

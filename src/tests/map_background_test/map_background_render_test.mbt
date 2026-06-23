@@ -163,7 +163,102 @@ test "map 100000000 background" {
   )
 
   assert_true(visible_sprite_count() > 0)
-  debug_inspect(@entity.iter_entities().to_array().length(), content=(#|1626
+  let background_sprite_positions : Array[(Int, Int, Int, Int, Int, Int, Int)] = []
+  for entity, sprite in @sprite.sprites() {
+    guard sprite.custom_size is Some(size) else { continue }
+    let width = size[@math.X].to_int()
+    let height = size[@math.Y].to_int()
+    guard (width == 1024 && height == 579) ||
+      (width == 2493 && height == 340) ||
+      (width == 315 && height == 268) ||
+      (width == 1024 && height == 257) ||
+      (width == 1024 && height == 294) else {
+      continue
+    }
+    let global_translation = @transform.global_transforms()
+      .get(entity)
+      .map(fn(transform) { transform.translation() })
+      .unwrap_or(@math.Vec3::zero())
+    let global_pos = @math.Vec2(global_translation.x, global_translation.y)
+    let viewport_pos = @ms_camera.world_to_viewport(global_pos)
+    let global_z = @transform.global_transforms()
+      .get(entity)
+      .map(fn(transform) {
+        transform.translation().z.round().to_int()
+      })
+      .unwrap_or(0)
+    background_sprite_positions.push((
+      width,
+      height,
+      global_pos[@math.X].round().to_int(),
+      global_pos[@math.Y].round().to_int(),
+      viewport_pos[@math.X].round().to_int(),
+      viewport_pos[@math.Y].round().to_int(),
+      global_z,
+    ))
+  }
+  background_sprite_positions.sort_by(fn(lhs, rhs) {
+    let lhs_key = lhs.0.compare(rhs.0)
+    if lhs_key != 0 {
+      return lhs_key
+    }
+    let lhs_height_key = lhs.1.compare(rhs.1)
+    if lhs_height_key != 0 {
+      return lhs_height_key
+    }
+    let lhs_x_key = lhs.4.compare(rhs.4)
+    if lhs_x_key != 0 {
+      return lhs_x_key
+    }
+    let lhs_y_key = lhs.5.compare(rhs.5)
+    if lhs_y_key != 0 {
+      return lhs_y_key
+    }
+    lhs.6.compare(rhs.6)
+  })
+  let camera_top_left = @ms_camera.current_camera_top_left()
+  let draw_29100_commands : Array[(Int, Int, Int, Int, Int)] = []
+  for item in capture.metadata.draw2d {
+    guard item.texture_path is Some(texture_path) &&
+      texture_path.contains("29100.png") &&
+      item.destination_rect is Some(rect) else {
+      continue
+    }
+    draw_29100_commands.push((
+      rect.x.round().to_int(),
+      rect.y.round().to_int(),
+      rect.width.round().to_int(),
+      rect.height.round().to_int(),
+      item.depth.map(fn(depth) { depth.round().to_int() }).unwrap_or(0),
+    ))
+  }
+  debug_inspect((
+    @entity.iter_entities().to_array().length(),
+    (
+      camera_top_left[@math.X].round().to_int(),
+      camera_top_left[@math.Y].round().to_int(),
+    ),
+    background_sprite_positions,
+    draw_29100_commands,
+  ), content=(
+    #|(
+    #|  1626,
+    #|  (-683, -384),
+    #|  [
+    #|    (315, 268, 217, -315, 900, 69, 2006),
+    #|    (1024, 257, -578, 142, 105, 526, 2008),
+    #|    (1024, 257, 1470, 142, 2153, 526, 2012),
+    #|    (1024, 294, 446, 105, 1129, 489, 2010),
+    #|    (1024, 294, 2494, 105, 3177, 489, 2014),
+    #|    (1024, 579, -1423, -278, -740, 106, 2002),
+    #|    (1024, 579, -399, -278, 284, 106, 2002),
+    #|    (1024, 579, 625, -278, 1308, 106, 2002),
+    #|    (1024, 579, 1649, -278, 2332, 106, 2002),
+    #|    (1024, 579, 2673, -278, 3356, 106, 2002),
+    #|    (2493, 340, -751, -47, -68, 337, 2004),
+    #|  ],
+    #|  [(-68, 337, 2493, 340, 2004)],
+    #|)
   ))
   @capture_app.snapshot(
     "src/tests/map_background_test/__snapshot__/map_100000000_bg.png",

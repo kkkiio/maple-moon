@@ -540,6 +540,7 @@ fn create_background_motion_states(
     let y_mode = maple_background_axis_mode(background_type, @selene_math.Y, ry)
     let repeat = maple_background_repeat_axes(background_type)
     let property_alpha = background_alpha_pair_from_layer(layer)
+    let base_screen_offset = @selene_math.Vec2(layer.offset_x, layer.offset_y)
     let base_alpha = clamp_u8(
         tiled_property_int_optional(layer, "a").unwrap_or(255),
       ).to_double() /
@@ -564,8 +565,8 @@ fn create_background_motion_states(
       clip,
       sprite_template,
       background_type,
-      base_screen_offset: @selene_math.Vec2(layer.offset_x, layer.offset_y),
-      moving_world_pos: @selene_math.Vec2(layer.offset_x, layer.offset_y),
+      base_screen_offset,
+      moving_world_pos: base_screen_offset,
       ratio: @selene_math.Vec2(x_mode.1, y_mode.1),
       speed: @selene_math.Vec2(x_mode.2, y_mode.2),
       moving_axis: (x_mode.0, y_mode.0),
@@ -650,6 +651,7 @@ fn disable_selene_parallax_for_backgrounds(
       layer, background_type, cx, cy, rx, ry,
     ) {
     @tiled.tiled_parallax_layers().remove(event.layer_entity)
+    @parallax2d.parallax2ds().remove(event.layer_entity)
   }
 }
 

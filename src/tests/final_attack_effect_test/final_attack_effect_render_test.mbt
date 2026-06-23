@@ -13,7 +13,7 @@ fn load_test_mob() -> @monster.Mob {
 }
 
 ///|
-async test "final attack hit effect with EFFECT_ZINDEX stays visible" {
+test "final attack hit effect with EFFECT_ZINDEX stays visible" {
   let previous_world = @ecs.current_world()
   let world = @ecs.World()
   @ecs.set_current_world(world)
@@ -72,9 +72,10 @@ async test "final attack hit effect with EFFECT_ZINDEX stays visible" {
     raw_delta=0.016,
   )
 
+  debug_inspect(@entity.iter_entities().to_array().length(), content=(#|3
+  ))
   @capture_app.snapshot(
     "src/tests/final_attack_effect_test/__snapshot__/final_attack_hit_z_effect_layer.png",
     capture.png,
-    visual_desc="A attack hit effect rendered on top of the monster",
   )
 }

@@ -134,7 +134,7 @@ fn setup_shop_scene_npcs() -> @app.App raise {
 }
 
 ///|
-async test "shop scene npc render snapshot on map 102000001" {
+test "shop scene npc render snapshot on map 102000001" {
   defer @map.clear_runtime_context()
   defer @map.clear_tiled_map(@ecs.require_current_world())
   defer @npc.clear_map_npcs()
@@ -150,9 +150,10 @@ async test "shop scene npc render snapshot on map 102000001" {
     raw_delta=0.016,
   )
 
+  debug_inspect(@entity.iter_entities().to_array().length(), content=(#|61
+  ))
   @capture_app.snapshot(
     "src/tests/shop_scene_test/__snapshot__/shop_scene_map_102000001_npcs.png",
     capture.png,
-    visual_desc="Shop scene, two NPCs standing on the left, behind the counter.",
   )
 }

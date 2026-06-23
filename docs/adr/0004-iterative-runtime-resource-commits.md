@@ -39,8 +39,8 @@ file out of the change.
   intentionally promoted into the runtime closure.
 - Resource additions stay reviewable because ignored files must be force-added
   explicitly.
-- Snapshot tests should fail on HTTP or WebGPU image-load errors instead of
-  accepting transparent missing-resource output.
+- Snapshot tests should fail on image-load errors instead of accepting
+  transparent missing-resource output.
 - Resource work must include dependency review, not just the top-level JSON
   file that triggered a failing load.
 

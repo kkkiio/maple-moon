@@ -4,7 +4,7 @@ import {
   "KKKIIO/maple-moon/tests/capture_app",
 }
 
-supported_targets = "js"
+supported_targets = "native"
 
 options(
   implement: "KKKIIO/maple-moon/engine/game_server",

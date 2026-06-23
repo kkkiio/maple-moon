@@ -1,5 +1,5 @@
 ///|
-async test "character stabO1" {
+test "character stabO1" {
   let previous_world = @ecs.current_world()
   let world = @ecs.World()
   @ecs.set_current_world(world)
@@ -94,9 +94,10 @@ async test "character stabO1" {
     height=200,
     raw_delta=0.016,
   )
+  debug_inspect(@entity.iter_entities().to_array().length(), content=(#|9
+  ))
   @capture_app.snapshot(
     "src/tests/char_look_test/__snapshot__/stabO1_0.png",
     capture.png,
-    visual_desc="2D game frame from animation test.",
   )
 }

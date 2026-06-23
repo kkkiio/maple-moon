@@ -5,7 +5,7 @@ using @char_look {type NxStanceLooks}
 using @types {type NxStanceBody}
 
 ///|
-async test "character stand1" {
+test "character stand1" {
   let previous_world = @ecs.current_world()
   let world = @ecs.World()
   @ecs.set_current_world(world)
@@ -189,9 +189,10 @@ async test "character stand1" {
     height=200,
     raw_delta=0.016,
   )
+  debug_inspect(@entity.iter_entities().to_array().length(), content=(#|13
+  ))
   @capture_app.snapshot(
     "src/tests/char_look_test/__snapshot__/stand1.png",
     capture.png,
-    visual_desc="A 2D side-view game screenshot showing a standing character facing left, with black hair, light blue top, dark shorts, and red boots.",
   )
 }

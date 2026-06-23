@@ -60,7 +60,7 @@ fn setup_scene(app : @app.App) -> Unit {
 }
 
 ///|
-async test "quest_log_ui renders in-progress & completed tab" {
+test "quest_log_ui renders in-progress & completed tab" {
   reset_quest_log_ui_test_state()
   defer reset_quest_log_ui_test_state()
 
@@ -75,10 +75,11 @@ async test "quest_log_ui renders in-progress & completed tab" {
     raw_delta=0.016,
   )
 
+  debug_inspect(@entity.iter_entities().to_array().length(), content=(#|26
+  ))
   @capture_app.snapshot(
     "src/tests/quest_log_ui_test/__snapshot__/quest_log_ui_in_progress.png",
     capture.png,
-    visual_desc="Quest log UI showing the in-progress tab with a list of active quests.",
   )
 
   let click_row_ok = @console.click_registered_ui(
@@ -92,10 +93,11 @@ async test "quest_log_ui renders in-progress & completed tab" {
     height=540,
     raw_delta=0.016,
   )
+  debug_inspect(@entity.iter_entities().to_array().length(), content=(#|26
+  ))
   @capture_app.snapshot(
     "src/tests/quest_log_ui_test/__snapshot__/quest_log_ui_in_progress_second_selected.png",
     capture2.png,
-    visual_desc="Quest log UI with the second quest in the in-progress list selected, displaying its details.",
   )
 
   let click_ok = @console.click_registered_ui("quest_log", "tab.completed")
@@ -107,15 +109,16 @@ async test "quest_log_ui renders in-progress & completed tab" {
     height=540,
     raw_delta=0.016,
   )
+  debug_inspect(@entity.iter_entities().to_array().length(), content=(#|24
+  ))
   @capture_app.snapshot(
     "src/tests/quest_log_ui_test/__snapshot__/quest_log_ui_completed.png",
     capture3.png,
-    visual_desc="Quest log UI showing the completed tab with a list of finished quests.",
   )
 }
 
 ///|
-async test "quest_log_ui closes on escape" {
+test "quest_log_ui closes on escape" {
   reset_quest_log_ui_test_state()
   defer reset_quest_log_ui_test_state()
   @game_state.init_state(

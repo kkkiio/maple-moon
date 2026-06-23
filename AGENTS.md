@@ -136,8 +136,7 @@ MoonBit 允许 `test` 直接传播错误, 用 `fail` 函数抛出错误.
 │   └── cmd/                   ← 命令行工具 (MoonBit JS target)
 │       ├── maple/             ← CLI (maple start / cmd / logs / bot ...)
 │       └── mapled/            ← CDP daemon (Chrome 控制, 注入, 采集)
-├── assets/                    ← 资源文件
-└── .env.test                  ← 测试环境配置
+└── assets/                    ← 资源文件
 ```
 
 ## Operation Guide
@@ -155,17 +154,25 @@ just build
 
 `just check` 覆盖 JS 与 native target, 但只做类型检查, 不进入 native C 编译/链接.
 
-`just test` 运行 `scripts/moon-webgpu-test.mjs`, 该脚本自动发现 `src/tests` 下调用 `@capture_app.snapshot(` 的 WebGPU 快照测试包，用 `moon test --target js --build-only` 构建选定测试，再在浏览器环境执行. 可用 `node scripts/moon-webgpu-test.mjs --list` review 自动发现的测试包.
+`just test` 运行所有 native target 测试，包括普通逻辑测试、数据测试和 native raylib 图形快照测试:
 
-不要在日常开发中直接执行裸 `moon test`, 因为 MoonBit 会生成 native 测试可执行文件, 即使 `src/apps/game_native/` 没有手写测试, 也会触发 raylib/native 编译和链接.
+```bash
+MOONBIT_NEW_NATIVE=1 moon test --target native --deny-warn --diagnostic-limit 200
+```
 
-不要把全仓 `moon test --target js` 当作默认流程. 画面测试依赖浏览器侧 `XMLHttpRequest` 和脚本提供的 asset server, 直接在 Node.js 里执行会把资源加载边界变成测试失败.
+PNG 快照更新使用 `UPDATE_GRAPHICS_SNAPS=true`; MoonBit inspect 快照更新继续使用 `moon test --update`.
 
-需要直接执行某个非画面 MoonBit 测试时, 显式指定 JS target 和测试路径，并先加载测试环境变量，避免 `selene-webgpu` 在 Node.js 下因缺少 DOM 报错：
+`UPDATE_GRAPHICS_SNAPS=true` 只用于更新图形快照 PNG. Moon 的 path 参数不会递归父目录下的子 package；需要批量更新 PNG 时，枚举 `src/tests/*/moon.pkg` 对应的 package path.
+
+不要在日常开发中直接执行裸 `moon test`, 因为它会同时考虑不必要的 target/backend. 使用 `just test` 跑 native 测试全集；图形快照测试需要单独调试时，显式指定 native target 和测试 package path.
+
+不要把全仓 `moon test --target js` 当作默认流程. 画面测试使用 native raylib backend; JS target 主要用于 Web 入口和命令行工具.
+
+需要直接执行某个 JS target MoonBit 测试时, 显式指定 JS target 和测试路径：
 
 ```bash
 # 在仓库根目录执行
-source scripts/test-env.sh && moon test --target js --deny-warn --diagnostic-limit 200 <path>
+moon test --target js --deny-warn --diagnostic-limit 200 <path>
 ```
 
 日常构建只构建 Web 入口:

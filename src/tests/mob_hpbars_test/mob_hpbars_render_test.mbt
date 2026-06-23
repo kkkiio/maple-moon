@@ -23,7 +23,7 @@ fn attach_visible_mob_sprite(entity : @entity.Entity) -> Unit {
 }
 
 ///|
-async test "mob hpbar render snapshot" {
+test "mob hpbar render snapshot" {
   defer @monster.clear_map_monsters()
   defer @monster.mob_hpbars_system(@ecs.require_current_world())
   defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
@@ -70,9 +70,10 @@ async test "mob hpbar render snapshot" {
     raw_delta=0.016,
   )
 
+  debug_inspect(@entity.iter_entities().to_array().length(), content=(#|10
+  ))
   @capture_app.snapshot(
     "src/tests/mob_hpbars_test/__snapshot__/mob_hpbar_default.png",
     capture.png,
-    visual_desc="A mob is visible and its HP bar is rendered above the mob, horizontally centered.",
   )
 }

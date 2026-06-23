@@ -1,5 +1,4 @@
 import {
-  "moonbitlang/async",
   "moonbitlang/core/json",
   "KKKIIO/maple-moon/engine/console",
   "KKKIIO/maple-moon/engine/game_state",
@@ -17,14 +16,14 @@ import {
   "Milky2018/selene/ecs",
 } for "test"
 
-supported_targets = "js"
+supported_targets = "native"
 
 options(
   overrides: [
-    "Milky2018/selene_webgpu/platform_window",
-    "Milky2018/selene_webgpu/platform_input",
-    "Milky2018/selene_webgpu/platform_render",
-    "Milky2018/selene_webgpu/platform_audio",
-    "Milky2018/selene_webgpu/platform_asset_io",
+    "Milky2018/selene_raylib/platform_window",
+    "Milky2018/selene_raylib/platform_input",
+    "Milky2018/selene_raylib/platform_render",
+    "Milky2018/selene_raylib/platform_audio",
+    "Milky2018/selene_raylib/platform_asset_io",
   ],
 )

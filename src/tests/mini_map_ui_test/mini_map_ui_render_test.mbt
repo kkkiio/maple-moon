@@ -59,9 +59,10 @@ fn setup_mini_map_ui_scene_with_data(
 }
 
 ///|
-async test "mini map ui renders normal frame" {
+test "mini map ui renders normal frame" {
   defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
   defer @sprite.sprites().clear()
+  @capture_app.ensure_native_context(width=420, height=240)
   let app = setup_mini_map_ui_scene_with_data(
     120010000,
     "Nautilus",
@@ -79,10 +80,11 @@ async test "mini map ui renders normal frame" {
     height=240,
     raw_delta=0.016,
   )
+  debug_inspect(@entity.iter_entities().to_array().length(), content=(#|9
+  ))
   @capture_app.snapshot(
     "src/tests/mini_map_ui_test/__snapshot__/mini_map_ui_normal.png",
     capture.png,
-    visual_desc="Mini map UI is displayed showing the map layout, player position, and other standard elements.",
   )
 }
 
@@ -126,9 +128,10 @@ fn load_real_minimap_runtime_resource_100030000() -> @map.MiniMapRuntimeResource
 }
 
 ///|
-async test "mini map ui renders portal marker from real map 100030000" {
+test "mini map ui renders portal marker from real map 100030000" {
   defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
   defer @sprite.sprites().clear()
+  @capture_app.ensure_native_context(width=420, height=240)
   let app = setup_mini_map_ui_scene_with_data(
     100030000,
     "Henesys",
@@ -142,9 +145,10 @@ async test "mini map ui renders portal marker from real map 100030000" {
     height=240,
     raw_delta=0.016,
   )
+  debug_inspect(@entity.iter_entities().to_array().length(), content=(#|12
+  ))
   @capture_app.snapshot(
     "src/tests/mini_map_ui_test/__snapshot__/mini_map_ui_with_portal_marker.png",
     capture.png,
-    visual_desc="Mini map UI is displayed with portal markers visible on the map.",
   )
 }

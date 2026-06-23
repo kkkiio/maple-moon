@@ -1,14 +1,11 @@
 ///|
 fn load_map_physics_from_assets(map_id : Int) -> @physics.Physics raise {
   let prefix = map_id / 100000000
-  let path = "assets/Map/map\{prefix}/\{map_id}.img.json"
-  let map_text = @fs.read_file_to_string(path)
-  let map_json = @json.parse(map_text)
-  let foothold_json = match map_json {
-    { "foothold": foothold, .. } => foothold
-    _ => fail("foothold not found in map_json")
-  }
-  let foothold_tree : @physics.NxFootholdTree = @json.from_json(foothold_json)
+  let (_, tiled_map) = @resource.load_tiled_map_from_mx([
+    "Map\{prefix}",
+    "\{map_id}.img.mx.json",
+  ])
+  let foothold_tree = @map.from_tiled_foothold_tree(tiled_map)
   @physics.Physics::from_resource(foothold_tree)
 }
 

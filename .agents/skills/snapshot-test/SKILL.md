@@ -42,14 +42,14 @@ let capture = @capture_app.capture_after_frames(app, 1, width=200, height=200)
 ## 文本快照
 
 使用 `@debug.debug_inspect` / `json_inspect` 做数据快照，不要自己填写 `content` 参数。
-执行 `moon test` 第一次运行时会自动生成快照。
+首次创建或更新数据快照时，使用 `moon test --update` 让 MoonBit 写入 inspect baseline。
 
 ```mbt
 @debug.debug_inspect(some_value)
 json_inspect(@npc_talk_ui.describe_npc_talk_ui())
 ```
 
-如果修改了代码导致快照不通过，用 `moon test --update` 更新快照，并检查快照是否正确。
+如果修改了代码导致 inspect 快照不通过，用 `moon test --update` 更新快照，并检查快照是否正确。PNG 快照不读取 `--update`，只读取 `UPDATE_GRAPHICS_SNAPS=true`。
 
 ## 图片快照
 
@@ -58,8 +58,9 @@ json_inspect(@npc_talk_ui.describe_npc_talk_ui())
 ### 1. 写图形快照测试
 
 - 在 `src/tests/<feature>_test/` 下新建或更新 blackbox test 包。
-- 复用 `capture_backend` override（对齐测试包 `moon.pkg` 配置）。
+- 测试包 `moon.pkg` 使用 native target 和 `Milky2018/selene_raylib/*` platform overrides。
 - 用 `@capture_app.capture_after_frames` 初始化测试 App，挂上 `@plugins.default_plugin` 和被测系统。
+- 如果测试在 `capture_after_frames` 之前会加载 raylib texture，先调用 `@capture_app.ensure_native_context(width=..., height=...)`。
 - 测试里直接读取本地 `assets/...json` 并传给游戏模块解析。
 - 不为测试改正式资源加载链路。
 - 固定画布尺寸、UI 位置、输入和帧推进次数，保证快照稳定可复现。
@@ -71,7 +72,13 @@ json_inspect(@npc_talk_ui.describe_npc_talk_ui())
 在仓库根目录执行：
 
 ```bash
-source .env.test && UPDATE_CANVAS_SNAPS=true moon test <test-target>
+MOONBIT_NEW_NATIVE=1 UPDATE_GRAPHICS_SNAPS=true moon test --target native --deny-warn --diagnostic-limit 200 src/tests/<feature>_test
+```
+
+如果同一次改动还新增或改变了 `debug_inspect` / `json_inspect` baseline，另跑 inspect 更新：
+
+```bash
+MOONBIT_NEW_NATIVE=1 moon test --target native --update --deny-warn --diagnostic-limit 200 src/tests/<feature>_test
 ```
 
 ### 3. agent 检查快照图片
@@ -88,4 +95,8 @@ source .env.test && UPDATE_CANVAS_SNAPS=true moon test <test-target>
 
 ### 5. 退出条件
 
-- `source .env.test && moon test <test-target>` 的 pixel 对比通过。
+- 无更新复跑通过：
+
+```bash
+MOONBIT_NEW_NATIVE=1 moon test --target native --deny-warn --diagnostic-limit 200 src/tests/<feature>_test
+```

@@ -95,7 +95,7 @@ fn load_weapon_item(item_id : Int) -> @item.ItemData raise {
 }
 
 ///|
-async fn snapshot_afterimage_case(
+fn snapshot_afterimage_case(
   item_id : Int,
   stance : @char_stance.StanceId,
   stance_key : String,
@@ -103,8 +103,7 @@ async fn snapshot_afterimage_case(
   facing_right : Bool,
   host_shift_x : Double,
   snapshot_path : String,
-  visual_desc : String,
-) -> Unit {
+) -> Unit raise {
   let previous_world = @ecs.current_world()
   let world = @ecs.World()
   @ecs.set_current_world(world)
@@ -167,5 +166,7 @@ async fn snapshot_afterimage_case(
     height=220,
     raw_delta=0.016,
   )
-  @capture_app.snapshot(snapshot_path, capture.png, visual_desc~)
+  debug_inspect(@entity.iter_entities().to_array().length(), content=(#|11
+  ))
+  @capture_app.snapshot(snapshot_path, capture.png)
 }

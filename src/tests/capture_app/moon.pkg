@@ -1,17 +1,11 @@
 import {
   "Milky2018/selene/app",
-  "Milky2018/selene/asset",
   "KKKIIO/maple-moon/game/server_proto",
-  "Milky2018/selene/platform_window",
   "Milky2018/selene/runtime_debug",
-  "Milky2018/selene/test_graphics",
   "moonbitlang/core/env",
   "moonbitlang/core/json",
   "moonbitlang/x/fs",
+  "tonyfettes/raylib",
 }
 
-supported_targets = "js"
-
-options(
-  targets: { "snapshot_defer.js.mbt": [ "js" ] },
-)
+supported_targets = "native"

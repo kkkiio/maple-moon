@@ -61,7 +61,7 @@ fn visible_sprite_count() -> Int {
 }
 
 ///|
-async test "map 101010102 tween lighting alpha background start" {
+test "map 101010102 tween lighting alpha background start" {
   defer @map.clear_tiled_map(@ecs.require_current_world())
   defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
   defer @sprite.sprites().clear()
@@ -78,15 +78,16 @@ async test "map 101010102 tween lighting alpha background start" {
   let start_alpha = min_sprite_alpha()
   assert_true(start_alpha >= 0.0)
   assert_true(visible_sprite_count() > 0)
+  debug_inspect(@entity.iter_entities().to_array().length(), content=(#|713
+  ))
   @capture_app.snapshot(
     "src/tests/map_background_test/__snapshot__/map_101010102_bg_alpha_start.png",
     capture.png,
-    visual_desc="Large green tree trunks and vines fill most of the screen, with lighter tree layers visible in the far background.",
   )
 }
 
 ///|
-async test "map 101010102 tween lighting alpha background mid" {
+test "map 101010102 tween lighting alpha background mid" {
   defer @map.clear_tiled_map(@ecs.require_current_world())
   defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
   defer @sprite.sprites().clear()
@@ -103,9 +104,69 @@ async test "map 101010102 tween lighting alpha background mid" {
   let after_motion_alpha = min_sprite_alpha()
   assert_true(after_motion_alpha >= 0.0)
   assert_true(visible_sprite_count() > 0)
+  debug_inspect(@entity.iter_entities().to_array().length(), content=(#|713
+  ))
   @capture_app.snapshot(
     "src/tests/map_background_test/__snapshot__/map_101010102_bg_alpha_mid.png",
     capture.png,
-    visual_desc="Overlapping foreground and background tree layers create a dense forest view, with thick trunks crossing the center of the screen.",
+  )
+}
+
+///|
+fn setup_tiled_background_scene_100000000() -> @app.App raise {
+  let app = @app.App()
+    .with_viewport_width(1366.0)
+    .with_viewport_height(768.0)
+    .add_plugin(@plugins.default_plugin)
+    .add_system(
+      Update,
+      fn(world) { @map.tiled_background_motion_system(world) },
+      system_name="tiled_background_motion_system",
+    )
+    .add_system(
+      Update,
+      fn(world) { @io_service.io_system(world) },
+      system_name="io_system",
+    )
+  @ecs.set_current_world(app.world())
+  @system.configure_display(1366.0, 768.0, 1.0)
+  let raw = @map.load_map_resources_by_id(100000000)
+  @map.set_tiled_map(
+    @ecs.require_current_world(),
+    raw.tiled_map,
+    background_animations=raw.background_animations,
+  )
+  let camera_anchor = @entity.Entity()
+  @transform2d.set_xy(camera_anchor, @math.Vec2(0.0, 0.0))
+  @ms_camera.setup_camera_entity(
+    camera_anchor,
+    center=@transform2d.get_xy(camera_anchor).unwrap_or(@math.Vec2::zero()),
+  )
+  @ms_camera.set_follow_target(camera_anchor)
+  @ms_camera.camera_follow_system(@ecs.require_current_world())
+  app
+}
+
+///|
+test "map 100000000 background" {
+  defer @map.clear_tiled_map(@ecs.require_current_world())
+  defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
+  defer @sprite.sprites().clear()
+
+  let app = setup_tiled_background_scene_100000000()
+  let capture = @capture_app.capture_after_frames(
+    app,
+    5,
+    width=1366,
+    height=768,
+    raw_delta=0.016,
+  )
+
+  assert_true(visible_sprite_count() > 0)
+  debug_inspect(@entity.iter_entities().to_array().length(), content=(#|1626
+  ))
+  @capture_app.snapshot(
+    "src/tests/map_background_test/__snapshot__/map_100000000_bg.png",
+    capture.png,
   )
 }

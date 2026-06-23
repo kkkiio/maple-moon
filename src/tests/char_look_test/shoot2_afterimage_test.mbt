@@ -1,5 +1,5 @@
 ///|
-async test "crossbow shoot2 afterimage without range should render" {
+test "crossbow shoot2 afterimage without range should render" {
   let previous_world = @ecs.current_world()
   let world = @ecs.World()
   @ecs.set_current_world(world)
@@ -129,9 +129,10 @@ async test "crossbow shoot2 afterimage without range should render" {
     height=200,
     raw_delta=0.016,
   )
+  debug_inspect(@entity.iter_entities().to_array().length(), content=(#|11
+  ))
   @capture_app.snapshot(
     "src/tests/char_look_test/__snapshot__/crossbow_shoot2_afterimage_left.png",
     capture.png,
-    visual_desc="A character faces left and fires a crossbow held in front of the body, with a translucent attack effect rendered just ahead of the weapon.",
   )
 }

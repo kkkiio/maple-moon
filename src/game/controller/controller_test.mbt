@@ -84,16 +84,14 @@ fn make_test_player(oid : Int) -> @player.Player raise {
 ///|
 fn load_map_runtime(map_id : Int) -> (@map.MapInfo, @physics.Physics) raise {
   let prefix = map_id / 100000000
-  let path = "assets/Map/map\{prefix}/\{map_id}.img.json"
-  let map_json = parse_json_file(path)
-  let foothold_json = match map_json {
-    { "foothold": foothold, .. } => foothold
-    _ => fail("missing foothold")
-  }
-  let foothold_tree : @physics.NxFootholdTree = @json.from_json(foothold_json)
+  let (_, tiled_map) = @resource.load_tiled_map_from_mx([
+    "Map\{prefix}",
+    "\{map_id}.img.mx.json",
+  ])
+  let foothold_tree = @map.from_tiled_foothold_tree(tiled_map)
   let physics = @physics.Physics::from_resource(foothold_tree)
-  let map_info = @map.MapInfo::from_resource(
-    map_json,
+  let map_info = @map.MapInfo::from_tiled_map(
+    tiled_map,
     physics.get_fht().get_walls(),
     physics.get_fht().get_borders(),
   )

@@ -1,0 +1,44 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/tests/capture_app"
+
+import {
+  "KKKIIO/maple-moon/game/server_proto",
+  "Milky2018/selene/app",
+  "Milky2018/selene/runtime_debug",
+  "moonbitlang/core/json",
+}
+
+// Values
+pub fn add_mock_server_handler(Int, (Json) -> Unit raise) -> Unit
+
+pub fn capture_after_frames(@app.App, Int, width~ : Int, height~ : Int, raw_delta? : Double, image_smooth? : Bool) -> @runtime_debug.FrameCaptureArtifact raise
+
+pub fn[T : @server_proto.ServerMessage] emit_mock_server_message(T) -> Unit raise
+
+pub fn emit_mock_server_state(Int, Json) -> Unit raise
+
+pub fn ensure_native_context(width~ : Int, height~ : Int) -> Unit raise
+
+pub fn mock_server_latest_sent_json(Int) -> Json?
+
+pub fn mock_server_latest_sent_json_internal(Int) -> Json?
+
+pub fn mock_server_sent_count(Int) -> Int
+
+pub fn mock_server_sent_count_internal(Int) -> Int
+
+pub fn record_mock_server_sent_message(Int, Json) -> Unit
+
+pub fn reset_mock_server() -> Unit
+
+pub fn reset_mock_server_state() -> Unit
+
+pub fn snapshot(String, Bytes) -> Unit raise
+
+// Errors
+
+// Types and methods
+
+// Type aliases
+
+// Traits

@@ -132,7 +132,8 @@ let capture = @capture_app.capture_after_frames(app, 1, width=200, height=200)
 
 - 单元测试（`assert_true` 等逻辑断言）。对 agent reward hacking 抵抗力弱。
 - AI 视觉模型自动化判定。已尝试，不稳定，放弃。
-- 本地 Native 测试。日常测试走 WebGPU 快照路径（ADR 0002, ADR 0003）。
+- 浏览器 WebGPU 图形快照测试。日常图形快照测试走 native raylib 后端；
+  浏览器运行状态由 maple-cli 覆盖。
 
 ## Consequences
 

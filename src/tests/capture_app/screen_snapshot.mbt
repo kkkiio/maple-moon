@@ -2,7 +2,7 @@
 /// Compare PNG bytes with a stored snapshot.
 ///
 /// If the snapshot file exists, the frame is compared with it. If
-/// `UPDATE_CANVAS_SNAPS` is `"true"` or the file is missing, the snapshot file
+/// `UPDATE_GRAPHICS_SNAPS` is `"true"` or the file is missing, the snapshot file
 /// is written from `actual`.
 ///
 /// # Example
@@ -13,24 +13,13 @@
 /// @capture_app.snapshot(
 ///   "src/tests/example/__snapshot__/frame.png",
 ///   artifact.png,
-///   visual_desc="The expected frame is rendered.",
 /// )
 /// ```
 pub fn snapshot(
   path : String,
   actual : Bytes,
-  visual_desc~ : String,
 ) -> Unit raise {
-  if defer_snapshot_for_external_runner(path, visual_desc) {
-    return
-  }
-  match check_snapshot_with_external_runner(path, actual, visual_desc) {
-    Some("") => return
-    Some(message) => fail(message)
-    None => ()
-  }
-  ignore(visual_desc)
-  let update_snapshot = @env.get_env_var("UPDATE_CANVAS_SNAPS") is Some("true")
+  let update_snapshot = @env.get_env_var("UPDATE_GRAPHICS_SNAPS") is Some("true")
   let should_write_snapshot = update_snapshot || !@fs.path_exists(path)
   try {
     if should_write_snapshot {

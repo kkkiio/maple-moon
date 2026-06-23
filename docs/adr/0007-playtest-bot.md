@@ -28,7 +28,7 @@ Playtest Bot 的设计目标：AI 编写 JS 场景脚本 → mapled 通过 CDP �
 
 ```
 src/apps/
-├── game_web/          # WebGPU，日常开发和测试
+├── game_web/          # WebGPU，日常浏览器开发
 ├── game_native/       # raylib，玩家本地游玩
 └── game_debug/        # WebGPU，bot 验证专用构建（新增）
 ```

@@ -73,7 +73,7 @@ fn setup_inventory_ui_test_scene() -> @app.App raise {
 }
 
 ///|
-async test "inventory ui renders equip tab with icon count and meso" {
+test "inventory ui renders equip tab with icon count and meso" {
   defer @inventory_ui.set_inventory_visible(false)
   defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
   defer @sprite.sprites().clear()
@@ -85,15 +85,16 @@ async test "inventory ui renders equip tab with icon count and meso" {
     height=540,
     raw_delta=0.016,
   )
+  debug_inspect(@entity.iter_entities().to_array().length(), content=(#|34
+  ))
   @capture_app.snapshot(
     "src/tests/inventory_ui_test/__snapshot__/inventory_ui_default.png",
     capture.png,
-    visual_desc="Inventory UI is displayed showing the default equip tab with items.",
   )
 }
 
 ///|
-async test "inventory ui renders use tab with icon count and meso" {
+test "inventory ui renders use tab with icon count and meso" {
   defer @inventory_ui.set_inventory_visible(false)
   defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
   defer @sprite.sprites().clear()
@@ -106,9 +107,10 @@ async test "inventory ui renders use tab with icon count and meso" {
     height=540,
     raw_delta=0.016,
   )
+  debug_inspect(@entity.iter_entities().to_array().length(), content=(#|34
+  ))
   @capture_app.snapshot(
     "src/tests/inventory_ui_test/__snapshot__/inventory_ui_use_tab.png",
     capture.png,
-    visual_desc="Inventory UI is displayed showing the use tab with items.",
   )
 }

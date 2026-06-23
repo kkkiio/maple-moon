@@ -1,1 +1,456 @@
-{"02010000":{"info":{"icon":{"__h":30,"__w":26,"origin":[-4,30],"__i":"images/Item/14576.png"},"iconRaw":{"__h":25,"__w":20,"origin":[-6,30],"__i":"images/Item/14577.png"},"price":15},"spec":{"hp":30}},"02010001":{"info":{"icon":{"__h":31,"__w":29,"origin":[-2,31],"__i":"images/Item/14578.png"},"iconRaw":{"__h":30,"__w":29,"origin":[-2,31],"__i":"images/Item/14579.png"},"price":53},"spec":{"hp":100}},"02010002":{"info":{"icon":{"__h":25,"__w":27,"origin":[-3,25],"__i":"images/Item/14580.png"},"iconRaw":{"__h":21,"__w":27,"origin":[-3,25],"__i":"images/Item/14581.png"},"price":25},"spec":{"hp":50}},"02010003":{"info":{"icon":{"__h":25,"__w":26,"origin":[-3,25],"__i":"images/Item/14582.png"},"iconRaw":{"__h":20,"__w":21,"origin":[-5,25],"__i":"images/Item/14583.png"},"price":50},"spec":{"mp":50}},"02010004":{"info":{"icon":{"__h":26,"__w":26,"origin":[-4,26],"__i":"images/Item/14584.png"},"iconRaw":{"__h":21,"__w":19,"origin":[-7,26],"__i":"images/Item/14585.png"},"price":155},"spec":{"mp":150}},"02010005":{"info":{"icon":{"__h":29,"__w":26,"origin":[-4,29],"__i":"images/Item/14586.png"},"iconRaw":{"__h":26,"__w":25,"origin":[-4,29],"__i":"images/Item/14587.png"},"price":750},"spec":{"hpR":30,"mpR":30}},"02010006":{"info":{"icon":{"__h":26,"__w":26,"origin":[-4,26],"__i":"images/Item/14588.png"},"iconRaw":{"__h":23,"__w":22,"origin":[-5,26],"__i":"images/Item/14589.png"},"price":1000},"spec":{"hpR":"50","mpR":"50"}},"02010007":{"info":{"icon":{"__h":30,"__w":26,"origin":[-4,30],"__i":"images/Item/14590.png"},"iconRaw":{"__h":25,"__w":20,"origin":[-6,30],"__i":"images/Item/14591.png"},"price":1,"quest":1},"spec":{"hp":30}},"02010009":{"info":{"icon":{"__h":29,"__w":26,"origin":[-4,30],"__i":"images/Item/14602.png"},"iconRaw":{"__h":25,"__w":20,"origin":[-6,30],"__i":"images/Item/14603.png"},"price":30},"spec":{"mp":30}},"02011000":{"info":{"icon":{"__h":29,"__w":29,"origin":[-2,29],"__i":"images/Item/14592.png"},"iconRaw":{"__h":27,"__w":29,"origin":[-2,29],"__i":"images/Item/14593.png"}},"spec":null},"02012000":{"info":{"icon":{"__h":33,"__w":26,"origin":[-4,33],"__i":"images/Item/14594.png"},"iconRaw":{"__h":32,"__w":21,"origin":[-6,33],"__i":"images/Item/14595.png"},"price":750},"spec":{"pad":8,"time":300000}},"02012001":{"info":{"icon":{"__h":32,"__w":31,"origin":[-1,32],"__i":"images/Item/14596.png"},"iconRaw":{"__h":31,"__w":31,"origin":[-1,32],"__i":"images/Item/14597.png"},"price":500},"spec":{"eva":10,"time":300000}},"02012002":{"info":{"icon":{"__h":30,"__w":26,"origin":[-3,30],"__i":"images/Item/14598.png"},"iconRaw":{"__h":29,"__w":21,"origin":[-5,30],"__i":"images/Item/14599.png"},"price":700},"spec":{"mad":10,"time":300000}},"02012003":{"info":{"icon":{"__h":26,"__w":31,"origin":[-1,26],"__i":"images/Item/14600.png"},"iconRaw":{"__h":22,"__w":31,"origin":[-1,26],"__i":"images/Item/14601.png"},"price":500},"spec":{"pdd":10,"time":300000}},"02012005":{"info":{"icon":{"__h":30,"__w":26,"origin":[-4,30],"__i":"images/Item/14604.png"},"iconRaw":{"__h":25,"__w":20,"origin":[-6,30],"__i":"images/Item/14605.png"},"notSale":1,"price":1,"tradeBlock":1},"spec":{"hp":200}},"02012006":{"info":{"icon":{"__h":26,"__w":26,"origin":[-4,26],"__i":"images/Item/14606.png"},"iconRaw":{"__h":21,"__w":19,"origin":[-7,26],"__i":"images/Item/14607.png"},"notSale":1,"price":1,"tradeBlock":1},"spec":{"mp":200}},"02012008":{"info":{"icon":{"__h":29,"__w":26,"origin":[-4,28],"__i":"images/Item/14608.png"},"iconRaw":{"__h":25,"__w":20,"origin":[-7,28],"__i":"images/Item/14609.png"},"price":1,"slotMax":10},"spec":{"mad":70,"pad":60,"pdd":10,"time":60000}}}
+{
+  "02010000": {
+    "info": {
+      "icon": {
+        "__i": "assets/Item/Consume/0201.img/bitmap/14576.png",
+        "__w": 26,
+        "__h": 30,
+        "origin": [
+          -4,
+          30
+        ]
+      },
+      "iconRaw": {
+        "__i": "assets/Item/Consume/0201.img/bitmap/14577.png",
+        "__w": 20,
+        "__h": 25,
+        "origin": [
+          -6,
+          30
+        ]
+      },
+      "price": 15
+    },
+    "spec": {
+      "hp": 30
+    }
+  },
+  "02010001": {
+    "info": {
+      "icon": {
+        "__i": "assets/Item/Consume/0201.img/bitmap/14578.png",
+        "__w": 29,
+        "__h": 31,
+        "origin": [
+          -2,
+          31
+        ]
+      },
+      "iconRaw": {
+        "__i": "assets/Item/Consume/0201.img/bitmap/14579.png",
+        "__w": 29,
+        "__h": 30,
+        "origin": [
+          -2,
+          31
+        ]
+      },
+      "price": 53
+    },
+    "spec": {
+      "hp": 100
+    }
+  },
+  "02010002": {
+    "info": {
+      "icon": {
+        "__i": "assets/Item/Consume/0201.img/bitmap/14580.png",
+        "__w": 27,
+        "__h": 25,
+        "origin": [
+          -3,
+          25
+        ]
+      },
+      "iconRaw": {
+        "__i": "assets/Item/Consume/0201.img/bitmap/14581.png",
+        "__w": 27,
+        "__h": 21,
+        "origin": [
+          -3,
+          25
+        ]
+      },
+      "price": 25
+    },
+    "spec": {
+      "hp": 50
+    }
+  },
+  "02010003": {
+    "info": {
+      "icon": {
+        "__i": "assets/Item/Consume/0201.img/bitmap/14582.png",
+        "__w": 26,
+        "__h": 25,
+        "origin": [
+          -3,
+          25
+        ]
+      },
+      "iconRaw": {
+        "__i": "assets/Item/Consume/0201.img/bitmap/14583.png",
+        "__w": 21,
+        "__h": 20,
+        "origin": [
+          -5,
+          25
+        ]
+      },
+      "price": 50
+    },
+    "spec": {
+      "mp": 50
+    }
+  },
+  "02010004": {
+    "info": {
+      "icon": {
+        "__i": "assets/Item/Consume/0201.img/bitmap/14584.png",
+        "__w": 26,
+        "__h": 26,
+        "origin": [
+          -4,
+          26
+        ]
+      },
+      "iconRaw": {
+        "__i": "assets/Item/Consume/0201.img/bitmap/14585.png",
+        "__w": 19,
+        "__h": 21,
+        "origin": [
+          -7,
+          26
+        ]
+      },
+      "price": 155
+    },
+    "spec": {
+      "mp": 150
+    }
+  },
+  "02010005": {
+    "info": {
+      "icon": {
+        "__i": "assets/Item/Consume/0201.img/bitmap/14586.png",
+        "__w": 26,
+        "__h": 29,
+        "origin": [
+          -4,
+          29
+        ]
+      },
+      "iconRaw": {
+        "__i": "assets/Item/Consume/0201.img/bitmap/14587.png",
+        "__w": 25,
+        "__h": 26,
+        "origin": [
+          -4,
+          29
+        ]
+      },
+      "price": 750
+    },
+    "spec": {
+      "hpR": 30,
+      "mpR": 30
+    }
+  },
+  "02010006": {
+    "info": {
+      "icon": {
+        "__i": "assets/Item/Consume/0201.img/bitmap/14588.png",
+        "__w": 26,
+        "__h": 26,
+        "origin": [
+          -4,
+          26
+        ]
+      },
+      "iconRaw": {
+        "__i": "assets/Item/Consume/0201.img/bitmap/14589.png",
+        "__w": 22,
+        "__h": 23,
+        "origin": [
+          -5,
+          26
+        ]
+      },
+      "price": 1000
+    },
+    "spec": {
+      "hpR": 50,
+      "mpR": 50
+    }
+  },
+  "02010007": {
+    "info": {
+      "icon": {
+        "__i": "assets/Item/Consume/0201.img/bitmap/14590.png",
+        "__w": 26,
+        "__h": 30,
+        "origin": [
+          -4,
+          30
+        ]
+      },
+      "iconRaw": {
+        "__i": "assets/Item/Consume/0201.img/bitmap/14591.png",
+        "__w": 20,
+        "__h": 25,
+        "origin": [
+          -6,
+          30
+        ]
+      },
+      "price": 1,
+      "quest": 1
+    },
+    "spec": {
+      "hp": 30
+    }
+  },
+  "02010009": {
+    "info": {
+      "icon": {
+        "__i": "assets/Item/Consume/0201.img/bitmap/14602.png",
+        "__w": 26,
+        "__h": 29,
+        "origin": [
+          -4,
+          30
+        ]
+      },
+      "iconRaw": {
+        "__i": "assets/Item/Consume/0201.img/bitmap/14603.png",
+        "__w": 20,
+        "__h": 25,
+        "origin": [
+          -6,
+          30
+        ]
+      },
+      "price": 30
+    },
+    "spec": {
+      "mp": 30
+    }
+  },
+  "02011000": {
+    "info": {
+      "icon": {
+        "__i": "assets/Item/Consume/0201.img/bitmap/14592.png",
+        "__w": 29,
+        "__h": 29,
+        "origin": [
+          -2,
+          29
+        ]
+      },
+      "iconRaw": {
+        "__i": "assets/Item/Consume/0201.img/bitmap/14593.png",
+        "__w": 29,
+        "__h": 27,
+        "origin": [
+          -2,
+          29
+        ]
+      }
+    },
+    "spec": {}
+  },
+  "02012000": {
+    "info": {
+      "icon": {
+        "__i": "assets/Item/Consume/0201.img/bitmap/14594.png",
+        "__w": 26,
+        "__h": 33,
+        "origin": [
+          -4,
+          33
+        ]
+      },
+      "iconRaw": {
+        "__i": "assets/Item/Consume/0201.img/bitmap/14595.png",
+        "__w": 21,
+        "__h": 32,
+        "origin": [
+          -6,
+          33
+        ]
+      },
+      "price": 750
+    },
+    "spec": {
+      "pad": 8,
+      "time": 300000
+    }
+  },
+  "02012001": {
+    "info": {
+      "icon": {
+        "__i": "assets/Item/Consume/0201.img/bitmap/14596.png",
+        "__w": 31,
+        "__h": 32,
+        "origin": [
+          -1,
+          32
+        ]
+      },
+      "iconRaw": {
+        "__i": "assets/Item/Consume/0201.img/bitmap/14597.png",
+        "__w": 31,
+        "__h": 31,
+        "origin": [
+          -1,
+          32
+        ]
+      },
+      "price": 500
+    },
+    "spec": {
+      "eva": 10,
+      "time": 300000
+    }
+  },
+  "02012002": {
+    "info": {
+      "icon": {
+        "__i": "assets/Item/Consume/0201.img/bitmap/14598.png",
+        "__w": 26,
+        "__h": 30,
+        "origin": [
+          -3,
+          30
+        ]
+      },
+      "iconRaw": {
+        "__i": "assets/Item/Consume/0201.img/bitmap/14599.png",
+        "__w": 21,
+        "__h": 29,
+        "origin": [
+          -5,
+          30
+        ]
+      },
+      "price": 700
+    },
+    "spec": {
+      "mad": 10,
+      "time": 300000
+    }
+  },
+  "02012003": {
+    "info": {
+      "icon": {
+        "__i": "assets/Item/Consume/0201.img/bitmap/14600.png",
+        "__w": 31,
+        "__h": 26,
+        "origin": [
+          -1,
+          26
+        ]
+      },
+      "iconRaw": {
+        "__i": "assets/Item/Consume/0201.img/bitmap/14601.png",
+        "__w": 31,
+        "__h": 22,
+        "origin": [
+          -1,
+          26
+        ]
+      },
+      "price": 500
+    },
+    "spec": {
+      "pdd": 10,
+      "time": 300000
+    }
+  },
+  "02012005": {
+    "info": {
+      "icon": {
+        "__i": "assets/Item/Consume/0201.img/bitmap/14604.png",
+        "__w": 26,
+        "__h": 30,
+        "origin": [
+          -4,
+          30
+        ]
+      },
+      "iconRaw": {
+        "__i": "assets/Item/Consume/0201.img/bitmap/14605.png",
+        "__w": 20,
+        "__h": 25,
+        "origin": [
+          -6,
+          30
+        ]
+      },
+      "notSale": 1,
+      "price": 1,
+      "tradeBlock": 1
+    },
+    "spec": {
+      "hp": 200
+    }
+  },
+  "02012006": {
+    "info": {
+      "icon": {
+        "__i": "assets/Item/Consume/0201.img/bitmap/14606.png",
+        "__w": 26,
+        "__h": 26,
+        "origin": [
+          -4,
+          26
+        ]
+      },
+      "iconRaw": {
+        "__i": "assets/Item/Consume/0201.img/bitmap/14607.png",
+        "__w": 19,
+        "__h": 21,
+        "origin": [
+          -7,
+          26
+        ]
+      },
+      "notSale": 1,
+      "price": 1,
+      "tradeBlock": 1
+    },
+    "spec": {
+      "mp": 200
+    }
+  },
+  "02012008": {
+    "info": {
+      "icon": {
+        "__i": "assets/Item/Consume/0201.img/bitmap/14608.png",
+        "__w": 26,
+        "__h": 29,
+        "origin": [
+          -4,
+          28
+        ]
+      },
+      "iconRaw": {
+        "__i": "assets/Item/Consume/0201.img/bitmap/14609.png",
+        "__w": 20,
+        "__h": 25,
+        "origin": [
+          -7,
+          28
+        ]
+      },
+      "price": 1,
+      "slotMax": 10
+    },
+    "spec": {
+      "mad": 70,
+      "pad": 60,
+      "pdd": 10,
+      "time": 60000
+    }
+  }
+}

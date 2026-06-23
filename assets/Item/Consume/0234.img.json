@@ -1,1 +1,24 @@
-{"02340000":{"info":{"icon":{"__h":30,"__w":30,"origin":[-1,29],"__i":"images/Item/16673.png"},"iconRaw":{"__h":26,"__w":30,"origin":[-1,29],"__i":"images/Item/16674.png"}}}}
+{
+  "02340000": {
+    "info": {
+      "icon": {
+        "__i": "assets/Item/Consume/0234.img/bitmap/16673.png",
+        "__w": 30,
+        "__h": 30,
+        "origin": [
+          -1,
+          29
+        ]
+      },
+      "iconRaw": {
+        "__i": "assets/Item/Consume/0234.img/bitmap/16674.png",
+        "__w": 30,
+        "__h": 26,
+        "origin": [
+          -1,
+          29
+        ]
+      }
+    }
+  }
+}

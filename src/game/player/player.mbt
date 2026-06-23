@@ -761,3 +761,26 @@ fn sync_player_world_z(player : Player) -> Unit {
       )
   }
 }
+
+///|
+fn init {
+  @console.register_command("whereami", fn(_args) {
+    let map_id = match @game_state.current_phase() {
+      @game_state.GamePhase::GameActive(map_id~, ..) => map_id
+      @game_state.GamePhase::GameTransiting(map_id~, ..) => map_id
+      @game_state.GamePhase::GameStart(map_id~, ..) => map_id
+      _ => 0
+    }
+    let pos = match get_player() {
+      Some(player) => player.character.get_position()
+      None => @struct.Point::new(0, 0)
+    }
+    {
+      "ok": true,
+      "code": "OK",
+      "map_id": map_id,
+      "x": pos.x,
+      "y": pos.y,
+    }
+  })
+}

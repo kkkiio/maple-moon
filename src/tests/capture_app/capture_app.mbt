@@ -96,9 +96,10 @@ pub fn capture_after_frames(
   if width <= 0 || height <= 0 {
     fail("capture_after_frames requires positive width and height")
   }
-  ignore(image_smooth)
   ensure_native_context(width~, height~)
-  let captures = app.run_frames_capture(
+  let captures = app
+  .with_image_smooth(image_smooth)
+  .run_frames_capture(
     frames,
     capture_width=width,
     capture_height=height,

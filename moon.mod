@@ -23,6 +23,7 @@ keywords = [ ]
 description = ""
 
 preferred_target = "native"
+supported_targets = "native+js"
 
 warnings = "-28"
 

@@ -47,9 +47,6 @@ let tiled_background_motion_states_worlds : Map[
 ] = {}
 
 ///|
-let maple_camera_y_offset = 80.0
-
-///|
 priv struct TiledBackgroundMotionState {
   layer_entity : @entity.Entity
   tile_entities : Array[@entity.Entity]
@@ -60,8 +57,9 @@ priv struct TiledBackgroundMotionState {
   sprite_template : @sprite.Sprite
   background_type : NxBackgroundType
   base_screen_offset : @selene_math.Vec2
-  moving_world_pos : @selene_math.Vec2
-  ratio : @selene_math.Vec2
+  parallax_factor : @selene_math.Vec2
+  parallax_origin : @selene_math.Vec2
+  motion_screen_offset : @selene_math.Vec2
   speed : @selene_math.Vec2
   moving_axis : (Bool, Bool)
   repeat : (Bool, Bool)
@@ -241,14 +239,20 @@ fn maple_background_axis_screen(
   camera_top_left : Double,
   view_half : Double,
   base_screen_offset : Double,
-  moving_world_pos : Double,
-  ratio : Double,
+  parallax_factor : Double,
+  parallax_origin : Double,
+  motion_screen_offset : Double,
   moving : Bool,
 ) -> Double {
+  let view_center = camera_top_left + view_half
+  let screen = base_screen_offset +
+    (1.0 - parallax_factor) * (view_center + parallax_origin) -
+    camera_top_left
   if moving {
-    return moving_world_pos - camera_top_left
+    screen + motion_screen_offset
+  } else {
+    screen
   }
-  base_screen_offset + ratio * (camera_top_left + view_half) + view_half
 }
 
 ///|
@@ -488,8 +492,11 @@ fn create_background_motion_states(
   root : @entity.Entity,
   clips_by_entity : Map[@entity.Entity, @resource.SeleneClip],
 ) -> Map[@entity.Entity, TiledBackgroundMotionState] raise {
-  ignore(tile_map)
   let states : Map[@entity.Entity, TiledBackgroundMotionState] = Map([])
+  let parallax_origin = @selene_math.Vec2(
+    tile_map.parallax_origin_x,
+    tile_map.parallax_origin_y,
+  )
   for layer_entity, instance in @tiled.tiled_image_layer_instances() {
     guard instance.map_entity == root &&
       is_background_image_layer(instance.layer.name) else {
@@ -566,8 +573,9 @@ fn create_background_motion_states(
       sprite_template,
       background_type,
       base_screen_offset,
-      moving_world_pos: base_screen_offset,
-      ratio: @selene_math.Vec2(x_mode.1, y_mode.1),
+      parallax_factor: @selene_math.Vec2(layer.parallax_x, layer.parallax_y),
+      parallax_origin,
+      motion_screen_offset: @selene_math.Vec2::zero(),
       speed: @selene_math.Vec2(x_mode.2, y_mode.2),
       moving_axis: (x_mode.0, y_mode.0),
       repeat,
@@ -672,10 +680,6 @@ pub fn tiled_background_motion_system(world : @ecs.World) -> Unit {
     view_size[@selene_math.X] * 0.5,
     view_size[@selene_math.Y] * 0.5,
   )
-  let camera_for_formula = @selene_math.Vec2(
-    camera_top_left[@selene_math.X],
-    camera_top_left[@selene_math.Y] - maple_camera_y_offset,
-  )
   for layer_entity, state in motion_states {
     ignore(state.background_type)
     let next_animation_elapsed_ms = state.animation_elapsed_ms + delta * 1000.0
@@ -706,28 +710,30 @@ pub fn tiled_background_motion_system(world : @ecs.World) -> Unit {
     )
     let state = ensure_background_tiles(state, tile_counts, sampled_sprite)
 
-    let mut next_moving_world_x = state.moving_world_pos[@selene_math.X]
+    let mut next_motion_screen_x = state.motion_screen_offset[@selene_math.X]
     if state.moving_axis.0 {
-      next_moving_world_x += state.speed[@selene_math.X] * delta
+      next_motion_screen_x += state.speed[@selene_math.X] * delta
     }
-    let mut next_moving_world_y = state.moving_world_pos[@selene_math.Y]
+    let mut next_motion_screen_y = state.motion_screen_offset[@selene_math.Y]
     if state.moving_axis.1 {
-      next_moving_world_y += state.speed[@selene_math.Y] * delta
+      next_motion_screen_y += state.speed[@selene_math.Y] * delta
     }
     let screen_x = maple_background_axis_screen(
-      camera_for_formula[@selene_math.X],
+      camera_top_left[@selene_math.X],
       view_half[@selene_math.X],
       state.base_screen_offset[@selene_math.X],
-      next_moving_world_x,
-      state.ratio[@selene_math.X],
+      state.parallax_factor[@selene_math.X],
+      state.parallax_origin[@selene_math.X],
+      next_motion_screen_x,
       state.moving_axis.0,
     )
     let screen_y = maple_background_axis_screen(
-      camera_for_formula[@selene_math.Y],
+      camera_top_left[@selene_math.Y],
       view_half[@selene_math.Y],
       state.base_screen_offset[@selene_math.Y],
-      next_moving_world_y,
-      state.ratio[@selene_math.Y],
+      state.parallax_factor[@selene_math.Y],
+      state.parallax_origin[@selene_math.Y],
+      next_motion_screen_y,
       state.moving_axis.1,
     )
     let wrapped_screen_x = if state.repeat.0 {
@@ -747,8 +753,8 @@ pub fn tiled_background_motion_system(world : @ecs.World) -> Unit {
     motion_states.set(layer_entity, {
       ..state,
       animation_elapsed_ms: next_animation_elapsed_ms,
-      moving_world_pos: @selene_math.Vec2(
-        next_moving_world_x, next_moving_world_y,
+      motion_screen_offset: @selene_math.Vec2(
+        next_motion_screen_x, next_motion_screen_y,
       ),
     })
     for index, tile_entity in state.tile_entities {
@@ -844,25 +850,26 @@ test "background axis mode mapping covers type0~7" {
 ///|
 test "parallax screen axis matches exported Tiled coordinate space" {
   let screen_x = maple_background_axis_screen(
-    1691.0, 400.0, -66.0, 0.0, -0.4, false,
+    -683.0, 683.0, -751.0, 0.2, -400.0, 0.0, false,
   )
-  let expected = -66.0 + -40.0 * (400.0 + 1691.0) / 100.0 + 400.0
+  let expected = -751.0 + (1.0 - 0.2) * (0.0 - 400.0) - -683.0
   assert_true((screen_x - expected).abs() < 0.000001)
+  assert_true((screen_x - -388.0).abs() < 0.000001)
 
-  let camera_top_left_y = 733.0
-  let view_half_y = 300.0
   let screen_y = maple_background_axis_screen(
-    camera_top_left_y - maple_camera_y_offset,
-    view_half_y,
-    -12.0,
-    0.0,
-    -0.5,
-    false,
+    -384.0, 384.0, -45.0, -0.03, 80.0, 0.0, false,
   )
-  let expected_y = -12.0 +
-    -50.0 * (view_half_y + camera_top_left_y - maple_camera_y_offset) / 100.0 +
-    view_half_y
+  let expected_y = -45.0 + (1.0 - -0.03) * (0.0 + 80.0) - -384.0
   assert_true((screen_y - expected_y).abs() < 0.000001)
+
+  let moving_screen_x = maple_background_axis_screen(
+    -683.0, 683.0, -396.0, 0.05, -400.0, -4.0, true,
+  )
+  let expected_moving_x = -396.0 +
+    (1.0 - 0.05) * (0.0 - 400.0) -
+    -683.0 -
+    4.0
+  assert_true((moving_screen_x - expected_moving_x).abs() < 0.000001)
 }
 
 ///|

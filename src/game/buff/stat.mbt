@@ -168,7 +168,7 @@ pub fn is_disease(buff_id : StatId) -> Bool {
 }
 
 ///|
-pub let first_codes : @immut/hashmap.HashMap[StatId, Int64] = @immut/hashmap.from_array([
+pub let first_codes : @immut/hashmap.HashMap[StatId, Int64] = @immut/hashmap.HashMap([
     (StatId::DASH2, 0x8000000000000L),
     (StatId::DASH, 0x10000000000000L),
     (StatId::ELEMENTAL_RESET, 0x200000000L),
@@ -186,7 +186,7 @@ pub let first_codes : @immut/hashmap.HashMap[StatId, Int64] = @immut/hashmap.fro
 )
 
 ///|
-pub let second_codes : @immut/hashmap.HashMap[StatId, Int64] = @immut/hashmap.from_array([
+pub let second_codes : @immut/hashmap.HashMap[StatId, Int64] = @immut/hashmap.HashMap([
     (StatId::NONE, 0x0L),
     (StatId::SLOW, 0x1L),
     (StatId::MORPH, 0x2L),
@@ -250,7 +250,7 @@ pub let second_codes : @immut/hashmap.HashMap[StatId, Int64] = @immut/hashmap.fr
 )
 
 ///|
-pub let diseases : @immut/hashmap.HashMap[StatId, Int64] = @immut/hashmap.from_array([
+pub let diseases : @immut/hashmap.HashMap[StatId, Int64] = @immut/hashmap.HashMap([
     (StatId::SLOW, 0x1L),
     (StatId::SEDUCE, 0x80L),
     // (Id::FISHABLE, 0x100), 

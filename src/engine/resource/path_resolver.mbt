@@ -244,12 +244,12 @@ pub fn resolve_resource_path(source : String, path : String) -> String {
 /// # Example
 /// ```moonbit nocheck
 /// inspect(
-///   resolve_json_resource_path("item", "Consume/0206.img/02060000").0,
-///   content="assets/Item/Consume/0206.img.json",
+///   resolve_json_resource_path("item", "Consume/0200.img/02000000").0,
+///   content="assets/Item/Consume/0200.img.json",
 /// )
 /// inspect(
-///   resolve_json_resource_path("item", "Consume/0206.img/02060000").1,
-///   content="[\"02060000\"]",
+///   resolve_json_resource_path("item", "Consume/0200.img/02000000").1,
+///   content="[\"02000000\"]",
 /// )
 /// ```
 pub fn resolve_json_resource_path(

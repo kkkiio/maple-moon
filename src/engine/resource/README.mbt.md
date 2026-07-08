@@ -64,10 +64,10 @@ ignore(required)
 ///|
 test "resolve item json file and node path" {
   let (file_path, node_path) = @resource.resolve_json_resource_path(
-    "item", "Consume/0206.img/02060000",
+    "item", "Consume/0200.img/02000000",
   )
-  inspect(file_path, content="assets/Item/Consume/0206.img.json")
-  inspect(node_path, content="[\"02060000\"]")
+  inspect(file_path, content="assets/Item/Consume/0200.img.json")
+  inspect(node_path, content="[\"02000000\"]")
 }
 ```
 

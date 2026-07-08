@@ -136,8 +136,55 @@ MoonBit 允许 `test` 直接传播错误, 用 `fail` 函数抛出错误.
 │   └── cmd/                   ← 命令行工具 (MoonBit JS target)
 │       ├── maple/             ← CLI (maple start / cmd / logs / bot ...)
 │       └── mapled/            ← CDP daemon (Chrome 控制, 注入, 采集)
-└── assets/                    ← 资源文件
+└── assets/                    ← 现代运行资源与数据表
+    ├── Map/                   ← Tiled 地图、tileset、地图图片与地图动画
+    ├── mob/ Npc/              ← 怪物/NPC mx.json 与 aseprite/json/png 动画闭包
+    ├── Character/             ← 角色身体、发型、脸型、装备、afterimage 资源
+    ├── Item/                  ← 当前道具闭包；药水、战斗弹药与 Special/0900
+    ├── String/                ← 原始 NX String JSON，用于名称、描述、地图分组
+    ├── data/                  ← 本地服务器与客户端共享 TSV 数据
+    ├── sound/                 ← BGM/SFX 音频
+    └── UI/ Effect/ Skill/ ... ← 当前会加载的最小 UI、特效、技能资源
 ```
+
+### Assets Structure
+
+`assets/` 是 Git 可见目录。提交资源时按 `gdd.md` 的当前范围组织完整闭包；当前范围是 Victoria Island，地图、怪物、NPC、任务、商店、掉落、音频和 UI 资源都按这个边界判断。
+
+```text
+assets resource closure
+├── Map/
+│   ├── Map1/<map_id>.img/mx.json
+│   ├── Map1/<map_id>.img/map.tmj
+│   ├── tilesets/*.tsj
+│   ├── tiles/*.tmj
+│   ├── images/*.png
+│   └── animations/*.{aseprite,json,png}
+├── mob/<7_digit_id>.img/
+│   ├── mx.json
+│   └── animations/*.{aseprite,json,png}
+├── Npc/<7_digit_id>.img/
+│   ├── mx.json
+│   └── animations/*.{aseprite,json,png}
+├── Character/
+│   ├── Body/ Face/ Hair/
+│   ├── Coat/ Longcoat/ Pants/ Shoes/ Shield/ Weapon/
+│   └── Afterimage/<name>.img/*.{mx.json,aseprite,json,png}
+├── Item/
+│   ├── Consume/0200.img.json                 # hp/mp 药水与药丸
+│   ├── Consume/0200.img/bitmap/*.png
+│   ├── Consume/{0206,0207,0233}.img.json     # 箭、飞镖、子弹
+│   ├── Consume/{0206,0207,0233}.img/
+│   │   ├── bitmap/*.png
+│   │   └── animations/*.{aseprite,json,png}
+│   └── Special/0900.img.json
+├── String/*.json
+├── data/*.tsv
+├── sound/**/*.mp3
+└── UI/ Effect/ Skill/ portal/ spritesheets/
+```
+
+服务端和客户端尽量读同一份 `assets/` 数据。只有一方完全用不到的数据才拆开；资源缺口优先通过补齐现代闭包解决。
 
 ## Operation Guide
 
@@ -191,13 +238,13 @@ just build
 just build-native
 ```
 
-## Utilities & Tips
+### Utilities & Tips
 
-### `moon.work` 本地工作区
+#### `moon.work` 本地工作区
 
 优先检查项目根目录有没有`moon.work`文件, 如果有, 分析依赖库代码时, 要用`moon.work`里配置的相对路径, 而不是`.mooncakes`.
 
-### 使用 Js 模块
+#### 使用 Js 模块
 
 用 MoonBit 的 `#module` attribute 声明 JavaScript 后端的依赖模块.
 
@@ -208,12 +255,12 @@ just build-native
 pub fn write_file_sync(file : String, data : String) = "writeFileSync"
 ```
 
-### 解析 nx 资源
+#### 解析 nx 资源
 
 nx 资源以 JSON 格式存储. 导入到游戏时, 可以定义 MoonBit `struct` , 并实现 `FromJson` 接口来解析数据.
 这些 struct 类型以 `Nx` 开头, 例如 `NxTexture` .
 
-### JSON Match Pattern
+#### JSON Match Pattern
 
 处理 JSON 数据时, 优先用模式匹配, 而不是 `Object::get` 等方法.
 
@@ -225,7 +272,7 @@ match json {
 }
 ```
 
-### JSON Literal
+#### JSON Literal
 
 moonbit 支持 JSON 语法构造 `JSON` 类型的数据:
 
@@ -236,7 +283,7 @@ let v : Json = {
 }
 ```
 
-### String
+#### String
 
 moonbit 的 `String` 是 UTF-16 编码的, API 为了考虑性能, 默认返回 UTF-16 code unit 数据:
 
@@ -295,15 +342,15 @@ test {
 }
 ```
 
-### Sprite
+#### Sprite
 
 使用 selene 的 `@sprite.Sprite` 渲染画面. 游戏的渲染层级比较多, z index 集中放在 `src/engine/graphics/z_index.mbt` 里管理.
 
 `@entity.Entity` 不要保存到单个对象`struct`里, 而是保存到全局容器里.
 
-### 资源
+#### 资源
 
 local server 是可以异步读取资源的.
 客户端则要保证先 preload 资源, 避免`async`污染游戏逻辑代码.
 
-大资源根目录默认被 `.gitignore` 忽略. 测试或运行时需要的最小资源闭包要用 `git add --force` 显式纳入，并包含 JSON 引用到的图片、spritesheet、tileset、animation JSON/PNG 和对应 `.aseprite` 源文件. 不提交引用图片缺失的半成品导出 JSON.
+提交资源时包含 JSON 引用到的图片、spritesheet、tileset、animation JSON/PNG 和对应 `.aseprite` 源文件. 不提交引用图片缺失的半成品导出 JSON.

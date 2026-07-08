@@ -14,7 +14,7 @@ pub(all) struct NxTexture {
   /// 翻转x轴时, 是以origin.x为对称轴, 翻转x轴.
   /// ```mbt
   /// let t = NxTexture::{
-  ///     i: "assets/character/body/male_1_white_face.png",
+  ///     i: "assets/Character/Body/male_1_white_face.png",
   ///     w: 39,
   ///     h: 35,
   ///     offset: {x: 41, y: 0},

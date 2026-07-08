@@ -1,13 +1,6 @@
 ///|
 let consume_bundle_files : Array[String] = [
-  "0200.img", "0201.img", "0202.img", "0203.img", "0204.img", "0205.img", "0206.img",
-  "0207.img", "0210.img", "0221.img", "0228.img", "0229.img", "0233.img", "0234.img",
-  "0238.img",
-]
-
-///|
-let etc_bundle_files : Array[String] = [
-  "0400.img", "0401.img", "0402.img", "0403.img", "0413.img", "0416.img",
+  "0200.img",
 ]
 
 ///|
@@ -29,14 +22,10 @@ fn collect_item_ids_from_bundle(json : Json, id_set : Map[Int, Bool]) -> Unit {
 }
 
 ///|
-fn discover_consume_and_etc_item_ids() -> Array[Int] {
+fn discover_preloaded_item_ids() -> Array[Int] {
   let id_set : Map[Int, Bool] = Map([])
   for bundle in consume_bundle_files {
     let bundle_json = load_item_bundle_cached("Consume", bundle)
-    collect_item_ids_from_bundle(bundle_json, id_set)
-  }
-  for bundle in etc_bundle_files {
-    let bundle_json = load_item_bundle_cached("Etc", bundle)
     collect_item_ids_from_bundle(bundle_json, id_set)
   }
   let ids : Array[Int] = []
@@ -47,10 +36,10 @@ fn discover_consume_and_etc_item_ids() -> Array[Int] {
 }
 
 ///|
-/// Loads consume/etc basic item resources and keeps a full in-memory item-data map.
+/// Loads basic item resources and keeps a full in-memory item-data map.
 pub fn BasicItemResource::load() -> BasicItemResource {
   preload_item_text_bundles()
-  let ids = discover_consume_and_etc_item_ids()
+  let ids = discover_preloaded_item_ids()
   let items_by_id : Map[Int, ItemData] = Map([])
   for item_id in ids {
     let item_data = ItemData::load_item_data(item_id)

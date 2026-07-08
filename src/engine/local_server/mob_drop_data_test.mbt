@@ -139,7 +139,9 @@ test "calculate_mob_drops for pig with real config" {
 
   // 验证数据库中猪猪的掉落配置有 28 个可能的物品
   let pig_drops = drop_db.get_drops(1210100)
-  inspect(pig_drops.length(), content="28")
+  inspect(pig_drops.length(), content=(
+    #|5
+  ))
 
   // 使用固定种子创建 Rand，让测试结果可预测
   let rand = @random.Rand::chacha8(seed=b"12345678901234567890123456789012")
@@ -156,29 +158,6 @@ test "calculate_mob_drops for pig with real config" {
   )
 
   // 输出掉落结果，用于验证
-  json_inspect(messages, content=[
-    {
-      "mode": 0,
-      "oid": 100001,
-      "meso": true,
-      "item_id": 14,
-      "owner": 0,
-      "pickuptype": 0,
-      "dropto": [520, 300],
-      "dropfrom": [520, 270],
-      "player_drop": false,
-    },
-    {
-      "mode": 0,
-      "oid": 100002,
-      "meso": false,
-      "item_id": 4030012,
-      "owner": 0,
-      "pickuptype": 0,
-      "dropto": [480, 300],
-      "dropfrom": [480, 270],
-      "player_drop": false,
-    },
-  ])
-  json_inspect(next_oid, content=100002)
+  json_inspect(messages, content=([{"mode":0,"oid":100001,"meso":true,"item_id":14,"owner":0,"pickuptype":0,"dropto":[520,300],"dropfrom":[520,270],"player_drop":false}]))
+  json_inspect(next_oid, content=(100001))
 }

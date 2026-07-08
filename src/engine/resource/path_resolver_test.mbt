@@ -81,10 +81,10 @@ test "resolve_resource_path keeps skill source root behavior" {
 ///|
 test "resolve_json_resource_path splits item bundle and node path" {
   let (file_path, node_path) = resolve_json_resource_path(
-    "item", "Consume/0206.img/02060000",
+    "item", "Consume/0200.img/02000000",
   )
-  inspect(file_path, content="assets/Item/Consume/0206.img.json")
-  json_inspect(node_path, content=["02060000"])
+  inspect(file_path, content="assets/Item/Consume/0200.img.json")
+  json_inspect(node_path, content=["02000000"])
 }
 
 ///|

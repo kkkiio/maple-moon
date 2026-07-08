@@ -36,7 +36,7 @@ pub impl ToJson for Hair with fn to_json(self) -> Json {
 }
 
 ///|
-pub let layers_by_name : @immut/sorted_map.SortedMap[String, HairLayer] = @immut/sorted_map.from_array([
+pub let layers_by_name : @immut/sorted_map.SortedMap[String, HairLayer] = @immut/sorted_map.SortedMap([
     ("hair", HairLayer::HAIR_LAYER_DEFAULT),
     ("hairBelowBody", HairLayer::BELOW_BODY),
     ("hairOverHead", HairLayer::OVER_HEAD),

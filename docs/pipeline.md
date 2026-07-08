@@ -142,13 +142,12 @@ require_json("assets/Item/Consume/2000000.json")  // 红药水
 ### 图片
 
 - **独立图片**：`.png`，通过 `require_image` 加载
-- 存放于 `assets/images/`（默认被 `.gitignore`，按需 `git add --force`）
-- 也存放于 `assets/spritesheets/` 各子目录下
+- 存放于现代资源目录的局部闭包里，例如 `assets/Map/images/`、`assets/UI/`、`assets/images/`
+- `assets/spritesheets/` 保留当前运行、测试或 UI 原型实际引用的 spritesheet
 
 ### 音效 / 背景音乐
 
 - `.mp3` / `.ogg` 文件，存放于 `assets/sound/`
-- 该目录默认被 `.gitignore` 忽略
 
 ### UI 资源
 
@@ -167,21 +166,21 @@ assets/
   data/                   ← 游戏数据表
   Effect/                 ← 特效数据
   Etc/                    ← 杂项
-  images/                 ← 独立图片（.gitignore 默认忽略）
+  images/                 ← 已接入运行或测试的独立图片
     Item/ Map/ Npc/ Skill/ UI/
   Item/                   ← 道具数据（Cash/ Consume/ Etc/ Install/ Pet/ Special）
-  Map/                    ← 地图数据
+  Map/                    ← Tiled 地图数据、tileset 和局部图片闭包
     Map/ WorldMap/
   map001/                 ← 地图 001 资源
     back/
-  minimap/                ← 小地图图片（.gitignore）
+  minimap/                ← 小地图图片
   mob/                    ← 怪物数据
-  Npc/                    ← NPC 数据（.img.json，.gitignore）
+  Npc/                    ← NPC 数据和动画闭包
   portal/                 ← 传送门图片
-  Quest/                  ← 任务数据（.gitignore）
+  Quest/                  ← 任务数据
   Skill/                  ← 技能数据
-  sound/                  ← 音频文件（.gitignore）
-  spritesheets/           ← 导出的 spritesheet（部分 .gitignore）
+  sound/                  ← 音频文件
+  spritesheets/           ← 已接入运行或测试的 spritesheet
     Item/ Map/ Mob/ UI/
   String/                 ← 文本字符串数据
   UI/                     ← UI 布局和素材
@@ -193,27 +192,27 @@ assets/
 
 详见 `docs/adr/0004-iterative-runtime-resource-commits.md`。
 
-**核心原则**：大资源目录默认 `.gitignore`，只按需提交运行和测试所需的最小闭包。
+**核心原则**：`assets/` 下的现代可使用资源可以进入版本控制，但每次提交只纳入当前范围内能运行、能测试、可复用的资源闭包。闭包包含数据 JSON、Tiled `.tmj/.tsj`、图片、音频、动画 JSON/PNG 和对应 `.aseprite` 源文件。
 
-### 被忽略的目录
+### 当前提交边界
 
 ```
-assets/images           assets/spritesheets/Map  assets/spritesheets/UI
-assets/Map              assets/map               assets/map001
-assets/minimap          assets/sound             assets/Quest
-assets/Npc
+范围内：Victoria Island 地图、地图引用的怪物和 NPC、当前会播放的 BGM/SFX、
+       以及当前 UI/测试会加载的最小 UI 资源。
+暂缓：范围外地图、未接入职业技能、普通怪物掉落杂物、完整登录/UI dump、
+     旧导出图片池和可由 ../nx_maple_res 重新生成的中间态文件。
 ```
 
 ### 提交资源的步骤
 
-当测试或运行时路径需要某个被忽略目录下的资源时：
+当测试或运行时路径需要新资源时：
 
 ```bash
-# 1. 确认需要哪些文件（JSON 引用的图片、spritesheet、tileset 等）
-# 2. 用 --force 显式添加最小闭包
-git add --force assets/Npc/2041000.img.json
-git add --force assets/Npc/2041000.img/
-git add --force assets/spritesheets/Npc/2041000.img/
+# 1. 确认需要哪些文件：JSON 引用的图片、spritesheet、tileset、动画、音频等
+# 2. 添加当前范围内的完整闭包
+git add assets/Npc/2041000.img.json
+git add assets/Npc/2041000.img/
+git add assets/Map/Map/100000000.tmj assets/Map/images/
 
 # 3. 确保所有引用的资源都存在（不做半成品提交）
 # 4. 提交

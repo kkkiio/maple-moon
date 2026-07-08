@@ -1,0 +1,5 @@
+import {
+  "KKKIIO/maple-moon/game/item",
+  "KKKIIO/maple-moon/game/equip/data",
+  "moonbitlang/core/builtin",
+}

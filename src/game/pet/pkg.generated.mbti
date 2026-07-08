@@ -1,0 +1,17 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/game/pet"
+
+// Values
+
+// Errors
+
+// Types and methods
+pub(all) struct Pet {
+  pet_name : String
+}
+pub fn Pet::new(String) -> Self
+
+// Type aliases
+
+// Traits
+

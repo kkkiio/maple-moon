@@ -1,0 +1,1 @@
+{"type":"tileset","name":"obj:insideGS/house3/basic","objectalignment":"bottomleft","tilewidth":800,"tileheight":721,"tilecount":3,"tiles":[{"id":0,"image":"../images/23769.png","imagewidth":800,"imageheight":721},{"id":1,"image":"../images/23770.png","imagewidth":800,"imageheight":608},{"id":2,"image":"../images/23771.png","imagewidth":800,"imageheight":27}]}

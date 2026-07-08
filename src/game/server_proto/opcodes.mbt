@@ -1,0 +1,282 @@
+///|
+pub(all) enum Opcode {
+  /// Login 1
+  LOGIN_RESULT = 0
+  SERVER_STATUS = 3
+  SERVER_LIST = 10
+  CHAR_LIST = 0x0B
+  SERVER_IP = 12
+  CHARNAME_RESPONSE = 13
+  ADD_NEWCHAR_ENTRY = 14
+  DELCHAR_RESPONSE = 15
+  PING = 17
+  /// Login 2
+  LAST_CONNECTED_WORLD = 0x1A
+  RECOMMENDED_WORLDS = 0x1B
+  CHECK_SPW_RESULT = 0x1C
+  /// Inventory 1
+  MODIFY_INVENTORY = 29
+  /// Player 2
+  CHANGE_CHANNEL = 16
+  CHANGE_STATS = 31
+  GIVE_BUFF = 32
+  CANCEL_BUFF = 33
+  RECALCULATE_STATS = 35
+  UPDATE_SKILL = 36
+  FAME_RESPONSE = 38
+  /// Messaging 1
+  SHOW_STATUS_INFO = 0x27
+  /// Inventory 2
+  GATHER_RESULT = 52
+  SORT_RESULT = 53
+  UPDATE_QUEST_INFO = 0xD3
+  /// Player 3
+
+  /// Messaging 2
+  SERVER_MESSAGE = 68
+  WEEK_EVENT_MESSAGE = 77
+  SKILL_MACROS = 124
+  SET_FIELD = 0x7D
+  WHISPER = 135
+  FIELD_EFFECT = 138
+  /// MapObject
+  SPAWN_CHAR = 160
+  REMOVE_CHAR = 161
+  /// Messaging
+  CHAT_RECEIVED = 162
+  SCROLL_RESULT = 167
+  /// MapObject
+  SPAWN_PET = 168
+  CHAR_MOVED = 185
+  /// Attack
+  ATTACKED_CLOSE = 186
+  ATTACKED_RANGED = 187
+  ATTACKED_MAGIC = 188
+  UPDATE_CHARLOOK = 197
+  SHOW_FOREIGN_EFFECT = 198
+  GIVE_FOREIGN_BUFF = 199
+  CANCEL_FOREIGN_BUFF = 200
+  SHOW_ITEM_GAIN_INCHAT // TODO: Rename this (Terribly named)
+  /// Player
+  ADD_COOLDOWN = 234
+  /// MapObject
+  /// Spawn a monster for a player who is NOT controlling it.
+  /// The client will not calculate AI or physics for this mob.
+  /// For local server (single player), we always use this.
+  SPAWN_MOB = 0xEC
+  KILL_MOB = 0xED
+  /// Spawn a monster for a player who IS controlling it.
+  /// The client will calculate AI and physics for this mob.
+  SPAWN_MOB_C = 0xEE
+  MOB_MOVED = 239
+  MOB_MOVE_RESPONSE = 240
+  APPLY_MONSTER_STATUS = 242
+  CANCEL_MONSTER_STATUS = 243
+  SHOW_MOB_HP = 250
+  SPAWN_NPC = 257
+  SPAWN_NPC_C = 259
+  SET_NPC_SCRIPTABLE = 263
+  DROP_LOOT = 268
+  REMOVE_LOOT = 269
+  HIT_REACTOR = 277
+  SPAWN_REACTOR = 279
+  REMOVE_REACTOR = 280
+  /// NPC Interaction
+  NPC_DIALOGUE = 0x130
+  OPEN_NPC_SHOP = 305
+  CONFIRM_SHOP_TRANSACTION = 0x132
+  KEYMAP = 335
+  /// Player Interaction
+  CHAR_INFO = 61
+  PLAYER_INTERACTION = 314
+  /// Cash Shop
+  SET_CASH_SHOP = 127
+} derive(Eq, Compare, Debug, ToJson, FromJson)
+
+///|
+pub fn Opcode::int_value(self : Opcode) -> Int = "%identity"
+
+///|
+pub fn Opcode::from_int(v : Int) -> Opcode raise UnknownOpCodeError {
+  match v {
+    /// Login 1
+    0 => LOGIN_RESULT
+    3 => SERVER_STATUS
+    10 => SERVER_LIST
+    11 => CHAR_LIST
+    12 => SERVER_IP
+    13 => CHARNAME_RESPONSE
+    14 => ADD_NEWCHAR_ENTRY
+    15 => DELCHAR_RESPONSE
+    17 => PING
+
+    /// Login 2
+    0x1A => LAST_CONNECTED_WORLD
+    0x1B => RECOMMENDED_WORLDS
+    0x1C => CHECK_SPW_RESULT
+
+    /// Inventory 1
+    29 => MODIFY_INVENTORY
+
+    /// Player 2
+    16 => CHANGE_CHANNEL
+    31 => CHANGE_STATS
+    32 => GIVE_BUFF
+    33 => CANCEL_BUFF
+    35 => RECALCULATE_STATS
+    36 => UPDATE_SKILL
+    38 => FAME_RESPONSE
+
+    /// Messaging 1
+    0x27 => SHOW_STATUS_INFO
+
+    /// Inventory 2
+    52 => GATHER_RESULT
+    53 => SORT_RESULT
+
+    /// Player 3
+
+    /// Messaging 2
+    68 => SERVER_MESSAGE
+    77 => WEEK_EVENT_MESSAGE
+    124 => SKILL_MACROS
+    125 => SET_FIELD
+    135 => WHISPER
+    138 => FIELD_EFFECT
+
+    /// MapObject
+    160 => SPAWN_CHAR
+    161 => REMOVE_CHAR
+
+    /// Messaging
+    162 => CHAT_RECEIVED
+    167 => SCROLL_RESULT
+
+    /// MapObject
+    168 => SPAWN_PET
+    185 => CHAR_MOVED
+
+    /// Attack
+    186 => ATTACKED_CLOSE
+    187 => ATTACKED_RANGED
+    188 => ATTACKED_MAGIC
+    197 => UPDATE_CHARLOOK
+    198 => SHOW_FOREIGN_EFFECT
+    199 => GIVE_FOREIGN_BUFF
+    200 => CANCEL_FOREIGN_BUFF
+    206 => SHOW_ITEM_GAIN_INCHAT // TODO: Rename this (Terribly named)
+
+    /// Player
+    234 => ADD_COOLDOWN
+
+    /// MapObject
+    236 => SPAWN_MOB
+    237 => KILL_MOB
+    238 => SPAWN_MOB_C
+    239 => MOB_MOVED
+    240 => MOB_MOVE_RESPONSE
+    242 => APPLY_MONSTER_STATUS
+    243 => CANCEL_MONSTER_STATUS
+    250 => SHOW_MOB_HP
+    257 => SPAWN_NPC
+    259 => SPAWN_NPC_C
+    263 => SET_NPC_SCRIPTABLE
+    268 => DROP_LOOT
+    269 => REMOVE_LOOT
+    277 => HIT_REACTOR
+    279 => SPAWN_REACTOR
+    280 => REMOVE_REACTOR
+
+    /// NPC Interaction
+    304 => NPC_DIALOGUE
+    305 => OPEN_NPC_SHOP
+    306 => CONFIRM_SHOP_TRANSACTION
+    335 => KEYMAP
+
+    /// Player Interaction
+    61 => CHAR_INFO
+    314 => PLAYER_INTERACTION
+
+    /// Cash Shop
+    127 => SET_CASH_SHOP
+    /// Quest
+    0xD3 => UPDATE_QUEST_INFO
+    _ => raise UnknownOpCodeError(v)
+  }
+}
+
+///|
+pub(all) suberror UnknownOpCodeError {
+  UnknownOpCodeError(Int)
+}
+
+///|
+pub impl Hash for Opcode with fn hash_combine(self : Opcode, hasher : Hasher) -> Unit {
+  hasher.combine(self.int_value())
+}
+
+///|
+/// Opcodes for packets sent from the client to the server associated with version 83 of the game
+pub(all) enum ClientOpcode {
+  LOGIN = 1
+  CHAR_LIST_REQUEST = 5
+  SERVER_STATUS_REQUEST = 6
+  ACCEPT_TOS = 7
+  SET_GENDER = 8
+  SERVERLIST_REQUEST = 11
+  SELECT_CHAR = 19
+  PLAYER_LOGIN = 20
+  NAME_CHAR = 21
+  CREATE_CHAR = 22
+  DELETE_CHAR = 23
+  PONG = 24
+  REGISTER_PIC = 29
+  SELECT_CHAR_PIC = 30
+  LOGIN_START = 35
+  CHANGE_MAP = 0x26
+  CHANGE_CHANNEL = 39
+  ENTER_CASHSHOP = 40
+  MOVE_PLAYER = 41
+  CLOSE_ATTACK = 44
+  RANGED_ATTACK = 45
+  MAGIC_ATTACK = 46
+  TAKE_DAMAGE = 48
+  GENERAL_CHAT = 49
+  TALK_TO_NPC = 58
+  NPC_TALK_MORE = 60
+  NPC_SHOP_ACTION = 61
+  GIVE_FAME = 95
+  CHAR_INFO_REQUEST = 97
+  GATHER_ITEMS = 69
+  SORT_ITEMS = 70
+  MOVE_ITEM = 71
+  USE_ITEM = 0x48
+  USE_CASH_ITEM = 0x4F
+  SCROLL_EQUIP = 86
+  DROP_MESOS = 94
+  SPEND_AP = 87
+  HEAL_OVER_TIME = 89
+  SPEND_SP = 90
+  CHANGE_KEYMAP = 135
+  USE_SKILL = 91
+  QUEST_ACTION = 0x6B
+  PLAYER_INTERACTION = 123
+  PARTY_OPERATION = 124
+  ADMIN_COMMAND = 128
+  MOVE_MONSTER = 188
+  PICKUP_ITEM = 202
+  DAMAGE_REACTOR = 205
+  PLAYER_MAP_TRANSFER = 207
+  PLAYER_UPDATE = 223
+} derive(Eq, Compare, Debug, ToJson, FromJson)
+
+///|
+pub fn ClientOpcode::int_value(self : ClientOpcode) -> Int = "%identity"
+
+///|
+pub fn ClientOpcode::log_level(self : ClientOpcode) -> @log.Level {
+  match self {
+    MOVE_PLAYER | MOVE_MONSTER => @log.Level::TRACE
+    _ => @log.Level::INFO
+  }
+}

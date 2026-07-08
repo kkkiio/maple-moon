@@ -1,0 +1,1 @@
+{"type":"tileset","name":"obj:WeddingGL/town/ladder","objectalignment":"bottomleft","tilewidth":81,"tileheight":112,"tilecount":3,"tiles":[{"id":0,"image":"../images/17608.png","imagewidth":79,"imageheight":112},{"id":1,"image":"../images/17607.png","imagewidth":81,"imageheight":112},{"id":2,"image":"../images/17609.png","imagewidth":80,"imageheight":40}]}

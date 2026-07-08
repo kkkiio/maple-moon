@@ -1,0 +1,70 @@
+{
+  "info": {
+    "reg": {
+      "r0ID0": "",
+      "r0ID1": "",
+      "r0ID2": "",
+      "r0ID3": "",
+      "r0ID4": "",
+      "r0ID5": "",
+      "r0Level": "",
+      "r0Num": "",
+      "r0PB": "",
+      "r1ID0": "",
+      "r1ID1": "",
+      "r1ID2": "",
+      "r1ID3": "",
+      "r1ID4": "",
+      "r1ID5": "",
+      "r1Level": "",
+      "r1Num": "",
+      "r1PB": "",
+      "r2ID0": "",
+      "r2ID1": "",
+      "r2ID2": "",
+      "r2ID3": "",
+      "r2ID4": "",
+      "r2ID5": "",
+      "r2Level": "",
+      "r2Num": "",
+      "r2PB": "",
+      "r3ID0": "",
+      "r3ID1": "",
+      "r3ID2": "",
+      "r3ID3": "",
+      "r3ID4": "",
+      "r3ID5": "",
+      "r3Level": "",
+      "r3Num": "",
+      "r3PB": "",
+      "r4ID0": "",
+      "r4ID1": "",
+      "r4ID2": "",
+      "r4ID3": "",
+      "r4ID4": "",
+      "r4ID5": "",
+      "r4Level": "",
+      "r4Num": "",
+      "r4PB": "",
+      "r5ID0": "",
+      "r5ID1": "",
+      "r5ID2": "",
+      "r5ID3": "",
+      "r5ID4": "",
+      "r5ID5": "",
+      "r5Level": "",
+      "r5Num": "",
+      "r5PB": ""
+    },
+    "script": {
+      "0": {
+        "script": "mc_enter1"
+      }
+    },
+    "speak": {
+      "0": "n0",
+      "1": "n1"
+    }
+  },
+  "animations_path": "animation.json"
+}

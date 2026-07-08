@@ -1,0 +1,157 @@
+{ "frames": [
+   {
+    "filename": "skill__21110006 0.aseprite",
+    "frame": { "x": 359, "y": 269, "w": 205, "h": 66 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 64, "y": 61, "w": 205, "h": 66 },
+    "sourceSize": { "w": 388, "h": 210 },
+    "duration": 120
+   },
+   {
+    "filename": "skill__21110006 1.aseprite",
+    "frame": { "x": 666, "y": 258, "w": 217, "h": 106 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 68, "y": 32, "w": 217, "h": 106 },
+    "sourceSize": { "w": 388, "h": 210 },
+    "duration": 120
+   },
+   {
+    "filename": "skill__21110006 2.aseprite",
+    "frame": { "x": 0, "y": 146, "w": 263, "h": 107 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 37, "y": 28, "w": 263, "h": 107 },
+    "sourceSize": { "w": 388, "h": 210 },
+    "duration": 120
+   },
+   {
+    "filename": "skill__21110006 3.aseprite",
+    "frame": { "x": 0, "y": 0, "w": 333, "h": 146 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 16, "y": 0, "w": 333, "h": 146 },
+    "sourceSize": { "w": 388, "h": 210 },
+    "duration": 120
+   },
+   {
+    "filename": "skill__21110006 4.aseprite",
+    "frame": { "x": 333, "y": 135, "w": 333, "h": 134 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 10, "y": 4, "w": 333, "h": 134 },
+    "sourceSize": { "w": 388, "h": 210 },
+    "duration": 120
+   },
+   {
+    "filename": "skill__21110006 5.aseprite",
+    "frame": { "x": 333, "y": 0, "w": 345, "h": 135 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 14, "w": 345, "h": 135 },
+    "sourceSize": { "w": 388, "h": 210 },
+    "duration": 120
+   },
+   {
+    "filename": "skill__21110006 6.aseprite",
+    "frame": { "x": 678, "y": 0, "w": 340, "h": 135 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 10, "w": 340, "h": 135 },
+    "sourceSize": { "w": 388, "h": 210 },
+    "duration": 120
+   },
+   {
+    "filename": "skill__21110006 7.aseprite",
+    "frame": { "x": 666, "y": 135, "w": 355, "h": 123 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 28, "y": 11, "w": 355, "h": 123 },
+    "sourceSize": { "w": 388, "h": 210 },
+    "duration": 120
+   },
+   {
+    "filename": "skill__21110006 8.aseprite",
+    "frame": { "x": 151, "y": 269, "w": 208, "h": 95 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 180, "y": 54, "w": 208, "h": 95 },
+    "sourceSize": { "w": 388, "h": 210 },
+    "duration": 120
+   },
+   {
+    "filename": "skill__21110006 9.aseprite",
+    "frame": { "x": 359, "y": 335, "w": 166, "h": 62 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 186, "y": 87, "w": 166, "h": 62 },
+    "sourceSize": { "w": 388, "h": 210 },
+    "duration": 120
+   },
+   {
+    "filename": "skill__21110006 10.aseprite",
+    "frame": { "x": 0, "y": 253, "w": 151, "h": 167 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 84, "y": 43, "w": 151, "h": 167 },
+    "sourceSize": { "w": 388, "h": 210 },
+    "duration": 120
+   },
+   {
+    "filename": "skill__21110006 11.aseprite",
+    "frame": { "x": 883, "y": 258, "w": 122, "h": 124 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 82, "y": 65, "w": 122, "h": 124 },
+    "sourceSize": { "w": 388, "h": 210 },
+    "duration": 120
+   },
+   {
+    "filename": "skill__21110006 12.aseprite",
+    "frame": { "x": 564, "y": 269, "w": 94, "h": 101 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 82, "y": 73, "w": 94, "h": 101 },
+    "sourceSize": { "w": 388, "h": 210 },
+    "duration": 120
+   },
+   {
+    "filename": "skill__21110006 13.aseprite",
+    "frame": { "x": 151, "y": 364, "w": 93, "h": 94 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 81, "y": 76, "w": 93, "h": 94 },
+    "sourceSize": { "w": 388, "h": 210 },
+    "duration": 120
+   },
+   {
+    "filename": "skill__21110006 14.aseprite",
+    "frame": { "x": 244, "y": 364, "w": 85, "h": 93 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 86, "y": 74, "w": 85, "h": 93 },
+    "sourceSize": { "w": 388, "h": 210 },
+    "duration": 120
+   }
+ ],
+ "meta": {
+  "app": "https://www.aseprite.org/",
+  "version": "1.3.14.4-arm64",
+  "image": "skill__21110006.png",
+  "format": "RGBA8888",
+  "size": { "w": 1021, "h": 458 },
+  "scale": "1",
+  "frameTags": [
+   { "name": "effect", "from": 0, "to": 9, "direction": "forward", "color": "#000000ff" },
+   { "name": "hit__0", "from": 10, "to": 14, "direction": "forward", "color": "#000000ff" }
+  ],
+  "layers": [
+   { "name": "main", "opacity": 255, "blendMode": "normal" }
+  ],
+  "slices": [
+   { "name": "anchor_effect", "keys": [{ "frame": 0, "bounds": {"x": 0, "y": 0, "w": 388, "h": 149 }, "pivot": {"x": 166, "y": 123 } }] },
+   { "name": "anchor_hit__0", "keys": [{ "frame": 0, "bounds": {"x": 81, "y": 43, "w": 154, "h": 167 }, "pivot": {"x": 85, "y": 80 } }] }
+  ]
+ }
+}

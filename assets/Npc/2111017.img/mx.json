@@ -1,0 +1,16 @@
+{
+  "info": {
+    "dcBottom": -151,
+    "dcLeft": -9,
+    "dcRight": 11,
+    "dcTop": -173,
+    "hideName": 1,
+    "script": {
+      "0": {
+        "script": "pipe1"
+      }
+    },
+    "talkMouseOnly": 1
+  },
+  "animations_path": "animation.json"
+}

@@ -1,0 +1,10 @@
+{
+  "info": {
+    "script": {
+      "0": {
+        "script": "flower_out"
+      }
+    }
+  },
+  "animations_path": "animation.json"
+}

@@ -1,0 +1,10 @@
+import {
+  "moonbitlang/core/strconv",
+  "KKKIIO/maple-moon/game/res_types" @struct,
+  "KKKIIO/maple-moon/game/map",
+  "KKKIIO/maple-moon/game/item",
+  "KKKIIO/maple-moon/engine/resource",
+  "moonbitlang/core/string",
+}
+
+supported_targets = "native+js"

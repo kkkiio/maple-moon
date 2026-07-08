@@ -1,0 +1,10 @@
+import {
+  "moonbitlang/core/cmp",
+  "moonbitlang/core/json",
+  "moonbitlang/core/strconv",
+  "KKKIIO/maple-moon/engine/resource",
+  "KKKIIO/maple-moon/game/char_stats",
+  "KKKIIO/maple-moon/game/maple_stat",
+  "KKKIIO/maple-moon/game/job",
+  "moonbitlang/core/string",
+}

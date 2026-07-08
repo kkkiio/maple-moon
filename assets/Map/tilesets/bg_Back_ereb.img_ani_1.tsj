@@ -1,0 +1,1 @@
+{"type":"tileset","name":"bg:Back/ereb.img/ani/1","objectalignment":"bottomleft","tilewidth":529,"tileheight":659,"image":"bg_Back_ereb.img_ani_1.png","imagewidth":1058,"imageheight":659,"columns":2,"tilecount":2,"tiles":[{"id":0,"animation":[{"tileid":0,"duration":2300},{"tileid":1,"duration":2300}]}]}

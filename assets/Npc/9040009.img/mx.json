@@ -1,0 +1,14 @@
+{
+  "info": {
+    "dcBottom": -58,
+    "dcLeft": -53,
+    "dcRight": 46,
+    "dcTop": -146,
+    "script": {
+      "0": {
+        "script": "guildquest1_statue"
+      }
+    }
+  },
+  "animations_path": "animation.json"
+}

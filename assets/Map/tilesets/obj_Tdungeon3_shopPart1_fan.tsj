@@ -1,0 +1,1 @@
+{"type":"tileset","name":"obj:Tdungeon3/shopPart1/fan","objectalignment":"bottomleft","tilewidth":102,"tileheight":58,"tilecount":3,"tiles":[{"id":0,"image":"../images/17207.png","imagewidth":59,"imageheight":58},{"id":1,"image":"../images/17209.png","imagewidth":55,"imageheight":24},{"id":2,"image":"../images/17208.png","imagewidth":102,"imageheight":24}]}

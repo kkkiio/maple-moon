@@ -1,0 +1,1 @@
+{"type":"tileset","name":"obj:trap/trap/artificiality","objectalignment":"bottomleft","tilewidth":89,"tileheight":62,"tilecount":2,"tiles":[{"id":0,"image":"../images/7250.png","imagewidth":85,"imageheight":61},{"id":1,"image":"../images/7249.png","imagewidth":89,"imageheight":62}]}

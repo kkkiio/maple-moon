@@ -1,0 +1,14 @@
+{
+  "info": {
+    "dcBottom": 0,
+    "dcLeft": -31,
+    "dcRight": 32,
+    "dcTop": -33,
+    "script": {
+      "0": {
+        "script": "subway_get1"
+      }
+    }
+  },
+  "animations_path": "animation.json"
+}

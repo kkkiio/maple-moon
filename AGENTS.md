@@ -1,0 +1,356 @@
+# AGENTS.md
+
+这个项目的目的是学习图形学、游戏引擎、游戏开发. 使用 [MoonBit](https://www.moonbitlang.com/), 一个现代的类 Rust 带 GC 的编程语言. 使用 [Selene](https://github.com/Yoorkin/selene), 非常新且小巧的 2D 游戏引擎. 缺少功能时, 先停下, 对比其他现代游戏引擎的实现, 提出改进方案.
+
+## Policies & Mandatory Rules
+
+### Mandatory Skill Usage
+
+#### `$resource-processing-workflow`
+
+缺少资源时使用. 可以导出 aseprite, tiled 资源, 以及以 JSON 格式导出 nx 资源.
+
+#### `$snapshot-test`
+
+项目主要用快照测试验证逻辑和画面, 使用该 skill 编写和执行测试.
+
+#### `$maple-cli`
+
+使用该 skill 通过 Maple CLI 验证修改后的游戏运行时、地图加载和资源加载.
+
+### Package README
+
+Main package 使用 `README.md`, 避免 MoonBit main package 把 `README.mbt.md` 当作 blackbox test 输入并产生 warning.
+
+非 main package 使用 `README.mbt.md`, 说明包的职责和使用方法，并让文档示例继续参与 MoonBit 检查.
+
+### Doc comments
+
+所有 public symbol 都要写 Doc comments, 包括:
+
+- `pub fn`. 写功能描述, 说明边缘情况, 并附带 `Example`.
+
+````moonbit
+///|
+/// Get the largest element of a non-empty `Array`.
+///
+/// # Example
+/// ```moonbit
+/// inspect(my_maximum([1,2,3,4,5,6]), content="6")
+/// ```
+///
+/// # Panics
+/// Panics if the `xs` is empty.
+pub fn[T : Compare] my_maximum(xs : Array[T]) -> T {
+  ...
+}
+````
+
+- `pub enum`. 尽量给每个 variant 加注释.
+- `pub struct`. 如果允许外部构造时(`pub(all)`), 所有字段都要加注释.
+
+### 禁止 fallback
+
+除非明确要求, 否则不写 fallback 逻辑, 避免干扰问题排查. 可以在函数返回值后加 `raise` 关键词, 让错误继续往上传播.
+
+MoonBit 允许 `test` 直接传播错误, 用 `fail` 函数抛出错误.
+
+### 错误处理边界
+
+写底层或基础函数时, 不要直接 `abort`/`panic`/`unwrap`, 除非函数名已经明确表达必须成功, 例如 `require_*` 或 `must_*`.
+
+加载预定义且不可缺失的资源时, 优先在 `resource` package 使用显式 require API, 例如 `require_json(path)`.
+
+写普通 `load`/`parse`/`from_*` 函数时, 使用 `raise` 和 `fail` 把错误往上传递, 直到 system 函数或明确的 require 边界. 在 system 函数里带上业务上下文记录日志, 再决定 `abort`.
+
+不要写 `option.unwrap_or(abort(...))` 或 `result.unwrap_or(panic(...))`; `unwrap_or` 的 fallback 会先求值. 需要延迟终止时, 使用 `unwrap_or_else(fn() { abort(...) })`, 或直接写 `match`.
+
+### 只写黑盒测试
+
+`*_test.mbt` 文件是黑盒测试. 不写 helper 函数.
+
+不允许写 `_for_test` 的 public symbol.
+
+### Effectless new
+
+`new` 函数不要带`async`, 如果需要异步初始化, 使用 `load` 作为函数名.
+
+### 文档与代码的关系
+
+文档描述项目**应当**处于的状态，代码是实现。两者不一致时，以文档为准——要么补代码，要么更新文档。
+
+## Project Structure Guide
+
+### Repo Structure & Important Files
+
+```
+├── playtests/               ← AI 编写的 bot 场景脚本 (纯 JS, 不参与 MoonBit 编译)
+├── gdd.md                     ← 一页纸设计文档
+├── CONTEXT.md                 ← 术语表
+├── docs/
+│   ├── specs/                 ← 功能规格
+│   ├── narrative/             ← 叙事素材
+│   ├── tuning/                ← 数值参数
+│   ├── adr/                   ← 架构决策记录
+│   └── pipeline.md            ← 资源管线
+├── src/
+│   ├── apps/
+│   │   ├── game_web/          ← WebGPU/JS 入口, 日常开发
+│   │   ├── game_native/       ← raylib/native 入口, 玩家本地游玩
+│   │   └── game_debug/        ← WebGPU/JS 入口, bot 验证专用 (含 BotController)
+│   ├── engine/                ← 引擎/框架层
+│   │   ├── game_app/          ← 共享运行时, 注册 systems
+│   │   ├── bot_controller/    ← Playtest Bot 运行时 (输入注入, action 管理, globalThis.__bot)
+│   │   ├── game_server/       ← 服务器通信
+│   │   ├── game_scene/        ← 场景管理
+│   │   ├── game_state/        ← 状态管理
+│   │   ├── graphics/          ← 图形工具 (z_index)
+│   │   ├── ui/                ← 可复用的 UI 原语
+│   │   ├── local_server/      ← 本地服务器
+│   │   ├── resource/          ← 资源加载
+│   │   ├── console/           ← 调试控制台
+│   │   └── log/ utils/ io_service/ randx/ fsx/ lazy/
+│   ├── game/                  ← MapleStory 游戏逻辑
+│   │   ├── combat_system/     ← 战斗主逻辑
+│   │   ├── combat_proto/      ← 战斗数据结构
+│   │   ├── damage/            ← 伤害计算
+│   │   ├── hit_detection/     ← 命中判定
+│   │   ├── regular_attack/    ← 普通攻击
+│   │   ├── skill/             ← 技能数据
+│   │   ├── skill_cast/        ← 技能施放
+│   │   ├── skill_sfx/         ← 技能特效
+│   │   ├── passive/           ← 被动技能
+│   │   ├── buff/              ← Buff
+│   │   ├── bullet/            ← 投射物
+│   │   ├── vfx/ vfx_skill/ vfx_afterimage/
+│   │   ├── character/ char_look/ char_stance/ char_stats/
+│   │   ├── character_body/ character_presentation/
+│   │   ├── monster/ npc/ pet/ player/
+│   │   ├── map/ map_object/ physics/ controller/ transform2d/
+│   │   ├── inventory/ equip/ item/ quest/ drop/
+│   │   ├── clothing/ weapon/ job/ res_types/
+│   │   ├── animation/ bgm/ camera/ cursor/ logic_fps/
+│   │   ├── maple_stat/ markup_text/ server_proto/
+│   │   └── ui/                ← 游戏画面 (背包、商店、NPC 对话等)
+│   ├── tests/                 ← 集成/快照测试 (视觉回归 + 数据回归)
+│   └── cmd/                   ← 命令行工具 (MoonBit JS target)
+│       ├── maple/             ← CLI (maple start / cmd / logs / bot ...)
+│       └── mapled/            ← CDP daemon (Chrome 控制, 注入, 采集)
+└── assets/                    ← 现代运行资源与数据表
+    ├── Map/                   ← Tiled 地图、tileset、地图图片与地图动画
+    ├── mob/ Npc/              ← 怪物/NPC mx.json 与 aseprite/json/png 动画闭包
+    ├── Character/             ← 角色身体、发型、脸型、装备、afterimage 资源
+    ├── Item/                  ← 当前道具闭包；药水、战斗弹药与 Special/0900
+    ├── String/                ← 原始 NX String JSON，用于名称、描述、地图分组
+    ├── data/                  ← 本地服务器与客户端共享 TSV 数据
+    ├── sound/                 ← BGM/SFX 音频
+    └── UI/ Effect/ Skill/ ... ← 当前会加载的最小 UI、特效、技能资源
+```
+
+### Assets Structure
+
+`assets/` 是 Git 可见目录。提交资源时按 `gdd.md` 的当前范围组织完整闭包；当前范围是 Victoria Island，地图、怪物、NPC、任务、商店、掉落、音频和 UI 资源都按这个边界判断。
+
+```text
+assets resource closure
+├── Map/
+│   ├── Map1/<map_id>.img/mx.json
+│   ├── Map1/<map_id>.img/map.tmj
+│   ├── tilesets/*.tsj
+│   ├── tiles/*.tmj
+│   ├── images/*.png
+│   └── animations/*.{aseprite,json,png}
+├── mob/<7_digit_id>.img/
+│   ├── mx.json
+│   └── animations/*.{aseprite,json,png}
+├── Npc/<7_digit_id>.img/
+│   ├── mx.json
+│   └── animations/*.{aseprite,json,png}
+├── Character/
+│   ├── Body/ Face/ Hair/
+│   ├── Coat/ Longcoat/ Pants/ Shoes/ Shield/ Weapon/
+│   └── Afterimage/<name>.img/*.{mx.json,aseprite,json,png}
+├── Item/
+│   ├── Consume/0200.img.json                 # hp/mp 药水与药丸
+│   ├── Consume/0200.img/bitmap/*.png
+│   ├── Consume/{0206,0207,0233}.img.json     # 箭、飞镖、子弹
+│   ├── Consume/{0206,0207,0233}.img/
+│   │   ├── bitmap/*.png
+│   │   └── animations/*.{aseprite,json,png}
+│   └── Special/0900.img.json
+├── String/*.json
+├── data/*.tsv
+├── sound/**/*.mp3
+└── UI/ Effect/ Skill/ portal/ spritesheets/
+```
+
+服务端和客户端尽量读同一份 `assets/` 数据。只有一方完全用不到的数据才拆开；资源缺口优先通过补齐现代闭包解决。
+
+## Operation Guide
+
+### Testing & Automated Checks
+
+修改完 moonbit 代码后, 执行编译命令:
+
+```bash
+just check
+just fmt
+just test
+just build
+```
+
+`just check` 覆盖 JS 与 native target, 但只做类型检查, 不进入 native C 编译/链接.
+
+`.mbti` 文件是 MoonBit 生成的包接口摘要, 记录 public API 签名, 供依赖包和文档示例检查使用.
+
+`moon info` 可能会更新 `pkg.generated.mbti` 的文件末尾空行. 这类纯空行 diff 是生成器输出, 不要回滚或清理; 只需要检查 public API 是否有语义变化.
+
+`just test` 运行所有 native target 测试，包括普通逻辑测试、数据测试和 native raylib 图形快照测试:
+
+```bash
+MOONBIT_NEW_NATIVE=1 moon test --target native --deny-warn --diagnostic-limit 200
+```
+
+PNG 快照更新使用 `UPDATE_GRAPHICS_SNAPS=true`; MoonBit inspect 快照更新继续使用 `moon test --update`.
+
+`UPDATE_GRAPHICS_SNAPS=true` 只用于更新图形快照 PNG. Moon 的 path 参数不会递归父目录下的子 package；需要批量更新 PNG 时，枚举 `src/tests/*/moon.pkg` 对应的 package path.
+
+不要在日常开发中直接执行裸 `moon test`, 因为它会同时考虑不必要的 target/backend. 使用 `just test` 跑 native 测试全集；图形快照测试需要单独调试时，显式指定 native target 和测试 package path.
+
+不要把全仓 `moon test --target js` 当作默认流程. 画面测试使用 native raylib backend; JS target 主要用于 Web 入口和命令行工具.
+
+需要直接执行某个 JS target MoonBit 测试时, 显式指定 JS target 和测试路径：
+
+```bash
+# 在仓库根目录执行
+moon test --target js --deny-warn --diagnostic-limit 200 <path>
+```
+
+日常构建只构建 Web 入口:
+
+```bash
+just build
+```
+
+只有需要玩家游玩或分发 native 版本时, 才构建 native 入口:
+
+```bash
+just build-native
+```
+
+### Utilities & Tips
+
+#### `moon.work` 本地工作区
+
+优先检查项目根目录有没有`moon.work`文件, 如果有, 分析依赖库代码时, 要用`moon.work`里配置的相对路径, 而不是`.mooncakes`.
+
+#### 使用 Js 模块
+
+用 MoonBit 的 `#module` attribute 声明 JavaScript 后端的依赖模块.
+
+在 cjs 格式中, 它被解释为 require, 而在 esm 格式中, 它被解释为 import.
+
+```mbt
+#module("node:fs")
+pub fn write_file_sync(file : String, data : String) = "writeFileSync"
+```
+
+#### 解析 nx 资源
+
+nx 资源以 JSON 格式存储. 导入到游戏时, 可以定义 MoonBit `struct` , 并实现 `FromJson` 接口来解析数据.
+这些 struct 类型以 `Nx` 开头, 例如 `NxTexture` .
+
+#### JSON Match Pattern
+
+处理 JSON 数据时, 优先用模式匹配, 而不是 `Object::get` 等方法.
+
+```mbt
+match json {
+  { "version": "1.0.0", "import": [..] as imports, .. } => ...
+  { "version": Number(i, ..), "import": Array(imports), .. } => ...
+  ...
+}
+```
+
+#### JSON Literal
+
+moonbit 支持 JSON 语法构造 `JSON` 类型的数据:
+
+```mbt
+let v : Json = {
+  "version": "1.0.0",
+  "import": ["import1", "import2"],
+}
+```
+
+#### String
+
+moonbit 的 `String` 是 UTF-16 编码的, API 为了考虑性能, 默认返回 UTF-16 code unit 数据:
+
+- `s[i]` 返回的是 UTF-16 code unit.
+- `s[i:j]` slice operator 被禁用, `s.charcodes(start = i, end = j)` 返回的是 UTF-16 code unit `StringView`.
+
+为了正确处理 unicode 字符, 使用:
+
+- `str.iter()` 遍历字符.
+- `match` 匹配子串.
+
+```mbt
+match path {
+  [.. "/route/", .. sub_path] => {// equivalent to ['/', 'r', 'o', 'u', 't', 'e', '/', ..]
+    ... // sub_path 匹配 /route/ 后面的所有内容
+  }
+}
+```
+
+- `=~` 正则匹配
+
+```mbt
+const REGEX_IDENT_START = re"[A-Za-z_]"
+const REGEX_IDENT_CONT = re"[A-Za-z0-9_]*"
+test {
+  let input = " let_name = 42 "
+  if (input =~ (
+      (REGEX_IDENT_START + REGEX_IDENT_CONT) as ident,
+      before=head,
+      after=tail
+    )) {
+    assert_true(head is " ")
+    assert_true(ident is "let_name")
+    assert_true(tail is " = 42 ")
+  } else {
+    fail("expected identifier")
+  }
+
+  if ("abc" =~ (re"b", before~, after~)) {
+    assert_true(before is "a")
+    assert_true(after is "c")
+  } else {
+    fail("expected middle match")
+  }
+
+  let source : StringView = "abc"
+  if (source =~ (re"." as ch, after=rest)) {
+    assert_eq(ch, 'a')
+    assert_true(rest is "bc")
+  } else {
+    fail("expected leading char")
+  }
+
+  assert_true("zabc!" =~ re"abc")
+  assert_true(!("zabc!" =~ re"^abc"))
+}
+```
+
+#### Sprite
+
+使用 selene 的 `@sprite.Sprite` 渲染画面. 游戏的渲染层级比较多, z index 集中放在 `src/engine/graphics/z_index.mbt` 里管理.
+
+`@entity.Entity` 不要保存到单个对象`struct`里, 而是保存到全局容器里.
+
+#### 资源
+
+local server 是可以异步读取资源的.
+客户端则要保证先 preload 资源, 避免`async`污染游戏逻辑代码.
+
+提交资源时包含 JSON 引用到的图片、spritesheet、tileset、animation JSON/PNG 和对应 `.aseprite` 源文件. 不提交引用图片缺失的半成品导出 JSON.

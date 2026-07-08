@@ -1,0 +1,48 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/game/ui/select_char_ui"
+
+import {
+  "KKKIIO/maple-moon/engine/ui",
+  "KKKIIO/maple-moon/game/animation",
+  "KKKIIO/maple-moon/game/character_presentation",
+  "KKKIIO/maple-moon/game/server_proto",
+  "Milky2018/selene/ecs",
+  "Milky2018/selene/entity",
+}
+
+// Values
+pub fn is_select_char_ui_open() -> Bool
+
+pub fn load_char_look(@entity.Entity, @character_presentation.CharacterPresentationResource, SelectableCharacter) -> @character_presentation.CharLook
+
+pub fn select_char_ui_system(@ecs.World) -> Unit
+
+pub fn setup_game_server_handlers() -> Unit
+
+pub fn to_selectable_character_ui(@entity.Entity, Int, SelectableCharacter, @character_presentation.CharacterPresentationResource, Array[@entity.Entity]) -> SelectableCharacterUI
+
+// Errors
+
+// Types and methods
+type SelectCharUI
+pub fn SelectCharUI::new(SelectCharUIResource, Array[SelectableCharacter], @character_presentation.CharacterPresentationResource, on_select_character? : (Int) -> Unit, on_new_character? : () -> Unit) -> Self
+
+pub(all) struct SelectCharUIResource {
+  ani18 : @animation.Animation
+  bt_new : @ui.MapleButtonResource
+  bt_select : @ui.MapleButtonResource
+}
+pub fn SelectCharUIResource::load() -> Self
+
+pub(all) struct SelectableCharacter {
+  cid : Int
+  name : String
+  look : @server_proto.LookEntry
+}
+
+type SelectableCharacterUI
+
+// Type aliases
+
+// Traits
+

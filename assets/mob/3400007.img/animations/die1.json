@@ -1,0 +1,92 @@
+{ "frames": [
+   {
+    "filename": "die1 0.aseprite",
+    "frame": { "x": 0, "y": 0, "w": 93, "h": 102 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 4, "y": 0, "w": 93, "h": 102 },
+    "sourceSize": { "w": 110, "h": 102 },
+    "duration": 110
+   },
+   {
+    "filename": "die1 1.aseprite",
+    "frame": { "x": 200, "y": 182, "w": 90, "h": 97 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 13, "y": 5, "w": 90, "h": 97 },
+    "sourceSize": { "w": 110, "h": 102 },
+    "duration": 110
+   },
+   {
+    "filename": "die1 2.aseprite",
+    "frame": { "x": 0, "y": 190, "w": 90, "h": 97 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 15, "y": 5, "w": 90, "h": 97 },
+    "sourceSize": { "w": 110, "h": 102 },
+    "duration": 110
+   },
+   {
+    "filename": "die1 3.aseprite",
+    "frame": { "x": 93, "y": 0, "w": 93, "h": 102 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 13, "y": 0, "w": 93, "h": 102 },
+    "sourceSize": { "w": 110, "h": 102 },
+    "duration": 110
+   },
+   {
+    "filename": "die1 4.aseprite",
+    "frame": { "x": 186, "y": 92, "w": 100, "h": 90 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 10, "y": 8, "w": 100, "h": 90 },
+    "sourceSize": { "w": 110, "h": 102 },
+    "duration": 110
+   },
+   {
+    "filename": "die1 5.aseprite",
+    "frame": { "x": 186, "y": 0, "w": 101, "h": 92 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 2, "y": 9, "w": 101, "h": 92 },
+    "sourceSize": { "w": 110, "h": 102 },
+    "duration": 110
+   },
+   {
+    "filename": "die1 6.aseprite",
+    "frame": { "x": 0, "y": 102, "w": 100, "h": 88 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 12, "w": 100, "h": 88 },
+    "sourceSize": { "w": 110, "h": 102 },
+    "duration": 110
+   },
+   {
+    "filename": "die1 7.aseprite",
+    "frame": { "x": 100, "y": 182, "w": 100, "h": 88 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 2, "y": 14, "w": 100, "h": 88 },
+    "sourceSize": { "w": 110, "h": 102 },
+    "duration": 110
+   }
+ ],
+ "meta": {
+  "app": "https://www.aseprite.org/",
+  "version": "1.3.14.4-arm64",
+  "image": "die1.png",
+  "format": "RGBA8888",
+  "size": { "w": 290, "h": 287 },
+  "scale": "1",
+  "frameTags": [
+   { "name": "die1", "from": 0, "to": 7, "direction": "forward", "color": "#000000ff" }
+  ],
+  "layers": [
+   { "name": "main", "opacity": 255, "blendMode": "normal" }
+  ],
+  "slices": [
+   { "name": "anchor_die1", "keys": [{ "frame": 0, "bounds": {"x": 0, "y": 0, "w": 110, "h": 102 }, "pivot": {"x": 53, "y": 102 } }] }
+  ]
+ }
+}

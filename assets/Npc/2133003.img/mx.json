@@ -1,0 +1,21 @@
+{
+  "info": {
+    "dcBottom": 0,
+    "dcLeft": -165,
+    "dcRight": 110,
+    "dcTop": -200,
+    "default": {
+      "__b": 8380,
+      "__w": 158,
+      "__h": 127,
+      "origin": [
+        79,
+        63
+      ],
+      "z": 0
+    },
+    "hideName": 1,
+    "talkMouseOnly": 1
+  },
+  "animations_path": "animation.json"
+}

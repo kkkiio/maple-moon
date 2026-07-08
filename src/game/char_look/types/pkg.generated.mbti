@@ -1,0 +1,30 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/game/char_look/types"
+
+import {
+  "KKKIIO/maple-moon/game/character_body",
+}
+
+// Values
+
+// Errors
+
+// Types and methods
+
+// Type aliases
+pub using @character_body {type BodyDrawInfo}
+
+pub using @character_body {type BodyLayer}
+
+pub using @character_body {type NxBodyLayerTexture}
+
+pub using @character_body {type NxMultiPartFrame}
+
+pub using @character_body {type NxStanceBody}
+
+pub using @character_body {type NxStanceBodyAction}
+
+pub using @character_body {type ShiftMap}
+
+// Traits
+

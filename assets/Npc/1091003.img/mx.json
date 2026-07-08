@@ -1,0 +1,10 @@
+{
+  "info": {
+    "script": {
+      "0": {
+        "script": "refine_nautillus"
+      }
+    }
+  },
+  "animations_path": "animation.json"
+}

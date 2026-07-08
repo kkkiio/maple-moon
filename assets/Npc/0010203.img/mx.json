@@ -1,0 +1,13 @@
+{
+  "info": {
+    "script": {
+      "0": {
+        "script": "infoRogue"
+      }
+    },
+    "speak": {
+      "0": "s0"
+    }
+  },
+  "animations_path": "animation.json"
+}

@@ -1,0 +1,10 @@
+{
+  "info": {
+    "script": {
+      "0": {
+        "script": "s4blocking_enter"
+      }
+    }
+  },
+  "animations_path": "animation.json"
+}

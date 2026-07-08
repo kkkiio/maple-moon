@@ -1,0 +1,1 @@
+{"type":"tileset","name":"obj:Tdungeon/mushCatle/tent","objectalignment":"bottomleft","tilewidth":575,"tileheight":410,"tilecount":2,"tiles":[{"id":0,"image":"../images/4170.png","imagewidth":575,"imageheight":410},{"id":1,"image":"../images/4171.png","imagewidth":244,"imageheight":290}]}

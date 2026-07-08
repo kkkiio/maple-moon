@@ -1,0 +1,8 @@
+import {
+  "moonbitlang/core/json",
+  "moonbitlang/core/strconv",
+  "KKKIIO/maple-moon/game/res_types" @struct,
+  "KKKIIO/maple-moon/engine/resource",
+  "KKKIIO/maple-moon/game/char_stance",
+  "moonbitlang/core/string",
+}

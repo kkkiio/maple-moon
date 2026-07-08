@@ -1,0 +1,2198 @@
+{
+  "alert": {
+    "0": {
+      "pants": {
+        "__h": 10,
+        "__w": 19,
+        "map": {
+          "navel": [
+            0,
+            -6
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          0,
+          0
+        ]
+      }
+    },
+    "1": {
+      "pants": {
+        "__h": 11,
+        "__w": 18,
+        "map": {
+          "navel": [
+            -1,
+            -7
+          ]
+        },
+        "origin": [
+          10,
+          6
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          19,
+          0
+        ]
+      }
+    },
+    "2": {
+      "pants": {
+        "__h": 11,
+        "__w": 18,
+        "map": {
+          "navel": [
+            -1,
+            -7
+          ]
+        },
+        "origin": [
+          9,
+          6
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          37,
+          0
+        ]
+      }
+    }
+  },
+  "fly": {
+    "0": {
+      "pants": {
+        "__h": 13,
+        "__w": 15,
+        "map": {
+          "navel": [
+            -5,
+            -3
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          55,
+          0
+        ]
+      }
+    },
+    "1": {
+      "pants": {
+        "__h": 13,
+        "__w": 14,
+        "map": {
+          "navel": [
+            -5,
+            -4
+          ]
+        },
+        "origin": [
+          10,
+          6
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          70,
+          0
+        ]
+      }
+    }
+  },
+  "heal": {
+    "0": {
+      "pants": {
+        "__h": 11,
+        "__w": 18,
+        "map": {
+          "navel": [
+            -1,
+            -7
+          ]
+        },
+        "origin": [
+          10,
+          6
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          19,
+          0
+        ]
+      }
+    },
+    "1": {
+      "pants": {
+        "__h": 13,
+        "__w": 17,
+        "map": {
+          "navel": [
+            -2,
+            -3
+          ]
+        },
+        "origin": [
+          10,
+          6
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          84,
+          0
+        ]
+      }
+    },
+    "2": {
+      "pants": {
+        "__h": 11,
+        "__w": 16,
+        "map": {
+          "navel": [
+            -4,
+            -4
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          101,
+          0
+        ]
+      }
+    }
+  },
+  "info": {
+    "cash": 0,
+    "icon": {
+      "__h": 23,
+      "__w": 26,
+      "origin": [
+        -4,
+        23
+      ],
+      "__i": "assets/Character/Pants/01060006.img.png",
+      "__off": [
+        117,
+        0
+      ]
+    },
+    "iconRaw": {
+      "__h": 16,
+      "__w": 25,
+      "origin": [
+        -4,
+        23
+      ],
+      "__i": "assets/Character/Pants/01060006.img.png",
+      "__off": [
+        143,
+        0
+      ]
+    },
+    "incPDD": 2,
+    "islot": "Pn",
+    "price": 25,
+    "reqDEX": 0,
+    "reqINT": 0,
+    "reqJob": 0,
+    "reqLUK": 0,
+    "reqLevel": 0,
+    "reqSTR": 0,
+    "tuc": 7,
+    "vslot": "Pn"
+  },
+  "jump": {
+    "0": {
+      "pants": {
+        "__h": 12,
+        "__w": 19,
+        "map": {
+          "navel": [
+            -2,
+            -5
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          168,
+          0
+        ]
+      }
+    }
+  },
+  "ladder": {
+    "0": {
+      "pants": {
+        "__h": 12,
+        "__w": 16,
+        "map": {
+          "navel": [
+            -2,
+            -6
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "backPants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          187,
+          0
+        ]
+      }
+    },
+    "1": {
+      "pants": {
+        "__h": 12,
+        "__w": 16,
+        "map": {
+          "navel": [
+            -2,
+            -6
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "backPants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          203,
+          0
+        ]
+      }
+    }
+  },
+  "prone": {
+    "0": {
+      "pants": {
+        "__h": 13,
+        "__w": 12,
+        "map": {
+          "navel": [
+            -10,
+            5
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          219,
+          0
+        ]
+      }
+    }
+  },
+  "proneStab": {
+    "0": {
+      "pants": {
+        "__h": 13,
+        "__w": 12,
+        "map": {
+          "navel": [
+            -10,
+            5
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          219,
+          0
+        ]
+      }
+    },
+    "1": {
+      "pants": {
+        "__h": 13,
+        "__w": 12,
+        "map": {
+          "navel": [
+            -10,
+            5
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          219,
+          0
+        ]
+      }
+    }
+  },
+  "rope": {
+    "0": {
+      "pants": {
+        "__h": 12,
+        "__w": 17,
+        "map": {
+          "navel": [
+            -1,
+            -7
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "backPants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          231,
+          0
+        ]
+      }
+    },
+    "1": {
+      "pants": {
+        "__h": 9,
+        "__w": 17,
+        "map": {
+          "navel": [
+            -2,
+            -5
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "backPants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          248,
+          0
+        ]
+      }
+    }
+  },
+  "shoot1": {
+    "0": {
+      "pants": {
+        "__h": 11,
+        "__w": 16,
+        "map": {
+          "navel": [
+            -3,
+            -3
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          265,
+          0
+        ]
+      }
+    },
+    "1": {
+      "pants": {
+        "__h": 11,
+        "__w": 16,
+        "map": {
+          "navel": [
+            -3,
+            -3
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          265,
+          0
+        ]
+      }
+    },
+    "2": {
+      "pants": {
+        "__h": 11,
+        "__w": 16,
+        "map": {
+          "navel": [
+            -3,
+            -3
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          265,
+          0
+        ]
+      }
+    }
+  },
+  "shoot2": {
+    "0": {
+      "pants": {
+        "__h": 11,
+        "__w": 17,
+        "map": {
+          "navel": [
+            -4,
+            -3
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          281,
+          0
+        ]
+      }
+    },
+    "1": {
+      "pants": {
+        "__h": 11,
+        "__w": 17,
+        "map": {
+          "navel": [
+            -4,
+            -3
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          281,
+          0
+        ]
+      }
+    },
+    "2": {
+      "pants": {
+        "__h": 11,
+        "__w": 17,
+        "map": {
+          "navel": [
+            -4,
+            -3
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          281,
+          0
+        ]
+      }
+    },
+    "3": {
+      "pants": {
+        "__h": 11,
+        "__w": 17,
+        "map": {
+          "navel": [
+            -4,
+            -3
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          281,
+          0
+        ]
+      }
+    },
+    "4": {
+      "pants": {
+        "__h": 11,
+        "__w": 17,
+        "map": {
+          "navel": [
+            -4,
+            -3
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          281,
+          0
+        ]
+      }
+    }
+  },
+  "shootF": {
+    "0": {
+      "pants": {
+        "__h": 12,
+        "__w": 19,
+        "map": {
+          "navel": [
+            1,
+            -3
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          298,
+          0
+        ]
+      }
+    },
+    "1": {
+      "pants": {
+        "__h": 13,
+        "__w": 20,
+        "map": {
+          "navel": [
+            1,
+            -3
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          317,
+          0
+        ]
+      }
+    },
+    "2": {
+      "pants": {
+        "__h": 13,
+        "__w": 20,
+        "map": {
+          "navel": [
+            1,
+            -3
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          317,
+          0
+        ]
+      }
+    }
+  },
+  "sit": {
+    "0": {
+      "pants": {
+        "__h": 9,
+        "__w": 17,
+        "map": {
+          "navel": [
+            0,
+            -6
+          ]
+        },
+        "origin": [
+          9,
+          7
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          337,
+          0
+        ]
+      }
+    }
+  },
+  "stabO1": {
+    "0": {
+      "pants": {
+        "__h": 13,
+        "__w": 21,
+        "map": {
+          "navel": [
+            0,
+            -4
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          354,
+          0
+        ]
+      }
+    },
+    "1": {
+      "pants": {
+        "__h": 15,
+        "__w": 22,
+        "map": {
+          "navel": [
+            -2,
+            0
+          ]
+        },
+        "origin": [
+          10,
+          6
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          375,
+          0
+        ]
+      }
+    }
+  },
+  "stabO2": {
+    "0": {
+      "pants": {
+        "__h": 12,
+        "__w": 19,
+        "map": {
+          "navel": [
+            -1,
+            -4
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          397,
+          0
+        ]
+      }
+    },
+    "1": {
+      "pants": {
+        "__h": 13,
+        "__w": 23,
+        "map": {
+          "navel": [
+            -4,
+            -3
+          ]
+        },
+        "origin": [
+          10,
+          6
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          416,
+          0
+        ]
+      }
+    }
+  },
+  "stabOF": {
+    "0": {
+      "pants": {
+        "__h": 11,
+        "__w": 12,
+        "map": {
+          "navel": [
+            0,
+            -5
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          439,
+          0
+        ]
+      }
+    },
+    "1": {
+      "pants": {
+        "__h": 13,
+        "__w": 21,
+        "map": {
+          "navel": [
+            2,
+            -4
+          ]
+        },
+        "origin": [
+          10,
+          6
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          451,
+          0
+        ]
+      }
+    },
+    "2": {
+      "pants": {
+        "__h": 13,
+        "__w": 24,
+        "map": {
+          "navel": [
+            0,
+            -1
+          ]
+        },
+        "origin": [
+          10,
+          6
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          472,
+          0
+        ]
+      }
+    }
+  },
+  "stabT1": {
+    "0": {
+      "pants": {
+        "__h": 13,
+        "__w": 20,
+        "map": {
+          "navel": [
+            0,
+            -2
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          496,
+          0
+        ]
+      }
+    },
+    "1": {
+      "pants": {
+        "__h": 15,
+        "__w": 21,
+        "map": {
+          "navel": [
+            -6,
+            -3
+          ]
+        },
+        "origin": [
+          10,
+          6
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          516,
+          0
+        ]
+      }
+    },
+    "2": {
+      "pants": {
+        "__h": 12,
+        "__w": 27,
+        "map": {
+          "navel": [
+            2,
+            -3
+          ]
+        },
+        "origin": [
+          9,
+          6
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          537,
+          0
+        ]
+      }
+    }
+  },
+  "stabT2": {
+    "0": {
+      "pants": {
+        "__h": 13,
+        "__w": 19,
+        "map": {
+          "navel": [
+            -2,
+            -1
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          564,
+          0
+        ]
+      }
+    },
+    "1": {
+      "pants": {
+        "__h": 16,
+        "__w": 21,
+        "map": {
+          "navel": [
+            -2,
+            0
+          ]
+        },
+        "origin": [
+          10,
+          6
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          583,
+          0
+        ]
+      }
+    },
+    "2": {
+      "pants": {
+        "__h": 12,
+        "__w": 27,
+        "map": {
+          "navel": [
+            3,
+            -4
+          ]
+        },
+        "origin": [
+          9,
+          6
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          604,
+          0
+        ]
+      }
+    }
+  },
+  "stabTF": {
+    "0": {
+      "pants": {
+        "__h": 12,
+        "__w": 24,
+        "map": {
+          "navel": [
+            -2,
+            -4
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          631,
+          0
+        ]
+      }
+    },
+    "1": {
+      "pants": {
+        "__h": 13,
+        "__w": 22,
+        "map": {
+          "navel": [
+            -2,
+            -5
+          ]
+        },
+        "origin": [
+          10,
+          6
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          655,
+          0
+        ]
+      }
+    },
+    "2": {
+      "pants": {
+        "__h": 14,
+        "__w": 20,
+        "map": {
+          "navel": [
+            4,
+            -5
+          ]
+        },
+        "origin": [
+          9,
+          6
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          677,
+          0
+        ]
+      }
+    },
+    "3": {
+      "pants": {
+        "__h": 12,
+        "__w": 27,
+        "map": {
+          "navel": [
+            2,
+            -3
+          ]
+        },
+        "origin": [
+          9,
+          6
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          537,
+          0
+        ]
+      }
+    }
+  },
+  "stand1": {
+    "0": {
+      "pants": {
+        "__h": 11,
+        "__w": 16,
+        "map": {
+          "navel": [
+            -5,
+            -6
+          ]
+        },
+        "origin": [
+          9,
+          6
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          697,
+          0
+        ]
+      }
+    },
+    "1": {
+      "pants": {
+        "__h": 11,
+        "__w": 16,
+        "map": {
+          "navel": [
+            -4,
+            -5
+          ]
+        },
+        "origin": [
+          9,
+          6
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          713,
+          0
+        ]
+      }
+    },
+    "2": {
+      "pants": {
+        "__h": 11,
+        "__w": 16,
+        "map": {
+          "navel": [
+            -3,
+            -6
+          ]
+        },
+        "origin": [
+          9,
+          6
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          729,
+          0
+        ]
+      }
+    }
+  },
+  "stand2": {
+    "0": {
+      "pants": {
+        "__h": 11,
+        "__w": 16,
+        "map": {
+          "navel": [
+            -5,
+            -6
+          ]
+        },
+        "origin": [
+          9,
+          6
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          697,
+          0
+        ]
+      }
+    },
+    "1": {
+      "pants": {
+        "__h": 11,
+        "__w": 16,
+        "map": {
+          "navel": [
+            -4,
+            -5
+          ]
+        },
+        "origin": [
+          9,
+          6
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          713,
+          0
+        ]
+      }
+    },
+    "2": {
+      "pants": {
+        "__h": 11,
+        "__w": 16,
+        "map": {
+          "navel": [
+            -3,
+            -6
+          ]
+        },
+        "origin": [
+          9,
+          6
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          729,
+          0
+        ]
+      }
+    }
+  },
+  "swingO1": {
+    "0": {
+      "pants": {
+        "__h": 14,
+        "__w": 18,
+        "map": {
+          "navel": [
+            -2,
+            -3
+          ]
+        },
+        "origin": [
+          9,
+          6
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          745,
+          0
+        ]
+      }
+    },
+    "1": {
+      "pants": {
+        "__h": 14,
+        "__w": 14,
+        "map": {
+          "navel": [
+            -8,
+            -3
+          ]
+        },
+        "origin": [
+          10,
+          6
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          763,
+          0
+        ]
+      }
+    },
+    "2": {
+      "pants": {
+        "__h": 14,
+        "__w": 25,
+        "map": {
+          "navel": [
+            -2,
+            -3
+          ]
+        },
+        "origin": [
+          9,
+          6
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          777,
+          0
+        ]
+      }
+    }
+  },
+  "swingO2": {
+    "0": {
+      "pants": {
+        "__h": 11,
+        "__w": 16,
+        "map": {
+          "navel": [
+            -4,
+            -4
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          101,
+          0
+        ]
+      }
+    },
+    "1": {
+      "pants": {
+        "__h": 13,
+        "__w": 17,
+        "map": {
+          "navel": [
+            -2,
+            -3
+          ]
+        },
+        "origin": [
+          10,
+          6
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          84,
+          0
+        ]
+      }
+    },
+    "2": {
+      "pants": {
+        "__h": 13,
+        "__w": 18,
+        "map": {
+          "navel": [
+            -2,
+            -3
+          ]
+        },
+        "origin": [
+          9,
+          6
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          802,
+          0
+        ]
+      }
+    }
+  },
+  "swingO3": {
+    "0": {
+      "pants": {
+        "__h": 12,
+        "__w": 20,
+        "map": {
+          "navel": [
+            -3,
+            -3
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          820,
+          0
+        ]
+      }
+    },
+    "1": {
+      "pants": {
+        "__h": 13,
+        "__w": 13,
+        "map": {
+          "navel": [
+            -8,
+            -2
+          ]
+        },
+        "origin": [
+          10,
+          6
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          840,
+          0
+        ]
+      }
+    },
+    "2": {
+      "pants": {
+        "__h": 14,
+        "__w": 18,
+        "map": {
+          "navel": [
+            -6,
+            -3
+          ]
+        },
+        "origin": [
+          9,
+          6
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          853,
+          0
+        ]
+      }
+    }
+  },
+  "swingOF": {
+    "0": {
+      "pants": {
+        "__h": 14,
+        "__w": 18,
+        "map": {
+          "navel": [
+            -3,
+            -4
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          871,
+          0
+        ]
+      }
+    },
+    "1": {
+      "pants": {
+        "__h": 13,
+        "__w": 19,
+        "map": {
+          "navel": [
+            -2,
+            -5
+          ]
+        },
+        "origin": [
+          10,
+          6
+        ],
+        "z": "backPants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          889,
+          0
+        ]
+      }
+    },
+    "2": {
+      "pants": {
+        "__h": 15,
+        "__w": 13,
+        "map": {
+          "navel": [
+            -8,
+            0
+          ]
+        },
+        "origin": [
+          9,
+          6
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          908,
+          0
+        ]
+      }
+    },
+    "3": {
+      "pants": {
+        "__h": 13,
+        "__w": 18,
+        "map": {
+          "navel": [
+            -2,
+            0
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          921,
+          0
+        ]
+      }
+    }
+  },
+  "swingP1": {
+    "0": {
+      "pants": {
+        "__h": 11,
+        "__w": 18,
+        "map": {
+          "navel": [
+            -2,
+            -5
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          939,
+          0
+        ]
+      }
+    },
+    "1": {
+      "pants": {
+        "__h": 13,
+        "__w": 18,
+        "map": {
+          "navel": [
+            -3,
+            -3
+          ]
+        },
+        "origin": [
+          10,
+          6
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          957,
+          0
+        ]
+      }
+    },
+    "2": {
+      "pants": {
+        "__h": 13,
+        "__w": 24,
+        "map": {
+          "navel": [
+            -1,
+            -2
+          ]
+        },
+        "origin": [
+          9,
+          6
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          975,
+          0
+        ]
+      }
+    }
+  },
+  "swingP2": {
+    "0": {
+      "pants": {
+        "__h": 13,
+        "__w": 19,
+        "map": {
+          "navel": [
+            -1,
+            -4
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          999,
+          0
+        ]
+      }
+    },
+    "1": {
+      "pants": {
+        "__h": 13,
+        "__w": 18,
+        "map": {
+          "navel": [
+            -3,
+            -4
+          ]
+        },
+        "origin": [
+          10,
+          6
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          1018,
+          0
+        ]
+      }
+    },
+    "2": {
+      "pants": {
+        "__h": 13,
+        "__w": 24,
+        "map": {
+          "navel": [
+            0,
+            -2
+          ]
+        },
+        "origin": [
+          9,
+          6
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          1036,
+          0
+        ]
+      }
+    }
+  },
+  "swingPF": {
+    "0": {
+      "pants": {
+        "__h": 12,
+        "__w": 24,
+        "map": {
+          "navel": [
+            -2,
+            -4
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          631,
+          0
+        ]
+      }
+    },
+    "1": {
+      "pants": {
+        "__h": 13,
+        "__w": 22,
+        "map": {
+          "navel": [
+            -2,
+            -5
+          ]
+        },
+        "origin": [
+          10,
+          6
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          655,
+          0
+        ]
+      }
+    },
+    "2": {
+      "pants": {
+        "__h": 16,
+        "__w": 20,
+        "map": {
+          "navel": [
+            4,
+            -4
+          ]
+        },
+        "origin": [
+          9,
+          6
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          1060,
+          0
+        ]
+      }
+    },
+    "3": {
+      "pants": {
+        "__h": 14,
+        "__w": 19,
+        "map": {
+          "navel": [
+            1,
+            -1
+          ]
+        },
+        "origin": [
+          9,
+          6
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          1080,
+          0
+        ]
+      }
+    }
+  },
+  "swingT1": {
+    "0": {
+      "pants": {
+        "__h": 11,
+        "__w": 18,
+        "map": {
+          "navel": [
+            -3,
+            -6
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          1099,
+          0
+        ]
+      }
+    },
+    "1": {
+      "pants": {
+        "__h": 13,
+        "__w": 18,
+        "map": {
+          "navel": [
+            -3,
+            -4
+          ]
+        },
+        "origin": [
+          10,
+          6
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          1117,
+          0
+        ]
+      }
+    },
+    "2": {
+      "pants": {
+        "__h": 13,
+        "__w": 24,
+        "map": {
+          "navel": [
+            -1,
+            -3
+          ]
+        },
+        "origin": [
+          9,
+          6
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          1135,
+          0
+        ]
+      }
+    }
+  },
+  "swingT2": {
+    "0": {
+      "pants": {
+        "__h": 14,
+        "__w": 17,
+        "map": {
+          "navel": [
+            -2,
+            -2
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          1159,
+          0
+        ]
+      }
+    },
+    "1": {
+      "pants": {
+        "__h": 12,
+        "__w": 19,
+        "map": {
+          "navel": [
+            -1,
+            -5
+          ]
+        },
+        "origin": [
+          10,
+          6
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          1176,
+          0
+        ]
+      }
+    },
+    "2": {
+      "pants": {
+        "__h": 12,
+        "__w": 22,
+        "map": {
+          "navel": [
+            -1,
+            -2
+          ]
+        },
+        "origin": [
+          9,
+          6
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          1195,
+          0
+        ]
+      }
+    }
+  },
+  "swingT3": {
+    "0": {
+      "pants": {
+        "__h": 14,
+        "__w": 18,
+        "map": {
+          "navel": [
+            -2,
+            -2
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          1217,
+          0
+        ]
+      }
+    },
+    "1": {
+      "pants": {
+        "__h": 12,
+        "__w": 20,
+        "map": {
+          "navel": [
+            -4,
+            -3
+          ]
+        },
+        "origin": [
+          10,
+          6
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          1235,
+          0
+        ]
+      }
+    },
+    "2": {
+      "pants": {
+        "__h": 12,
+        "__w": 22,
+        "map": {
+          "navel": [
+            -1,
+            -3
+          ]
+        },
+        "origin": [
+          9,
+          6
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          1255,
+          0
+        ]
+      }
+    }
+  },
+  "swingTF": {
+    "0": {
+      "pants": {
+        "__h": 12,
+        "__w": 15,
+        "map": {
+          "navel": [
+            -3,
+            -3
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "backPants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          1277,
+          0
+        ]
+      }
+    },
+    "1": {
+      "pants": {
+        "__h": 16,
+        "__w": 16,
+        "map": {
+          "navel": [
+            0,
+            -3
+          ]
+        },
+        "origin": [
+          10,
+          6
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          1292,
+          0
+        ]
+      }
+    },
+    "2": {
+      "pants": {
+        "__h": 13,
+        "__w": 20,
+        "map": {
+          "navel": [
+            -1,
+            -3
+          ]
+        },
+        "origin": [
+          9,
+          6
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          1308,
+          0
+        ]
+      }
+    },
+    "3": {
+      "pants": {
+        "__h": 12,
+        "__w": 22,
+        "map": {
+          "navel": [
+            -1,
+            0
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          1328,
+          0
+        ]
+      }
+    }
+  },
+  "walk1": {
+    "0": {
+      "pants": {
+        "__h": 13,
+        "__w": 14,
+        "map": {
+          "navel": [
+            -5,
+            -7
+          ]
+        },
+        "origin": [
+          9,
+          7
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          1350,
+          0
+        ]
+      }
+    },
+    "1": {
+      "pants": {
+        "__h": 12,
+        "__w": 17,
+        "map": {
+          "navel": [
+            -3,
+            -7
+          ]
+        },
+        "origin": [
+          9,
+          6
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          1364,
+          0
+        ]
+      }
+    },
+    "2": {
+      "pants": {
+        "__h": 12,
+        "__w": 14,
+        "map": {
+          "navel": [
+            -5,
+            -7
+          ]
+        },
+        "origin": [
+          9,
+          7
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          1381,
+          0
+        ]
+      }
+    },
+    "3": {
+      "pants": {
+        "__h": 11,
+        "__w": 14,
+        "map": {
+          "navel": [
+            -5,
+            -5
+          ]
+        },
+        "origin": [
+          9,
+          6
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          1395,
+          0
+        ]
+      }
+    }
+  },
+  "walk2": {
+    "0": {
+      "pants": {
+        "__h": 13,
+        "__w": 14,
+        "map": {
+          "navel": [
+            -5,
+            -7
+          ]
+        },
+        "origin": [
+          9,
+          7
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          1350,
+          0
+        ]
+      }
+    },
+    "1": {
+      "pants": {
+        "__h": 12,
+        "__w": 17,
+        "map": {
+          "navel": [
+            -3,
+            -7
+          ]
+        },
+        "origin": [
+          9,
+          6
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          1364,
+          0
+        ]
+      }
+    },
+    "2": {
+      "pants": {
+        "__h": 12,
+        "__w": 14,
+        "map": {
+          "navel": [
+            -5,
+            -7
+          ]
+        },
+        "origin": [
+          9,
+          7
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          1381,
+          0
+        ]
+      }
+    },
+    "3": {
+      "pants": {
+        "__h": 11,
+        "__w": 14,
+        "map": {
+          "navel": [
+            -5,
+            -5
+          ]
+        },
+        "origin": [
+          9,
+          6
+        ],
+        "z": "pants",
+        "__i": "assets/Character/Pants/01060006.img.png",
+        "__off": [
+          1395,
+          0
+        ]
+      }
+    }
+  }
+}

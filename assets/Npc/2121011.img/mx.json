@@ -1,0 +1,26 @@
+{
+  "info": {
+    "dcBottom": -236,
+    "dcLeft": -38,
+    "dcRight": 38,
+    "dcTop": -348,
+    "default": {
+      "__b": 12218,
+      "__w": 89,
+      "__h": 100,
+      "origin": [
+        44,
+        50
+      ],
+      "z": 0
+    },
+    "hideName": 1,
+    "script": {
+      "0": {
+        "script": "hwpicture"
+      }
+    },
+    "talkMouseOnly": 1
+  },
+  "animations_path": "animation.json"
+}

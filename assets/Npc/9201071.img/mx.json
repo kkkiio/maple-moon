@@ -1,0 +1,10 @@
+{
+  "info": {
+    "script": {
+      "0": {
+        "script": "Sunstone"
+      }
+    }
+  },
+  "animations_path": "animation.json"
+}

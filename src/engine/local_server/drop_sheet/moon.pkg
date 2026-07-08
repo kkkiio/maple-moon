@@ -1,0 +1,4 @@
+import {
+  "KKKIIO/maple-moon/engine/data_sheet",
+  "KKKIIO/maple-moon/engine/resource",
+}

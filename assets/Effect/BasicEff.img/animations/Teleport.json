@@ -1,0 +1,131 @@
+{
+  "frames": [
+    {
+      "filename": "main/0",
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 62,
+        "h": 172
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 62,
+        "h": 172
+      },
+      "sourceSize": {
+        "w": 62,
+        "h": 172
+      },
+      "duration": 80
+    },
+    {
+      "filename": "main/1",
+      "frame": {
+        "x": 62,
+        "y": 0,
+        "w": 62,
+        "h": 172
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 62,
+        "h": 172
+      },
+      "sourceSize": {
+        "w": 62,
+        "h": 172
+      },
+      "duration": 80
+    },
+    {
+      "filename": "main/2",
+      "frame": {
+        "x": 124,
+        "y": 0,
+        "w": 62,
+        "h": 172
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 62,
+        "h": 172
+      },
+      "sourceSize": {
+        "w": 62,
+        "h": 172
+      },
+      "duration": 80
+    },
+    {
+      "filename": "main/3",
+      "frame": {
+        "x": 186,
+        "y": 0,
+        "w": 62,
+        "h": 172
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 62,
+        "h": 172
+      },
+      "sourceSize": {
+        "w": 62,
+        "h": 172
+      },
+      "duration": 80
+    }
+  ],
+  "meta": {
+    "app": "nx-maple-res",
+    "version": "1.0",
+    "image": "Teleport.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 248,
+      "h": 172
+    },
+    "scale": "1",
+    "frameTags": [
+      {
+        "name": "main",
+        "from": 0,
+        "to": 3,
+        "direction": "forward"
+      }
+    ],
+    "slices": [
+      {
+        "name": "anchor_main",
+        "keys": [
+          {
+            "frame": 0,
+            "bounds": {
+              "x": 0,
+              "y": 0,
+              "w": 62,
+              "h": 172
+            },
+            "pivot": {
+              "x": 34,
+              "y": 122
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

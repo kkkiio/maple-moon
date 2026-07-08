@@ -1,0 +1,106 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/game/clothing"
+
+import {
+  "KKKIIO/maple-moon/engine/resource",
+  "KKKIIO/maple-moon/game/char_stance",
+  "KKKIIO/maple-moon/game/character_body",
+  "KKKIIO/maple-moon/game/equip/slot",
+  "KKKIIO/maple-moon/game/item",
+  "KKKIIO/maple-moon/game/res_types",
+  "moonbitlang/core/debug",
+  "moonbitlang/core/json",
+}
+
+// Values
+pub fn resolve_anchor_shift(@character_body.BodyDrawInfo, @char_stance.StanceId, Int, String, @res_types.Point[Int]) -> @res_types.Point[Int] raise
+
+// Errors
+
+// Types and methods
+type Clothing derive(@debug.Debug)
+pub fn Clothing::from_resource(@item.ItemData, @character_body.BodyDrawInfo) -> Self raise
+pub fn Clothing::get_animation(Self, @char_stance.StanceId, String) -> (Array[@resource.NxFrame], Array[ClothingLayer])?
+pub fn Clothing::get_eqslot(Self) -> @slot.Id
+pub fn Clothing::get_id(Self) -> Int
+pub fn Clothing::get_parts_for_stance(Self, @char_stance.StanceId) -> Map[String, (Array[@resource.NxFrame], Array[ClothingLayer])]?
+pub fn Clothing::get_stand(Self) -> @char_stance.StanceId
+pub fn Clothing::get_vslot(Self) -> String
+pub fn Clothing::get_walk(Self) -> @char_stance.StanceId
+pub fn Clothing::is_twohanded(Self) -> Bool
+
+pub(all) enum ClothingLayer {
+  CAPE
+  SHIELD_BELOW_BODY
+  WEAPON_BELOW_BODY
+  CAP_BELOW_BODY
+  WRIST_OVER_BODY
+  GLOVE_OVER_BODY
+  SHOES
+  MAIL
+  PANTS_DEFAULT
+  PANTS
+  TOP_DEFAULT
+  TOP
+  SHIELD_OVER_HAIR
+  EARRINGS
+  FACE_ACC
+  EYE_ACC
+  SHIELD
+  CAP
+  CAP_OVER_HAIR
+  WEAPON_BELOW_ARM
+  MAILARM
+  WEAPON
+  WEAPON_OVER_ARM
+  WRIST
+  GLOVE
+  WEAPON_OVER_GLOVE
+  WEAPON_OVER_HAND
+  WEAPON_OVER_BODY
+  HAND_OVER_WEAPON
+  WRIST_OVER_HAIR
+  GLOVE_OVER_HAIR
+  PENDANT
+  BELT
+  MEDAL
+  RING
+  BACK_SHIELD
+  BACK_WEAPON
+} derive(Eq, Hash, @debug.Debug)
+pub fn ClothingLayer::int_value(Self) -> Int
+pub impl ToJson for ClothingLayer
+
+pub(all) struct NxMapAnchor {
+  parent_key : String
+  parent_pos : @res_types.Point[Int]
+} derive(Eq, @debug.Debug)
+pub impl @json.FromJson for NxMapAnchor
+
+pub(all) struct NxWeapon {
+  actions : Map[String, NxWeaponAction]
+} derive(@debug.Debug)
+pub fn NxWeapon::get_part(Self, String, Int, String) -> NxWeaponPart?
+pub impl @json.FromJson for NxWeapon
+
+pub(all) struct NxWeaponAction {
+  frames : Map[Int, NxWeaponFrame]
+} derive(@debug.Debug)
+pub impl @json.FromJson for NxWeaponAction
+
+pub(all) struct NxWeaponFrame {
+  parts : Map[String, NxWeaponPart]
+} derive(@debug.Debug)
+pub impl @json.FromJson for NxWeaponFrame
+
+pub(all) struct NxWeaponPart {
+  texture : @resource.NxTexture
+  z : String
+  anchor : NxMapAnchor
+} derive(@debug.Debug)
+pub impl @json.FromJson for NxWeaponPart
+
+// Type aliases
+
+// Traits
+

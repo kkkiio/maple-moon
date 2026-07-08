@@ -1,0 +1,1 @@
+{"type":"tileset","name":"bg:syarenInside","objectalignment":"bottomleft","tilewidth":400,"tileheight":301,"tilecount":3,"tiles":[{"id":0,"image":"../images/27968.png","imagewidth":400,"imageheight":206},{"id":1,"image":"../images/27972.png","imagewidth":81,"imageheight":301},{"id":2,"image":"../images/27971.png","imagewidth":269,"imageheight":206}]}

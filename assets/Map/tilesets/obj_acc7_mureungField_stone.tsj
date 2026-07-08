@@ -1,0 +1,1 @@
+{"type":"tileset","name":"obj:acc7/mureungField/stone","objectalignment":"bottomleft","tilewidth":188,"tileheight":176,"tilecount":3,"tiles":[{"id":0,"image":"../images/14625.png","imagewidth":180,"imageheight":101},{"id":1,"image":"../images/14626.png","imagewidth":188,"imageheight":149},{"id":2,"image":"../images/14637.png","imagewidth":96,"imageheight":176}]}

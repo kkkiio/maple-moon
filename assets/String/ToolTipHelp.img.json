@@ -1,0 +1,3944 @@
+{
+  "Game": {
+    "Button": {
+      "Chat": {
+        "Desc": "The window that lets you chat with buddies within a world.",
+        "Title": "Messenger Window"
+      },
+      "Claim": {
+        "Title": "Alert GM"
+      },
+      "Equip": {
+        "Desc": "The window that shows the equipped items, and allowing the character to equip/unequip them.\\nOpen the item inventory alongside it to use the equip. items.",
+        "Title": "Equipment Window (E)"
+      },
+      "Item": {
+        "Desc": "The window that allows the character to see the items it owns.\\nThe items are categorized under Equip., Use, Set-Up, and Etc. items.",
+        "Title": "Item Inventory (I)"
+      },
+      "KeySet": {
+        "Title": "Key Config."
+      },
+      "MapTransfer": {
+        "Delete": {
+          "Desc": "Delete the chosen map from the list.",
+          "Title": "Delete Map"
+        },
+        "Move": {
+          "Desc": "Teleports to the map of your choice, or to the map where the chosen character is.",
+          "Title": "Move"
+        },
+        "Register": {
+          "Desc": "Registers the map the character is at to the teleport list. Can save up to 5 maps.",
+          "Title": "Register Map"
+        },
+        "RegisterEx": {
+          "Desc": "Registers the map where the character is located into the Teleport List. Can register upto 10 different places.",
+          "Title": "Register Map"
+        }
+      },
+      "Menu": {
+        "Desc": "The window that lets you change the options or game infos.\\nCan change game and system option.\\nCan also see quest info, party info, and the community info.",
+        "Title": "Menu"
+      },
+      "QuestAlarm": {
+        "Desc": "Click on Quest Alarm button if you wish to register the current quest into the Quest Alarm. Up to 5 quests can be registered in this alarm."
+      },
+      "QuickSlot": {
+        "Title": "Show Quick Slot"
+      },
+      "QuickSlotD": {
+        "Title": "Hide Quick Slot"
+      },
+      "Shop": {
+        "Desc": "It's a place where, armed with Cash, you'll be able to purchase accessories, clothes, messenger item, hair salon coupons, coupons for plastic surgery, and other various items.",
+        "Title": "Cash Shop"
+      },
+      "Skill": {
+        "Desc": "The window that shows the detailed look of the skillbook owned by the character.\\nUse skill points to learn the skills available.",
+        "Title": "Skill Window (K)"
+      },
+      "Stat": {
+        "Desc": "The window that shows detailed character info and its abilities.\\nUse AP to enhance many different kinds of abilities. ",
+        "Title": "Ability Window (S)"
+      },
+      "StatAuto": {
+        "Desc": "Distributes the remaining AP according to your level and class.",
+        "Title": "Stat Auto-Assign"
+      },
+      "StatAuto1": {
+        "Desc": "Distributes the remaining AP according to Brawler requirements.",
+        "Title": "Stat Auto-Assign (Brawler)"
+      },
+      "StatAuto2": {
+        "Desc": "Distributes the remaining AP according to Gunslinger requirements.",
+        "Title": "Stat Auto-Assign (Gunslinger)"
+      },
+      "Whisper": {
+        "Desc": "Press the button to choose the character you want to whisper to.\\nPress it once more to disable whisper.",
+        "Title": "Whisper"
+      }
+    },
+    "UIWnd": {
+      "Stat": {
+        "0": {
+          "Desc": "Once the name is made,\\nthe name can't be changed.",
+          "Title": "Name of the Character",
+          "lt": [
+            8,
+            32
+          ],
+          "rb": [
+            55,
+            47
+          ]
+        },
+        "1": {
+          "Desc": "Can make the job advancement to Warrior, Bowman, Thief, Magician, or Pirate. \\nWarrior : Minimum of Level 10, Perion\\nBowman : Minimum of Level 10, Henesys\\nMagician : Minimum of Level 8, Ellinia\\nThief : Minimum of Level 10, Kerning City\\nPirate : Minimum of Level 10, The Nautilus",
+          "Title": "Job of the Character",
+          "lt": [
+            8,
+            50
+          ],
+          "rb": [
+            55,
+            75
+          ]
+        },
+        "10": {
+          "Desc": "The higher this stat, the higher the accuracy and strenghth of your magic attack. The most important stat that determines the magic attacks for mages.",
+          "Title": "Intelligence (INT)",
+          "lt": [
+            8,
+            280
+          ],
+          "rb": [
+            55,
+            295
+          ]
+        },
+        "11": {
+          "Desc": "The higher it is, the higher the avoidability is. \\nIt determines the Thief's attacking ability and the Mage's magic attack accuracy. \\nAlso, the higher it is, the less EXP a character loses by dying.",
+          "Title": "Luck (LUK)",
+          "lt": [
+            8,
+            298
+          ],
+          "rb": [
+            55,
+            313
+          ]
+        },
+        "12": {
+          "Desc": "Amount to increase STR, DEX, INT,LUK, HP and MP. For STR, DEX, INT and LUK, every 1 AP used will increase the stats by 1.  For HP and MP, it differs pending on the jobs and characters.  5 Points will be given upon level up.",
+          "Title": "AP(Ability Point)",
+          "lt": [
+            7,
+            192
+          ],
+          "rb": [
+            90,
+            214
+          ]
+        },
+        "2": {
+          "Desc": "Accumulate enough EXP to raise the level of the character.",
+          "Title": "Level",
+          "lt": [
+            8,
+            78
+          ],
+          "rb": [
+            55,
+            93
+          ]
+        },
+        "3": {
+          "Desc": "The main community of the communities the account belongs to. Press \"G\" to check guild info.",
+          "Title": "Main Guild",
+          "lt": [
+            8,
+            96
+          ],
+          "rb": [
+            55,
+            111
+          ]
+        },
+        "4": {
+          "Desc": "It's a health stat, and if it reaches 0, the character dies.\\nHP decreases if either attacked by an enemy or if a certain skill is used.\\nIt can go up to the maximum of 30,000 points.",
+          "Title": "Health Point",
+          "lt": [
+            8,
+            114
+          ],
+          "rb": [
+            55,
+            129
+          ]
+        },
+        "5": {
+          "Desc": "The stat needed to use various skills.\\nIt can go up to the maximum of 30,000 points.",
+          "Title": "Mana Point",
+          "lt": [
+            8,
+            132
+          ],
+          "rb": [
+            55,
+            147
+          ]
+        },
+        "6": {
+          "Desc": "The amount of experience gained. \\nObtained by killing a monster or completing a quest.",
+          "Title": "EXP",
+          "lt": [
+            8,
+            150
+          ],
+          "rb": [
+            55,
+            165
+          ]
+        },
+        "7": {
+          "Desc": "The level of fame can be increased or decreased, based on other users. Some equipments and quests require the character reach a certain level of fame.",
+          "Title": "Fame",
+          "lt": [
+            8,
+            168
+          ],
+          "rb": [
+            55,
+            183
+          ]
+        },
+        "8": {
+          "Desc": "The stat needed to use heavy weapons and/or armors.\\nIt determines the attacking ability of the warriors and pirates (Brawlers).",
+          "Title": "Strength (STR)",
+          "lt": [
+            8,
+            243
+          ],
+          "rb": [
+            55,
+            259
+          ]
+        },
+        "9": {
+          "Desc": "This stat is vital to making direct attacks using a weapon. This is the most significant stat when it comes to the strength of the attacks for warriors and pirates (Gunslingers). ",
+          "Title": "Dexterity (DEX)",
+          "lt": [
+            8,
+            262
+          ],
+          "rb": [
+            55,
+            277
+          ]
+        }
+      },
+      "StatDetail": {
+        "0": {
+          "Desc": "The stat that impacts the damage caused by physical attacks. This stat is related to strength (STR) for warriors and magicians, dexterity (DEX) for bowmen, strength, dexterity and luck (LUK) for thieves and strength and dexterity for pirates. The above stat and the equipment's physical attack are added to decide on the overall physical attack.  ",
+          "Title": "Attack",
+          "lt": [
+            13,
+            7
+          ],
+          "rb": [
+            70,
+            22
+          ]
+        },
+        "1": {
+          "Desc": "The stat that determines the ability to defend the weapon attack.\\nBased on all equipped armors' weapon def. ",
+          "Title": "Weapon Def.",
+          "lt": [
+            13,
+            25
+          ],
+          "rb": [
+            70,
+            40
+          ]
+        },
+        "2": {
+          "Desc": "The stat that determines the success rate and the attacking ability of spells.\\nBased on INT and equipped items' magic power.",
+          "Title": "Magic",
+          "lt": [
+            13,
+            43
+          ],
+          "rb": [
+            70,
+            58
+          ]
+        },
+        "3": {
+          "Desc": "The stat for defending spells.\\nBased on magic def. of every armor that's been equipped.",
+          "Title": "Magic Def.",
+          "lt": [
+            13,
+            61
+          ],
+          "rb": [
+            70,
+            76
+          ]
+        },
+        "4": {
+          "Desc": "The stat that determines the accuracy of weapon attack. \\nThe higher, the more accurate.\\nBased on dexterity and the equipment item options.",
+          "Title": "Accuracy",
+          "lt": [
+            13,
+            79
+          ],
+          "rb": [
+            70,
+            94
+          ]
+        },
+        "5": {
+          "Desc": "The stat that enables the character to avoid weapon damage.\\nThe higher it is, the better the character avoids weapon damage.\\nBased on dexterity, luck, and the equipment item options.",
+          "Title": "Avoidability",
+          "lt": [
+            13,
+            97
+          ],
+          "rb": [
+            70,
+            112
+          ]
+        },
+        "6": {
+          "Desc": "",
+          "Title": "",
+          "lt": [
+            13,
+            115
+          ],
+          "rb": [
+            70,
+            130
+          ]
+        },
+        "7": {
+          "Desc": "A character's speed can increase upto 140%. Can be changed through equipment item options or skills.",
+          "Title": "Speed",
+          "lt": [
+            13,
+            133
+          ],
+          "rb": [
+            70,
+            148
+          ]
+        },
+        "8": {
+          "Desc": "A character's jump ability can increase upto 123%. \\nCan be changed through equipment item options or skills.",
+          "Title": "Jump",
+          "lt": [
+            13,
+            151
+          ],
+          "rb": [
+            70,
+            166
+          ]
+        }
+      }
+    }
+  },
+  "MTS": {
+    "Button": {
+      "Check": {
+        "Desc": "Checking the remaining points.",
+        "Title": "Check Points"
+      }
+    }
+  },
+  "Mapobject": {
+    "0": {
+      "0": {
+        "Desc": "Press Alt on keyboard to jump",
+        "Title": "Character Jump(Alt)"
+      },
+      "1": {
+        "Desc": "Move around, climb up the ladder, and use portals using the arrow keys.",
+        "Title": "Move Character(Arrow Keys)"
+      },
+      "2": {
+        "Title": "Use Portal(Up)"
+      },
+      "3": {
+        "Desc": "Move to the right to explore new grounds.",
+        "Title": "To New Places..."
+      },
+      "4": {
+        "Title": "Starting Point"
+      }
+    },
+    "10000": {
+      "0": {
+        "Title": "Use Portal (Up)"
+      }
+    },
+    "1000000": {
+      "0": {
+        "Desc": "This is the place to purchase weapons.",
+        "Title": "Weapon Store"
+      },
+      "1": {
+        "Desc": "This is the place to purchase potions, scrolls, and other goods.",
+        "Title": "Department Store"
+      },
+      "2": {
+        "Desc": "Toward Southperry",
+        "Title": "Entrance to Adventurer Training Center"
+      },
+      "3": {
+        "Title": "Amherst"
+      }
+    },
+    "100000000": {
+      "0": {
+        "Title": "Cab Station"
+      },
+      "1": {
+        "Title": "Henesys Market"
+      },
+      "10": {
+        "Title": "Mini Dungeon: Mushroom Castle"
+      },
+      "11": {
+        "Title": "Dungeon (Towards Sleepywood)"
+      },
+      "2": {
+        "Title": "Henesys Park"
+      },
+      "3": {
+        "Title": "Dungeon"
+      },
+      "4": {
+        "Title": "Henesys"
+      },
+      "5": {
+        "Title": "The Hill East of Henesys"
+      },
+      "6": {
+        "Title": "Henesys"
+      },
+      "7": {
+        "Title": "Henesys Hunting Ground"
+      },
+      "8": {
+        "Title": "Henesys"
+      },
+      "9": {
+        "Title": "Maya's House"
+      }
+    },
+    "100000002": {
+      "0": {
+        "Title": "Pig Park"
+      },
+      "1": {
+        "Title": "Theme Dungeon: Mushroom Castle"
+      },
+      "2": {
+        "Title": "헤네시스"
+      },
+      "3": {
+        "Title": "Theme Dungeon: Mushroom Castle"
+      }
+    },
+    "100000003": {
+      "0": {
+        "Title": "An Empty House (Towards Henesys)"
+      },
+      "1": {
+        "Title": "Pig Park II"
+      }
+    },
+    "100000004": {
+      "0": {
+        "Title": "Someone Else's House"
+      },
+      "1": {
+        "Title": "Pig Park (Towards Henesys)"
+      }
+    },
+    "100000005": {
+      "0": {
+        "Title": "Pig Park II (Towards Henesys)"
+      }
+    },
+    "100000100": {
+      "0": {
+        "Title": "Henesys Market"
+      },
+      "1": {
+        "Title": "Free Market"
+      },
+      "10": {
+        "Title": "Henesys Park"
+      },
+      "11": {
+        "Title": "Henesys"
+      },
+      "12": {
+        "Title": "Henesys Market"
+      },
+      "2": {
+        "Title": "Weapon Store"
+      },
+      "3": {
+        "Title": "Department Store"
+      },
+      "4": {
+        "Title": "Pet Store"
+      },
+      "5": {
+        "Title": "Skin Care"
+      },
+      "6": {
+        "Title": "Hair Salon"
+      },
+      "7": {
+        "Title": "Hair Salon"
+      },
+      "8": {
+        "Title": "Plastic Surgery"
+      },
+      "9": {
+        "Title": "Henesys Market"
+      }
+    },
+    "100000200": {
+      "0": {
+        "Title": "Henesys"
+      },
+      "1": {
+        "Title": "Henesys Park"
+      },
+      "2": {
+        "Title": "Pet Walkway"
+      },
+      "3": {
+        "Title": "Henesys"
+      },
+      "4": {
+        "Title": "Henesys Market"
+      },
+      "5": {
+        "Title": "Henesys Game Park"
+      },
+      "6": {
+        "Title": "Bowman Instructional School"
+      },
+      "7": {
+        "Title": "Bowman Instructional School"
+      }
+    },
+    "100010000": {
+      "0": {
+        "Title": "The Forest East of Henesys (Towards Ellinia/Nautilus)"
+      },
+      "1": {
+        "Title": "Henesys"
+      }
+    },
+    "100020000": {
+      "0": {
+        "Title": "Mini Dungeon: Henesys Pig Farm"
+      },
+      "1": {
+        "Title": "Mini Dungeon: Henesys Pig Farm"
+      },
+      "2": {
+        "Title": "The Forest East of Henesys (Towards Ellinia/Nautilus)"
+      },
+      "3": {
+        "Title": "The Hill East of Henesys"
+      }
+    },
+    "100030000": {
+      "0": {
+        "Title": "Utah's pig farm"
+      },
+      "1": {
+        "Title": "Ellinia southern forest"
+      },
+      "10": {
+        "Title": "Forest East of Henesys"
+      },
+      "2": {
+        "Title": "Nautilus Harbor"
+      },
+      "3": {
+        "Title": "Utah's Pig Farm"
+      },
+      "4": {
+        "Title": "Ellinia southern forest"
+      },
+      "5": {
+        "Title": "Ellinia eastern forest"
+      },
+      "6": {
+        "Title": "Nautilus Harbor"
+      },
+      "7": {
+        "Title": "Utah's Pig Farm"
+      },
+      "8": {
+        "Title": "Ellinia southern forest"
+      },
+      "9": {
+        "Title": "Nautilus Harbor"
+      }
+    },
+    "100040000": {
+      "0": {
+        "Title": "The Forest of Wisdom (Towards Ellinia)"
+      },
+      "1": {
+        "Title": "The Forest East of Henesys (Towards Henesys/Nautilus)"
+      },
+      "2": {
+        "Title": "The Forest of Wisdom (Towards Ellinia)"
+      },
+      "3": {
+        "Title": "The Forest East of Henesys (Towards Henesys/Nautilus)"
+      },
+      "4": {
+        "Title": "The Forest of Wisdom (Towards Ellinia)"
+      },
+      "5": {
+        "Title": "The Forest East of Henesys (Towards Henesys/Nautilus)"
+      }
+    },
+    "100040100": {
+      "0": {
+        "Title": "The Forest South of Ellinia (Towards Henesys/Nautilus)"
+      },
+      "1": {
+        "Title": "The Field South of Ellinia (Towards Ellinia)"
+      }
+    },
+    "100040101": {
+      "0": {
+        "Title": "The Forest of Wisdom"
+      },
+      "1": {
+        "Title": "Monkey Forest II"
+      }
+    },
+    "100040103": {
+      "0": {
+        "Title": "The Forest of Evil I"
+      },
+      "1": {
+        "Title": "Monkey Forest I"
+      }
+    },
+    "100040105": {
+      "0": {
+        "Title": "The Forest of Evil II"
+      },
+      "1": {
+        "Title": "Monkey Forest II"
+      },
+      "quest00": "Rotten Tree Trail"
+    },
+    "1010000": {
+      "0": {
+        "Desc": "Toward Southperry",
+        "Title": "Split Road of Destiny"
+      },
+      "1": {
+        "Title": "Adventurer Training Center"
+      }
+    },
+    "101000000": {
+      "0": {
+        "Title": "Cab Station"
+      },
+      "1": {
+        "Title": "위험에 빠진 궁수교육원Weapon·Armor Shop"
+      },
+      "2": {
+        "Title": "Department Store"
+      },
+      "3": {
+        "Title": "Cab Station"
+      },
+      "4": {
+        "Title": "Ellinia Station"
+      },
+      "5": {
+        "Title": "Magic Library"
+      },
+      "6": {
+        "Title": "World Tour Info Desk"
+      },
+      "7": {
+        "Title": "Marr's Forest"
+      },
+      "8": {
+        "Desc": "The ship that passes through Ereve is at anchor.",
+        "Title": "Sky Ferry"
+      }
+    },
+    "101000300": {
+      "0": {
+        "Title": "Henesys"
+      },
+      "1": {
+        "Title": "Perion"
+      },
+      "2": {
+        "Title": "Ellinia"
+      },
+      "3": {
+        "Title": "Kerning City"
+      },
+      "4": {
+        "Title": "Ticket Booth"
+      }
+    },
+    "101010000": {
+      "0": {
+        "Title": "The Tree That Grew I (Towards Perion)"
+      },
+      "1": {
+        "Title": "Ellinia"
+      }
+    },
+    "101010100": {
+      "0": {
+        "Title": "The Tree That Grew II"
+      },
+      "1": {
+        "Title": "The Field Up North of Ellinia (Towards Ellinia)"
+      },
+      "2": {
+        "Title": "The Forest North of Ellinia (Towards Perion)"
+      }
+    },
+    "101010101": {
+      "0": {
+        "Title": "The Tree That Grew III"
+      },
+      "1": {
+        "Title": "The Tree That Grew I"
+      }
+    },
+    "101010102": {
+      "0": {
+        "Title": "Crest Of The Tree That Grew"
+      },
+      "1": {
+        "Title": "The Tree That Grew II"
+      }
+    },
+    "101010103": {
+      "0": {
+        "Desc": "Height: 30km above ground level. This is the highest peak of the tallest tree in Ellinia. The wind blows eastwards towards Sleepywood. Jump at your own risk.",
+        "Title": "             <Warning>             "
+      }
+    },
+    "101020000": {
+      "0": {
+        "Title": "East Domain of Perion (Towards Perion)"
+      },
+      "1": {
+        "Title": "The Tree That Grew1 (Towards Ellinia)"
+      },
+      "10": {
+        "Title": "Tree Dungeon, Forest Up North VI"
+      },
+      "11": {
+        "Title": "Tree Dungeon, Forest Up North VI"
+      },
+      "12": {
+        "Title": "Tree Dungeon, Forest Up North VII"
+      },
+      "13": {
+        "Title": "Tree Dungeon, Forest Up North VII"
+      },
+      "14": {
+        "Title": "Tree Dungeon, Forest Up North VIII"
+      },
+      "15": {
+        "Title": "Tree Dungeon, Forest Up North VIII"
+      },
+      "16": {
+        "Title": "Tree Dungeon, Forest Up North IX"
+      },
+      "2": {
+        "Title": "Tree Dungeon, Forest Up North I"
+      },
+      "3": {
+        "Title": "Tree Dungeon, Forest Up North I"
+      },
+      "4": {
+        "Title": "Tree Dungeon, Forest Up North II"
+      },
+      "5": {
+        "Title": "Tree Dungeon, Forest Up North II"
+      },
+      "6": {
+        "Title": "Tree Dungeon, Forest Up North III"
+      },
+      "7": {
+        "Title": "Tree Dungeon, Forest Up North III"
+      },
+      "8": {
+        "Title": "Tree Dungeon, Forest Up North IV"
+      },
+      "9": {
+        "Title": "Tree Dungeon, Forest Up North V"
+      }
+    },
+    "101030000": {
+      "0": {
+        "Title": "Rocky Road III (Towards Perion)"
+      },
+      "1": {
+        "Title": "The Forest North of Ellinia (Towards Ellinia)"
+      },
+      "2": {
+        "Title": "Rocky Road III (Towards Perion)"
+      },
+      "3": {
+        "Title": "The Forest North of Ellinia (Towards Ellinia)"
+      }
+    },
+    "101030100": {
+      "0": {
+        "Title": "Rocky Road II"
+      },
+      "1": {
+        "Title": "Excavation Site I"
+      },
+      "2": {
+        "Title": "East Domain of Perion"
+      },
+      "3": {
+        "Title": "Excavation Site I"
+      }
+    },
+    "101030101": {
+      "0": {
+        "Title": "Excavation Site II (Towards Excavation Site)"
+      },
+      "1": {
+        "Title": "Rocky Road III (Towards Victoria Road)"
+      }
+    },
+    "101030102": {
+      "0": {
+        "Title": "Excavation Site I (Towards Victoria Road)"
+      },
+      "1": {
+        "Title": "Excavation Site III (Towards Excavation Site)"
+      }
+    },
+    "101030103": {
+      "0": {
+        "Title": "Excavation Site II"
+      },
+      "1": {
+        "Title": "Excavation Site"
+      }
+    },
+    "101030104": {
+      "0": {
+        "Title": "RemainsI"
+      },
+      "1": {
+        "Title": "Remains3"
+      }
+    },
+    "101030200": {
+      "0": {
+        "Title": "Rocky Road I (Towards Perion)"
+      },
+      "1": {
+        "Title": "Rocky Road III (Towards Ellinia)"
+      }
+    },
+    "101030300": {
+      "0": {
+        "Title": "East Rocky Mountain I (Towards Perion)"
+      },
+      "1": {
+        "Title": "Rocky Road II (Towards Ellinia)"
+      }
+    },
+    "101030400": {
+      "0": {
+        "Title": "Rocky Road II"
+      },
+      "1": {
+        "Title": "East Rocky Mountain II"
+      },
+      "2": {
+        "Title": "Rocky Road I"
+      }
+    },
+    "101030401": {
+      "0": {
+        "Title": "East Rocky Mountain I (Towards Victoria Road)"
+      },
+      "1": {
+        "Title": "East Rocky Mountain III"
+      }
+    },
+    "101030402": {
+      "0": {
+        "Title": "East Rocky Mountain II (Towards Victoria Road)"
+      },
+      "1": {
+        "Title": "East Rocky Mountain IV"
+      }
+    },
+    "101030403": {
+      "0": {
+        "Title": "East Rocky Mountain III (Towards Victoria Road)"
+      },
+      "1": {
+        "Title": "East Rocky Mountain V"
+      }
+    },
+    "101030404": {
+      "0": {
+        "Title": "East Rocky Mountain IV (Towards Victoria Road)"
+      },
+      "1": {
+        "Title": "East Rocky Mountain VI"
+      }
+    },
+    "101030405": {
+      "0": {
+        "Title": "East Rocky Mountain V (Towards Victoria Road)"
+      },
+      "1": {
+        "Title": "East Rocky Mountain VII"
+      }
+    },
+    "101040000": {
+      "0": {
+        "Title": "Perion"
+      },
+      "1": {
+        "Title": "East Rocky Mountain I (Towards Ellinia)"
+      }
+    },
+    "101040001": {
+      "0": {
+        "Desc": "You will need to destroy the resource first before you defeated Boogi ",
+        "Title": "Stone plate of Boogi"
+      }
+    },
+    "1020000": {
+      "0": {
+        "Title": "Southperry"
+      }
+    },
+    "102000000": {
+      "0": {
+        "Title": "West Street Corner of Perion"
+      },
+      "1": {
+        "Title": "Cab Station"
+      },
+      "2": {
+        "Title": "On the Way to Dungeon"
+      },
+      "3": {
+        "Title": "East Domain of Perion"
+      },
+      "4": {
+        "Title": "Department Store"
+      },
+      "5": {
+        "Title": "Free Market"
+      },
+      "6": {
+        "Title": "위험에 빠진 궁수교육원Weapon·Armor ShopWeapon·Armor Shop"
+      },
+      "7": {
+        "Title": "Warriors' Sanctuary"
+      },
+      "8": {
+        "Title": "World Tour Info Desk"
+      }
+    },
+    "102010000": {
+      "0": {
+        "Title": "West Rocky Mountain I (Towards Kerning City)"
+      },
+      "1": {
+        "Title": "Perion"
+      }
+    },
+    "102020000": {
+      "0": {
+        "Title": "West Domain of Perion"
+      },
+      "1": {
+        "Title": "West Rocky Mountain II"
+      },
+      "2": {
+        "Title": "West Street Corner of Perion"
+      },
+      "3": {
+        "Title": "West Domain of Perion"
+      },
+      "4": {
+        "Title": "West Rocky Mountain II"
+      },
+      "5": {
+        "Title": "West Street Corner of Perion"
+      },
+      "6": {
+        "Desc": "Danger zone from here on. Be cautious.",
+        "Title": "             DANGER!             "
+      }
+    },
+    "102030000": {
+      "0": {
+        "Title": "Construction Site North of Kerning City (Towards Kerning City)"
+      },
+      "1": {
+        "Title": "West Rocky Mountain I (Towards Perion)"
+      }
+    },
+    "102040000": {
+      "0": {
+        "Title": "Sunset Sky (Towards Kerning City)"
+      },
+      "1": {
+        "Title": "West Domain of Perion (Towards Perion)"
+      },
+      "2": {
+        "Title": "Abandoned Subway Station"
+      }
+    },
+    "102050000": {
+      "0": {
+        "Title": "Kerning City"
+      },
+      "1": {
+        "Title": "Construction Site North of Kerning City (Towards Perion)"
+      }
+    },
+    "103000000": {
+      "0": {
+        "Title": "Subway"
+      },
+      "1": {
+        "Title": "Key Shop"
+      },
+      "10": {
+        "Title": "Self-Defence Item Store"
+      },
+      "11": {
+        "Title": "Cab Station"
+      },
+      "12": {
+        "Title": "World Tour Info Desk"
+      },
+      "2": {
+        "Title": "Maple Internet Cafe"
+      },
+      "3": {
+        "Title": "Kerning City Pharmacy"
+      },
+      "4": {
+        "Title": "Kerning City Pharmacy"
+      },
+      "5": {
+        "Title": "Fusion Jazz Bar"
+      },
+      "6": {
+        "Title": "Hair Salon"
+      },
+      "7": {
+        "Title": "Repair Shop"
+      },
+      "8": {
+        "Title": "Naora Hosptial"
+      },
+      "9": {
+        "Title": "Naora Hosptial"
+      }
+    },
+    "103010000": {
+      "0": {
+        "Title": "Kerning City"
+      },
+      "1": {
+        "Title": "L Forest I (Towards Henesys/Lith Harbor)"
+      },
+      "2": {
+        "Title": "Kerning City"
+      },
+      "3": {
+        "Title": "L Forest III (Towards Henesys/Lith Harbor)"
+      }
+    },
+    "103020000": {
+      "0": {
+        "Title": "Kerning City Construction Site (Towards Kerning City)"
+      },
+      "1": {
+        "Title": "L Forest II (Towards Henesys/Lith Harbor)"
+      }
+    },
+    "103020100": {
+      "0": {
+        "Title": "L Forest I (Towards Kerning City)"
+      },
+      "1": {
+        "Title": "L Forest III (Towards Henesys/Lith Harbor)"
+      }
+    },
+    "103020200": {
+      "0": {
+        "Title": "Kerning City Middle Forest I (Towards Henesys/Lith Harbor)"
+      },
+      "1": {
+        "Title": "L Forest II (Towards Kerning City)"
+      }
+    },
+    "103030000": {
+      "0": {
+        "Title": "Kerning City Middle Forest II"
+      },
+      "1": {
+        "Title": "L Forest III"
+      },
+      "2": {
+        "Title": "Three-Way Road"
+      }
+    },
+    "103030100": {
+      "0": {
+        "Title": "Kerning City Middle Forest III"
+      },
+      "1": {
+        "Title": "Kerning City Middle Forest I"
+      }
+    },
+    "104000000": {
+      "0": {
+        "Title": "Ticket Booth"
+      },
+      "1": {
+        "Title": "Department Store"
+      },
+      "2": {
+        "Title": "Armor Shop"
+      },
+      "3": {
+        "Title": "Cab Station"
+      },
+      "4": {
+        "Desc": "\\nPerion, Ellinia: 1200 Mesos, Henesys: 800 Mesos, Kerning City: 1000 Mesos\\n\\n\\n- 90% Discount for Beginners!!",
+        "Title": "Ticket Price Guideline"
+      },
+      "5": {
+        "Title": "Weapon Store"
+      },
+      "6": {
+        "Title": "Info Shop"
+      }
+    },
+    "104000100": {
+      "0": {
+        "Title": "Lith Harbor"
+      },
+      "1": {
+        "Title": "Thicket Around the Beach I (Towards Victoria Road)"
+      }
+    },
+    "104000200": {
+      "0": {
+        "Title": "Right Around Lith Harbor (Towards Lith Harbor)"
+      },
+      "1": {
+        "Title": "Thicket Around the Beach II (Towards Victoria Road)"
+      }
+    },
+    "104000300": {
+      "0": {
+        "Title": "Thicket Around the Beach I (Towards Lith Harbor)"
+      },
+      "1": {
+        "Title": "Thicket Around the Beach III (Towards Victoria Road)"
+      }
+    },
+    "104000400": {
+      "0": {
+        "Title": "Thicket Around the Beach II (Towards Lith Harbor)"
+      },
+      "1": {
+        "Title": "3-Way Road-Split (Towards Victoria Road)"
+      }
+    },
+    "104010000": {
+      "0": {
+        "Title": "Kerning City Middle Forest I"
+      },
+      "1": {
+        "Title": "Forest West of Henesys"
+      },
+      "2": {
+        "Title": "Thicket Around the Beach III"
+      },
+      "3": {
+        "Title": "Thicket Around the Beach III"
+      },
+      "4": {
+        "Title": "Forest West of Henesys"
+      },
+      "5": {
+        "Title": "Kerning City"
+      },
+      "6": {
+        "Title": "Danger Zone"
+      },
+      "9": {
+        "Title": "Danger Zone"
+      }
+    },
+    "104020000": {
+      "0": {
+        "Title": "3-Way Road-Split (Towards Kerning City/Lith Harbor)"
+      },
+      "1": {
+        "Title": "Hill West of Henesys (Towards Henesys)"
+      }
+    },
+    "104030000": {
+      "0": {
+        "Title": "Henesys hunting ground 1"
+      },
+      "1": {
+        "Title": "Henesys Western forest"
+      }
+    },
+    "104040000": {
+      "0": {
+        "Title": "Henesys Hunting Ground II"
+      },
+      "1": {
+        "Title": "Henesys"
+      },
+      "2": {
+        "Title": "Hill West of Henesys (Towards Lith Harbor/Kerning City)"
+      },
+      "3": {
+        "Title": "Henesys Hunting Ground II"
+      }
+    },
+    "104040001": {
+      "0": {
+        "Title": "Henesys Hunting Ground III"
+      },
+      "1": {
+        "Title": "Henesys Hunting Ground I"
+      },
+      "2": {
+        "Title": "Henesys Hunting Ground III"
+      }
+    },
+    "104040002": {
+      "0": {
+        "Title": "Henesys Hunting Ground II"
+      }
+    },
+    "105030000": {
+      "0": {
+        "Title": "Swampy Land (Towards Kerning City)"
+      },
+      "1": {
+        "Title": "Dungeon (Towards Perion)"
+      },
+      "2": {
+        "Title": "Swampy Land in a Deep Forest (Towards Sleepywood)"
+      }
+    },
+    "105040000": {
+      "0": {
+        "Title": "Entrance to Henesys Dungeon"
+      },
+      "1": {
+        "Title": "Deep Forest"
+      },
+      "2": {
+        "Title": "Sleepywood"
+      },
+      "3": {
+        "Title": "Deep Forest Hunting Ground I"
+      }
+    },
+    "105040100": {
+      "0": {
+        "Title": "Hunting Ground in the Deep Forest I"
+      },
+      "1": {
+        "Title": "Swampy Land in a Deep Forest (Towards Sleepywood)"
+      }
+    },
+    "105040300": {
+      "0": {
+        "Title": "Hotel"
+      },
+      "1": {
+        "Title": "Swampy Land in a Deep Forest"
+      },
+      "2": {
+        "Title": "Dungeon"
+      }
+    },
+    "105040304": {
+      "0": {
+        "Title": "Mini Dungeon: The Ruins of the Fallen Golem"
+      }
+    },
+    "105050100": {
+      "0": {
+        "Title": "Mini Dungeon: Cave Where Mushrooms Grow"
+      }
+    },
+    "105090311": {
+      "0": {
+        "Title": "Mini Dungeon: Drake's Blue Cave"
+      }
+    },
+    "106000000": {
+      "0": {
+        "Title": "Perion"
+      },
+      "1": {
+        "Title": "Deep Valley II (Towards Sleepywood)"
+      },
+      "2": {
+        "Title": "Perion"
+      },
+      "3": {
+        "Title": "Deep Valley II (Towards Sleepywood)"
+      }
+    },
+    "106000001": {
+      "0": {
+        "Title": "Deep Valley I"
+      },
+      "1": {
+        "Title": "Dangerous Valley II"
+      }
+    },
+    "106000100": {
+      "0": {
+        "Title": "Deep Valley3 (Towards Sleepywood)"
+      },
+      "1": {
+        "Title": "The Burnt Land1"
+      },
+      "2": {
+        "Title": "Deep Valley I (Towards Perion)"
+      }
+    },
+    "106000101": {
+      "0": {
+        "Title": "Deep Valley II"
+      },
+      "1": {
+        "Title": "The Burnt Land II"
+      }
+    },
+    "106000110": {
+      "0": {
+        "Title": "The Burnt Land I"
+      },
+      "1": {
+        "Title": "The Burnt Land III"
+      }
+    },
+    "106000120": {
+      "0": {
+        "Title": "The Burnt Land II"
+      },
+      "1": {
+        "Title": "The Burnt Land IV"
+      }
+    },
+    "106000130": {
+      "0": {
+        "Title": "The Burnt Land III"
+      },
+      "1": {
+        "Title": "The Burnt Land V"
+      }
+    },
+    "106000200": {
+      "0": {
+        "Title": "Deep Valley II (Towards Perion)"
+      },
+      "1": {
+        "Title": "Path to Perion Dungeon (Towards Sleepywood)"
+      }
+    },
+    "106000300": {
+      "0": {
+        "Title": "Deep Forest (Towards Sleepywood)"
+      },
+      "1": {
+        "Title": "Deep Valley III (Towards Perion)"
+      }
+    },
+    "106010000": {
+      "0": {
+        "Title": "Henesys"
+      },
+      "1": {
+        "Title": "Entrance to Henesys Dungeon (Towards Sleepywood)"
+      }
+    },
+    "106010100": {
+      "0": {
+        "Title": "Path to the Dungeon (Towards Henesys)"
+      },
+      "1": {
+        "Title": "Hunting Ground in the Deep Forest II (Towards Sleepywood)"
+      }
+    },
+    "106010101": {
+      "0": {
+        "Title": "The Entrance of Golem's Temple"
+      }
+    },
+    "106010102": {
+      "0": {
+        "Title": "The Breathing Rock"
+      },
+      "1": {
+        "Title": "Golem's Temple I"
+      },
+      "2": {
+        "Title": "Golem's Temple II"
+      },
+      "3": {
+        "Title": "Golem's Temple III"
+      },
+      "4": {
+        "Title": "Golem's Temple IV"
+      }
+    },
+    "106020000": {
+      "0": {
+        "Title": "Castle of King Mush"
+      },
+      "1": {
+        "Title": "Empty House (To Henesys)"
+      }
+    },
+    "106020100": {
+      "0": {
+        "Title": "Mushking Castle"
+      }
+    },
+    "106020200": {
+      "0": {
+        "Title": "Mushking Castle"
+      }
+    },
+    "106020300": {
+      "0": {
+        "Title": "Mushking Castle"
+      },
+      "1": {
+        "Desc": "Double-click on Killer Mushroom Spore item to permanently penetrate the barrier, or use 1 Poison Spore dropped from the Poison Mushroom to temporarily break the barrier.",
+        "Title": "Barrier of the Magic Spore "
+      }
+    },
+    "106020400": {
+      "0": {
+        "Title": "Mushking Castle"
+      },
+      "1": {
+        "Title": "Cliff Shadows"
+      }
+    },
+    "106020401": {
+      "0": {
+        "Title": "Cliff Shadows"
+      }
+    },
+    "106020402": {
+      "0": {
+        "Title": "Cliff Shadows"
+      }
+    },
+    "106020403": {
+      "0": {
+        "Title": "Mushking Castle (Beware of Cliff)"
+      }
+    },
+    "106020500": {
+      "0": {
+        "Desc": "Double-click on the Thorn Remover to remove the thorns from the vine, then climb on it.",
+        "Title": "Outside the Wall of Mushroom Castle"
+      }
+    },
+    "106020501": {
+      "0": {
+        "Desc": "You can only enter the castle by stepping on the vine with thorns removed.",
+        "Title": "Entering Mushking Castle"
+      }
+    },
+    "106020600": {
+      "0": {
+        "Title": "West Castle Tower"
+      }
+    },
+    "106020700": {
+      "0": {
+        "Title": "West Castle Tower"
+      }
+    },
+    "106020800": {
+      "0": {
+        "Title": "West Castle Tower"
+      }
+    },
+    "106021000": {
+      "0": {
+        "Title": "Central Castle Tower"
+      }
+    },
+    "106021100": {
+      "0": {
+        "Title": "Central Castle Tower"
+      }
+    },
+    "106021200": {
+      "0": {
+        "Title": "Central Castle Tower"
+      }
+    },
+    "106021300": {
+      "0": {
+        "Title": "East Castle Tower"
+      }
+    },
+    "106021800": {
+      "0": {
+        "Title": "Mushroom Castle Exit"
+      }
+    },
+    "107000500": {
+      "0": {
+        "Title": "Dangerous Croko II (Towards Kerning City)"
+      },
+      "1": {
+        "Title": "Deep Forest (Towards Sleepywood)"
+      }
+    },
+    "120000100": {
+      "0": {
+        "Title": "The Ship's Control Room"
+      },
+      "1": {
+        "Title": "Restaurant"
+      },
+      "2": {
+        "Title": "Central Corridor of The Nautilus (↓)"
+      },
+      "3": {
+        "Title": "Training Room"
+      },
+      "4": {
+        "Desc": "If you want to make a job advancement to becoming a pirate,  then go to the room on the left most corner...",
+        "Title": "Kyrin's Control Room"
+      }
+    },
+    "120000200": {
+      "0": {
+        "Title": "Morgan's Weapons Shop"
+      },
+      "1": {
+        "Title": "Rodos' Armor Shop"
+      },
+      "10": {
+        "Title": "Free Market"
+      },
+      "2": {
+        "Title": "Conference Room"
+      },
+      "3": {
+        "Title": "Exit"
+      },
+      "4": {
+        "Title": "Gali's General Goods Shop"
+      },
+      "5": {
+        "Title": "Upper Corridor of The Nautilus (↑)"
+      },
+      "6": {
+        "Title": "Lower Corridor of The Nautilus (↓)"
+      },
+      "7": {
+        "Title": "Bedroom"
+      },
+      "8": {
+        "Title": "Weapon / Armor Shop"
+      },
+      "9": {
+        "Title": "General Goods Shop / Stairs"
+      }
+    },
+    "120000300": {
+      "0": {
+        "Title": "Central Corridor of The Nautilus (↑)"
+      },
+      "1": {
+        "Title": "Generator Room"
+      },
+      "2": {
+        "Title": "Generator Room"
+      }
+    },
+    "120010000": {
+      "0": {
+        "Title": "The Forest East of Henesys (Towards Victoria Road)"
+      },
+      "1": {
+        "Title": "Nautilus"
+      }
+    },
+    "130000000": {
+      "0": {
+        "Title": "Spot where Shinsoo fell asleep"
+      }
+    },
+    "130000200": {
+      "0": {
+        "Title": "Training Forest"
+      },
+      "1": {
+        "Title": "Knights Chamber"
+      },
+      "2": {
+        "Title": "Department Store"
+      },
+      "3": {
+        "Title": "in the direction of the Sky Ferry"
+      },
+      "4": {
+        "Title": "Free Market"
+      },
+      "5": {
+        "Title": "Ereve Weapon Store"
+      },
+      "6": {
+        "Title": "Department Store"
+      },
+      "7": {
+        "Desc": "The ship that passes through Ereve is at anchor.",
+        "Title": "Sky Ferry"
+      }
+    },
+    "140000000": {
+      "0": {
+        "Title": "Towards Center of the Island"
+      },
+      "1": {
+        "Title": "To Harbor"
+      },
+      "2": {
+        "Title": "Rien Library"
+      },
+      "3": {
+        "Title": "Weapon/Armor Store"
+      },
+      "4": {
+        "Title": "Department Store"
+      }
+    },
+    "140010000": {
+      "0": {
+        "Title": "Rien"
+      },
+      "1": {
+        "Title": "Penguin Training Center"
+      }
+    },
+    "140010100": {
+      "0": {
+        "Title": "Penguin Training Center"
+      }
+    },
+    "140020000": {
+      "0": {
+        "Title": "Penguin Port"
+      }
+    },
+    "140020200": {
+      "0": {
+        "Title": "Penguin Port"
+      },
+      "1": {
+        "Title": "Rien"
+      }
+    },
+    "20000": {
+      "0": {
+        "Title": "Mushroom Town"
+      },
+      "1": {
+        "Title": "Snail Hunting Ground"
+      },
+      "2": {
+        "Title": "Nina & Sen's House"
+      }
+    },
+    "2000000": {
+      "0": {
+        "Desc": "You may purchase armors here.",
+        "Title": "Armor Store"
+      },
+      "1": {
+        "Desc": "Fee : 150 mesos\\n\\nBoard a ship headed to Lith Harbor by speaking with Shanks. Once you leave here, you won’t be able to come back.",
+        "Title": "Southperry → Lith Harbor of Victoria Island"
+      }
+    },
+    "200000000": {
+      "0": {
+        "Title": "Free Market"
+      },
+      "1": {
+        "Title": "위험에 빠진 궁수교육원Weapon·Armor ShopWeapon·Armor ShopWeapon·Armor Shop"
+      },
+      "2": {
+        "Title": "Guild Office"
+      },
+      "3": {
+        "Title": "Department Store"
+      },
+      "4": {
+        "Title": "Orbis Station"
+      },
+      "5": {
+        "Title": "Orbis Park"
+      },
+      "6": {
+        "Title": "Orbis Station"
+      },
+      "7": {
+        "Title": "Orbis Tower"
+      },
+      "8": {
+        "Title": "Cloud Park"
+      },
+      "9": {
+        "Title": "World Tour Info Desk"
+      }
+    },
+    "200000100": {
+      "0": {
+        "Title": "Orbis"
+      },
+      "1": {
+        "Title": "Station"
+      }
+    },
+    "200000110": {
+      "0": {
+        "Title": "Station <To Ellinia>"
+      },
+      "1": {
+        "Title": "Orbis Station - Waiting Room"
+      }
+    },
+    "200000120": {
+      "0": {
+        "Title": "Station <To Ludibrium>"
+      },
+      "1": {
+        "Title": "Orbis Station - Waiting Room"
+      }
+    },
+    "200000130": {
+      "0": {
+        "Title": "Station <To Leafre>"
+      },
+      "1": {
+        "Title": "Orbis Station - Waiting Room"
+      }
+    },
+    "200000140": {
+      "0": {
+        "Title": "Station <To Mu Lung>"
+      },
+      "1": {
+        "Title": "Orbis Station - Waiting Room"
+      }
+    },
+    "200000150": {
+      "0": {
+        "Title": "Orbis Station waiting room"
+      },
+      "1": {
+        "Title": "Platform to Ariant"
+      }
+    },
+    "200000160": {
+      "0": {
+        "Title": "Orbis Station Waiting Room"
+      },
+      "1": {
+        "Title": "Station to Ereve"
+      }
+    },
+    "200010000": {
+      "0": null,
+      "1": {
+        "Title": "The Road to Garden of 3 Colors"
+      },
+      "2": {
+        "Title": "Cloud Park II"
+      }
+    },
+    "200010100": {
+      "0": {
+        "Title": "Garden of Red I"
+      },
+      "1": {
+        "Title": "Garden of Yellow I"
+      },
+      "2": {
+        "Title": "Garden of Blue I"
+      },
+      "3": {
+        "Title": "The Road to Garden of 3 Colors"
+      },
+      "4": {
+        "Title": "Cloud Park I"
+      }
+    },
+    "200010200": {
+      "0": {
+        "Title": "Stairway to the Sky II"
+      },
+      "1": {
+        "Title": "Garden of Red II"
+      },
+      "2": {
+        "Title": "Garden of Yellow II"
+      },
+      "3": {
+        "Title": "Garden of Blue II"
+      }
+    },
+    "200082100": {
+      "0": {
+        "Title": "Orbis Tower - Basement"
+      },
+      "1": {
+        "Title": "Orbis Tower - Basement"
+      }
+    },
+    "200082300": {
+      "0": {
+        "Title": "Sea Interchange"
+      }
+    },
+    "200090500": {
+      "0": {
+        "Title": "Sky Road : Toward the Temple of Time"
+      }
+    },
+    "200090510": {
+      "0": {
+        "Title": "Sky Road : Toward Leafre"
+      }
+    },
+    "211000000": {
+      "0": {
+        "Title": "Orbis Tower"
+      },
+      "1": {
+        "Title": "El Nath"
+      },
+      "2": {
+        "Title": "El Nath Market"
+      },
+      "3": {
+        "Title": "Chief's Residence"
+      },
+      "4": {
+        "Title": "El Nath"
+      },
+      "5": {
+        "Title": "El Nath Mountain Range"
+      }
+    },
+    "211000100": {
+      "0": {
+        "Title": "El Nath"
+      },
+      "1": {
+        "Title": "El Nath Market"
+      },
+      "2": {
+        "Title": "Free Market"
+      },
+      "3": {
+        "Title": "위험에 빠진 궁수교육원Weapon·Armor ShopWeapon·Armor ShopWeapon·Armor ShopWeapon·Armor Shop"
+      },
+      "4": {
+        "Title": "Department Store"
+      }
+    },
+    "211000200": {
+      "0": {
+        "Title": "Orbis Tower"
+      },
+      "1": {
+        "Title": "ElNath"
+      }
+    },
+    "211010000": {
+      "0": {
+        "Desc": "A small altar setup by the hunters in El Nath. This was made to appease the Snow Witch when she appears enraged. If a dropped item from the snowfield is used as the sacrifice, then the witch will be appeased.",
+        "Title": "Hunter's Altar"
+      }
+    },
+    "211020000": {
+      "0": {
+        "Desc": "A small altar setup by the hunters in El Nath. This was made to appease the Snow Witch when she appears enraged. If a dropped item from the snowfield is used as the sacrifice, then the witch will be appeased.",
+        "Title": "Hunter's Altar"
+      }
+    },
+    "211040000": {
+      "0": {
+        "Title": "Ice Valley I"
+      },
+      "1": {
+        "Title": "Cold Field I"
+      },
+      "2": {
+        "Title": "Icy Cold Field"
+      }
+    },
+    "211041100": {
+      "0": {
+        "Desc": "Lich area!! If you cannot escape from lich, dedicate teeth of zombie to grave!! Resource of lich's power is underneath.....grave..",
+        "Title": "lich -alert-"
+      },
+      "1": {
+        "Title": "Dead Tree's Forest II"
+      }
+    },
+    "211041200": {
+      "0": {
+        "Desc": "Lich area!! If you cannot escape from lich, dedicate teeth of zombie to grave!! Resource of lich's power is underneath.....grave..",
+        "Title": "lich -alert-"
+      },
+      "1": {
+        "Title": "Dead tree;s forest I"
+      },
+      "2": {
+        "Title": "Dead tree;s forest III"
+      }
+    },
+    "211041300": {
+      "0": {
+        "Desc": "Lich area!! If you cannot escape from lich, dedicate teeth of zombie to grave!! Resource of lich's power is underneath.....grave..",
+        "Title": "lich -alert-"
+      }
+    },
+    "211041400": {
+      "0": {
+        "Desc": "Lich area!! If you cannot escape from lich, dedicate teeth of zombie to grave!! Resource of lich's power is underneath.....grave..",
+        "Title": "lich -alert-"
+      }
+    },
+    "211050000": {
+      "0": {
+        "Desc": "A small altar setup by the hunters in El Nath. This was made to appease the Snow Witch when she appears enraged. If a dropped item from the snowfield is used as the sacrifice, then the witch will be appeased.",
+        "Title": "Hunter's Altar"
+      },
+      "1": {
+        "Title": "Rider's Field"
+      }
+    },
+    "219000000": {
+      "0": {
+        "Title": "Department Store"
+      }
+    },
+    "220000000": {
+      "0": {
+        "Desc": "On the Way to Helios Tower",
+        "Title": "Ludibrium - East Entrance"
+      },
+      "1": {
+        "Title": "Skin Care"
+      },
+      "10": {
+        "Title": "위험에 빠진 궁수교육원Weapon·Armor ShopWeapon·Armor ShopWeapon·Armor ShopWeapon·Armor ShopWeapon·Armor Shop"
+      },
+      "11": {
+        "Title": "Ludibrium Station"
+      },
+      "12": {
+        "Title": "Clocktower"
+      },
+      "13": {
+        "Title": "Pet Walkway"
+      },
+      "14": {
+        "Title": "Townstreet"
+      },
+      "15": {
+        "Title": "위험에 빠진 궁수교육원Weapon·Armor ShopWeapon·Armor ShopWeapon·Armor ShopWeapon·Armor ShopWeapon·Armor ShopFree Market·Plastic Surgery"
+      },
+      "16": {
+        "Title": "위험에 빠진 궁수교육원Weapon·Armor ShopWeapon·Armor ShopWeapon·Armor ShopWeapon·Armor ShopWeapon·Armor ShopFree Market·Plastic SurgeryWeapon Store·Department Store·Ludibrium Station"
+      },
+      "17": {
+        "Title": "Helios Tower"
+      },
+      "18": {
+        "Title": "World Tour Info Desk"
+      },
+      "2": {
+        "Title": "Clocktower"
+      },
+      "3": {
+        "Title": "Hair Salon"
+      },
+      "4": {
+        "Desc": "On the Way to Eos Tower",
+        "Title": "Ludibrium - West Entrance 1"
+      },
+      "5": {
+        "Title": "Pet Walkway"
+      },
+      "6": {
+        "Title": "Free Market"
+      },
+      "7": {
+        "Title": "Plastic Surgery"
+      },
+      "8": {
+        "Title": "Department Store"
+      },
+      "9": {
+        "Title": "Department Store"
+      }
+    },
+    "220000100": {
+      "0": {
+        "Title": "Ticket Booth"
+      },
+      "1": {
+        "Title": "Station"
+      }
+    },
+    "220000300": {
+      "0": {
+        "Title": "Tara and Sarah's House"
+      },
+      "1": {
+        "Title": "Korin's House"
+      },
+      "2": {
+        "Title": "Manager Karl's House"
+      },
+      "3": {
+        "Title": "Chloe's House"
+      },
+      "4": {
+        "Title": "Mation's House"
+      },
+      "5": {
+        "Desc": "On the Way to Eos Tower",
+        "Title": "Ludibrium - West Entrance 2"
+      },
+      "6": {
+        "Title": "Eos Tower"
+      },
+      "7": {
+        "Title": "Ludibrium"
+      }
+    },
+    "220000400": {
+      "0": {
+        "Title": "Eos Tower"
+      },
+      "1": {
+        "Title": "Eos Tower"
+      },
+      "2": {
+        "Title": "Townstreet"
+      }
+    },
+    "220000500": {
+      "0": {
+        "Title": "Helios Tower"
+      },
+      "1": {
+        "Title": "Ludibrium"
+      },
+      "2": {
+        "Title": "Helios Tower"
+      }
+    },
+    "220050300": {
+      "0": {
+        "Title": "Warped Path of Time"
+      },
+      "1": {
+        "Title": "Forgotten Path of Time"
+      }
+    },
+    "221000000": {
+      "0": {
+        "Title": "Free Market"
+      },
+      "1": {
+        "Title": "Headquarter"
+      },
+      "2": {
+        "Title": "Safety Zone"
+      },
+      "3": {
+        "Title": "Off-Limits"
+      }
+    },
+    "221000200": {
+      "0": {
+        "Title": "Medical Office"
+      },
+      "1": {
+        "Title": "Weapon Provider"
+      },
+      "2": {
+        "Title": "Armor Provider"
+      }
+    },
+    "221000400": {
+      "0": {
+        "Title": "Eos Tower"
+      },
+      "1": {
+        "Title": "Eos Tower"
+      }
+    },
+    "221023400": {
+      "0": {
+        "Title": "Mini Dungeon: Drummer Bunny's Lair"
+      }
+    },
+    "221030000": {
+      "0": {
+        "Title": "Boswell Field I"
+      },
+      "1": {
+        "Title": "The Omega Sector"
+      },
+      "2": {
+        "Title": "Kulan  Field I"
+      }
+    },
+    "221050300": {
+      "0": {
+        "Title": "Warped Path of Time"
+      },
+      "1": {
+        "Title": "Forgotten Path of Time"
+      }
+    },
+    "222000000": {
+      "0": {
+        "Title": "General Goods Shop"
+      },
+      "1": {
+        "Title": "Korean Folk Town"
+      },
+      "2": {
+        "Title": "Black Mountain"
+      },
+      "3": {
+        "Title": "Black Mountain"
+      },
+      "4": {
+        "Title": "Weapon / Armor Shop"
+      },
+      "5": {
+        "Title": "Helios Tower <Library>"
+      },
+      "6": {
+        "Title": "Entrance to Black Mountain"
+      },
+      "7": {
+        "Title": "Free Market Entrance"
+      }
+    },
+    "222010000": {
+      "0": {
+        "Title": "Black Mountain <Corner>"
+      },
+      "1": {
+        "Title": "Korean Folk Town"
+      },
+      "2": {
+        "Title": "Small Pond"
+      },
+      "3": {
+        "Title": "Small Pond"
+      },
+      "4": {
+        "Title": "Korean Folk Town"
+      }
+    },
+    "222010100": {
+      "0": {
+        "Title": "Tiger Forest I"
+      },
+      "1": {
+        "Title": "Entrance to Black Mountain"
+      },
+      "2": {
+        "Title": "Tiger Ridge"
+      }
+    },
+    "222010101": {
+      "0": {
+        "Title": "Small pond"
+      },
+      "1": {
+        "Title": "Tiger forest II"
+      }
+    },
+    "222010102": {
+      "0": {
+        "Title": "Tiger forest II"
+      },
+      "1": {
+        "Title": "※Prohibited to proceed "
+      }
+    },
+    "222010200": {
+      "0": {
+        "Title": "Black Mountain Valley"
+      },
+      "1": {
+        "Title": "Small Pond"
+      },
+      "2": {
+        "Title": "Fox Ridge"
+      }
+    },
+    "222010300": {
+      "0": {
+        "Title": "222010400.000000"
+      },
+      "1": {
+        "Title": "Tiger Ridge"
+      },
+      "2": {
+        "Desc": "All those that pass Fox Valley should throw Samiho's tail from the top of the tower to pay off it's scores",
+        "Title": "Tower"
+      }
+    },
+    "229010000": {
+      "0": {
+        "Title": "Abandoned Grave"
+      },
+      "1": {
+        "Title": "On the Way Back"
+      }
+    },
+    "230000000": {
+      "0": {
+        "Title": "Aquarium Department Store"
+      },
+      "1": {
+        "Title": "Aquarium Zoo"
+      },
+      "2": {
+        "Title": "Aquarium Market"
+      },
+      "3": {
+        "Title": "Aquarium"
+      }
+    },
+    "230000001": {
+      "0": {
+        "Title": "Aquarium Zoo"
+      },
+      "1": {
+        "Title": "Aquarium Department Store"
+      }
+    },
+    "230000002": {
+      "0": {
+        "Title": "Department Store"
+      },
+      "1": {
+        "Title": "Armor Shop"
+      },
+      "2": {
+        "Title": "Weapon Store"
+      },
+      "3": {
+        "Title": "Storage"
+      }
+    },
+    "230000003": {
+      "0": {
+        "Title": "Balrog"
+      },
+      "1": {
+        "Title": "White Fang and Yeti"
+      },
+      "2": {
+        "Title": "Pig and Ribbon Pig"
+      },
+      "3": {
+        "Title": "Aquarium Zoo"
+      }
+    },
+    "230010000": {
+      "0": {
+        "Title": "Orbis Tower"
+      }
+    },
+    "230010100": {
+      "0": {
+        "Title": "Sea Interchange"
+      },
+      "1": {
+        "Title": "Red Coral Forest"
+      }
+    },
+    "230010200": {
+      "0": {
+        "Title": "Crystal Valley"
+      },
+      "1": {
+        "Title": "Turban Shell Hill"
+      }
+    },
+    "230010300": {
+      "0": {
+        "Title": "Red Coral Forest"
+      },
+      "1": {
+        "Title": "Western Sea Crossroad"
+      }
+    },
+    "230010400": {
+      "0": {
+        "Title": "Aquarium"
+      },
+      "1": {
+        "Title": "Turban Shell Hill"
+      }
+    },
+    "230020000": {
+      "0": {
+        "Title": "Aquarium"
+      }
+    },
+    "230020100": {
+      "0": {
+        "Title": "The Sharp Unknown"
+      },
+      "1": {
+        "Title": "Blue Seaweed Road"
+      }
+    },
+    "230020200": {
+      "0": {
+        "Title": "Mushroom Coral Hill"
+      }
+    },
+    "230030000": {
+      "0": {
+        "Title": "Mushroom Coral Hill"
+      },
+      "1": {
+        "Title": "Big Fish Valley"
+      }
+    },
+    "230030200": {
+      "0": {
+        "Title": "Korean Folk Town"
+      }
+    },
+    "240000000": {
+      "0": {
+        "Title": "Department Store"
+      },
+      "1": {
+        "Title": "위험에 빠진 궁수교육원Weapon·Armor ShopWeapon·Armor ShopWeapon·Armor ShopWeapon·Armor ShopWeapon·Armor ShopFree Market·Plastic SurgeryWeapon Store·Department Store·Ludibrium StationWeapon·Armor Store"
+      },
+      "2": {
+        "Title": "Free Market"
+      },
+      "3": {
+        "Title": "West Forest of Leafre"
+      },
+      "4": {
+        "Title": "East Forest of Leafre"
+      },
+      "5": {
+        "Title": "Leafre Station"
+      },
+      "6": {
+        "Title": "Leafre"
+      },
+      "7": {
+        "Title": "World Tour Info Desk"
+      }
+    },
+    "240000100": {
+      "0": {
+        "Title": "Leafre"
+      },
+      "1": {
+        "Title": "Ticket Booth"
+      },
+      "2": {
+        "Title": "Station"
+      }
+    },
+    "240010000": {
+      "0": {
+        "Title": "Leafre"
+      },
+      "1": {
+        "Title": "Minar Forest : West Border"
+      }
+    },
+    "240010100": {
+      "0": {
+        "Title": "West Forest of Leafre"
+      },
+      "1": {
+        "Title": "Cranky Forest"
+      }
+    },
+    "240010200": {
+      "0": {
+        "Title": "Steep Hill"
+      },
+      "1": {
+        "Title": "Steep Hill"
+      },
+      "2": {
+        "Title": "Minar Forest : West Border"
+      },
+      "3": {
+        "Title": "The Area of Red Kentaurus"
+      },
+      "4": {
+        "Title": "Minar Forest : West Border"
+      }
+    },
+    "240010300": {
+      "0": {
+        "Title": "Forest : Forked Road"
+      },
+      "1": {
+        "Title": "Cranky Forest"
+      }
+    },
+    "240010400": {
+      "0": {
+        "Title": "Entrance to Dragon Forest"
+      },
+      "1": {
+        "Title": "Steep Hill"
+      },
+      "2": {
+        "Title": "Valley of the Antelope"
+      },
+      "3": {
+        "Title": "Steep Hill"
+      },
+      "4": {
+        "Title": "Valley of the Antelope"
+      },
+      "5": {
+        "Title": "Entrance to Dragon Forest"
+      }
+    },
+    "240010800": {
+      "0": {
+        "Title": "Minar Forest : East Border"
+      },
+      "1": {
+        "Title": "Sky Nest I"
+      },
+      "2": {
+        "Title": "Battlefield of Water and Darkness"
+      },
+      "3": {
+        "Title": "Minar Forest : East Border"
+      },
+      "4": {
+        "Title": "Sky Nest I"
+      }
+    },
+    "240010900": {
+      "0": {
+        "Title": "Tera Forest"
+      },
+      "1": {
+        "Title": "Tera Forest"
+      }
+    },
+    "240011000": {
+      "0": {
+        "Title": "Minar Forest : East Border"
+      },
+      "1": {
+        "Title": "Leafre"
+      }
+    },
+    "240020000": {
+      "0": {
+        "Title": "Battlefield of Fire and Water"
+      },
+      "1": {
+        "Title": "Cranky Forest"
+      },
+      "2": {
+        "Title": "Battlefield of Fire and Darkness"
+      }
+    },
+    "240020300": {
+      "0": {
+        "Title": "The Area of Blue Kentaurus"
+      },
+      "1": {
+        "Title": "Entrance to Sky Nest"
+      },
+      "2": {
+        "Title": "The Area of Black Kentaurus"
+      }
+    },
+    "240020500": {
+      "0": {
+        "Title": "Mini Dungeon: The Round Table of Kentaurus"
+      }
+    },
+    "240030000": {
+      "0": {
+        "Title": "Forest : Forked Road"
+      },
+      "1": {
+        "Title": "Dragon Forest I"
+      }
+    },
+    "240030100": {
+      "0": {
+        "Title": "Dragon Forest II"
+      },
+      "1": {
+        "Title": "Entrance to Dragon Forest"
+      },
+      "2": {
+        "Title": "Dragon Forest II"
+      },
+      "3": {
+        "Title": "Burning Forest"
+      },
+      "4": {
+        "Title": "Disappeared Forest"
+      },
+      "7": {
+        "Title": "Entrance to Dragon Forest"
+      }
+    },
+    "240030103": {
+      "0": {
+        "Title": "Dragon Forest I"
+      }
+    },
+    "240030104": {
+      "0": {
+        "Title": "Dragon Forest I"
+      }
+    },
+    "240030200": {
+      "0": {
+        "Title": "Dragon Forest III"
+      },
+      "1": {
+        "Title": "Dragon Forest I"
+      }
+    },
+    "240030300": {
+      "0": {
+        "Title": "Dragon Forest II"
+      }
+    },
+    "240040000": {
+      "0": {
+        "Title": "Dragon Forest III"
+      }
+    },
+    "240040100": {
+      "0": {
+        "Title": "Dragon Canyon"
+      },
+      "1": {
+        "Title": "East Path of Canyon"
+      },
+      "2": {
+        "Title": "West Path of Canyon"
+      }
+    },
+    "240040400": {
+      "0": {
+        "Title": "West Path of Canyon"
+      },
+      "1": {
+        "Title": "East Path of Canyon"
+      },
+      "2": {
+        "Title": "Entrance to Dragon Nest"
+      }
+    },
+    "240040500": {
+      "0": {
+        "Title": "The Destroyed Dragon Nest"
+      },
+      "1": {
+        "Title": "Dead Dragon Nest"
+      },
+      "2": {
+        "Title": "Wyvern Canyon"
+      }
+    },
+    "240040511": {
+      "0": {
+        "Title": "Mini Dungeon: The Restoring Memory"
+      }
+    },
+    "240040520": {
+      "0": {
+        "Title": "Mini Dungeon: Newt Secured Zone"
+      }
+    },
+    "240040600": {
+      "0": {
+        "Title": "The Dragon Nest Left Behind"
+      },
+      "1": {
+        "Title": "Entrance to Cave of Life"
+      },
+      "2": {
+        "Title": "Dangerous Dragon Nest"
+      }
+    },
+    "250000000": {
+      "0": {
+        "Title": "World Tour Info Desk"
+      },
+      "1": {
+        "Title": "Mu Lung Hair Salon"
+      },
+      "2": {
+        "Title": "Mu Lung Plastic Surgery"
+      },
+      "3": {
+        "Title": "Armor Shop"
+      },
+      "4": {
+        "Title": "Weapon Store"
+      },
+      "5": {
+        "Title": "Mu Lung Skin Care"
+      },
+      "6": {
+        "Title": "Mu Lung Department Store"
+      },
+      "7": {
+        "Title": "Free Market Entrance"
+      },
+      "8": {
+        "Title": "Mu Lung Temple"
+      }
+    },
+    "250010301": {
+      "0": {
+        "Title": "Snake Area"
+      }
+    },
+    "250010500": {
+      "0": {
+        "Title": "Peach Farm 2"
+      },
+      "1": {
+        "Title": "Where the Sky Forest Ends"
+      },
+      "2": {
+        "Title": "Foggy Forest"
+      }
+    },
+    "250010501": {
+      "0": {
+        "Title": "Virtuous Forest"
+      },
+      "1": {
+        "Title": "Peach Farm1"
+      }
+    },
+    "250010700": {
+      "0": {
+        "Title": "Isolated Swamp"
+      }
+    },
+    "251000000": {
+      "0": {
+        "Title": "Weapon Store"
+      },
+      "1": {
+        "Title": "Armor Shop"
+      }
+    },
+    "251010400": {
+      "0": {
+        "Title": "Bellflower Valley"
+      },
+      "1": {
+        "Title": "Isolated Swamp"
+      }
+    },
+    "251010402": {
+      "0": {
+        "Title": "Mini Dungeon: Pillage of Treasure Island "
+      }
+    },
+    "251010500": {
+      "0": {
+        "Title": "Peach Farm 3"
+      },
+      "1": {
+        "Title": "Old Swamp"
+      }
+    },
+    "260000000": {
+      "0": {
+        "Title": "Outside the Ariant West Gate"
+      },
+      "1": {
+        "Title": "Post Ware House"
+      },
+      "10": {
+        "Title": "Ariant Armor shop"
+      },
+      "11": {
+        "Title": "Ariant Potion shop"
+      },
+      "12": {
+        "Title": "Ext North Gate of Ariant"
+      },
+      "13": {
+        "Title": "Ariant Hair shop"
+      },
+      "14": {
+        "Title": "Ext East gate of Ariant"
+      },
+      "15": {
+        "Title": "Ariant Platform"
+      },
+      "2": {
+        "Title": "World Tour Manual"
+      },
+      "3": {
+        "Title": "Ariant Platform"
+      },
+      "4": {
+        "Title": "Ariant Skin Care Clinic"
+      },
+      "5": {
+        "Title": "Ariant Plastic Surgery"
+      },
+      "6": {
+        "Title": "Ariant town"
+      },
+      "7": {
+        "Title": "Free market"
+      },
+      "8": {
+        "Title": "Ariant Palace"
+      },
+      "9": {
+        "Title": "Ariant Weapon shop"
+      }
+    },
+    "260000200": {
+      "0": {
+        "Title": "Ridium Processing Workshop"
+      },
+      "1": {
+        "Title": "Ariant Market"
+      }
+    },
+    "260010000": {
+      "0": {
+        "Title": "Ariant"
+      }
+    },
+    "260010600": {
+      "0": {
+        "Title": "Dry Desert"
+      }
+    },
+    "260010700": {
+      "0": {
+        "Title": "Ariant"
+      }
+    },
+    "260020000": {
+      "0": {
+        "Title": "Ariant"
+      },
+      "1": {
+        "Desc": "Magatia 1500 Mesos",
+        "Title": "Camel Taxi"
+      }
+    },
+    "260020500": {
+      "0": {
+        "Title": "Pyramid Dunes"
+      },
+      "1": {
+        "Title": "The Ruins of Desert Nomads"
+      },
+      "2": {
+        "Title": "Sahel 2"
+      },
+      "3": {
+        "Title": "Pyramid Dunes"
+      }
+    },
+    "260020600": {
+      "0": {
+        "Title": "Mini Dungeon: Hill of Sandstorms"
+      }
+    },
+    "260020700": {
+      "0": {
+        "Desc": "Ariant 1500 Mesos",
+        "Title": "Camel Taxi"
+      }
+    },
+    "261000000": {
+      "0": {
+        "Title": "Sahel"
+      },
+      "1": {
+        "Title": "Alcadno Society - General Store"
+      },
+      "2": {
+        "Title": "Zenumist Society - Weapon & Armor Shop"
+      },
+      "3": {
+        "Title": "Magatia Bank"
+      },
+      "4": {
+        "Title": "Stan's Workroom"
+      },
+      "5": {
+        "Title": "Weapon & Armor Shop"
+      },
+      "6": {
+        "Title": "Zenumist Society"
+      },
+      "7": {
+        "Title": "General Store"
+      },
+      "8": {
+        "Title": "Alcadno Society"
+      },
+      "9": {
+        "Title": "Free Market Entrance"
+      }
+    },
+    "261020200": {
+      "0": {
+        "Desc": "A poison sprayer used to defeat Rurumo. All alchemists from Alcadno should only use this to eliminate Rurumo. Who keeps taking the poison from the spray bottle?",
+        "Title": "Poison Spray"
+      }
+    },
+    "261020300": {
+      "0": {
+        "Title": "Mini Dungeon: Critical Error"
+      }
+    },
+    "261020400": {
+      "0": {
+        "Desc": "A poison sprayer used to defeat Rurumo. All alchemists from Alcadno should only use this to eliminate Rurumo. Who keeps taking the poison from the spray bottle?",
+        "Title": "Poison Spray"
+      }
+    },
+    "261020600": {
+      "0": {
+        "Desc": "A poison sprayer used to defeat Rurumo. All alchemists from Alcadno should only use this to eliminate Rurumo. Who keeps taking the poison from the spray bottle?",
+        "Title": "Poison Spray"
+      }
+    },
+    "270000000": {
+      "0": {
+        "Title": "Road to the Future"
+      },
+      "1": {
+        "Title": "Road of the Present"
+      },
+      "2": {
+        "Title": "Road to the Past"
+      }
+    },
+    "270000100": {
+      "0": {
+        "Title": "Air Field"
+      },
+      "1": {
+        "Title": "Air Field"
+      },
+      "2": {
+        "Title": "Temple Entrance"
+      },
+      "3": {
+        "Title": "Three Doors"
+      },
+      "4": {
+        "Title": "Temple Entrance"
+      }
+    },
+    "270010000": {
+      "0": {
+        "Title": "Three Doors"
+      },
+      "1": {
+        "Title": "Door of Memory"
+      },
+      "2": {
+        "Title": "Road to the Past : Memory"
+      }
+    },
+    "270010100": {
+      "0": {
+        "Title": "Past of the Verdure"
+      }
+    },
+    "270010110": {
+      "0": {
+        "Title": "Memory Keeper's Room"
+      },
+      "1": {
+        "Title": "Memory Lane 2"
+      }
+    },
+    "270010111": {
+      "0": {
+        "Title": "Time Observatory"
+      }
+    },
+    "270010200": {
+      "0": {
+        "Title": "Resting Spot of Memory 1"
+      },
+      "1": {
+        "Title": "Resting Spot of Memory 2"
+      }
+    },
+    "270010210": {
+      "0": {
+        "Title": "Memory Lane 3"
+      }
+    },
+    "270010310": {
+      "0": {
+        "Title": "Memory Lane 4"
+      }
+    },
+    "270010500": {
+      "0": {
+        "Title": "Frozen Past"
+      }
+    },
+    "270020000": {
+      "0": {
+        "Title": "Memory Lane Direction"
+      },
+      "1": {
+        "Title": "Door of Regrets"
+      }
+    },
+    "270020100": {
+      "0": {
+        "Title": "Frozen Past"
+      }
+    },
+    "270020110": {
+      "0": {
+        "Title": "Road of Regrets 1"
+      }
+    },
+    "270020210": {
+      "0": {
+        "Title": "Sorcerer's Room"
+      },
+      "1": {
+        "Title": "Road of Regrets 2"
+      }
+    },
+    "270020400": {
+      "0": {
+        "Title": "Resting Spot of Regret 4"
+      }
+    },
+    "270030000": {
+      "0": {
+        "Title": "Road to Oblivion"
+      },
+      "1": {
+        "Title": "Road of Regrets 5"
+      },
+      "2": {
+        "Title": "Door of Oblivion"
+      }
+    },
+    "270030210": {
+      "0": {
+        "Title": "Road to Oblivion 2"
+      }
+    },
+    "270030300": {
+      "0": {
+        "Title": "Resting Spot of Oblivion 3"
+      }
+    },
+    "270030400": {
+      "0": {
+        "Title": "Resting Spot of Oblivion 3"
+      }
+    },
+    "270030410": {
+      "0": {
+        "Title": "Road to Oblivion 4"
+      },
+      "1": {
+        "Title": "Road to Oblivion 5"
+      },
+      "2": {
+        "Title": "Record Keeper's Room"
+      }
+    },
+    "270030500": {
+      "0": {
+        "Title": "Toward the Temple Ruins"
+      }
+    },
+    "30000": {
+      "0": {
+        "Title": "Snail Hunting Ground"
+      },
+      "1": {
+        "Title": "Snail Hunting Ground"
+      },
+      "2": {
+        "Title": "Snail Hunting Ground"
+      },
+      "3": {
+        "Title": "Snail Hunting Ground"
+      },
+      "4": {
+        "Title": "Snail Hunting Ground"
+      },
+      "5": {
+        "Title": "Snail Hunting Ground"
+      }
+    },
+    "300000000": {
+      "0": {
+        "Title": "Barrier Stone"
+      },
+      "1": {
+        "Title": "General Shop"
+      },
+      "2": {
+        "Title": "Clinic"
+      },
+      "3": {
+        "Title": "Camp Conference Room"
+      },
+      "4": {
+        "Title": "Barrier Stone"
+      }
+    },
+    "300010000": {
+      "0": {
+        "Title": "Altaire Camp"
+      },
+      "1": {
+        "Title": "Mossy Tree Forest "
+      }
+    },
+    "300010200": {
+      "0": {
+        "Desc": "If you're a lost adventurer, go this way...",
+        "Title": "Mossy Tree Forest Trail"
+      }
+    },
+    "300010300": {
+      "0": {
+        "Desc": "The camp is beyond the western region of the forest. -Rios-",
+        "Title": "Western Region of Mossy Tree Forest"
+      },
+      "1": {
+        "Title": "Southern Region of Mossy Tree Forest"
+      },
+      "2": {
+        "Title": "Toward the Boulder Mountain"
+      }
+    },
+    "300020000": {
+      "0": {
+        "Desc": "If you're a lost adventurer, go this way...",
+        "Title": "Mossy Tree Forest Trail"
+      }
+    },
+    "300030000": {
+      "0": {
+        "Desc": "Due to strange occurrences as of late, explorations are not being allowed. -Athena Pierce-",
+        "Title": "Danger Zone.  Explorations Not Allowed!"
+      }
+    },
+    "40000": {
+      "0": {
+        "Title": "Amherst"
+      },
+      "1": {
+        "Title": "Southperry"
+      },
+      "2": {
+        "Title": "Amherst"
+      },
+      "3": {
+        "Title": "Southperry"
+      }
+    },
+    "40001": {
+      "0": {
+        "Title": "Amherst"
+      },
+      "1": {
+        "Title": "Southperry"
+      },
+      "2": {
+        "Title": "Amherst"
+      },
+      "3": {
+        "Title": "Southperry"
+      }
+    },
+    "40002": {
+      "0": {
+        "Title": "Amherst"
+      },
+      "1": {
+        "Title": "Southperry"
+      },
+      "2": {
+        "Title": "Amherst"
+      },
+      "3": {
+        "Title": "Southperry"
+      }
+    },
+    "50000": {
+      "0": {
+        "Title": "Amherst"
+      },
+      "1": {
+        "Title": "Amherst"
+      },
+      "2": {
+        "Title": "Snail Hunting Ground"
+      },
+      "3": {
+        "Title": "Amherst"
+      },
+      "4": {
+        "Title": "Southperry"
+      }
+    },
+    "500000000": {
+      "0": {
+        "Title": "Free Market"
+      },
+      "1": {
+        "Title": "World Tour Info Desk"
+      }
+    },
+    "500010000": {
+      "0": {
+        "Title": "Toad Pond"
+      },
+      "1": {
+        "Title": "Floating Market"
+      }
+    },
+    "500010100": {
+      "0": {
+        "Title": "Frog Pond/Floating Market"
+      }
+    },
+    "500020100": {
+      "0": {
+        "Title": "Outside the Entrance to the Village"
+      },
+      "1": {
+        "Title": "Fancy Swamp"
+      },
+      "2": {
+        "Title": "Small Jungle"
+      },
+      "3": {
+        "Title": "Outside the Entrance to the Village"
+      },
+      "4": {
+        "Title": "Fancy Swamp"
+      },
+      "5": {
+        "Title": "Small Jungle"
+      }
+    },
+    "540000000": {
+      "0": {
+        "Title": "Changi Airport"
+      },
+      "1": {
+        "Title": "Central Way 1"
+      }
+    },
+    "540000100": {
+      "0": {
+        "Title": "Central Way 2"
+      }
+    },
+    "540000200": {
+      "0": {
+        "Title": "Central Way 3"
+      }
+    },
+    "540000300": {
+      "0": {
+        "Title": "Central Way 2"
+      },
+      "1": {
+        "Title": "Surburban Area 1"
+      }
+    },
+    "540020000": {
+      "0": {
+        "Title": "Surburban Area 2"
+      },
+      "1": {
+        "Title": "Boat Quay Town"
+      }
+    },
+    "540020100": {
+      "0": {
+        "Title": "Surburban Area 1"
+      }
+    },
+    "541000300": {
+      "0": {
+        "Title": "Ghost Ship 1"
+      }
+    },
+    "550000100": {
+      "0": {
+        "Title": "Outskirt of Muddy Banks"
+      }
+    },
+    "551000000": {
+      "0": {
+        "Title": "Kampung Village"
+      }
+    },
+    "551000100": {
+      "0": {
+        "Title": "Hibiscus Road 1"
+      }
+    },
+    "551000200": {
+      "0": {
+        "Title": "Hibiscus Road 2"
+      }
+    },
+    "551010000": {
+      "0": {
+        "Title": "Cable Car Station 1"
+      }
+    },
+    "551020000": {
+      "0": {
+        "Title": "Cable Car"
+      }
+    },
+    "551030000": {
+      "0": {
+        "Title": "Mini Dungeon: Longest Ride on ByeBye Station"
+      }
+    },
+    "60000": {
+      "0": {
+        "Desc": "This is the place to purchase armors.",
+        "Title": "Armor Shop"
+      },
+      "1": {
+        "Desc": "Fee : 150 Mesos\\n\\nGet on the ship that heads to Lith Harbor through Shanks. Once out of Maple Island, you will not be able to return here ever again.",
+        "Title": "Southperry --> Lith Harbor (Victoria Island)"
+      }
+    },
+    "60002": {
+      "0": {
+        "Desc": "Southperry is a port city.",
+        "Title": "Southperry"
+      }
+    },
+    "680000000": {
+      "0": {
+        "Title": "Amoria Wedding Shop"
+      },
+      "1": {
+        "Title": "Saint Maple Altar"
+      },
+      "2": {
+        "Title": "Amoria Plastic Surgery "
+      },
+      "3": {
+        "Title": "Amoria Hair Salon"
+      },
+      "4": {
+        "Title": "White Wedding Altar"
+      },
+      "5": {
+        "Title": "Amoria"
+      },
+      "6": {
+        "Title": "Purple Plains 1"
+      },
+      "7": {
+        "Title": "Wedding Cathedral"
+      },
+      "8": {
+        "Title": "Wedding Chapel"
+      }
+    },
+    "701000000": {
+      "0": {
+        "Title": "Department Store"
+      },
+      "1": {
+        "Title": "위험에 빠진 궁수교육원Weapon·Armor ShopWeapon·Armor ShopWeapon·Armor ShopWeapon·Armor ShopWeapon·Armor ShopFree Market·Plastic SurgeryWeapon Store·Department Store·Ludibrium StationWeapon·Armor StoreWeapon·Armor Shop"
+      },
+      "2": {
+        "Title": "Newspaper Tray"
+      },
+      "3": {
+        "Title": "Newspaper Tray"
+      },
+      "4": {
+        "Title": "Department Store"
+      },
+      "5": {
+        "Title": "World Tour Info Desk"
+      }
+    },
+    "740000000": {
+      "0": {
+        "Title": "Weapon Store"
+      },
+      "1": {
+        "Title": "Armor Store"
+      },
+      "2": {
+        "Title": "Department Store"
+      },
+      "3": {
+        "Title": "Taipei Route"
+      },
+      "4": {
+        "Title": "Subway<Taipei>"
+      },
+      "5": {
+        "Title": "World Tour Info Desk"
+      }
+    },
+    "740000100": {
+      "0": {
+        "Title": "Exit"
+      }
+    },
+    "740010200": {
+      "0": {
+        "Title": "Back Alley of Taipei"
+      },
+      "1": {
+        "Title": "Streets of Taipei II"
+      },
+      "2": {
+        "Title": "Streets of TaipeiⅣ"
+      }
+    },
+    "741000000": {
+      "0": {
+        "Title": "Hair Salon"
+      },
+      "1": {
+        "Title": "Hair Salon"
+      },
+      "2": {
+        "Title": "Plastic Surgery"
+      },
+      "3": {
+        "Title": "Plastic Surgery"
+      },
+      "4": {
+        "Title": "Plastic Surgery"
+      },
+      "5": {
+        "Title": "Skin Care"
+      }
+    },
+    "741000001": {
+      "0": {
+        "Title": "Skin Care"
+      },
+      "1": {
+        "Title": "Plastic Surgery"
+      }
+    },
+    "741010200": {
+      "0": {
+        "Title": "Streets of Night Market II"
+      },
+      "1": {
+        "Title": "Streets of Night MarketⅣ"
+      },
+      "2": {
+        "Title": "In Between the Road of Night Market I"
+      }
+    },
+    "800000000": {
+      "0": {
+        "Title": "Mushroom Shrine"
+      },
+      "1": {
+        "Title": "Fish Cake Shop"
+      },
+      "2": {
+        "Title": "Yakisoba Shop"
+      },
+      "3": {
+        "Title": "Takoyaki Shop"
+      },
+      "4": {
+        "Title": "Mushroom Ramen Shop"
+      },
+      "5": {
+        "Title": "Dango Shop"
+      },
+      "6": {
+        "Title": "Mushroom Shrine"
+      },
+      "7": {
+        "Title": "World Tour Info Desk"
+      }
+    },
+    "800020000": {
+      "0": {
+        "Title": "Crow Forest II"
+      },
+      "1": {
+        "Title": "The Animal Forest"
+      },
+      "2": {
+        "Title": "Mushroom Forest"
+      }
+    },
+    "800020101": {
+      "0": {
+        "Title": "Bamboo Forest"
+      },
+      "1": {
+        "Title": "Cloud Fox Mountain"
+      },
+      "2": {
+        "Title": "Crow Forest I"
+      }
+    },
+    "800020110": {
+      "0": {
+        "Desc": "If a cold breeze blows through the Bamboo Forest, that's when Bamboo Warrior appears! Watch out for the Bamboo Warrior that's holding a grudge. To eliminate the warrior, slash the bamboo trees in the Forest...",
+        "Title": "Watch Out for the Bamboo Warrior!"
+      }
+    },
+    "800020120": {
+      "0": {
+        "Desc": "If a cold breeze blows through the Bamboo Forest, that's when Bamboo Warrior appears! Watch out for the Bamboo Warrior that's holding a grudge. To eliminate the warrior, slash the bamboo trees in the Forest...",
+        "Title": "Watch Out for the Bamboo Warrior!"
+      }
+    },
+    "800020130": {
+      "0": {
+        "Desc": "If a cold breeze blows through the Bamboo Forest, that's when Bamboo Warrior appears! Watch out for the Bamboo Warrior that's holding a grudge. To eliminate the warrior, slash the bamboo trees in the Forest...",
+        "Title": "Watch Out for the Bamboo Warrior!"
+      }
+    },
+    "920010100": {
+      "0": {
+        "Title": "<Lobby>"
+      },
+      "1": {
+        "Title": "<Sealed Room>"
+      },
+      "2": {
+        "Title": "<Storage>"
+      },
+      "3": {
+        "Title": "<Lounge>"
+      },
+      "4": {
+        "Title": "<Walkway>"
+      },
+      "5": {
+        "Title": "<On the Way Up>"
+      }
+    },
+    "922230000": {
+      "0": {
+        "Title": "Exit"
+      }
+    },
+    "925020000": {
+      "0": {
+        "Title": "Mu Lung Training Center"
+      }
+    },
+    "930000800": {
+      "0": {
+        "Desc": "A spring of clean water. It appears to have the power to detoxify the Golem's Marble filled with poison inside. Let's try dropping the marble in front of the spring. poison which fills.",
+        "Title": "          Spring of Purification            "
+      }
+    },
+    "970000100": {
+      "0": {
+        "Title": "Maple Studio"
+      },
+      "1": {
+        "Title": "Ludibrium Studio"
+      },
+      "2": {
+        "Title": "Ariant Studio"
+      },
+      "3": {
+        "Title": "Orbis Studio"
+      },
+      "4": {
+        "Title": "Mu Lung Studio"
+      },
+      "5": {
+        "Title": "Magatia Studio"
+      },
+      "6": {
+        "Title": "Ereve Studio"
+      },
+      "7": {
+        "Title": "Cookie Studio"
+      }
+    },
+    "980020000": {
+      "0": {
+        "Desc": "You're at the entrance to Mr. Goldrich's private lane. If you want to enter, please use your golden compass.",
+        "Title": "Entrance of the Goldrich maze"
+      }
+    },
+    "990000200": {
+      "0": {
+        "Title": "Shelenian Ruins"
+      }
+    }
+  },
+  "PortalTooltip": {
+    "100000100": {
+      "market00": "Free Market Entrance"
+    },
+    "100000200": {
+      "in02": "Bowman Instructional School"
+    },
+    "100020000": {
+      "MD00": "Mini Dungeon: Henesys Pig Farm"
+    },
+    "100030000": {
+      "quest00": "Utah's Pig Farm"
+    },
+    "100040105": {
+      "quest00": "Dead Tree Path"
+    },
+    "101000000": {
+      "in04": "Sky Ferry",
+      "inERShip": "Sky Ferry",
+      "jobin00": "Magic Library"
+    },
+    "101030104": {
+      "pt00": "Hidden Relic"
+    },
+    "102000000": {
+      "market00": "Free Market Entrance"
+    },
+    "103000310": {
+      "out00": "To Kerning City"
+    },
+    "104000000": {
+      "in03": "Lith Harbor Info Shop"
+    },
+    "105040304": {
+      "MD00": "Mini Dungeon: The Ruins of the Fallen Golem"
+    },
+    "105050100": {
+      "MD00": "Mini Dungeon: Cave Where Mushrooms Grow"
+    },
+    "105090700": {
+      "in00": "Secret Shrine"
+    },
+    "105090800": {
+      "in00": "Forgotten Shrine"
+    },
+    "106020400": {
+      "right00": "Edge of Castle Wall",
+      "right01": "Steep Downhill 1"
+    },
+    "106021000": {
+      "in00": "Castle Security Room"
+    },
+    "120000200": {
+      "market00": "Free Market Entrance"
+    },
+    "130000200": {
+      "st00": "Free Market Entrance",
+      "west00": "Training Forest 1"
+    },
+    "130010000": {
+      "in00": "Tino's Forest",
+      "in01": "Tiv's Forest"
+    },
+    "130010100": {
+      "in00": "Timu's Forest",
+      "in01": "Tiru's Forest"
+    },
+    "130010200": {
+      "west00": "Drill Hall Entrance"
+    },
+    "130020000": {
+      "in00": "The 1st Drill Hall",
+      "in01": "The 2nd Drill Hall",
+      "in02": "The 3rd Drill Hall",
+      "in03": "The 4th Drill Hall"
+    },
+    "140000000": {
+      "market00": "Free Market",
+      "west00": "Field West of Rien"
+    },
+    "140010000": {
+      "east00": "Rien",
+      "west00": "Entrance to Rien Training Center"
+    },
+    "140010100": {
+      "in00": "Rien Training Center"
+    },
+    "140010200": {
+      "in00": "Mirror Cave"
+    },
+    "140020200": {
+      "east00": "Penguin Port"
+    },
+    "140030000": {
+      "in00": "Mirror of Desire"
+    },
+    "140090100": {
+      "west00": "Cold Forest 2"
+    },
+    "140090200": {
+      "west00": "Cold Forest 3"
+    },
+    "140090300": {
+      "west00": "Cold Forest 4"
+    },
+    "140090400": {
+      "west00": "Cold Forest 5"
+    },
+    "200000000": {
+      "market00": "Free Market Entrance"
+    },
+    "200060000": {
+      "in00": "Neglected Strolling Path"
+    },
+    "211000100": {
+      "market00": "Free Market Entrance"
+    },
+    "211042300": {
+      "ps00": "Zakum Altar"
+    },
+    "211050000": {
+      "in00": "Rider's Field"
+    },
+    "220000000": {
+      "market00": "Free Market Entrance"
+    },
+    "221000000": {
+      "market00": "Free Market Entrance"
+    },
+    "221023400": {
+      "MD00": "Mini Dungeon: Drummer Bunny's Lair"
+    },
+    "222000000": {
+      "market00": "Free Market Entrance"
+    },
+    "222010300": {
+      "west00": "Tiger Ridge"
+    },
+    "222020400": {
+      "in00": "To the Past"
+    },
+    "230000000": {
+      "market01": "Free Market Entrance"
+    },
+    "230040410": {
+      "boss00": "Pianus Cave"
+    },
+    "240000000": {
+      "market00": "Free Market Entrance"
+    },
+    "240010700": {
+      "pt00": "The Top of the Sky Nest"
+    },
+    "240020100": {
+      "boss00": "Griffey Forest"
+    },
+    "240020101": {
+      "in00": "Remote Forest"
+    },
+    "240020102": {
+      "in00": "Remote Forest"
+    },
+    "240020400": {
+      "boss00": "Manon Forest"
+    },
+    "240020401": {
+      "in00": "Remote Forest"
+    },
+    "240020402": {
+      "in00": "Remote Forest"
+    },
+    "240020500": {
+      "MD00": "Mini Dungeon: The Round Table of Kentaurus"
+    },
+    "240020600": {
+      "out00": "Griffey Forest",
+      "out01": "Manon Forest"
+    },
+    "240040511": {
+      "MD00": "Mini Dungeon: The Restoring Memory"
+    },
+    "240040520": {
+      "MD00": "Mini Dungeon: Newt Secured Zone"
+    },
+    "240040610": {
+      "in00": "Nine Spirit's Nest"
+    },
+    "240040700": {
+      "out00": "Peak of the Big Nest",
+      "temp00": "Entrance to Cave of Horntail"
+    },
+    "240050100": {
+      "in00": "1st Room of Maze"
+    },
+    "240050101": {
+      "in00": "2nd Room of Maze"
+    },
+    "240050102": {
+      "in00": "3rd Room of Maze"
+    },
+    "240050103": {
+      "in00": "4th Room of Maze"
+    },
+    "240050104": {
+      "in00": "5th Room of Maze"
+    },
+    "240050105": {
+      "in00": "Room of Maze"
+    },
+    "240050400": {
+      "temp00": "Entrance to the Cave of Life"
+    },
+    "250000000": {
+      "market00": "Free Market Entrance"
+    },
+    "251000000": {
+      "market00": "Free Market Entrance"
+    },
+    "260020600": {
+      "MD00": "Mini Dungeon: Hill of Sandstorms"
+    },
+    "261000000": {
+      "market0": "Free Market"
+    },
+    "261020300": {
+      "MD00": "Mini Dungeon: Critical Error"
+    },
+    "261020600": {
+      "up00": "Research Center A-3"
+    },
+    "280010000": {
+      "ps01": "The Room of Tragedy"
+    },
+    "300000010": {
+      "in00": "Library"
+    },
+    "500000000": {
+      "market00": "Free Market Entrance"
+    },
+    "910000000": {
+      "out00": "Entrance to Free Market"
+    },
+    "914000000": {
+      "out00": "On the Way to Escape"
+    },
+    "914000100": {
+      "out00": "Burning Forest 1"
+    },
+    "914000200": {
+      "west00": "Burning Forest 2"
+    },
+    "914000210": {
+      "west00": "Burning Forest 3"
+    },
+    "914000300": {
+      "east00": "Burning Forest 3"
+    },
+    "914000500": {
+      "out00": "Burning Forest 1"
+    },
+    "914020000": {
+      "out00": "Battle Against Maha"
+    },
+    "914030000": {
+      "out00": "Field of Wolves"
+    },
+    "920010100": {
+      "in00": "Tower of Goddess <Walkway>",
+      "in01": "Tower of Goddess <Storage>",
+      "in02": "Tower of Goddess <Lobby>",
+      "in03": "Tower of Goddess <Sealed Room>"
+    },
+    "920010300": {
+      "st00": "Tower of Goddess <Center Tower>"
+    },
+    "920010500": {
+      "st00": "Tower of Goddess <Center Tower>"
+    },
+    "920010800": {
+      "in00": "Tower of Goddess <Center Tower>"
+    },
+    "925040001": {
+      "out00": "Back Alley of Mu Lung Dojo"
+    },
+    "925100000": {
+      "next00": "Through the Head of the Ship!"
+    },
+    "925100100": {
+      "next00": "Through the Deck I"
+    },
+    "925100200": {
+      "next00": "Through the Deck II"
+    },
+    "925100300": {
+      "next00": "Eliminate Pirates!"
+    },
+    "925100400": {
+      "next00": "The Captain's Dignity"
+    }
+  },
+  "Shop": {
+    "Button": {
+      "BuyAvatar": {
+        "Desc": "Buying the items that are equipped by the character. The existing items are not\\nincluded in the purchase.",
+        "Title": "Buying Equipped Items"
+      },
+      "Charge": {
+        "Desc": "Please visit the website to charge your account.",
+        "Title": "Recharging Cash"
+      },
+      "Check": {
+        "Desc": "Checking the remaining Cash",
+        "Title": "Check Cash"
+      },
+      "Coupon": {
+        "Desc": "Exchanging the item coupon into an item.",
+        "Title": "Using Coupon"
+      },
+      "DefaultAvatar": {
+        "Desc": "Character being put back into the state of default before walking into the cash shop.",
+        "Title": "Back to Default"
+      },
+      "ExConsume": {
+        "Desc": "Extending a use inventory by 4 slots (1 line)\\n8000 A-Cash",
+        "Title": "Extending Use Inventory"
+      },
+      "ExEquip": {
+        "Desc": "Extending an equip. inventory by 4 slots (1 line)\\n8000 A-Cash",
+        "Title": "Extending Equip. Inventory"
+      },
+      "ExEtc": {
+        "Desc": "Extending an etc. inventory by 4 slots (1 line)\\n8000 A-Cash",
+        "Title": "Extending Etc. Inventory"
+      },
+      "ExInstall": {
+        "Desc": "Extending a set-up inventory by 4 slots (1 line)\\n8000 A-Cash",
+        "Title": "Extending Set-Up Inventory"
+      },
+      "GiftToken": {
+        "Desc": "Click to see \"How to Gift\" Details",
+        "Title": "Gift Token"
+      },
+      "Rebate": {
+        "Desc": "Deleting cash items and saving a percentage of its price as MaplePoints",
+        "Title": "Deleting Items"
+      },
+      "TakeoffAvatar": {
+        "Desc": "Remove all the items that the character is wearing.",
+        "Title": "Remove All"
+      }
+    }
+  }
+}

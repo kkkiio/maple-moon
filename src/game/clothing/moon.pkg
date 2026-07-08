@@ -1,0 +1,19 @@
+import {
+  "moonbitlang/core/json",
+  "moonbitlang/core/strconv",
+  "KKKIIO/maple-moon/game/equip/slot",
+  "KKKIIO/maple-moon/game/item",
+  "KKKIIO/maple-moon/engine/resource",
+  "KKKIIO/maple-moon/engine/resource",
+  "KKKIIO/maple-moon/game/weapon",
+  "KKKIIO/maple-moon/game/res_types" @struct,
+  "KKKIIO/maple-moon/game/char_look/types",
+  "KKKIIO/maple-moon/game/equip/data",
+  "KKKIIO/maple-moon/game/char_stance",
+  "moonbitlang/core/string",
+}
+
+import {
+  "moonbitlang/x/fs",
+  "KKKIIO/maple-moon/game/char_look",
+} for "test"

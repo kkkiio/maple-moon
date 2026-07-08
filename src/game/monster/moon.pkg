@@ -1,0 +1,32 @@
+import {
+  "KKKIIO/maple-moon/game/animation" @ms_animation,
+  "moonbitlang/core/random",
+  "moonbitlang/core/json",
+  "moonbitlang/core/queue",
+  "moonbitlang/core/strconv",
+  "moonbitlang/core/cmp",
+  "KKKIIO/maple-moon/game/res_types" @struct,
+  "KKKIIO/maple-moon/engine/utils",
+  "KKKIIO/maple-moon/engine/randx",
+  "KKKIIO/maple-moon/game/physics",
+  "KKKIIO/maple-moon/engine/resource",
+  "KKKIIO/maple-moon/engine/graphics",
+  "KKKIIO/maple-moon/game/combat_proto" @combat,
+  "KKKIIO/maple-moon/engine/log",
+  "KKKIIO/maple-moon/engine/io_service",
+  "Milky2018/selene/transform",
+  "KKKIIO/maple-moon/game/transform2d",
+  "Milky2018/selene/entity",
+  "KKKIIO/maple-moon/engine/game_server",
+  "KKKIIO/maple-moon/game/logic_fps",
+  "KKKIIO/maple-moon/game/server_proto",
+  "Milky2018/selene/sprite",
+  "Milky2018/selene/math" @selene_math,
+  "Milky2018/selene/ecs",
+  "Milky2018/selene/time",
+  "moonbitlang/core/string",
+}
+
+import {
+  "moonbitlang/x/fs",
+} for "test"

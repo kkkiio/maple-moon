@@ -1,0 +1,17 @@
+{
+  "info": {
+    "default": {
+      "__b": 4151,
+      "__w": 63,
+      "__h": 68,
+      "delay": 3000,
+      "origin": [
+        26,
+        68
+      ],
+      "z": 0
+    },
+    "trunkPut": 100
+  },
+  "animations_path": "animation.json"
+}

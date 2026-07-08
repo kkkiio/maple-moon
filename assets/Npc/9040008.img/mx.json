@@ -1,0 +1,19 @@
+{
+  "info": {
+    "dcBottom": -36,
+    "dcLeft": -56,
+    "dcRight": 56,
+    "dcTop": -210,
+    "default": {
+      "__b": 3772,
+      "__w": 82,
+      "__h": 100,
+      "origin": [
+        39,
+        100
+      ]
+    },
+    "guildRank": 1
+  },
+  "animations_path": "animation.json"
+}

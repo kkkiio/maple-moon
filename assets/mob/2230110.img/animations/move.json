@@ -1,0 +1,74 @@
+{ "frames": [
+   {
+    "filename": "move 0.aseprite",
+    "frame": { "x": 170, "y": 85, "w": 84, "h": 85 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 3, "y": 5, "w": 84, "h": 85 },
+    "sourceSize": { "w": 88, "h": 90 },
+    "duration": 120
+   },
+   {
+    "filename": "move 1.aseprite",
+    "frame": { "x": 86, "y": 85, "w": 84, "h": 86 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 3, "y": 3, "w": 84, "h": 86 },
+    "sourceSize": { "w": 88, "h": 90 },
+    "duration": 120
+   },
+   {
+    "filename": "move 2.aseprite",
+    "frame": { "x": 86, "y": 0, "w": 85, "h": 85 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 1, "y": 0, "w": 85, "h": 85 },
+    "sourceSize": { "w": 88, "h": 90 },
+    "duration": 120
+   },
+   {
+    "filename": "move 3.aseprite",
+    "frame": { "x": 171, "y": 0, "w": 85, "h": 85 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 1, "w": 85, "h": 85 },
+    "sourceSize": { "w": 88, "h": 90 },
+    "duration": 120
+   },
+   {
+    "filename": "move 4.aseprite",
+    "frame": { "x": 0, "y": 0, "w": 86, "h": 86 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 4, "w": 86, "h": 86 },
+    "sourceSize": { "w": 88, "h": 90 },
+    "duration": 120
+   },
+   {
+    "filename": "move 5.aseprite",
+    "frame": { "x": 0, "y": 86, "w": 86, "h": 82 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 2, "y": 7, "w": 86, "h": 82 },
+    "sourceSize": { "w": 88, "h": 90 },
+    "duration": 120
+   }
+ ],
+ "meta": {
+  "app": "https://www.aseprite.org/",
+  "version": "1.3.14.4-arm64",
+  "image": "move.png",
+  "format": "RGBA8888",
+  "size": { "w": 256, "h": 171 },
+  "scale": "1",
+  "frameTags": [
+   { "name": "move", "from": 0, "to": 5, "direction": "forward", "color": "#000000ff" }
+  ],
+  "layers": [
+   { "name": "main", "opacity": 255, "blendMode": "normal" }
+  ],
+  "slices": [
+   { "name": "anchor_move", "keys": [{ "frame": 0, "bounds": {"x": 0, "y": 0, "w": 88, "h": 90 }, "pivot": {"x": 49, "y": 90 } }] }
+  ]
+ }
+}

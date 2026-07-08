@@ -1,0 +1,12 @@
+{
+  "info": {
+    "script": {
+      "0": {
+        "end": 20080301,
+        "script": "cheeseEnter",
+        "start": 20080122
+      }
+    }
+  },
+  "animations_path": "animation.json"
+}

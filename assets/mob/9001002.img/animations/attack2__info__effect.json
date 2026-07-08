@@ -1,0 +1,74 @@
+{ "frames": [
+   {
+    "filename": "attack2__info__effect 0.aseprite",
+    "frame": { "x": 541, "y": 0, "w": 1, "h": 1 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 113, "y": 70, "w": 1, "h": 1 },
+    "sourceSize": { "w": 202, "h": 78 },
+    "duration": 300
+   },
+   {
+    "filename": "attack2__info__effect 1.aseprite",
+    "frame": { "x": 0, "y": 0, "w": 202, "h": 78 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 202, "h": 78 },
+    "sourceSize": { "w": 202, "h": 78 },
+    "duration": 100
+   },
+   {
+    "filename": "attack2__info__effect 2.aseprite",
+    "frame": { "x": 202, "y": 0, "w": 188, "h": 78 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 5, "y": 0, "w": 188, "h": 78 },
+    "sourceSize": { "w": 202, "h": 78 },
+    "duration": 100
+   },
+   {
+    "filename": "attack2__info__effect 3.aseprite",
+    "frame": { "x": 390, "y": 0, "w": 151, "h": 78 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 19, "y": 0, "w": 151, "h": 78 },
+    "sourceSize": { "w": 202, "h": 78 },
+    "duration": 100
+   },
+   {
+    "filename": "attack2__info__effect 4.aseprite",
+    "frame": { "x": 0, "y": 78, "w": 151, "h": 76 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 19, "y": 1, "w": 151, "h": 76 },
+    "sourceSize": { "w": 202, "h": 78 },
+    "duration": 100
+   },
+   {
+    "filename": "attack2__info__effect 5.aseprite",
+    "frame": { "x": 151, "y": 78, "w": 151, "h": 57 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 19, "y": 18, "w": 151, "h": 57 },
+    "sourceSize": { "w": 202, "h": 78 },
+    "duration": 100
+   }
+ ],
+ "meta": {
+  "app": "https://www.aseprite.org/",
+  "version": "1.3.14.4-arm64",
+  "image": "attack2__info__effect.png",
+  "format": "RGBA8888",
+  "size": { "w": 542, "h": 154 },
+  "scale": "1",
+  "frameTags": [
+   { "name": "attack2/info/effect", "from": 0, "to": 5, "direction": "forward", "color": "#000000ff" }
+  ],
+  "layers": [
+   { "name": "main", "opacity": 255, "blendMode": "normal" }
+  ],
+  "slices": [
+   { "name": "anchor_attack2/info/effect", "keys": [{ "frame": 0, "bounds": {"x": 0, "y": 0, "w": 202, "h": 78 }, "pivot": {"x": 113, "y": 70 } }] }
+  ]
+ }
+}

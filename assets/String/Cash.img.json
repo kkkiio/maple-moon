@@ -1,0 +1,2002 @@
+{
+  "5010000": {
+    "desc": "A special effect in which you'll see a brightly smiling sun floating over you. On the KeyConfig, configure this on a button of your choice to turn the effect on/off.",
+    "name": "Sunny Day"
+  },
+  "5010001": {
+    "desc": "A special effect in which you'll see a brightly smiling moon floating around in a sea of stars over you. On the KeyConfig, configure this on a button of your choice to turn the effect on/off.",
+    "name": "Moon & the Stars"
+  },
+  "5010002": {
+    "desc": "A special effect in which you'll see a rainbow in its full 7 colors floating next to you. Designate a HotKey to turn the effect on/off.",
+    "name": "Colorful Rainbow"
+  },
+  "5010003": {
+    "desc": "A special effect in which you'll see Lilly the cute little devil floating around next to you. Designate a HotKey to turn the effect on/off.",
+    "name": "Little Devil"
+  },
+  "5010004": {
+    "desc": "A special effect that shows a submarine under the water.  Designate a HotKey to turn the effect on/off.",
+    "name": "Underwater"
+  },
+  "5010005": {
+    "desc": "A special effect that displays the longing to be with someone special.  Designate a HotKey to turn the effect on/off.",
+    "name": "Looking for Love"
+  },
+  "5010006": {
+    "desc": "A lovely effect that shows a baby angel floating around as your protector.  Designate a HotKey to turn the effect on/off.",
+    "name": "Baby Angel"
+  },
+  "5010007": {
+    "desc": "A special effect that puts a poster in front of your face as if you're being wanted around the world.  Designate a HotKey to turn the effect on/off.",
+    "name": "Fugitive"
+  },
+  "5010008": {
+    "desc": "A special effect used to increase the chance of winning with Slot Machine by 2x. Designate a HotKey to turn the effect on/off.",
+    "name": "Mr. Jackpot"
+  },
+  "5010009": {
+    "desc": "A special effect that appears Chinese Falg. Designate a HotKey to turn the effect on/off.",
+    "name": "Martial Effect"
+  },
+  "5010010": {
+    "desc": "A special effect in which you'll see two babies floating on the cloud as a sign of friendship. Designate a HotKey to turn the effect on/off.",
+    "name": "Play with Me"
+  },
+  "5010011": {
+    "desc": "A special effect that displays that the owner would like to be left alone. Designate a HotKey to turn the effect on/off.",
+    "name": "Loner"
+  },
+  "5010012": {
+    "desc": "A special equalizer effect that is given as a prize at the Maple Member Shop. Designate a HotKey to turn the effect on/off.",
+    "name": "Equalizer"
+  },
+  "5010013": {
+    "desc": "A special effect of the fireworks that is given as a prize at the Maple Member Shop. Designate a HotKey to turn the effect on/off.",
+    "name": "Fireworks"
+  },
+  "5010014": {
+    "desc": "A special effect that displays the stormy cloud with rain and lightning hovering around the owner's head. Designate a HotKey to turn the effect on/off.",
+    "name": "Stormy Cloud"
+  },
+  "5010015": {
+    "desc": "A special effect used to increase the number of balls obtained from winning with Slot Machine by 2x. Designate a HotKey to turn the effect on/off.",
+    "name": "777 Effect"
+  },
+  "5010016": {
+    "desc": "A siren effect that can be used under emergencies.  Designate a HotKey to turn the effect ON/OFF.",
+    "name": "Siren"
+  },
+  "5010017": {
+    "desc": "A special star effect for a special day.  Designate a HotKey to turn the effect ON/OFF.",
+    "name": "Twinkling Star"
+  },
+  "5010018": {
+    "desc": "A smile effect best used when you're in a great mood! Designate a a HotKey to turn the effect ON/OFF.",
+    "name": "Smile"
+  },
+  "5010019": {
+    "desc": "A heart effect you can use to show your love to the others.  Designate a HotKey to turn the effect ON/OFF.",
+    "name": "Heart"
+  },
+  "5010020": {
+    "desc": "A special effect that follows your character for the supporting of Korea's victory.  Designate a HotKey to turn the effect ON/OFF.",
+    "name": "Go! Korea!"
+  },
+  "5010021": {
+    "desc": "This skull was found somewhere around the remains, and it'll be with you until you wish for otherwise. Double-click on the item or on the Key Config, configure this on a button of your choice to turn the effect on/off.",
+    "name": "Skeleton of Horror"
+  },
+  "5010022": {
+    "desc": "A number of twinkling stars surrounds the character in this special effect.",
+    "name": "Twinkling Star"
+  },
+  "5010023": {
+    "desc": "A special effect that captures the feeling of wanting to express the feeling of love to someone special. Double-click on the item or on the Key Config, configure this on a button of your choice to turn the effect on/off.",
+    "name": "Pumping Heart"
+  },
+  "5010024": {
+    "desc": "A family of toy ducks follow around the character. Double-click on the item or on the Key Config, configure this on a button of your choice to turn the effect on/off.",
+    "name": "The Flocking Ducks"
+  },
+  "5010025": {
+    "desc": "A special effect in which you'll see a spooky ghost appirate behind you and scare the daylights out of everyone nearby! On the Key Config, configure this on a button of your choice to turn the effect on/off.",
+    "name": "Silent Spectre"
+  },
+  "5010026": {
+    "desc": "A special effect in which you'll see a horde of Dracula's finest bats appear and surround your character with alluring nocturne ambience. On the Key Config, configure this on a button of your choice to turn the effect on/off. ",
+    "name": "Indigo Dracula"
+  },
+  "5010027": {
+    "desc": "A special effect that perfectly represents the feeling of anger. On the Key Config, configure this on a button of your choice to turn the effect on/off.",
+    "name": "Hot Head"
+  },
+  "5010028": {
+    "desc": "This is an effect item that exudes an aura around the character. On the Key Config, configure this on a button of your choice to turn the effect on/off.",
+    "name": "Indigo Flames"
+  },
+  "5010029": {
+    "desc": "This is an effect item that exudes an aura around the character. On the Key Config, configure this on a button of your choice to turn the effect on/off.",
+    "name": "Demonfyre"
+  },
+  "5010030": {
+    "desc": "This is an effect item that exudes an aura around the character. On the Key Config, configure this on a button of your choice to turn the effect on/off.",
+    "name": "Nuclear Fire"
+  },
+  "5010031": {
+    "desc": "Show the world how much you adore your boyfriend with this attractive marker! On the Key Config, configure this on a button of your choice to turn the effect on/off.",
+    "name": "My Boyfriend"
+  },
+  "5010032": {
+    "desc": "Show the world how much you adore your girlfriend with this attractive marker! On the Key Config, configure this on a button of your choice to turn the effect on/off.",
+    "name": "My Girlfriend"
+  },
+  "5010033": {
+    "desc": "A special effect perfect for instances where you were caught off-guard. On the Key Config, configure this on a button of your choice to turn the effect on/off.",
+    "name": "Sheer Fear"
+  },
+  "5010034": {
+    "desc": "If you ever felt like becoming a Christmas Tree, here's your chance! On the Key Config, configure this on a button of your choice to turn the effect on/off.",
+    "name": "Christmas Tree"
+  },
+  "5010035": {
+    "desc": "On a cold, snowy day, this effect will enable you to become a snowman. On the Key Config, configure this on a button of your choice to turn the effect on/off.",
+    "name": "Snowman"
+  },
+  "5010038": {
+    "desc": "A special effect that pours massive amount of water on top of the head.  Double-click on the icon or designate a HotKey to turn the effect on/off.",
+    "name": "Shower Power"
+  },
+  "5010039": {
+    "desc": "A special effect that features a spotlight above the head of the character. Double-click on the icon or designate a HotKey to turn the effect on/off.",
+    "name": "Spotlight"
+  },
+  "5010041": {
+    "desc": "A special effect that follows the character around which can be used to express the feeling of happiness and joy.  Double-click on the icon or designate a HotKey to turn the effect on/off.",
+    "name": "Super Symphony"
+  },
+  "5010042": {
+    "desc": "A very busy bee that's never distracted from following you. Keeps one focused on the task at hand.",
+    "name": "Busy Bee"
+  },
+  "5010043": {
+    "desc": " A special effect that features a blinding glow on the character's eyes. Double-click on the icon or designate a HotKey to turn the effect on/off.",
+    "name": "Eyelighter"
+  },
+  "5010044": {
+    "desc": "Traces of the character remains while the character moves, creating multiple images of the character in the process. Double-click on the icon, or designate a HotKey to turn the effect on/off.",
+    "name": "Shadow Style"
+  },
+  "5010045": {
+    "desc": "A special effect that displays the lightning striking on the character's head.  Double-click on the icon or designate a HotKey to turn the effect on/off.",
+    "name": "Struck by Lightning"
+  },
+  "5010046": {
+    "desc": "A special effect that puts a poster in front of your face as if you're being Maple Champion around the world.  Designate a HotKey to turn the effect on/off.",
+    "name": "Maple Champion"
+  },
+  "5010048": {
+    "desc": "A special effect that puts a poster in front of your face as if you're being Maple Champion around the world.  Designate a HotKey to turn the effect on/off.",
+    "name": "Maple Champion"
+  },
+  "5010049": {
+    "desc": "A special effect that puts a poster in front of your face as if you're being Maple Champion around the world.  Designate a HotKey to turn the effect on/off.",
+    "name": "Maple Champion"
+  },
+  "5010051": {
+    "desc": "Celebrate your holiday cheer with this effect! Designate a HotKey to turn the effect ON/OFF.",
+    "name": "O Maplemas Tree"
+  },
+  "5010052": {
+    "desc": "Give Santa a lift with this hilarious effect! Designate a HotKey to turn the effect ON/OFF.",
+    "name": "Santa Sled"
+  },
+  "5010053": {
+    "desc": "Create the perfect excuse for a holiday kiss! Designate a HotKey to turn the effect ON/OFF.",
+    "name": "Mistletoe"
+  },
+  "5010054": {
+    "desc": "A special effect that displays Santa and his two trusty reindeers breaking down to the beat, hovering around the owner's head. Designate a HotKey to turn the effect on/off.",
+    "name": "Jingling Santa"
+  },
+  "5010055": {
+    "desc": "A special effect that features a UFO and a number of colorful aliens accompanying the owner of the item. Designate a HotKey to turn the effect on/off.",
+    "name": "UFO"
+  },
+  "5010056": {
+    "desc": "A special effect that features a trail of flowers and grass left behind by the owner of the item. Designate a HotKey to turn the effect on/off.",
+    "name": "Garden Trail"
+  },
+  "5010057": {
+    "desc": "A special effect that shows a cute fairy sprinkling flowers. On the Key Config, configure this on a button of your choice to turn the effect on/off.",
+    "name": "Flower Fairy"
+  },
+  "5010059": {
+    "desc": "Blaze a trail of dark energy--no one can escape your wrath with this effect!",
+    "name": "Trail of Darkness Effect"
+  },
+  "5010060": {
+    "desc": "Tis' the season to be jolly fa la la la la la la la! Sing to everyone in Maple with the carolers!",
+    "name": "Caroler Effect"
+  },
+  "5010061": {
+    "desc": "Show your Valentine's Day spirit with the Ace of Hearts!",
+    "name": "Ace of Hearts"
+  },
+  "5010064": {
+    "name": "Rock Band Effect"
+  },
+  "5010065": {
+    "name": "Scoreboard Effect"
+  },
+  "5010066": {
+    "name": "Disco Effect"
+  },
+  "5010068": {
+    "desc": "Who knows? Perhaps you'll flutter away with these wings on your back!",
+    "name": "Return of Angel Wing"
+  },
+  "5010069": {
+    "desc": "Who knows? Perhaps you'll flutter away with these wings on your back!",
+    "name": "Seraphim's Dark Wings"
+  },
+  "5010070": {
+    "desc": "A pair of wings that resembles the wings of a forest fairy.",
+    "name": "Sprite Wings"
+  },
+  "5010073": {
+    "desc": "Well, lookie here. Someone’s certainly become popular with the guys. Turn this effect on and off by assigning it to a shortcut key from the keyboard settings menu.\r\n",
+    "name": "Miss Popular"
+  },
+  "5010074": {
+    "desc": "Well, lookie here. Someone’s certainly become popular with the girls. Turn this effect on and off by assigning it to a shortcut key from the keyboard settings menu.\r\n",
+    "name": "Mr. Popular"
+  },
+  "5010999": {
+    "desc": "Not sold in Cash Shop. An effect shown while changing into a monster.",
+    "name": "Changing to a Monster"
+  },
+  "5021000": {
+    "desc": "A cool blue water balloon. Thrown with a #cthrowing star# to have the water balloon effect. Item cannot be removed.",
+    "name": "Water Balloon"
+  },
+  "5021001": {
+    "desc": "A nicely-folded paper plane. Thrown with a #cthrowing star# to have the paper plane effect. Item cannot be removed.",
+    "name": "Paper Plane"
+  },
+  "5021002": {
+    "desc": "A ball of concentrated energy. Thrown with a #cthrowing star# to have the energy effect. Item cannot be removed.",
+    "name": "Energy Ball"
+  },
+  "5021003": {
+    "desc": "A red starfish that can be seen at the beach. Can be equipped with a #cthrowing star# to have the starfish effect.\\n\\nThis item cannot be removed.",
+    "name": "Super Star"
+  },
+  "5021004": {
+    "desc": "A baseball with small wings attached to it. Can be equipped with a #cthrowing star# to have the winged baseball effect.\\n\\nThis item cannot be destroyed.",
+    "name": "Winged Baseball"
+  },
+  "5021005": {
+    "desc": "The official football of the MapleBowl. When held in your inventory, #cthrowing stars# will appear as a thrown football.",
+    "name": "Football"
+  },
+  "5021006": {
+    "desc": "A chalkboard eraser commonly found in classrooms. Thrown with a #cthrowing star# to have the eraser effect. Item cannot be removed.",
+    "name": "Chalkboard Eraser"
+  },
+  "5021007": {
+    "desc": "A small pink heart of love that explodes on contact. Thrown with a #cthrowing star# to have the heart effect. \\n\\nItem cannot be removed.",
+    "name": "Shooting Hearts"
+  },
+  "5021008": {
+    "desc": "An adorable brown teddy bear that explodes on contact. Thrown with a #cthrowing star# to have the teddy bear effect. \\n\\nItem cannot be removed.",
+    "name": "Throwing Teddy"
+  },
+  "5021009": {
+    "desc": "Never in Pepe's wildest dreams did it think it'd be chucked down the field in place of the throwing star. Thrown with a throwing star to have the Pepe effect. Item cannot be removed.",
+    "name": "Throwing Pepe"
+  },
+  "5021010": {
+    "desc": "A throwing star make to look like Mr. Puff, with its huffy puffy cheeks resembling that of a tasty-looking steamed bun. Thrown with a #cthrowing star# to have the Mr. Puff effect.\\n\\nItem cannot be removed.",
+    "name": "Mr. Puff Throwing Star"
+  },
+  "5021011": {
+    "desc": "An enchanted skull straight from the Headless Horseman. Thrown with a throwing star to have the skull striker effect. Item cannot be removed.",
+    "name": "Skull Striker"
+  },
+  "5021012": {
+    "desc": "Harmless pie? Think again. Thrown with a throwing star to have the pumpkin bomb effect.",
+    "name": "Pumpkin Bomb"
+  },
+  "5021013": {
+    "desc": "An explosive bomb used by the legendary pirates. Thrown with a #cthrowing star# to have the explosive bomb effect.\\n\\nItem cannot be removed.",
+    "name": "Pirate Bomb"
+  },
+  "5021014": {
+    "desc": "That nasty poop can be detected from afar. Thrown with a #cthrowing star# to have the nasty poop effect.\\n\\nItem cannot be removed.",
+    "name": "Poo Stars"
+  },
+  "5021015": {
+    "desc": "A white egg thrown in place of the throwing star, and that explodes on contact. Thrown with a #cthrowing star# to have the Chick effect. \\n\\nItem cannot be removed.",
+    "name": "Egg Throwing Star"
+  },
+  "5021016": {
+    "desc": "A mischievous ball that has gained sentience, and now lives to be thrown for massive damage. Tremendous striking power! Equips over #cThrowing Stars#!",
+    "name": "Devilball"
+  },
+  "5021017": {
+    "desc": "An explosive throwing star used by the Dragon. Thrown with a #cthrowing star# to have the explosive bomb effect.\\n\\nItem cannot be removed.",
+    "name": "Dragon Disc"
+  },
+  "5021019": {
+    "desc": "Beautiful shooting star. Mask over #cThrowing Star#.\\n\\nItem cannot be removed.",
+    "name": "Shooting Star Medal"
+  },
+  "5021020": {
+    "desc": "Explosive throwing stars from New Leaf City. They're the Bomb!  This item equips over #cThrowing Stars#!",
+    "name": "Throwing Boomers"
+  },
+  "5021021": {
+    "desc": "A cute and cuddly sheep. Don't let it fool you--it's lethal. This item equips over #cThrowing Stars#!",
+    "name": "Exploding Sheep"
+  },
+  "5021022": {
+    "desc": "Thrown with a #cthrowing star#.Item cannot be removed.",
+    "name": "Plate Throwing Star"
+  },
+  "5021023": {
+    "desc": "Stirgeman's favorite throwing star! Guaranteed to get you out of a tight spot!",
+    "name": "Stirge Throwing Star"
+  },
+  "5021024": {
+    "desc": "Can be equipped with a #cthrowing star#.",
+    "name": "Throwing Eggs Weapon"
+  },
+  "5021025": {
+    "desc": "Equips over #cThrowing Stars#!",
+    "name": "Charm of the Undead"
+  },
+  "5021026": {
+    "desc": "A gift box that can be freely thrown around. Using the #cThrowing Star# will create an orbital effect.\\n\\nThis item cannot be deleted.",
+    "name": "Gift Box Throwing Stars"
+  },
+  "5030000": {
+    "desc": "Set up this special store on the Free Market, and this Elf, working as the Hired Merchant, will sell the items for the owner, even if the owner does not log on to the game.",
+    "name": "Mushroom House Elf"
+  },
+  "5030001": {
+    "desc": "Set up this special store on the Free Market, and this Elf, working as the Hired Merchant, will sell the items for the owner, even if the owner does not log on to the game.",
+    "name": "Mushroom House Elf"
+  },
+  "5030002": {
+    "desc": "Set up this special store on the Free Market, and this Teddy Bear, working as the Hired Merchant, will sell the items for the owner, even if the owner does not log on to the game.",
+    "name": "Cashier: Teddy Bear Clerk"
+  },
+  "5030003": {
+    "desc": "Set up this special store on the Free Market, and this Teddy Bear, working as the Hired Merchant, will sell the items for the owner, even if the owner does not log on to the game.",
+    "name": "Cashier: Teddy Bear Clerk"
+  },
+  "5030004": {
+    "desc": "Set up this special store on the Free Market, and this Robot, working as the Hired Merchant, will sell the items for the owner, even if the owner does not log on to the game.",
+    "name": "The Robot Stand"
+  },
+  "5030005": {
+    "desc": "Set up this special store on the Free Market, and this Robot, working as the Hired Merchant, will sell the items for the owner, even if the owner does not log on to the game.",
+    "name": "The Robot Stand"
+  },
+  "5030006": {
+    "desc": "Set up this special store on the Free Market, and this Elf, working as the Hired Merchant, will sell the items for the owner, even if the owner does not log on to the game.",
+    "name": "Mushroom House Elf"
+  },
+  "5030008": {
+    "desc": "Set up this special store on the Free Market, and this Coffeehouse, doubling as the Hired Merchant, will be a place that sells the items for the owner, even if the owner does not log on to the game. #cIf an item is sold, the owner will be notified through the chat window.#",
+    "name": "Homely Coffeehouse"
+  },
+  "5030009": {
+    "desc": "Set up this special store on the Free Market, and this Coffeehouse, doubling as the Hired Merchant, will be a place that sells the items for the owner, even if the owner does not log on to the game. #cIf an item is sold, the owner will be notified through the chat window.#",
+    "name": "Homely Coffeehouse"
+  },
+  "5030010": {
+    "desc": "Set up this special store on the Free Market, and this Granny, working as the Hired Merchant, will sell the items for the owner, even if the owner does not log on to the game.",
+    "name": "Granny's Food Stand"
+  },
+  "5030011": {
+    "desc": "Set up this special store on the Free Market, and this Granny, working as the Hired Merchant, will sell the items for the owner, even if the owner does not log on to the game.",
+    "name": "Granny's Food Stand"
+  },
+  "5030012": {
+    "desc": "Set up this special store on the Free Market, and this Granny, working as the Hired Merchant, will sell the items for the owner, even if the owner does not log on to the game.",
+    "name": "Tiki Torch Store"
+  },
+  "5040000": {
+    "desc": "Remembers 5 maps of your choice. This rock will enable you to #cteleport to the map you remembered#. It can even allow you to #cmove to the map where a certain character is#, provided that the person is in the same channel at the same world. This item cannot be used to teleport in between continents.",
+    "name": "The Teleport Rock"
+  },
+  "5040001": {
+    "desc": "By drinking sweet refreshing #cCoca-Cola#, it ables you to #cteleport to one of the remembered maps#. You can also #cteleport to the map where specific character is located# in the same channel.  Unable the teleport to the maps where teleport is limited.",
+    "name": "Teleport Coke"
+  },
+  "5041000": {
+    "desc": "This Teleport Rock enables one to #cteleport between continents#. It also enables the user to teleport to a specific character from the same channel. Up to #c10# maps, excluding the maps that cannot be reached through teleport, can be registered for this.",
+    "name": "VIP Teleport Rock"
+  },
+  "5050000": {
+    "desc": "This is the #cscroll that allows you to reset 1 AP from the ability stat#. Choose one AP from HP, MP, STR, DEX, INT, or LUK , and allocate it to the desired category. The lowest an AP level can reach on any category is 4.",
+    "name": "AP Reset"
+  },
+  "5050001": {
+    "desc": "This scroll allows you to #creset 1 SP from a 1st-job skill#. The SP that's been reset may NOT be applied to 2nd or 3rd job skills.",
+    "name": "SP Reset (1st job)"
+  },
+  "5050002": {
+    "desc": "This scroll allows you to #creset 1 SP from a 2nd-level skill#. The 1st job SP raised AFTER the 2nd job adv. can also be reset and applied to a 2nd job skill. The SP that's been reset may NOT be applied to 1st or 3rd job skills.",
+    "name": "SP Reset (2nd job)"
+  },
+  "5050003": {
+    "desc": "This scroll allows you to #creset 1 SP from a 3rd-level skill#. The 1st & 2nd job SP raised AFTER the 3rd job adv. can also be reset and applied to a 3rd job skill. The SP that's been reset may NOT be applied to 1st or 2nd job skills.",
+    "name": "SP Reset (3rd job)"
+  },
+  "5050004": {
+    "desc": "This scroll allows you to #creset 1 SP from a 4th-level skill#. The 1st, 2nd, and 3rd job SP raised AFTER the 4th job adv. can also be reset and applied to a 3rd job skill. The SP that's been reset may NOT be applied to 1st, 2nd or 3rd job skills.",
+    "name": "SP Reset (4th job)"
+  },
+  "5060000": {
+    "desc": "This will enable the owner of the weapon to engrave his/her name on an equipment item once. Click on the item, and drag the item #con top of the equipment of choice# to engrave your character name on it. ",
+    "name": "Item Tag"
+  },
+  "5060001": {
+    "desc": "A lock that seals away any equipment items and throwing stars, excluding the quest items. By sealing the item away, the item will be #cdisabled from selling, trading, or throwing away#. Double-click on the lock to seal an item.",
+    "name": "Item Guard"
+  },
+  "5060002": {
+    "desc": "An equipment needed to open the #ceggs from pigme#.  Pigme eggs canve incubated by double clicking the incubator.",
+    "name": "Incubator"
+  },
+  "5061000": {
+    "desc": "A guard for sealing an equip item and/or throwing star to prevent #cselling, trading or dropping# of the item. Double-click on the guard, then seal the item into the window that appears. #cThis Item Guard is active for 7 days, after which the item will be automatically released from the seal.#",
+    "name": "Item Guard : 7 Days"
+  },
+  "5061001": {
+    "desc": "A guard for sealing an equip item and/or throwing star to prevent #cselling, trading or dropping# of the item. Double-click on the guard, then seal the item into the window that appears. #cThis Item Guard is active for 30 days, after which the item will be automatically released from the seal.# ",
+    "name": "Item Guard : 30 Days"
+  },
+  "5061002": {
+    "desc": "A guard for sealing an equip item and/or throwing star to prevent #cselling, trading or dropping# of the item. Double-click on the guard, then seal the item into the window that appears. #cThis Item Guard is active for 90 days, after which the item will be automatically released from the seal.# ",
+    "name": "Item Guard : 90 days"
+  },
+  "5061003": {
+    "desc": "A guard for sealing an equip item and/or throwing star to prevent #cselling, trading or dropping# of the item. Double-click on the guard, then seal the item into the window that appears. #cThis Item Guard is active for 365 days, after which the item will be automatically released from the seal.# ",
+    "name": "Item Guard : 365 Days"
+  },
+  "5070000": {
+    "desc": "Shout to everyone in the map your character is on with this megaphone.",
+    "name": "Cheap Megaphone"
+  },
+  "5071000": {
+    "desc": "Shout to everyone in the map your character is on with this megaphone. Only available for characters that are over Level 10.",
+    "name": "Megaphone"
+  },
+  "5072000": {
+    "desc": "Shout to everyone in the world your character is on with this megaphone. Only available for characters that are over Level 10. ",
+    "name": "Super Megaphone"
+  },
+  "5073000": {
+    "desc": "Shout to everyone in the world your character is on with this megaphone. (Heart accents)",
+    "name": "Heart Megaphone"
+  },
+  "5074000": {
+    "desc": "Shout to everyone in the world your character is on with this megaphone. (Skull accents)",
+    "name": "Skull Megaphone"
+  },
+  "5075000": {
+    "desc": "Show your avatar on Maple TV with messages.\\nIn case of dedication messages, character you have designated will also appear on the screen throughout the entire world.  The message will last appx. 15 seconds.",
+    "name": "MapleTV Messenger"
+  },
+  "5075001": {
+    "desc": "Beautifully designed TV with star effects. \\nThis allows you to type in longer messages with longer period of time, 30 seconds.  Only announcement type of message is available with this item.  The message will last for 30 seconds.",
+    "name": "MapleTV Star Messenger"
+  },
+  "5075002": {
+    "desc": "Beautifully designed TV with Heart effect.\\nPropose in style on the TV.  This item only allows dedication type of message where designated user also appears on the TV.  The message will last for 1 minute.",
+    "name": "MapleTV Heart Messenger"
+  },
+  "5075003": {
+    "desc": "Show your message on the chatting window as well as Maple TV at the same time.",
+    "name": "Megassenger"
+  },
+  "5075004": {
+    "desc": "Show your message on the chatting window as well as Maple TV at the same time.  This comes with star effect on the Maple TV.",
+    "name": "Star Megassenger"
+  },
+  "5075005": {
+    "desc": "Show your message on the chatting window as well as Maple TV at the same time.  This comes with heart effect on the Maple TV.",
+    "name": "Heart Megassenger"
+  },
+  "5076000": {
+    "desc": "Use this megaphone to broadcast to everyone your World about an item that may be for sale.",
+    "name": "Item Megaphone"
+  },
+  "5077000": {
+    "desc": "This allows three lines of text to be heard throughout the world your character is currently in.",
+    "name": "Triple Megaphone"
+  },
+  "5080000": {
+    "desc": "A kite that you can float around the skies at will. Enter your own message.",
+    "msg": "is wishing you a happy new year.",
+    "msgIn": "Enter your new year's wishes",
+    "name": "Korean Kite"
+  },
+  "5080001": {
+    "desc": "A balloon full of love you can float around.  Enter your own message.",
+    "msg": "'s message of love.",
+    "msgIn": "Write out your love.(You can write on every line.)",
+    "name": "Heart Balloon"
+  },
+  "5080002": {
+    "desc": "A graduation banner you can float around. Enter your own message.",
+    "msg": "wishing you a happy graduation.",
+    "msgIn": "Enter a congratulatory message.(You can write on every line.)",
+    "name": "Graduation Banner"
+  },
+  "5080003": {
+    "desc": "A banner celebrating the admission to a school. Enter your own message.",
+    "msg": "celebrating your admission to a school.",
+    "msgIn": "Enter a congratulatory message.(You can write on every line.)",
+    "name": "Admission Banner"
+  },
+  "5090000": {
+    "desc": "Double-click to send a note to an offline character. The receiver will be able to see the note at the next login.",
+    "name": "Note"
+  },
+  "5100000": {
+    "desc": "Play a congratulatory song on the map you're in.",
+    "msg": "%s's song for you.",
+    "name": "Congratulatory Song",
+    "title": "Congrats"
+  },
+  "5110000": {
+    "desc": "A sweet chocolate in a heart-shaped box. When in possession, a heart will appear above the head of the person that gave the present.",
+    "name": "Heart-Shaped Chocolate"
+  },
+  "5120000": {
+    "desc": "Sprinkles snow on the map where your character is for 30 seconds. Enter a message of your choice.",
+    "msg": "%s's snow : %s",
+    "name": "Snowy Snow"
+  },
+  "5120001": {
+    "desc": "Sprinkles flower on the map where your character is for 30 seconds. Enter a message of your choice.",
+    "msg": "%s's flower : %s",
+    "name": "Sprinkled Flowers"
+  },
+  "5120002": {
+    "desc": "Sprinkles bubbles on the map where your character is for 30 seconds. Enter a message of your choice.",
+    "msg": "%s's bubbles : %s",
+    "name": "Soap Bubbles"
+  },
+  "5120003": {
+    "desc": "Sprinkles icy snow on the map where your character is for 30 seconds. Enter a message of your choice.",
+    "msg": "%s's icy snow : %s",
+    "name": "Snowflakes"
+  },
+  "5120004": {
+    "desc": "Sprinkles presents on the map where your character is for 30 seconds. Enter a message of your choice.",
+    "msg": "%s's presents : %s",
+    "name": "Sprinkled Presents"
+  },
+  "5120005": {
+    "desc": "Sprinkles chocolate on the map where your character is for 30 seconds. Enter a message of your choice.",
+    "msg": "%s's chocolate : %s",
+    "name": "Sprinkled Chocolate"
+  },
+  "5120006": {
+    "desc": "Sprinkle flower petals on the map where your character is for 30 seconds. Enter a message of your choice.",
+    "msg": "%s's petals : %s",
+    "name": "Sprinkled Flower Petals"
+  },
+  "5120007": {
+    "desc": "Sprinkles candies on the map where your character is for 30 seconds. Enter a message of your choice.",
+    "msg": "%s's candies : %s",
+    "name": "Sprinkled Candy"
+  },
+  "5120008": {
+    "desc": "Sprinkles maple leaves on the map where your character is for 30 sec. Enter a message of your choice.",
+    "msg": "%s's maple leaves : %s",
+    "name": "Sprinkled Maple Leaves"
+  },
+  "5120009": {
+    "desc": "Ignites fireworks on the map where your character is for 30 sec. Enter a message of your choice.",
+    "msg": "%s's fireworks: %s",
+    "name": "Fireworks"
+  },
+  "5120010": {
+    "desc": "Sprinkles #cCoca-Cola# on the map where your character is for 30 seconds.  Enter a message of your choice.",
+    "msg": "%s 's Coke : %s",
+    "name": "Sprinkled Coke"
+  },
+  "5120011": {
+    "desc": "Ghosts on the map where your character is for 30 sec. Enter a message of your choice.",
+    "msg": "%s's spirit haunt: %s",
+    "name": "Spirit Haunt"
+  },
+  "5120012": {
+    "desc": "Sprinkles holiday socks on the map where your character is for 30 seconds. Enter a message of your choice.",
+    "msg": "%s's Holiday Sock : %s",
+    "name": "Holiday Sock"
+  },
+  "5120014": {
+    "desc": "Sprinkles Christmas Socks on the map where your character is for 30 seconds. Enter a message of your choice.",
+    "msg": "%s",
+    "name": "Christmas Socks"
+  },
+  "5120015": {
+    "desc": "Greet the Lunar New Year with the fireworks that fills up the screen.",
+    "msg": "A Lunar New Year greeting from %s: %s",
+    "name": "Chinese Lantern Firecrackers"
+  },
+  "5120016": {
+    "desc": "호랑이",
+    "msg": "%s",
+    "name": "월묘의떡 퀘스트용"
+  },
+  "5120017": {
+    "desc": "라케리스",
+    "msg": "%s",
+    "name": "첫번째동행 퀘스트용"
+  },
+  "5120018": {
+    "desc": "표지판",
+    "msg": "%s",
+    "name": "차원의균열 퀘스트용"
+  },
+  "5120019": {
+    "desc": "이크",
+    "msg": "%s",
+    "name": "여신의탑 퀘스트용"
+  },
+  "5120020": {
+    "desc": "구옹",
+    "msg": "%s",
+    "name": "해적데비존 퀘스트용"
+  },
+  "5120021": {
+    "desc": "로미오",
+    "msg": "%s",
+    "name": "로미오 퀘스트용"
+  },
+  "5120022": {
+    "desc": "줄리엣",
+    "msg": "%s",
+    "name": "줄리엣 퀘스트용"
+  },
+  "5120023": {
+    "desc": "요정",
+    "msg": "%s",
+    "name": "엘린숲 퀘스트용"
+  },
+  "5120024": {
+    "desc": "소공",
+    "msg": "%s",
+    "name": "무릉도원 퀘스트용"
+  },
+  "5120025": {
+    "desc": "매크로 잡으세요.",
+    "msg": "%s",
+    "name": "매니저용"
+  },
+  "5120026": {
+    "desc": "골드리치",
+    "msg": "%s",
+    "name": "골드리치미로용"
+  },
+  "5120027": {
+    "desc": "Spaceship that is used when rescuing Gaga.",
+    "msg": "%s",
+    "name": "Spaceship"
+  },
+  "5120028": {
+    "desc": "It's raining cats and dogs!!! Enter a message of your choice.",
+    "msg": "%s 's message : %s",
+    "name": "Raining Cats & Dogs"
+  },
+  "5120030": {
+    "desc": "The Witch Tower hints of danger.",
+    "msg": "%s",
+    "name": "Witch Tower"
+  },
+  "5120034": {
+    "desc": "Meatballs will drop from the sky in the map your character is in for 30 seconds.",
+    "msg": "%s's Meetballs: %s",
+    "name": "Cloudy Meatballs"
+  },
+  "5121000": {
+    "desc": "You can enter the message of your choice. ",
+    "msg": "%s's Fighting Spirit : %s",
+    "name": "Fighting Spirit"
+  },
+  "5121001": {
+    "desc": "You can enter the message of your choice. ",
+    "msg": "%s's Chant : %s",
+    "name": "Korean Soccer Chant"
+  },
+  "5121002": {
+    "desc": "Increases Speed +20, Jump +10 for 10 minutes to everyone in the map. Enter a message of your choice.",
+    "msg": "%s's soccer fever : %s",
+    "name": "Soccer Fever"
+  },
+  "5121003": {
+    "desc": "You can enter the message of your choice. ",
+    "msg": "%s's chicken soup : %s",
+    "name": "Chicken Soup"
+  },
+  "5121004": {
+    "desc": "You can enter the message of your choice. ",
+    "msg": "%s's Song Pyun : %s",
+    "name": "Song Pyun"
+  },
+  "5121005": {
+    "desc": "You can enter the message of your choice. ",
+    "msg": "%s's Han Gwa : %s",
+    "name": "Han Gwa"
+  },
+  "5121006": {
+    "desc": "A special effect that displays a flock of witches flying around the area in their spanking-new flying brooms.",
+    "msg": "%s's Flock of Witches : %s",
+    "name": "Flock of Witches"
+  },
+  "5121007": {
+    "desc": "Buffs everyone in the map for 15 minutes with weapon attack +20 and magic attack +30. Enter a message of your choice.",
+    "msg": "%s's Tree Decor : %s",
+    "name": "Tree Decor"
+  },
+  "5121008": {
+    "desc": "You can enter the message of your choice. ",
+    "msg": "%s 's Congratulations : %s",
+    "name": "Happy Birthday"
+  },
+  "5121009": {
+    "desc": "Increases Weapon Attack +20, Magic Attack +30 for 15 minutes to everyone in the map. Enter a message of your choice.",
+    "msg": "%s 's message : %s",
+    "name": "Petite Rose"
+  },
+  "5121010": {
+    "desc": "Increases Weapon Attack +20, Magic Attack +30 for 15 minutes to everyone in the map. Enter a message of your choice.",
+    "msg": "%s 's message : %s",
+    "name": "Floral Fest"
+  },
+  "5121014": {
+    "desc": "You can enter the message of your choice. ",
+    "msg": "%s 's message : %s",
+    "name": "Snowing Fishbread"
+  },
+  "5121015": {
+    "desc": "When this weather effect is on, everyone in the map is buffed with weapon attack +20 and magic attack +30 for 15 minutes. Enter a message of your choice before spreading this holiday joy to everyone.",
+    "msg": "%s 's message : %s",
+    "name": "Snowy Snowman"
+  },
+  "5121016": {
+    "desc": "You can enter the message of your choice. ",
+    "msg": "%s 's Congratulations : %s",
+    "name": "Heart-shaped Chocolate Box"
+  },
+  "5121017": {
+    "desc": "You can enter the message of your choice. ",
+    "msg": "%s 's Water Splash : %s",
+    "name": "Water Splash"
+  },
+  "5121019": {
+    "desc": "Enter a message of your choice.",
+    "msg": "%s 's message : %s",
+    "name": "Winter Knit Fest"
+  },
+  "5121020": {
+    "desc": "맵에 속한 캐릭터의 물리공격력 +20, 마법공격력 +30 을 15분간 상승시켜준다. 원하는 메세지를 입력할 수 있다.",
+    "msg": "%s 님의 새해 복 많이: %s",
+    "name": "새해 복 많이"
+  },
+  "5122000": {
+    "desc": "You can enter the message of your choice. ",
+    "msg": "%s's Hearty Party Bear : %s",
+    "name": "Hearty Party Bear"
+  },
+  "5130000": {
+    "desc": "It does not let the user lose EXP points after death, as long as it's in possession. 30% of your HP and MP will be recovered when you are revived.",
+    "name": "Safety Charm"
+  },
+  "5140000": {
+    "desc": "Open a regular store. Can open anywhere of choice in the free market. Can sell up to 16 items at once.",
+    "name": "Regular Store Permit"
+  },
+  "5140001": {
+    "desc": "A special-edition coupon that opens a sky blue tree store. Can open anywhere of choice in the free market and sell up to 24 items at once. Available for a limited time only.",
+    "name": "Summer Store Permit(SE)"
+  },
+  "5140002": {
+    "desc": "Open a pink tree store. Can open anywhere of choice in the free market. Can sell up to 24 items at once.",
+    "name": "Pink VIP Store Permit"
+  },
+  "5140003": {
+    "desc": "A special-edition coupon that opens a orange tree store. Can open anywhere of choice in the free market and sell up to 24 items at once. Available for a limited time only.",
+    "name": "Fall Store Permit(SE)"
+  },
+  "5140004": {
+    "desc": "A special-edition coupon that opens a green tree store. Can open anywhere of choice in the free market and sell up to 24 items at once. Available for a limited time only.",
+    "name": "Spring Store Permit (SE)"
+  },
+  "5140006": {
+    "desc": "A special-edition permit that opens Christmas store. Can open anywhere of choice in the free market and sell up to 24 items at once. Available for a limited time only",
+    "name": "Holiday Store Permit"
+  },
+  "5150000": {
+    "desc": "Use it at #cHenesys Hair Salon# to change your hair style #crandomly#. (one-time use)",
+    "name": "Henesys Hair Style Coupon (REG)"
+  },
+  "5150001": {
+    "desc": "Use it at #cHenesys Hair Salon# to change your hair to a style of #cyour choice#. (one-time use)",
+    "name": "Henesys Hair Style Coupon (VIP)"
+  },
+  "5150002": {
+    "desc": "Use it at #cKerning City Hair Salon# to change your hair style #crandomly#. (one-time use)",
+    "name": "Kerning City Hair Style Coupon (REG)"
+  },
+  "5150003": {
+    "desc": "Use it at #cKerning City Hair Salon# to change your hair to a style of #cyour choice#. (one-time use)",
+    "name": "Kerning City Hair Style Coupon (VIP)"
+  },
+  "5150004": {
+    "desc": "Use it at #cOrbis Hair Salon# to change your hair style #crandomly#. (one-time use)",
+    "name": "Orbis Hair Style Coupon (REG)"
+  },
+  "5150005": {
+    "desc": "Use it at #cOrbis Hair Salon# to change your hair to a style of #cyour choice#. (one-time use)",
+    "name": "Orbis Hair Style Coupon (VIP)"
+  },
+  "5150006": {
+    "desc": "Use it at #cLudibrium Hair Salon# to change your hair style #crandomly#. (one-time use)",
+    "name": "Ludibrium Hair Style Coupon (REG)"
+  },
+  "5150007": {
+    "desc": "Use it at #cLudibrium Hair Salon# to change your hair to a style of #cyour choice#. (one-time use)",
+    "name": "Ludibrium Hair Style Coupon (VIP)"
+  },
+  "5150008": {
+    "desc": "Use it at #cShowa Hair Salon# to change your hair style #crandomly#. (one-time use)",
+    "name": "Showa Hair Style Coupon (REG)"
+  },
+  "5150009": {
+    "desc": "Use it at #cShowa Hair Salon# to change your hair to a style of #cyour choice#. (one-time use)",
+    "name": "Showa Hair Style Coupon (VIP)"
+  },
+  "5150010": {
+    "desc": "Use it at #cHenesys Hair Salon# to #crandomly# change your hair style with a chance to obtain a new experimental style. (one-time use)",
+    "name": "Henesys Hair Style Coupon (EXP)"
+  },
+  "5150011": {
+    "desc": "Use it at #cKerning City Hair Salon# to #crandomly# change your hair style with a chance to obtain a new experimental style. (one-time use)",
+    "name": "Kerning City Hair Style Coupon (EXP)"
+  },
+  "5150012": {
+    "desc": "Use it at #cLudibrium Hair Salon# to #crandomly# change your hair style, with a chance to obtain a new experimental style. (one-time use)",
+    "name": "Ludibrium Hair Style Coupon (EXP)"
+  },
+  "5150013": {
+    "desc": "Use it at #cOrbis Hair Salon# to #crandomly# change your hair style, with a chance to obtain a new experimental style. (one-time use)",
+    "name": "Orbis Hair Style Coupon (EXP)"
+  },
+  "5150019": {
+    "desc": "Use it at #cAmoria Hair Salon# to #crandomly# change your hair style with a chance to obtain a new experimental style. (one-time use)",
+    "name": "Amoria Hairstyle Coupon (EXP)"
+  },
+  "5150020": {
+    "desc": "Use it at #cAmoria Hair Salon# to change your hair to a style of #cyour choice#. (one-time use)",
+    "name": "Amoria Hairstyle Coupon (VIP)"
+  },
+  "5150021": {
+    "desc": "Use it at #cNight Market Hair Salon# to #crandomly# change your hair style with a chance to obtain a new experimental style. (one-time use)",
+    "name": "Night Market Hair Style Coupon (EXP)"
+  },
+  "5150022": {
+    "desc": "Use it at #cNight Market Hair Salon# to change your hair to a style of #cyour choice#. (one-time use)",
+    "name": "Night Market Hair Style Coupon (VIP)"
+  },
+  "5150024": {
+    "desc": "Use it at #cMu Lung Hair Salon# to #crandomly# change your hair style with a chance to obtain a new experimental style. (one-time use)",
+    "name": "Mu Lung Hair Style Coupon (EXP)"
+  },
+  "5150025": {
+    "desc": "Use it at #cMu Lung Hair Salon# to change your hair to a style of #cyour choice#. (one-time use)",
+    "name": "Mu Lung Hair Style Coupon (VIP)"
+  },
+  "5150026": {
+    "desc": "Use it on #cAriant Hair Salon# to change your hair style #crandomly#. (one-time use)",
+    "name": "Ariant Hair Style Coupon (REG)"
+  },
+  "5150027": {
+    "desc": "Use it on #cAriant Hair Salon# to change your hair style of #cyour choice#. (one-time use)",
+    "name": "Ariant Hair Style Coupon (VIP)"
+  },
+  "5150030": {
+    "desc": "Use it at #cNLC Hair Salon# to #crandomly# change your hair style with a chance to obtain a new experimental style. (one-time use)",
+    "name": "NLC Hairstyle Coupon (EXP)"
+  },
+  "5150031": {
+    "desc": "Use it at #cNLC Hair Salon# to change your hair to a style of #cyour choice#. (one-time use)",
+    "name": "NLC Hairstyle Coupon (VIP)"
+  },
+  "5150032": {
+    "desc": "Use it at #cCBD Hair Salon# to change your hair style #crandomly#. (one-time use)",
+    "name": "CBD Hair Style Coupon (REG)"
+  },
+  "5150033": {
+    "desc": "Use it at #cCBD Hair Salon# to change your hair style to a style of #cyour choice#. (one-time use)",
+    "name": "CBD Hair Style Coupon (VIP)"
+  },
+  "5150038": {
+    "desc": "Use this coupon to change the hairstyle to a #cMatinee Idol# hairstyle. (one-time use)",
+    "name": "Matinee Idol Hair Coupon"
+  },
+  "5150040": {
+    "desc": "If you take this to #cBig Headward of Henesys Hair Shop#, your hair style will change to #cone of several Royal options.#",
+    "name": "Royal Hair Coupon"
+  },
+  "5150044": {
+    "desc": "Take this coupon to the #cBig Headward of Henesys Hair Salon#, and you'll be able to #ctemporarily#k change your hair.",
+    "name": "Special Royal Hair Coupon"
+  },
+  "5151000": {
+    "desc": "Use it at #cHenesys Hair Salon# to change your hair color #crandomly#. (one-time use)",
+    "name": "Henesys Hair Color Coupon (REG)"
+  },
+  "5151001": {
+    "desc": "Use it on #cHenesys Hair Salon# to change your hair to a color of #cyour choice#. (one-time use)",
+    "name": "Henesys Hair Color Coupon (VIP)"
+  },
+  "5151002": {
+    "desc": "Use it at #cKerning City Hair Salon# to change your hair color #crandomly#. (one-time use)",
+    "name": "Kerning City Hair Color Coupon (REG)"
+  },
+  "5151003": {
+    "desc": "Use it at #cKerning City Hair Salon# to change your hair color of #cyour choice#. (one-time use)",
+    "name": "Kerning City Hair Color Coupon (VIP)"
+  },
+  "5151004": {
+    "desc": "Use it at #cOrbis Hair Salon# to change your hair color #crandomly#. (one-time use)",
+    "name": "Orbis Hair Color Coupon (REG)"
+  },
+  "5151005": {
+    "desc": "Use it on #cOrbis Hair Salon# to change your hair to a color of #cyour choice#. (one-time use)",
+    "name": "Orbis Hair Color Coupon (VIP)"
+  },
+  "5151006": {
+    "desc": "Use it at #cLudbrium Hair Salon# to change your hair color #crandomly#. (one-time use)",
+    "name": "Ludibrium Hair Color Coupon (REG)"
+  },
+  "5151007": {
+    "desc": "Use it on #cLudibrium Hair Salon# to change your hair to a color of #cyour choice#. (one-time use)",
+    "name": "Ludibrium Hair Color Coupon (VIP)"
+  },
+  "5151008": {
+    "desc": "Use it at #cShowa Hair Salon# to change your hair color #crandomly#. (one-time use)",
+    "name": "Showa Hair Color Coupon (REG)"
+  },
+  "5151009": {
+    "desc": "Use it at #cShowa Hair Salon# to change your hair to a color of #cyour choice#. (one-time use)",
+    "name": "Showa Hair Color Coupon (VIP)"
+  },
+  "5151014": {
+    "desc": "Use it at #cNight Market Hair Salon# to change your hair color #crandomly#. (one-time use)",
+    "name": "Night Market Hair Color Coupon (REG)"
+  },
+  "5151015": {
+    "desc": "Use it on #cNight Market Hair Salon# to change your hair to a color of #cyour choice#. (one-time use)",
+    "name": "Night Market Hair Color Coupon (VIP)"
+  },
+  "5151016": {
+    "desc": "Use it at #cAmoria Hair Salon# to change your hair color #crandomly#. (one-time use)",
+    "name": "Amoria Hair Color Coupon (REG) "
+  },
+  "5151017": {
+    "desc": "Use it on #cAmoria Hair Salon# to change your hair to a color of #cyour choice#. (one-time use)",
+    "name": "Amoria Hair Color Coupon (VIP)"
+  },
+  "5151019": {
+    "desc": "Use it at #cMu Lung Hair Salon# to change your hair color #crandomly#. (one-time use)",
+    "name": "Mu Lung Hair Color Coupon (REG)"
+  },
+  "5151020": {
+    "desc": "Use it at #cMu Lung Hair Salon# to change your hair to a color of #cyour choice#. (one-time use)",
+    "name": "Mu Lung Hair Color Coupon (VIP)"
+  },
+  "5151021": {
+    "desc": "Use it on #cAriant Hair Salon# to change your hair color #crandomly# (one-time use)",
+    "name": "Ariant Hair Color Coupon (REG)"
+  },
+  "5151022": {
+    "desc": "Use it on #cAriant Hair Salon# to change your hair to a a color of #cyour choice# (one-time use)",
+    "name": "Ariant Hair Color Coupon (VIP)"
+  },
+  "5151025": {
+    "desc": "Use it at #cNLC Hair Salon# to change your hair color #crandomly#. (one-time use)",
+    "name": "NLC Hair Color Coupon (REG)"
+  },
+  "5151026": {
+    "desc": "Use it at #cNLC Hair Salon# to change your hair to a color of #cyour choice#. (one-time use)",
+    "name": "NLC Hair Color Coupon (VIP)"
+  },
+  "5151027": {
+    "desc": "Use it at #cCBD Hair Salon# to change your hair color #crandomly#. (one-time use)",
+    "name": "CBD Hair Color Coupon (REG)"
+  },
+  "5151028": {
+    "desc": "Use it on #cCBD Hair Salon# to change your hair to a color of #cyour choice#. (one-time use)",
+    "name": "CBD Hair Color Coupon (VIP)"
+  },
+  "5152000": {
+    "desc": "Use it at #cHenesys Plastic Surgery# to change your face #crandomly#. (one-time use)",
+    "name": "Henesys Face Coupon (REG)"
+  },
+  "5152001": {
+    "desc": "Use it at #cHenesys Plastic Surgery# to change your face to a style of #cyour choice#. (one-time use)",
+    "name": "Henesys Face Coupon (VIP)"
+  },
+  "5152002": {
+    "desc": "Use it at #cKerning City Plastic Surgery# to change your face #crandomly#. (one-time use)",
+    "name": "Kerning City Face Coupon (REG)"
+  },
+  "5152003": {
+    "desc": "Use it at #cKerning City Plastic Surgery# to change your face to a style of your #cchoice#. (one-time use)",
+    "name": "Kerning City Face Coupon (VIP)"
+  },
+  "5152004": {
+    "desc": "Use it at #cOrbis Plastic Surgery# to change your face #crandomly#. (one-time use)",
+    "name": "Orbis Face Coupon (REG)"
+  },
+  "5152005": {
+    "desc": "Use it at #cOrbis Plastic Surgery# to change your face to a style of #cyour choice#. (one-time use)",
+    "name": "Orbis Face Coupon (VIP)"
+  },
+  "5152006": {
+    "desc": "Use it at #cLudibrium Plastic Surgery# to change your face #crandomly#. (one-time use)",
+    "name": "Ludibrium Face Coupon (REG)"
+  },
+  "5152007": {
+    "desc": "Use it at #cLudibrium Plastic Surgery# to change your face to a style of #cyour choice#. (one-time use)",
+    "name": "Ludibrium Face Coupon (VIP)"
+  },
+  "5152008": {
+    "desc": "Use it at #cShowa Plastic Surgery# to change your face #crandomly#. (one-time use)",
+    "name": "Showa Face Coupon (REG)"
+  },
+  "5152009": {
+    "desc": "Use it at #cShowa Plastic Surgery# to change your face to a style of #cyour choice#. (one-time use)",
+    "name": "Showa Face Coupon (VIP)"
+  },
+  "5152010": {
+    "desc": "Use it at #cHenesys Plastic Surgery# to change your eye color #crandomly#. (one-time use)",
+    "name": "Henesys Cosmetic Lens Coupon (REG)"
+  },
+  "5152011": {
+    "desc": "Use it at #cOrbis Plastic Surgery# to change your eye color #crandomly#. (one-time use)",
+    "name": "Orbis Cosmetic Lens Coupon (REG)"
+  },
+  "5152012": {
+    "desc": "Use it at #cLudibrium Plastic Surgery# to change your eye color #crandomly#. (one-time use)",
+    "name": "Ludibrium Cosmetic Lens Coupon (REG)"
+  },
+  "5152013": {
+    "desc": "Use it at #cHenesys Plastic Surgery# to change your eye to a color of #cyour choice#. (one-time use)",
+    "name": "Henesys Cosmetic Lens Coupon (VIP)"
+  },
+  "5152014": {
+    "desc": "Use it at #cOrbis Plastic Surgery# to change your eye to a color of #cyour choice#. (one-time use)",
+    "name": "Orbis Cosmetic Lens Coupon (VIP)"
+  },
+  "5152015": {
+    "desc": "Use it at #cLudibrium Plastic Surgery# to change your eye to a color of #cyour choice#. (one-time use)",
+    "name": "Ludibrium Cosmetic Lens Coupon (VIP)"
+  },
+  "5152021": {
+    "desc": "Use it at #cAmoria Plastic Surgery# to change your face #crandomly#. (one-time use)",
+    "name": "Amoria Face Coupon (REG)"
+  },
+  "5152022": {
+    "desc": "Use it at #cAmoria Plastic Surgery# to change your face to a style of #cyour choice#. (one-time use)",
+    "name": "Amoria Face Coupon (VIP)"
+  },
+  "5152023": {
+    "desc": "Use it at #cNight Market Plastic Surgery# to change your face #crandomly#. (one-time use)",
+    "name": "Night Market Face Coupon (REG)"
+  },
+  "5152024": {
+    "desc": "Use it at #cNight Market Plastic Surgery# to change your face to a style of #cyour choice#. (one-time use)",
+    "name": "Night Market Face Coupon (VIP)"
+  },
+  "5152025": {
+    "desc": "Use it at #cAmoria Plastic Surgery# to change your eye color #crandomly#. (one-time use)",
+    "name": "Amoria Cosmetic Lens Coupon (REG)"
+  },
+  "5152026": {
+    "desc": "Use it at #cAmoria Plastic Surgery# to change your eye to a color of #cyour choice#. (one-time use)",
+    "name": "Amoria Cosmetic Lens Coupon (VIP)"
+  },
+  "5152027": {
+    "desc": "Use it at #cMu Lung Plastic Surgery# to change your face #crandomly#. (one-time use)",
+    "name": "Mu Lung Plastic Surgery Coupon (REG)"
+  },
+  "5152028": {
+    "desc": "Use it at #cMu Lung Plastic Surgery# to change your face to a style of #cyour choice#. (one-time use)",
+    "name": "Mu Lung Plastic Surgery Coupon (VIP)"
+  },
+  "5152029": {
+    "desc": "Use it at #cAriant Plastic Surgery# to change your face #crandomly# (one-time use)",
+    "name": "Ariant Face Coupon (REG)"
+  },
+  "5152030": {
+    "desc": "Use it at #cAriant Plastic Surgery# to change your face to a style of #cyour choice# (one-time use)",
+    "name": "Ariant Face Coupon (VIP)"
+  },
+  "5152033": {
+    "desc": "Use it at #cNLC Plastic Surgery# to change your face #crandomly#. (one-time use)",
+    "name": "NLC Face Coupon (REG)"
+  },
+  "5152034": {
+    "desc": "Use it at #cNLC Plastic Surgery# to change your face to a style of #cyour choice#. (one-time use)",
+    "name": "NLC Face Coupon (VIP)"
+  },
+  "5152035": {
+    "desc": "Use it at #cNLC Plastic Surgery# to change your eye color #crandomly#. (one-time use)",
+    "name": "NLC Cosmetic Lens Coupon (REG)"
+  },
+  "5152036": {
+    "desc": "Use it at #cNLC Plastic Surgery# to change your eye to a color of #cyour choice#. (one-time use)",
+    "name": "NLC Cosmetic Lens Coupon (VIP)"
+  },
+  "5152037": {
+    "desc": "Use it at #cCBD Plastic Surgery# to change your face #crandomly#. (one-time use)",
+    "name": "CBD Face Coupon (REG)"
+  },
+  "5152038": {
+    "desc": "Use it at #cCBD Plastic Surgery# to change your face to a style of #cyour choice#. (one-time use)",
+    "name": "CBD Face Coupon (VIP)"
+  },
+  "5152039": {
+    "desc": "Use it at #cCBD Plastic Surgery# to change your eye color #crandomly#. (one-time use)",
+    "name": "CBD Cosmetic Lens Coupon (REG)"
+  },
+  "5152040": {
+    "desc": "Use it at #cCBD Plastic Surgery# to change your eye to a color of #cyour choice#. (one-time use)",
+    "name": "CBD Cosmetic Lens Coupon (VIP)"
+  },
+  "5152041": {
+    "desc": "Use it at #cMu Lung Plastic Surgery# to change your eye to a color of #cyour choice#. (one-time use)",
+    "name": "Mu Lung Cosmetic Lens Coupon (VIP)"
+  },
+  "5152042": {
+    "desc": "Use it at #cMu Lung Plastic Surgery# to change your eye color #crandomly#. (one-time use)",
+    "name": "Mu Lung Cosmetic Lens Coupon (REG)"
+  },
+  "5152045": {
+    "desc": "Use it at #cShowa Plastic Surgery# to change your eye to a color of #cyour choice#. (one-time use)",
+    "name": "Showa Cosmetic Lens Coupon (VIP)"
+  },
+  "5152046": {
+    "desc": "Use it at #cShowa Plastic Surgery# to change your eye color #crandomly#. (one-time use)",
+    "name": "Showa Cosmetic Lens Coupon (REG)"
+  },
+  "5152047": {
+    "desc": "Use it at #cAriant Plastic Surgery# to change your eye to a color of #cyour choice#. (one-time use)",
+    "name": "Ariant Cosmetic Lens Coupon (VIP)"
+  },
+  "5152048": {
+    "desc": "Use it at #cAriant Plastic Surgery# to change your eye color #crandomly#. (one-time use)",
+    "name": "Ariant Cosmetic Lens Coupon (REG)"
+  },
+  "5152100": {
+    "desc": "Use it once to change the color of your eyes to #cBlack#. (one-time use)",
+    "name": "One-Time Cosmetic Lens (Black)"
+  },
+  "5152101": {
+    "desc": "Use it once to change the color of your eyes to #cBlue#. (one-time use)",
+    "name": "One-Time Cosmetic Lens (Blue)"
+  },
+  "5152102": {
+    "desc": "Use it once to change the color of your eyes to #cRed#. (one-time use)",
+    "name": "One-Time Cosmetic Lens (Red)"
+  },
+  "5152103": {
+    "desc": "Use it once to change the color of your eyes to #cGreen#. (one-time use)",
+    "name": "One-Time Cosmetic Lens (Green)"
+  },
+  "5152104": {
+    "desc": "Use it once to change the color of your eyes to #cBrown#. (one-time use)",
+    "name": "One-Time Cosmetic Lens (Brown)"
+  },
+  "5152105": {
+    "desc": "Use it once to change the color of your eyes to #cEmerald#. (one-time use)",
+    "name": "One-Time Cosmetic Lens (Emerald)"
+  },
+  "5152106": {
+    "desc": "Use it once to change the color of your eyes to #cPurple#. (one-time use)",
+    "name": "One-Time Cosmetic Lens (Purple)"
+  },
+  "5152107": {
+    "desc": "Use it once to change the color of your eyes to #cAmethyst#. (one-time use)",
+    "name": "One-Time Cosmetic Lens (Amethyst)"
+  },
+  "5153000": {
+    "desc": "Use it at #cHenesys Skin-Care# to change your skin to a color of #cyour choice#. (one-time use)",
+    "name": "Henesys Skin Coupon"
+  },
+  "5153001": {
+    "desc": "Use it at #cOrbis Skin-Care# to change your skin to a color of #cyour choice#. (one-time use)",
+    "name": "Orbis Skin Coupon"
+  },
+  "5153002": {
+    "desc": "Use it at #cLudibrium Skin-Care# to change your skin to a color of #cyour choice#. (one-time use)",
+    "name": "Ludibrium Skin Coupon"
+  },
+  "5153005": {
+    "desc": "Use it at #cNight Market Skin-Care# to change your skin to a color of #cyour choice#. (one-time use)",
+    "name": "Night Market Skin Coupon"
+  },
+  "5153006": {
+    "desc": "Use it at #cMu Lung Skin-Care# to change your skin to a color of #cyour choice#. (one-time use)",
+    "name": "Mu Lung Skin Care Coupon"
+  },
+  "5153007": {
+    "desc": "Use it at #cAriant Skin Care Shop# to change your skin to a color of #cyour choice# (one-time use)",
+    "name": "Ariant Skin Care Coupon"
+  },
+  "5153009": {
+    "desc": "Use it at #cNLC Skin-Care# to change your skin to a color of #cyour choice#. (one-time use)",
+    "name": "NLC Skin Coupon"
+  },
+  "5153010": {
+    "desc": "Use it at #cCBD Skin-Care# to change your skin to a color of #cyour choice#. (one-time use)",
+    "name": "CBD Skin Coupon"
+  },
+  "5154000": {
+    "desc": "Use it at the #cOrbis Hair Salon# once for the disheveled look.",
+    "name": "Orbis Dirty Hair Coupon"
+  },
+  "5160000": {
+    "desc": "On the KeyConfig, configure this expression on a button of your choice. Press the button and watch your character display the throwing up motion.",
+    "name": "Queasy"
+  },
+  "5160001": {
+    "desc": "On the KeyConfig, configure this expression on a button of your choice. Press the button and watch your character display panicking face.",
+    "name": "Panicky"
+  },
+  "5160002": {
+    "desc": "On the KeyConfig, configure this expression on a button of your choice. Press the button and watch your character display the happy face.",
+    "name": "Sweetness"
+  },
+  "5160003": {
+    "desc": "On the KeyConfig, configure this expression on a button of your choice. Press the button and watch your character display kissing face.",
+    "name": "Smoochies"
+  },
+  "5160004": {
+    "desc": "On the KeyConfig, configure this expression on a button of your choice. Press the button and watch your character display lovely wink.",
+    "name": "Wink"
+  },
+  "5160005": {
+    "desc": "On the KeyConfig, configure it on a button of your choice, and the character will make the face of pain and sorrow.",
+    "name": "Ouch"
+  },
+  "5160006": {
+    "desc": "On the KeyConfig, configure this expression on a button of your choice. Press the button and watch your character display sparkling eyes.",
+    "name": "Sparkling Eyes"
+  },
+  "5160007": {
+    "desc": "On the KeyConfig, configure this expression on a button of your choice. Press the button and watch your character display the look of rage.",
+    "name": "Flaming"
+  },
+  "5160008": {
+    "desc": "On the KeyConfig, configure this expression on a button of your choice. Press the button and watch your character display beaming eyes.",
+    "name": "Ray"
+  },
+  "5160009": {
+    "desc": "On the KeyConfig, configure this expression on a button of your choice. Press the button and watch your character display the look of “awesome!!!”",
+    "name": "Goo Goo"
+  },
+  "5160010": {
+    "desc": "On the KeyConfig, configure this expression on a button of your choice. Press the button and watch your character display the look of being flustered.",
+    "name": "Whoa Whoa"
+  },
+  "5160011": {
+    "desc": "On the KeyConfig, configure this expression on a button of your choice. Press the button and watch your character display the thinking look.",
+    "name": "Constant Sigh"
+  },
+  "5160012": {
+    "desc": "On the KeyConfig, configure this expression on a button of your choice. Press the button and watch your character act like falling asleep.",
+    "name": "Drool"
+  },
+  "5160013": {
+    "desc": "On the KeyConfig, configure this expression on a button of your choice. Press the button and watch your character act very surprised.",
+    "name": "Dragon Breath"
+  },
+  "5160014": {
+    "desc": "On the KeyConfig, configure this expression on a button of your choice. Press the button and watch your character act very surprised.",
+    "name": "Bleh"
+  },
+  "5170000": {
+    "desc": "Use this item to name your pet. Call its name before making an order, and the pet responds much better to your command. \\n ex) Lucky, sit!",
+    "name": "Pet Name Tag"
+  },
+  "5180000": {
+    "desc": "A mysterious water gathered from the deepest valleys of Ellinia. Double click the Water of Life to reawaken your pet, which has turned into a doll.",
+    "name": "Water of Life"
+  },
+  "5190000": {
+    "desc": "Adds the item pick-up skill to a pet. \\n#cAvailable to pets that can only pick up Mesos.#",
+    "name": "Item Pick-up Skill"
+  },
+  "5190001": {
+    "desc": "Adds to automatic potion-feeding skill to the pet. \\n#cAvailable to all pets that do not have this option.#",
+    "name": "HP Charge Skill"
+  },
+  "5190002": {
+    "desc": "Use this scroll to expand the pet's moving range by 3 times. \\n#cOnly available to pets that have automatic pick-up skills, cannot be used on top of each other.#",
+    "name": "Expand Range Skill"
+  },
+  "5190003": {
+    "desc": "A skill that enables pets to pick up items and mesos within the area without the character having to move. \\n#cAvailable to pets with Mesos pick-up, item pick-up skills.#",
+    "name": "Automatic Pick-Up Skill"
+  },
+  "5190004": {
+    "desc": "Adds the skill that enables pets to pick up mesos and items that have been dropped for more than 30 seconds, thus rendering it as leftovers.\\n#cAvailable to pets that have Meso pick-up skills as well as item pick-up skills.#",
+    "name": "(+) Pick up Leftover Item & Meso Skills"
+  },
+  "5190005": {
+    "desc": "The skill that makes pet not picking up any selected item. \\n#s only pet mounted meso or item collecting function can use the skill.#",
+    "name": "Unpickable item skill"
+  },
+  "5190006": {
+    "desc": "The skill that automatically recharges one's MP provided you have set the option up in the system option. \\n#c The skill applies to all pet that does not have the skillt#.  ",
+    "name": "MP potion recharge skill"
+  },
+  "5191000": {
+    "desc": "Use this scroll to disable the pet from picking up items.",
+    "name": "(-) Delete Item Pick-Up"
+  },
+  "5191001": {
+    "desc": "Use this scroll to disable the pet from automatically feeding the character when the HP reaches critical stage.",
+    "name": "(-) Delete HP Charge"
+  },
+  "5191002": {
+    "desc": "Use this scroll to return the range of pet's movement back to normal.",
+    "name": "(-)Delete Expand Range"
+  },
+  "5191003": {
+    "desc": "Use this scroll to disable the pet from picking up items and mesos.",
+    "name": "(-) Delete Automatic Pick-Up"
+  },
+  "5191004": {
+    "desc": "Use this scroll to disable pets from picking up leftover items and mesos, the ones that have been dropped for more than 30 seconds.",
+    "name": "(-) Delete Pick up Leftover Item & Meso"
+  },
+  "5200000": {
+    "desc": "Contains quite a bit of mesos. User must be above level 15 to purchase sacks.",
+    "name": "Bronze Sack of Mesos"
+  },
+  "5200001": {
+    "desc": "Contains a lot of mesos. User must be above level 15 to purchase sacks.",
+    "name": "Silver Sack of Mesos"
+  },
+  "5200002": {
+    "desc": "Contains lots and lots of mesos. User must be above level 15 to purchase sacks.",
+    "name": "Gold Sack of Mesos"
+  },
+  "5201000": {
+    "desc": "200 balls in the box.",
+    "name": "Box of Metal Balls"
+  },
+  "5201001": {
+    "desc": "500 balls in the box.",
+    "name": "Box of Metal Balls"
+  },
+  "5210000": {
+    "desc": "When in possession, temporarily doubles the EXP gained.",
+    "name": "Pro-Adult Ticket"
+  },
+  "5210001": {
+    "desc": "When in possession during a specific time period, all EXP gained will be double.",
+    "name": "Pro-Adult Ticket"
+  },
+  "5210002": {
+    "desc": "When in possession during a specific time period, all EXP gained will be double.",
+    "name": "Pro-Adult Ticket"
+  },
+  "5210003": {
+    "desc": "When in possession during a specific time period, all EXP gained will be double.",
+    "name": "Pro-Adult Ticket"
+  },
+  "5210004": {
+    "desc": "When in possession during a specific time period, all EXP gained will be double.",
+    "name": "Pro-Adult Ticket"
+  },
+  "5210005": {
+    "desc": "When in possession during a specific time period, all EXP gained will be double.",
+    "name": "Pro-Adult Ticket"
+  },
+  "5211000": {
+    "desc": "This coupon allows users to earn #c2x Exp (double experience)#. The coupon will be activated immediately after purchase, and the double experience effect will be available from 6pm ~ 8pm (Pacific time) for #c7 days#.",
+    "name": "2x EXP Card"
+  },
+  "5211001": {
+    "desc": "Please refrain from breaking Maplestory client apart.",
+    "name": "From NEXON"
+  },
+  "5211002": {
+    "desc": "Hold on to this coupon to #cearn 2x EXP from all monsters#. This coupon is valid for 5 days after the initial possession, and please be aware that if the character has multiple coupons of the same kind, they will all kick in at once.",
+    "name": "Special Coupon - 5 days"
+  },
+  "5211003": {
+    "desc": "This coupon allows users to earn #c2x Exp (double experience)# for xx minutes after the purchaser activate the coupon.",
+    "name": "one-time 2x EXP coupon"
+  },
+  "5211004": {
+    "desc": "This coupon allows users to earn #c2x Exp (double experience)#. The coupon will be activated immediately after purchase, and the double experience effect will be available from 07 am to 11 am (Pacific time) #cweekdays#.",
+    "name": "2x EXP Card Type 1 - Weekdays"
+  },
+  "5211005": {
+    "desc": "This coupon allows users to earn #c2x Exp (double experience)#. The coupon will be activated immediately after purchase, and the double experience effect will be available from 10 am to 02 pm (Pacific time) #cweekdays#.",
+    "name": "2x EXP Card Type 2 - Weekdays"
+  },
+  "5211006": {
+    "desc": "This coupon allows users to earn #c2x Exp (double experience)#. The coupon will be activated immediately after purchase, and the double experience effect will be available from 01 pm to 05 pm (Pacific time) #cweekdays#.",
+    "name": "2x EXP Card Type 3 - Weekdays"
+  },
+  "5211007": {
+    "desc": "This coupon allows users to earn #c2x Exp (double experience)#. The coupon will be activated immediately after purchase, and the double experience effect will be available from 04 pm to 08 pm (Pacific time) #cweekdays#.",
+    "name": "2x EXP Card Type 4 - Weekdays"
+  },
+  "5211008": {
+    "desc": "This coupon allows users to earn #c2x Exp (double experience)#. The coupon will be activated immediately after purchase, and the double experience effect will be available from 07 pm to 11 pm (Pacific time) #cweekdays#.",
+    "name": "2x EXP Card Type 5 - Weekdays"
+  },
+  "5211009": {
+    "desc": "This coupon allows users to earn #c2x Exp (double experience)#. The coupon will be activated immediately after purchase, and the double experience effect will be available from 07 am to 11 am (Pacific time) #cweekends#.",
+    "name": "2x EXP Card Type 1 - Weekends"
+  },
+  "5211010": {
+    "desc": "This coupon allows users to earn #c2x Exp (double experience)#. The coupon will be activated immediately after purchase, and the double experience effect will be available from 10 am to 02 pm (Pacific time) #cweekends#.",
+    "name": "2x EXP Card Type 2 - Weekends"
+  },
+  "5211011": {
+    "desc": "This coupon allows users to earn #c2x Exp (double experience)#. The coupon will be activated immediately after purchase, and the double experience effect will be available from 01 pm to 05 pm (Pacific time) #cweekends#.",
+    "name": "2x EXP Card Type 3 - Weekends"
+  },
+  "5211012": {
+    "desc": "This coupon allows users to earn #c2x Exp (double experience)#. The coupon will be activated immediately after purchase, and the double experience effect will be available from 04 pm to 08 pm (Pacific time) #cweekends#.",
+    "name": "2x EXP Card Type 4 - Weekends"
+  },
+  "5211013": {
+    "desc": "This coupon allows users to earn #c2x Exp (double experience)#. The coupon will be activated immediately after purchase, and the double experience effect will be available from 07 pm to 11 pm (Pacific time) #cweekends#.",
+    "name": "2x EXP Card Type 5 - Weekends"
+  },
+  "5211014": {
+    "desc": "This coupon allows users to earn #c2x Exp (double experience)#. The coupon will be activated immediately after purchase, and the double experience effect will be available from 07 am to 11 am (Pacific time) #ceveryday#.",
+    "name": "2x EXP Card Type 1 - Everyday"
+  },
+  "5211015": {
+    "desc": "This coupon allows users to earn #c2x Exp (double experience)#. The coupon will be activated immediately after purchase, and the double experience effect will be available from 10 am to 02 pm (Pacific time) #ceveryday#.",
+    "name": "2x EXP Card Type 2 - Everyday"
+  },
+  "5211016": {
+    "desc": "This coupon allows users to earn #c2x Exp (double experience)#. The coupon will be activated immediately after purchase, and the double experience effect will be available from 01 pm to 05 pm (Pacific time) #ceveryday#.",
+    "name": "2x EXP Card Type 3 - Everyday"
+  },
+  "5211017": {
+    "desc": "This coupon allows users to earn #c2x Exp (double experience)#. The coupon will be activated immediately after purchase, and the double experience effect will be available from 04 pm to 08 pm (Pacific time) #ceveryday#.",
+    "name": "2x EXP Card Type 4 - Everyday"
+  },
+  "5211018": {
+    "desc": "This coupon allows users to earn #c2x Exp (double experience)#. The coupon will be activated immediately after purchase, and the double experience effect will be available from 07 pm to 11 pm (Pacific time) #ceveryday#.",
+    "name": "2x EXP Card Type 5 - Everyday"
+  },
+  "5211037": {
+    "desc": "This coupon allows users to earn #c2x Exp (double experience)#. The coupon will be activated immediately after purchase, and the double experience effect will be available from 12 am to 04 am (Pacific time) #cweekdays#.",
+    "name": "2x EXP Card Type 6 - Weekdays"
+  },
+  "5211038": {
+    "desc": "This coupon allows users to earn #c2x Exp (double experience)#. The coupon will be activated immediately after purchase, and the double experience effect will be available from 12 am to 04 am (Pacific time) #cweekends#.",
+    "name": "2x EXP Card Type 6 - Weekends"
+  },
+  "5211039": {
+    "desc": "This coupon allows users to earn #c2x Exp (double experience)#. The coupon will be activated immediately after purchase, and the double experience effect will be available from 12 am to 04 am (Pacific time) #ceveryday#.",
+    "name": "2x EXP Card Type 6 - Everyday"
+  },
+  "5211040": {
+    "desc": "This coupon allows users to earn #c2x Exp (double experience)#. The coupon will be activated immediately after purchase, and the double experience effect will be available from 03 am to 07 am (Pacific time) #cweekdays#.",
+    "name": "2x EXP Card Type 7 - Weekdays"
+  },
+  "5211041": {
+    "desc": "This coupon allows users to earn #c2x Exp (double experience)#. The coupon will be activated immediately after purchase, and the double experience effect will be available from 03 am to 07 am (Pacific time) #cweekends#.",
+    "name": "2x EXP Card Type 7 - Weekends"
+  },
+  "5211042": {
+    "desc": "This coupon allows users to earn #c2x Exp (double experience)#. The coupon will be activated immediately after purchase, and the double experience effect will be available from 03 am to 07 am (Pacific time) #ceveryday#.",
+    "name": "2x EXP Card Type 7 - Everyday"
+  },
+  "5211043": {
+    "desc": "This coupon allows users to earn #c2x Exp (double experience)#. The coupon will be activated immediately after purchase, and the double experience effect will be available from 06 am to 10 am (Pacific time) #cweekdays#.",
+    "name": "2x EXP Card Type 8 - Weekdays"
+  },
+  "5211044": {
+    "desc": "This coupon allows users to earn #c2x Exp (double experience)#. The coupon will be activated immediately after purchase, and the double experience effect will be available from 06 am to 10 am (Pacific time) #cweekends#.",
+    "name": "2x EXP Card Type 8 - Weekends"
+  },
+  "5211045": {
+    "desc": "This coupon allows users to earn #c2x Exp (double experience)#. The coupon will be activated immediately after purchase, and the double experience effect will be available from 06 am to 10 am (Pacific time) #ceveryday#.",
+    "name": "2x EXP Card Type 8 - Everyday"
+  },
+  "5211046": {
+    "desc": "This coupon allows users to earn #c2x Exp (double experience)#. The coupon will be activated immediately after purchase, and the double experience effect will be available for 24 hours upon purchase.",
+    "name": "1day 2x EXP Special Coupon "
+  },
+  "5211047": {
+    "desc": "This coupon allows users to earn #c2x Exp (double experience)#. The coupon will be activated immediately after purchase, and the double experience effect will be available for 3 hours upon purchase.",
+    "name": "2x EXP 3 Hours Special Coupon "
+  },
+  "5211048": {
+    "desc": "This coupon allows users to earn #c2x Exp (double experience)#. The coupon will be activated immediately after purchase, and the double experience effect will be available for 4 hour upon purchase.",
+    "name": "4 hour 2 x EXP special coupon"
+  },
+  "5211049": {
+    "desc": "This coupon allows users to earn #c2x Exp (double experience)#. The coupon will be activated immediately after receiving it, and the double experience effect will be available for 90 minutes.",
+    "name": "7-Eleven 2x EXP Card - 90 Minutes"
+  },
+  "5211052": {
+    "desc": "Fot Test",
+    "name": "3xExp"
+  },
+  "5211060": {
+    "desc": "This coupon allows users to earn #c3x Exp (triple experience)#. The coupon will be activated immediately after purchase, and the triple experience effect will be available for 2 hour upon purchase.",
+    "name": "2 hour 3 x EXP special coupon"
+  },
+  "5220000": {
+    "desc": "This ticket will enable you to use Gachapon and obtain various items.",
+    "name": "Gachapon Ticket"
+  },
+  "5220001": {
+    "desc": "A ticket needed to enter the event map.",
+    "name": "Event Ticket"
+  },
+  "5220010": {
+    "name": "Gachapon for slot machines"
+  },
+  "5220020": {
+    "name": "Gachapon for Net Cafe"
+  },
+  "5221000": {
+    "desc": "This ticket allows you to shop certain items  in the cash shop regardless of  price.",
+    "name": "Free Ticket"
+  },
+  "5221001": {
+    "desc": "A scroll that has the magic power to release the seal on the Miwok Artifact. The scroll is written in ancient tribal language, so you need NPC Toh Reliseeker's help if you wish to use it.",
+    "name": "Enchanted Scroll"
+  },
+  "5222000": {
+    "desc": "Get a random Cash Shop item when you open this box. Test your luck! After purchasing this item, open the box by double-clicking it in the Cash Inventory. Please keep in mind that you'll only be able to open the box in the Cash Inventory.",
+    "name": "Cash Shop Surprise"
+  },
+  "5230000": {
+    "desc": "#cThe Owl of Minerva#, which represents wisdom, can be used to search for items sold at the Free Market. #cDisappears right after showing the results of the item search#.",
+    "name": "The Owl of Minerva"
+  },
+  "5240000": {
+    "desc": "Tasty-looking monkey banana. Only edible for the pet Monkey. \\nRecovers entire Fullness. \\nIncrease 100 Closeness.",
+    "name": "Monkey Banana"
+  },
+  "5240001": {
+    "desc": "A fresh set of batteries. Only usable with the pet Robot.\\nRecovers entire Fullness. \\nIncrease 100 Closeness.",
+    "name": "Micro-Chips"
+  },
+  "5240002": {
+    "desc": "A neatly-packaged dog bone. Only edible for the pet Puppy and Husky.\\nRecovers entire Fullness. \\nIncrease 100 Closeness.",
+    "name": "Dog Bone"
+  },
+  "5240003": {
+    "desc": "Bamboo harvested from Ellinia forests. Only edible for the pet Panda.\\nRecovers entire Fullness. \\nIncrease 100 Closeness.",
+    "name": "Bamboo"
+  },
+  "5240004": {
+    "desc": "Just caught at Lith Harbor. Only edible for the pet Kitty, Black Pig and Penguin.\\nRecovers entire Fullness. \\nIncrease 100 Closeness.",
+    "name": "Porgy"
+  },
+  "5240005": {
+    "desc": "A freshly-plucked clover. Only edible for the pet Bunny, Black Pig, and Rudolph.\\nRecovers entire Fullness. \\nIncrease 100 Closeness.",
+    "name": "Clover"
+  },
+  "5240006": {
+    "desc": "Fresh red meat bought from the market. Only edible for the pet Dino, Mini Kargo, Black Pig, Orange Tiger and White Tiger.\\nRecovers entire Fullness. \\nIncrease 100 Closeness.",
+    "name": "Red Meat"
+  },
+  "5240007": {
+    "desc": "A frozen fruit that can only be eaten by #cMini Yeti and Black Pig#. Restores fullness and #cincreases closeness by 100#.",
+    "name": "Frozen Fruits"
+  },
+  "5240008": {
+    "desc": "Nicely packed Turkey Feed. Only eligible for the pet Turkey.",
+    "name": "Turkey Feed"
+  },
+  "5240009": {
+    "desc": "A large piece of Purple Heart Meat Pudding that can only be eaten by #cJr. Balrog#. Recovers \"fullness\" completely and #cincreases closeness by 100#.",
+    "name": "Purple Heart Pudding"
+  },
+  "5240010": {
+    "desc": "Delicious chocolate covered with Golden cover. Only edible for the pet Golden Pig.\\nRecovers entire Fullness. \\nIncrease 100 Closeness.",
+    "name": "Golden Coin Chocolate"
+  },
+  "5240011": {
+    "desc": "A pet food designated for Pet Sun Wu Kong. Fullness 100% & Closeness +100",
+    "name": "Cotton Candy"
+  },
+  "5240012": {
+    "desc": "A pet food designated for Dragons. Fullness 100% & Closeness +100",
+    "name": "Dragon Marble Candy"
+  },
+  "5240013": {
+    "desc": "A large piece of Caramel Beetle that can only be eaten by #cJr. Reaper#. Recovers \"fullness\" completely and #cincreases closeness by 100#.",
+    "name": "Caramel Beetle"
+  },
+  "5240015": {
+    "desc": "Crispy-Salty looking bag of Chips. Only edible for the pet Porcupine. \\nRecovers entire Fullness. \\nIncrease 100 Closeness.",
+    "name": "Garlic Salt Chips"
+  },
+  "5240016": {
+    "desc": "A caramel beetle plucked right from a myserious tree. Only the #cJr. Reaper# appreciates such delicacy. Restores Fullness and #cincreases 100 Closeness#.",
+    "name": "Caramel Beetle"
+  },
+  "5240017": {
+    "desc": "A tasty icicle that can only be consumed by #cSnowman and Crystal Rudolph#. Recovers entire Fullness and #cincreases 100 Closeness#.",
+    "name": "Snowflake"
+  },
+  "5240018": {
+    "desc": "A nutritious food only available for #cKino#. Restores Fullness and #cincreases 100 Closeness#..",
+    "name": "Sprout"
+  },
+  "5240019": {
+    "desc": "A nutritious blend of formulas only for #cHedgehogs#. Restores Fullness and #cincreases 100 Closeness#..",
+    "name": "Hedgehog Food\t\t\t\t\t\t\t\t\t\t\tIs this supposed to be for the Porcupine?"
+  },
+  "5240020": {
+    "desc": "Only eligible for the pet Skunk. \\nIncrease 100 Closeness.",
+    "name": "Caviar"
+  },
+  "5240021": {
+    "desc": "Greasy oil for the Robo",
+    "name": "Robo Oil"
+  },
+  "5240023": {
+    "desc": "A slice of freshly baked bread that can only be eaten by #cWhite Duck#. Recovers \"fullness\" completely and #cincreases closeness by 100#.",
+    "name": "Bread"
+  },
+  "5240024": {
+    "desc": "Pink Bean's favorite Drumstick. Only available for Pink Bean.",
+    "name": "Pinky DrumStick"
+  },
+  "5240027": {
+    "desc": "A drumstick that can be consumed only by #cBaby Tiger#. It recovers hunger and #cincreases Closeness by 100.#",
+    "name": "Golden Drumstick"
+  },
+  "5251000": {
+    "desc": "Ticket to have a wedding at the Cathedral w/ invitations",
+    "name": "Wedding Ticket (Cathedral)"
+  },
+  "5251001": {
+    "desc": "Ticket to have a wedding at the Vegas Chapel w/ invitations",
+    "name": "Wedding Ticket (Chapel)"
+  },
+  "5251002": {
+    "desc": "Chapel wedding ticket that includes invitations and a special wedding event.",
+    "name": "Premium Wedding Ticket (Chapel)"
+  },
+  "5251003": {
+    "desc": "Cathedral wedding ticket that includes invitations and a special wedding event. ",
+    "name": "Premium Wedding Ticket (Cathedral)"
+  },
+  "5251004": {
+    "desc": "A ticket that allows for a simple wedding. #cThe bride and groom may each invite 5 well-wishers and receive a 1 Carat Wedding Ring.#",
+    "name": "Simple Wedding Ticket"
+  },
+  "5251005": {
+    "desc": "A ticket that allows for a sweet wedding. #cThe bride and groom may each invite 15 well-wishers, take a Wedding Photo, and receive a 2 Carat Wedding Ring.#",
+    "name": "Sweet Wedding Ticket"
+  },
+  "5251006": {
+    "desc": "A ticket that allows for a lavish, premier wedding. #cThe bride and groom may each invite 30 well-wishers, take a Wedding Photo, and receive a 3 Carat Wedding Ring.#",
+    "name": "Premium Wedding Ticket"
+  },
+  "5251100": {
+    "desc": "Ticket that lets you make additional invitation cards.(one-time use)",
+    "name": "Wedding Invitation Ticket"
+  },
+  "5252000": {
+    "desc": "A ticket that's required to enter the Mini Dungeon during the event period. Without this, you won't be able to fully participate in the event.",
+    "name": "Event Ticket (NX)"
+  },
+  "5252001": {
+    "desc": "This ticket allows you to enter the Treasure Dungeon.",
+    "name": "Ticket to Treasure Dungeon"
+  },
+  "5281000": {
+    "desc": "A special effect that shows Passed Gas. Double-click to use this effect one time only!",
+    "name": "Passed Gas"
+  },
+  "5281001": {
+    "desc": "A special effect that shows Floral Scent. ",
+    "name": "Floral Scent"
+  },
+  "5290000": {
+    "desc": "An emoticon that can be entered in Guild Forum.",
+    "name": "Guild Forum Emoticon - Angry"
+  },
+  "5290001": {
+    "desc": "An emoticon that can be entered in Guild Forum.",
+    "name": "Guild Forum Emoticon - Smile"
+  },
+  "5290002": {
+    "desc": "An emoticon that can be entered in Guild Forum.",
+    "name": "Guild Forum Emoticon - Silent"
+  },
+  "5290003": {
+    "desc": "An emoticon that can be entered in Guild Forum.",
+    "name": "Guild Forum Emoticon - LOL"
+  },
+  "5290004": {
+    "desc": "An emoticon that can be entered in Guild Forum.",
+    "name": "Guild Forum Emoticon - Surprise"
+  },
+  "5290005": {
+    "desc": "An emoticon that can be entered in Guild Forum.",
+    "name": "Guild Forum Emoticon - Cry"
+  },
+  "5290006": {
+    "desc": "An emoticon that can be entered in Guild Forum.",
+    "name": "Guild Forum Emoticon - Furious"
+  },
+  "5290007": {
+    "desc": "An emoticon that can be entered in Guild Forum.",
+    "name": "Guild Forum Emoticon - 0_0"
+  },
+  "5300000": {
+    "desc": "At last, your desire to transform into a mushroom can be fulfilled. Disguise yourself for 10 minutes and surpirse your friends!",
+    "name": "Fungus Scroll"
+  },
+  "5300001": {
+    "desc": "Endulge yourself with this phat pig costume. 10 minutes of gluttony has never been so fun!",
+    "name": "Oinker Delight"
+  },
+  "5300002": {
+    "desc": "Become a terifying Space Monster with this costume. Scare your friends out of this world for 10 minutes!",
+    "name": "Zeta Nightmare"
+  },
+  "5330000": {
+    "desc": "This ticket enables one to send a package, along with an entered message, #cRIGHT THEN AND THERE#. #cDouble-click# it or visit the #cPackage NPC# to use this.",
+    "name": "Quick Delivery Ticket"
+  },
+  "5360000": {
+    "desc": "This coupon #cdoubles the amount of mesos and doubles the rate of items# dropped from monsters. The Double Drop card is immediately activated upon purchase and the double drop effect will be available for 24 hours upon purchase.",
+    "name": "1day 2x Drop Special Coupon "
+  },
+  "5360001": {
+    "desc": "This coupon #cdoubles the amount of mesos and doubles the rate of items# dropped from monsters. The Double Drop card is immediately activated upon purchase and the double drop effect will be available from 07 am to 11 am (Pacific time) #ceveryday#.",
+    "name": "2x Drop Card Type 1 - Everyday"
+  },
+  "5360002": {
+    "desc": "This coupon #cdoubles the amount of mesos and doubles the rate of items# dropped from monsters. The Double Drop card is immediately activated upon purchase and the double drop effect will be available from 10 am to 02 pm (Pacific time) #ceveryday#.",
+    "name": "2x Drop Card Type 2 - Everyday"
+  },
+  "5360003": {
+    "desc": "This coupon #cdoubles the amount of mesos and doubles the rate of items# dropped from monsters. The Double Drop card is immediately activated upon purchase and the double drop effect will be available from 01 pm to 05 pm (Pacific time) #ceveryday#.",
+    "name": "2x Drop Card Type 3 - Everyday"
+  },
+  "5360004": {
+    "desc": "This coupon #cdoubles the amount of mesos and doubles the rate of items# dropped from monsters. The Double Drop card is immediately activated upon purchase and the double drop effect will be available from 04 pm to 08 pm (Pacific time) #ceveryday#.",
+    "name": "2x Drop Card Type 4 - Everyday"
+  },
+  "5360005": {
+    "desc": "This coupon #cdoubles the amount of mesos and doubles the rate of items# dropped from monsters. The Double Drop card is immediately activated upon purchase and the double drop effect will be available from 07 pm to 11 pm (Pacific time) #ceveryday#.",
+    "name": "2x Drop Card Type 5 - Everyday"
+  },
+  "5360006": {
+    "desc": "This coupon #cdoubles the amount of mesos and doubles the rate of items# dropped from monsters. The Double Drop card is immediately activated upon purchase and the double drop effect will be available from 12 am to 04 am (Pacific time) #ceveryday#.",
+    "name": "2x Drop Card Type 6 - Everyday"
+  },
+  "5360007": {
+    "desc": "This coupon #cdoubles the amount of mesos and doubles the rate of items# dropped from monsters. The Double Drop card is immediately activated upon purchase and the double drop effect will be available from 03 am to 07 am (Pacific time) #ceveryday#.",
+    "name": "2x Drop Card Type 7 - Everyday"
+  },
+  "5360008": {
+    "desc": "This coupon #cdoubles the amount of mesos and doubles the rate of items# dropped from monsters. The Double Drop card is immediately activated upon purchase and the double drop effect will be available from 06 am to 10 am (Pacific time) #ceveryday#.",
+    "name": "2x Drop Card Type 8 - Everyday"
+  },
+  "5360009": {
+    "desc": "This coupon allows users to earn #c2x Exp (double experience)#. The coupon will be activated immediately after purchase, and the double experience effect will be available for 24 hours upon purchase.",
+    "name": "2X Drop Card - Type 1"
+  },
+  "5360010": {
+    "desc": "This coupon allows users to earn #c2x Exp (double experience)#. The coupon will be activated immediately after purchase, and the double experience effect will be available for 24 hours upon purchase.",
+    "name": "2X Drop Card - Type 1"
+  },
+  "5360011": {
+    "desc": "This coupon allows users to earn #c2x Exp (double experience)#. The coupon will be activated immediately after purchase, and the double experience effect will be available for 24 hours upon purchase.",
+    "name": "2X Drop Card - Type 1"
+  },
+  "5360012": {
+    "desc": "This coupon allows users to earn #c2x Drop (double drop rate)# from monsters. The coupon will be activated immediately after purchase, and the double experience effect will be available for 24 hours upon purchase.",
+    "name": "2X Drop Card - Type 1"
+  },
+  "5360013": {
+    "desc": "This coupon allows users to earn #c2x Drop (double drop rate)# from monsters. The coupon will be activated immediately after purchase, and the double experience effect will be available for 24 hours upon purchase.",
+    "name": "2X Drop Card - Type 1"
+  },
+  "5360014": {
+    "desc": "This coupon allows users to earn #c2x Drop (double drop)#. The coupon will be activated immediately after purchase, and the double drop effect will be available for 3 hours upon purchase.",
+    "name": "2x Drop 3 Hours Special Card"
+  },
+  "5360042": {
+    "desc": "This coupon #cdoubles the amount of mesos and doubles the rate of items# dropped from monsters. The coupon will be immediately activated after purchase and the double drop effect will be available for 4 hour upon purchase.",
+    "name": "4 hour 2 x Drop special coupon"
+  },
+  "5370000": {
+    "desc": "Any information entered will be featured on the chalkboard. The item can be used anywhere including #cFree Market Entrance# except for #cFree Market#.",
+    "name": "Chalkboard"
+  },
+  "5370001": {
+    "desc": "Any information entered will be featured on the chalkboard. The item can be used anywhere including #cFree Market Entrance# except for #cFree Market#.",
+    "name": "Chalkboard"
+  },
+  "5380000": {
+    "desc": "A mysterious rock that enables baby Evolving Pets to grow into full-fledged adult Evolving Pets.",
+    "name": "The Rock of Evolution"
+  },
+  "5390000": {
+    "desc": "Shout to everyone in the world your character is on with this megaphone. Now available with your avatar on the top of everyone's screen! Comes with a burning background for your avatar.",
+    "name": "Diablo Messenger"
+  },
+  "5390001": {
+    "desc": "Shout to everyone in the world your character is on with this megaphone. Now available with your avatar on the top of everyone's screen! Comes with a bright background for your avatar.",
+    "name": "Cloud 9 Messenger"
+  },
+  "5390002": {
+    "desc": "Shout to everyone in the world your character is on with this megaphone. Now available with your avatar on the top of everyone's screen! Comes with a heart background for your avatar.",
+    "name": "Loveholic Messenger"
+  },
+  "5390005": {
+    "desc": "Shout to everyone in the world your character is on with this megaphone. Now available with your avatar on the top of everyone's screen! Comes with a tiger background for your avatar.",
+    "name": "Cute Tiger Messenger"
+  },
+  "5390006": {
+    "desc": "Shout to everyone in the world your character is on with this megaphone. Now available with your avatar on the top of everyone's screen! Comes with a screen shaked.",
+    "name": "Roaring Tiger Messenger"
+  },
+  "5400000": {
+    "desc": "This scroll will enable you to change your character name to something totally new! Please be aware that the character must be at level 10 or higher to be eligible for the name change and the new name should be an acceptable new name that has passed the name check. The name-change will occur during the following server check, and you will then be restricted from changing names for one month.",
+    "name": "Character Name Change"
+  },
+  "5401000": {
+    "desc": "This item is used to transfer your character from one game world server to another. Your character must be at least Level 20, and only up to 1,000,000 mesos will be transferred with the character.",
+    "name": "Character Transfer"
+  },
+  "5420000": {
+    "desc": "Use it at #cAmoria Hair Salon# to change your hair to a style of #cyour choice#. ",
+    "name": "Amoria Hair Membership Coupon"
+  },
+  "5420001": {
+    "desc": "Use it at #cNLC Hair Salon# to change your hair to a style of #cyour choice#. ",
+    "name": "NLC Hair Membership Coupon"
+  },
+  "5420002": {
+    "desc": "Use it at #cHenesys Hair Salon# to change your hair to a style of #cyour choice#. ",
+    "name": "Henesys Hair Membership Coupon"
+  },
+  "5420003": {
+    "desc": "Use it at #cKerning City Hair Salon# to change your hair to a style of #cyour choice#. ",
+    "name": "Kerning City Hair Membership Coupon"
+  },
+  "5420004": {
+    "desc": "Use it at #cOrbis Hair Salon# to change your hair to a style of #cyour choice#. ",
+    "name": "Orbis Hair Membership Coupon"
+  },
+  "5420005": {
+    "desc": "Use it at #cLudibrium Hair Salon# to change your hair to a style of #cyour choice#. ",
+    "name": "Ludibrium Hair Membership Coupon"
+  },
+  "5420006": {
+    "desc": "Use it at #cMu Lung Hair Salon# to change your hair to a style of #cyour choice#. ",
+    "name": "Mu Lung Hair Membership Coupon"
+  },
+  "5430000": {
+    "desc": "Increases the character creation slot by 1. Each account may hold a maximum of 6 character slots per server world.",
+    "name": "Extra Character Slot Coupon"
+  },
+  "5431000": {
+    "desc": "#c*Warning: If you do not have an empty Character slot, it cannot be used.#\\r\\n\\r\\nIf you are over #cLevel 30#, a new Level 30 character can be created in your world.You can choose one of the following classes #c(Warrior, Magician, Thief, Bowman and Pirate)# at #c1st Job status#.\\r\\n\\r\\nOnly the amount of AP needed for each respective 1st jobs have been allocated and the rest of AP and SP can be distributed to your liking.#cBasic equips and items# needed for travel are also provided.",
+    "name": "Maple Life (A-Type)"
+  },
+  "5432000": {
+    "desc": "#c*Warning : If all 12 character slots are full, it cannot be used.#\\r\\n\\r\\nThis package has the #cMaple Life item plus an Extra Character Slot coupon.#Using this item will automiatically create a new slot.\\r\\n\\r\\nIf you are over #cLevel 30#, a new Level 30 character can be created in your world. You can choose one of the following classes #c(Warrior, Magician, Thief, Bowman and Pirate)# at #c1st Job status.#\\r\\n\\r\\nOnly the amount of AP needed for each respective 1st jobs have been allocated and the rest of AP and SP can be distributed to your liking.#cBasic equips and items# needed for travel are also provided.",
+    "name": "Maple Life (B-Type)"
+  },
+  "5450000": {
+    "desc": "Use this to experience the same effect as entering a general store. Can purchase potions to recover HP & MP, throwing stars, and recharge bullets. Some maps restrict the use of this item, though.",
+    "name": "Miu Miu the Traveling Merchant"
+  },
+  "5451000": {
+    "desc": "This ticket will enable you to use the Gachapon of any town without having to travel to the actual location.",
+    "name": "Remote Gachapon Ticket"
+  },
+  "5460000": {
+    "desc": "A Pet Snack is secret method of handling multiple pets at once.",
+    "name": "Pet Snack"
+  },
+  "5470000": {
+    "desc": "Can control the Hired Merchant anywhere, as long as the merchant is on the same channel.",
+    "name": "Store Remote Controller"
+  },
+  "5490000": {
+    "desc": "Take this Master Key to open the Gold Gachapon Box and earn a rare item!",
+    "name": "Gold Master Key"
+  },
+  "5490001": {
+    "desc": "Take this Master Key to open the Silver Gachapon Box and earn a rare item!",
+    "name": "Silver Master Key"
+  },
+  "5490002": {
+    "desc": "Take this Premium Master Key to open the Premium Gold Box and earn a rare item!",
+    "name": "Premium Gold Master Key"
+  },
+  "5490003": {
+    "desc": "Take this Premium Master Key to open the Premium Silver Box and earn a rare item!",
+    "name": "Premium Silver Master Key"
+  },
+  "5500000": {
+    "desc": "장착 중인 유효기간이 있는 장비에 주문서처럼 드래그앤 드롭하여 사용하면, 유효기간이 #c1일#  늘어나게 된다. #c캐시아이템에는 사용할 수 없으며. 오늘부터 30일 이상으로는 늘릴 수 없다#",
+    "name": "마법의 모래시계"
+  },
+  "5500001": {
+    "desc": "Drag and drop this onto a piece of equipment that has a time limit to extend the time limit by #c7days#. #This cannot be used on cash items, and the time limit cannot be extended past 30 days, starting from today.#",
+    "name": "[7days]Magical Sandglass"
+  },
+  "5500002": {
+    "desc": "Drag and drop this onto a piece of equipment that has a time limit to extend the time limit by #c20days#. #This cannot be used on cash items, and the time limit cannot be extended past 30 days, starting from today.#",
+    "name": "[20days]Magical Sandglass"
+  },
+  "5510000": {
+    "desc": "This item revives characters in the same map where they have died. However, it cannot be used in some PQs, Event Maps, and Transportation (i.e. ship).",
+    "name": "Wheel of Destiny"
+  },
+  "5520000": {
+    "desc": "This cuts the ties that bind an item to its master, allowing you to trade once. Applicable to only certain items.",
+    "name": "Scissors of Karma"
+  },
+  "5530000": {
+    "desc": "Double-click on it to exchange it with DS Eggs.",
+    "name": "DS Egg Basket"
+  },
+  "5550000": {
+    "desc": "This item allows characters to equip 1 more Pendant than is normally allowed for 30 days. #cHowever, characters will not be able to equip more than 1 Special Equipment Item#",
+    "name": "Increasing the Pendant Slots:30 Days"
+  },
+  "5570000": {
+    "desc": "Temper the equipped item with Vicious' Hammer to increase available upgrade by 1. It can be used maximum 2 times per item. Warning: You cannot use it on the Horntail Necklace.",
+    "name": "Vicious' Hammer"
+  },
+  "5590000": {
+    "desc": "Can equip items that are 5 levels above your current level.",
+    "name": "High-Five Stamp"
+  },
+  "5610000": {
+    "desc": "This winning spell from Vega enables a 30% success rate on a 10% scroll. Please check the scroll description to confirm that Vega's Spell is available for the scroll you choose.",
+    "name": "Vega's Spell(10%)"
+  },
+  "5610001": {
+    "desc": "This winning spell from Vega enables a 90% success rate on a 60% scroll. Please check the scroll description to confirm that Vega's Spell is available for the scroll you choose.",
+    "name": "Vega's Spell(60%)"
+  },
+  "5990000": {
+    "name": "MTS sale"
+  }
+}

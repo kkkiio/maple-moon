@@ -1,0 +1,15 @@
+{
+  "info": {
+    "dcBottom": 0,
+    "dcLeft": -60,
+    "dcRight": 60,
+    "dcTop": -100,
+    "hideName": 1,
+    "script": {
+      "0": {
+        "script": "Warehouse"
+      }
+    }
+  },
+  "animations_path": "animation.json"
+}

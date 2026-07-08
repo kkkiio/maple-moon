@@ -1,0 +1,14 @@
+{
+  "info": {
+    "dcBottom": 0,
+    "dcLeft": -70,
+    "dcRight": 80,
+    "dcTop": -127,
+    "script": {
+      "0": {
+        "script": "hontale_out"
+      }
+    }
+  },
+  "animations_path": "animation.json"
+}

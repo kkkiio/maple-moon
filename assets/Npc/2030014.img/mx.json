@@ -1,0 +1,14 @@
+{
+  "info": {
+    "dcBottom": 4,
+    "dcLeft": -27,
+    "dcRight": 27,
+    "dcTop": -113,
+    "script": {
+      "0": {
+        "script": "s4freeze_item"
+      }
+    }
+  },
+  "animations_path": "animation.json"
+}

@@ -1,0 +1,18 @@
+{
+  "info": {
+    "dcBottom": 0,
+    "dcLeft": -60,
+    "dcRight": 60,
+    "dcTop": -65,
+    "script": {
+      "0": {
+        "script": "nightmarket01"
+      }
+    },
+    "speak": {
+      "0": "n0",
+      "1": "n1"
+    }
+  },
+  "animations_path": "animation.json"
+}

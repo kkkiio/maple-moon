@@ -1,0 +1,930 @@
+{
+  "alert": {
+    "0": {
+      "shield": {
+        "__h": 22,
+        "__w": 15,
+        "map": {
+          "navel": [
+            11,
+            5
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "shieldOverHair",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
+        "__off": [
+          32,
+          26
+        ]
+      }
+    },
+    "1": {
+      "shield": {
+        "__h": 22,
+        "__w": 15,
+        "map": {
+          "navel": [
+            11,
+            2
+          ]
+        },
+        "origin": [
+          10,
+          6
+        ],
+        "z": "shieldOverHair",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
+        "__off": [
+          51,
+          0
+        ]
+      }
+    },
+    "2": {
+      "shield": {
+        "__h": 22,
+        "__w": 15,
+        "map": {
+          "navel": [
+            12,
+            0
+          ]
+        },
+        "origin": [
+          9,
+          6
+        ],
+        "z": "shieldOverHair",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
+        "__off": [
+          51,
+          22
+        ]
+      }
+    }
+  },
+  "fly": {
+    "0": {
+      "shield": {
+        "__h": 21,
+        "__w": 16,
+        "map": {
+          "navel": [
+            7,
+            8
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "shieldBelowBody",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
+        "__off": [
+          127,
+          0
+        ]
+      }
+    },
+    "1": {
+      "shield": {
+        "__h": 21,
+        "__w": 16,
+        "map": {
+          "navel": [
+            7,
+            8
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "shieldBelowBody",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
+        "__off": [
+          127,
+          0
+        ]
+      }
+    }
+  },
+  "heal": {
+    "0": {
+      "shield": {
+        "__h": 22,
+        "__w": 15,
+        "map": {
+          "navel": [
+            11,
+            2
+          ]
+        },
+        "origin": [
+          10,
+          6
+        ],
+        "z": "shieldOverHair",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
+        "__off": [
+          51,
+          0
+        ]
+      }
+    },
+    "1": {
+      "shield": {
+        "__h": 21,
+        "__w": 16,
+        "map": {
+          "navel": [
+            5,
+            12
+          ]
+        },
+        "origin": [
+          10,
+          6
+        ],
+        "z": "shieldBelowBody",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
+        "__off": [
+          95,
+          42
+        ]
+      }
+    },
+    "2": {
+      "shield": {
+        "__h": 21,
+        "__w": 16,
+        "map": {
+          "navel": [
+            7,
+            4
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "shieldBelowBody",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
+        "__off": [
+          95,
+          21
+        ]
+      }
+    }
+  },
+  "info": {
+    "cash": 0,
+    "icon": {
+      "__h": 26,
+      "__w": 26,
+      "origin": [
+        -4,
+        26
+      ],
+      "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
+      "__off": [
+        0,
+        0
+      ]
+    },
+    "iconRaw": {
+      "__h": 25,
+      "__w": 25,
+      "origin": [
+        -5,
+        26
+      ],
+      "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
+      "__off": [
+        26,
+        0
+      ]
+    },
+    "incPDD": 10,
+    "islot": "Si",
+    "price": 2000,
+    "reqDEX": 0,
+    "reqINT": 0,
+    "reqJob": 1,
+    "reqLUK": 0,
+    "reqLevel": 10,
+    "reqSTR": 0,
+    "tuc": 7,
+    "vslot": "Si"
+  },
+  "jump": {
+    "0": {
+      "shield": {
+        "__h": 21,
+        "__w": 16,
+        "map": {
+          "navel": [
+            6,
+            7
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "shieldBelowBody",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
+        "__off": [
+          127,
+          21
+        ]
+      }
+    }
+  },
+  "prone": {
+    "0": {
+      "shield": {
+        "__h": 15,
+        "__w": 22,
+        "map": {
+          "navel": [
+            35,
+            6
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "shieldBelowBody",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
+        "__off": [
+          15,
+          48
+        ]
+      }
+    }
+  },
+  "proneStab": {
+    "0": {
+      "shield": {
+        "__h": 15,
+        "__w": 22,
+        "map": {
+          "navel": [
+            35,
+            6
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "shieldBelowBody",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
+        "__off": [
+          15,
+          48
+        ]
+      }
+    },
+    "1": {
+      "shield": {
+        "__h": 15,
+        "__w": 22,
+        "map": {
+          "navel": [
+            35,
+            6
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "shieldBelowBody",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
+        "__off": [
+          15,
+          48
+        ]
+      }
+    }
+  },
+  "stabO1": {
+    "0": {
+      "shield": {
+        "__h": 21,
+        "__w": 16,
+        "map": {
+          "navel": [
+            20,
+            9
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "shieldBelowBody",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
+        "__off": [
+          16,
+          91
+        ]
+      }
+    },
+    "1": {
+      "shield": {
+        "__h": 21,
+        "__w": 16,
+        "map": {
+          "navel": [
+            -7,
+            10
+          ]
+        },
+        "origin": [
+          10,
+          6
+        ],
+        "z": "shieldBelowBody",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
+        "__off": [
+          32,
+          91
+        ]
+      }
+    }
+  },
+  "stabO2": {
+    "0": {
+      "shield": {
+        "__h": 21,
+        "__w": 16,
+        "map": {
+          "navel": [
+            20,
+            10
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "shieldBelowBody",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
+        "__off": [
+          48,
+          91
+        ]
+      }
+    },
+    "1": {
+      "shield": {
+        "__h": 21,
+        "__w": 16,
+        "map": {
+          "navel": [
+            -8,
+            7
+          ]
+        },
+        "origin": [
+          10,
+          6
+        ],
+        "z": "shieldBelowBody",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
+        "__off": [
+          64,
+          91
+        ]
+      }
+    }
+  },
+  "stabOF": {
+    "0": {
+      "shield": {
+        "__h": 22,
+        "__w": 15,
+        "map": {
+          "navel": [
+            8,
+            5
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "shield",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
+        "__off": [
+          0,
+          48
+        ]
+      }
+    },
+    "1": {
+      "shield": {
+        "__h": 21,
+        "__w": 16,
+        "map": {
+          "navel": [
+            30,
+            12
+          ]
+        },
+        "origin": [
+          10,
+          6
+        ],
+        "z": "shieldBelowBody",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
+        "__off": [
+          80,
+          91
+        ]
+      }
+    },
+    "2": {
+      "shield": {
+        "__h": 21,
+        "__w": 16,
+        "map": {
+          "navel": [
+            18,
+            9
+          ]
+        },
+        "origin": [
+          10,
+          6
+        ],
+        "z": "shieldBelowBody",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
+        "__off": [
+          96,
+          91
+        ]
+      }
+    }
+  },
+  "stand1": {
+    "0": {
+      "shield": {
+        "__h": 21,
+        "__w": 16,
+        "map": {
+          "navel": [
+            4,
+            -2
+          ]
+        },
+        "origin": [
+          9,
+          6
+        ],
+        "z": "shieldBelowBody",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
+        "__off": [
+          0,
+          70
+        ]
+      }
+    },
+    "1": {
+      "shield": {
+        "__h": 21,
+        "__w": 16,
+        "map": {
+          "navel": [
+            6,
+            -1
+          ]
+        },
+        "origin": [
+          9,
+          6
+        ],
+        "z": "shieldBelowBody",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
+        "__off": [
+          16,
+          70
+        ]
+      }
+    },
+    "2": {
+      "shield": {
+        "__h": 21,
+        "__w": 16,
+        "map": {
+          "navel": [
+            8,
+            -2
+          ]
+        },
+        "origin": [
+          9,
+          6
+        ],
+        "z": "shieldBelowBody",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
+        "__off": [
+          32,
+          70
+        ]
+      }
+    }
+  },
+  "swingO1": {
+    "0": {
+      "shield": {
+        "__h": 21,
+        "__w": 16,
+        "map": {
+          "navel": [
+            -6,
+            12
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "shieldBelowBody",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
+        "__off": [
+          48,
+          70
+        ]
+      }
+    },
+    "1": {
+      "shield": {
+        "__h": 21,
+        "__w": 16,
+        "map": {
+          "navel": [
+            -13,
+            6
+          ]
+        },
+        "origin": [
+          10,
+          6
+        ],
+        "z": "shieldBelowBody",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
+        "__off": [
+          64,
+          70
+        ]
+      }
+    },
+    "2": {
+      "shield": {
+        "__h": 21,
+        "__w": 16,
+        "map": {
+          "navel": [
+            5,
+            9
+          ]
+        },
+        "origin": [
+          9,
+          6
+        ],
+        "z": "shieldBelowBody",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
+        "__off": [
+          95,
+          0
+        ]
+      }
+    }
+  },
+  "swingO2": {
+    "0": {
+      "shield": {
+        "__h": 21,
+        "__w": 16,
+        "map": {
+          "navel": [
+            7,
+            4
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "shieldBelowBody",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
+        "__off": [
+          95,
+          21
+        ]
+      }
+    },
+    "1": {
+      "shield": {
+        "__h": 21,
+        "__w": 16,
+        "map": {
+          "navel": [
+            5,
+            12
+          ]
+        },
+        "origin": [
+          10,
+          6
+        ],
+        "z": "shieldBelowBody",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
+        "__off": [
+          95,
+          42
+        ]
+      }
+    },
+    "2": {
+      "shield": {
+        "__h": 21,
+        "__w": 16,
+        "map": {
+          "navel": [
+            15,
+            14
+          ]
+        },
+        "origin": [
+          9,
+          6
+        ],
+        "z": "shieldBelowBody",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
+        "__off": [
+          95,
+          63
+        ]
+      }
+    }
+  },
+  "swingO3": {
+    "0": {
+      "shield": {
+        "__h": 22,
+        "__w": 15,
+        "map": {
+          "navel": [
+            23,
+            9
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "shield",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
+        "__off": [
+          66,
+          0
+        ]
+      }
+    },
+    "1": {
+      "shield": {
+        "__h": 21,
+        "__w": 16,
+        "map": {
+          "navel": [
+            -5,
+            12
+          ]
+        },
+        "origin": [
+          10,
+          6
+        ],
+        "z": "shieldBelowBody",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
+        "__off": [
+          111,
+          0
+        ]
+      }
+    },
+    "2": {
+      "shield": {
+        "__h": 21,
+        "__w": 16,
+        "map": {
+          "navel": [
+            -9,
+            11
+          ]
+        },
+        "origin": [
+          9,
+          6
+        ],
+        "z": "shieldBelowBody",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
+        "__off": [
+          111,
+          21
+        ]
+      }
+    }
+  },
+  "swingOF": {
+    "0": {
+      "shield": {
+        "__h": 21,
+        "__w": 16,
+        "map": {
+          "navel": [
+            11,
+            3
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "shieldBelowBody",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
+        "__off": [
+          111,
+          42
+        ]
+      }
+    },
+    "1": {
+      "shield": {
+        "__h": 22,
+        "__w": 15,
+        "map": {
+          "navel": [
+            -20,
+            3
+          ]
+        },
+        "origin": [
+          10,
+          6
+        ],
+        "z": "backShield",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
+        "__off": [
+          66,
+          22
+        ]
+      }
+    },
+    "2": {
+      "shield": {
+        "__h": 21,
+        "__w": 16,
+        "map": {
+          "navel": [
+            -6,
+            12
+          ]
+        },
+        "origin": [
+          9,
+          6
+        ],
+        "z": "shieldBelowBody",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
+        "__off": [
+          111,
+          63
+        ]
+      }
+    },
+    "3": {
+      "shield": {
+        "__h": 21,
+        "__w": 16,
+        "map": {
+          "navel": [
+            15,
+            5
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "shieldBelowBody",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
+        "__off": [
+          0,
+          91
+        ]
+      }
+    }
+  },
+  "walk1": {
+    "0": {
+      "shield": {
+        "__h": 22,
+        "__w": 15,
+        "map": {
+          "navel": [
+            10,
+            1
+          ]
+        },
+        "origin": [
+          9,
+          7
+        ],
+        "z": "shield",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
+        "__off": [
+          17,
+          26
+        ]
+      }
+    },
+    "1": {
+      "shield": {
+        "__h": 22,
+        "__w": 14,
+        "map": {
+          "navel": [
+            9,
+            1
+          ]
+        },
+        "origin": [
+          9,
+          6
+        ],
+        "z": "shield",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
+        "__off": [
+          81,
+          0
+        ]
+      }
+    },
+    "2": {
+      "shield": {
+        "__h": 22,
+        "__w": 15,
+        "map": {
+          "navel": [
+            10,
+            1
+          ]
+        },
+        "origin": [
+          9,
+          7
+        ],
+        "z": "shield",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
+        "__off": [
+          17,
+          26
+        ]
+      }
+    },
+    "3": {
+      "shield": {
+        "__h": 22,
+        "__w": 17,
+        "map": {
+          "navel": [
+            9,
+            3
+          ]
+        },
+        "origin": [
+          9,
+          6
+        ],
+        "z": "shield",
+        "__i": "assets/Character/Shield/spritesheets/01092005.img.png",
+        "__off": [
+          0,
+          26
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,63 @@
+# Mob
+
+怪物
+
+## 资源加载
+
+- `NxMob`：保留碰撞框、head 点、攻击范围等运行时元数据。
+- `MxMob`：从 `Mob/<id>.img/mx.json` 读取 Aseprite 动画引用。
+- 运行时会把 `MxMob` 引用编译成 Selene native clip，并覆盖 `NxMob` 中的可播放动画后端。
+
+## link
+
+有些怪物借用其他怪物的动画，比如战士二转任务里的火野猪和猴子。
+
+```mbt nocheck
+///|
+test {
+  let src : Json = {
+    "MADamage": 120,
+    "MDDamage": 50,
+    "PADamage": 110,
+    "PDDamage": 30,
+    "acc": 90,
+    "bodyAttack": 1,
+    "eva": 10,
+    "exp": 0,
+    "fs": 10,
+    "level": 35,
+    "link": "3210800",
+    "maxHP": 800,
+    "maxMP": 100,
+    "mobType": 0,
+    "pushed": 1,
+    "speed": 35,
+    "summonType": 1,
+    "undead": 0,
+  }
+  let info : MobInfo = src |> @json.from_json
+  json_inspect(info, content={
+    "magic_damage": 120,
+    "md_damage": 50,
+    "pa_damage": 110,
+    "pd_damage": 30,
+    "acc": 90,
+    "body_attack": true,
+    "eva": 10,
+    "exp": 0,
+    "fs": 10,
+    "fly_speed": 0,
+    "level": 35,
+    "link": 3210800,
+    "max_hp": 800,
+    "max_mp": 100,
+    "mob_type": 0,
+    "pushed": 1,
+    "speed": 35,
+    "summon_type": 1,
+    "undead": false,
+    "boss": false,
+    "no_flip": false,
+  })
+}
+```

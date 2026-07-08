@@ -1,0 +1,118 @@
+{
+  "info": {
+    "MADamage": 0,
+    "MDDamage": 60,
+    "PADamage": 90,
+    "PDDamage": 10,
+    "acc": 55,
+    "bodyAttack": 1,
+    "eva": 7,
+    "exp": 32,
+    "fs": 10,
+    "level": 20,
+    "maxHP": 350,
+    "maxMP": 30,
+    "mobType": 4,
+    "pushed": 1,
+    "speed": 5,
+    "summonType": 1,
+    "undead": 0
+  },
+  "stance_nodes": {
+    "die1": {
+      "path_key": "die1",
+      "total_duration_ms": 660,
+      "loop_": false,
+      "first_head": {
+        "x": -5,
+        "y": -44
+      },
+      "first_bounds": null
+    },
+    "hit1": {
+      "path_key": "hit1",
+      "total_duration_ms": 600,
+      "loop_": false,
+      "first_head": {
+        "x": 2,
+        "y": -61
+      },
+      "first_bounds": {
+        "lt": {
+          "x": -28,
+          "y": -65
+        },
+        "rb": {
+          "x": 34,
+          "y": 0
+        }
+      }
+    },
+    "jump": {
+      "path_key": "jump",
+      "total_duration_ms": 100,
+      "loop_": false,
+      "first_head": {
+        "x": 2,
+        "y": -61
+      },
+      "first_bounds": {
+        "lt": {
+          "x": -28,
+          "y": -64
+        },
+        "rb": {
+          "x": 34,
+          "y": 0
+        }
+      }
+    },
+    "move": {
+      "path_key": "move",
+      "total_duration_ms": 480,
+      "loop_": true,
+      "first_head": {
+        "x": -3,
+        "y": -51
+      },
+      "first_bounds": {
+        "lt": {
+          "x": -32,
+          "y": -55
+        },
+        "rb": {
+          "x": 32,
+          "y": 0
+        }
+      }
+    },
+    "stand": {
+      "path_key": "stand",
+      "total_duration_ms": 360,
+      "loop_": true,
+      "first_head": {
+        "x": 2,
+        "y": -54
+      },
+      "first_bounds": {
+        "lt": {
+          "x": -27,
+          "y": -58
+        },
+        "rb": {
+          "x": 36,
+          "y": 0
+        }
+      }
+    }
+  },
+  "attack_nodes": {},
+  "skill_nodes": {},
+  "mx_animations": {
+    "die1": "animations/die1.json",
+    "hit1": "animations/hit1.json",
+    "jump": "animations/jump.json",
+    "move": "animations/move.json",
+    "stand": "animations/stand.json"
+  }
+}

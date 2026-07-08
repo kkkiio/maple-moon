@@ -1,0 +1,104 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/engine/local_server"
+
+import {
+  "KKKIIO/maple-moon/engine/log",
+  "KKKIIO/maple-moon/game/server_proto",
+  "moonbitlang/core/debug",
+  "moonbitlang/core/json",
+  "moonbitlang/core/random",
+  "moonbitlang/core/ref",
+}
+
+// Values
+pub fn calculate_mob_drops(Int, Int, Int, Int, MobDropDatabase?, MobDropDatabase?, @random.Rand, active_quest_ids? : Map[Int, Unit]) -> (Array[@server_proto.DropLootMessage], Int)
+
+pub let default_rand_seed : @ref.Ref[Bytes]
+
+pub fn init_server(LocalServer) -> Unit
+
+pub fn server_system(LocalServer) -> Unit
+
+// Errors
+
+// Types and methods
+pub struct FileDB {
+  root_path : String
+}
+pub fn FileDB::new(root_path? : String) -> Self
+pub fn FileDB::root_path_for_debug(Self) -> String
+pub impl DB for FileDB
+
+type LocalServer
+pub fn LocalServer::add_server_message_handler(Self, String, Int, (Json) -> Unit raise) -> Unit
+pub fn LocalServer::init_routes(Self) -> Unit
+pub fn LocalServer::load_character(Self, Int) -> Bool
+pub fn LocalServer::load_character_inventory_tab_data(Self, Json) -> Unit
+pub fn LocalServer::load_character_roster(Self) -> Bool
+pub fn LocalServer::new(db~ : &DB, drop_rng? : @random.Rand) -> Self
+pub fn LocalServer::save_character(Self, Int) -> Unit
+pub fn LocalServer::save_character_core(Self, Int) -> Unit
+pub fn LocalServer::save_character_inventory(Self, Int) -> Unit
+pub fn LocalServer::save_character_inventory_data(Self, Int, Int) -> Unit
+pub fn LocalServer::save_character_quest_data(Self, Int, Int) -> Unit
+pub fn LocalServer::save_character_roster(Self) -> Unit
+#callsite(autofill(loc))
+pub fn[T : @server_proto.ClientMessage] LocalServer::send_client_message(Self, T, log_level? : @log.Level, loc~ : SourceLoc) -> Unit
+
+pub struct MemoryDB {
+  stores : @ref.Ref[Map[String, Map[String, Json]]]
+}
+pub fn MemoryDB::get_json(Self, String, String) -> Json?
+pub fn MemoryDB::new() -> Self
+pub impl DB for MemoryDB
+
+type MobDropDatabase
+pub fn MobDropDatabase::from_tsv(String) -> Self
+pub fn MobDropDatabase::get_drops(Self, Int) -> Array[MobDropEntry]
+pub fn MobDropDatabase::get_mob_ids(Self) -> Iter[Int]
+pub fn MobDropDatabase::has_drops(Self, Int) -> Bool
+pub fn MobDropDatabase::roll_drops(Self, Int, @random.Rand, active_quest_ids? : Map[Int, Unit]) -> Array[(Int, Int)]
+
+pub(all) struct MobDropEntry {
+  dropperid : Int
+  itemid : Int
+  minimum_quantity : Int
+  maximum_quantity : Int
+  questid : Int
+  chance : Int
+}
+pub fn MobDropEntry::roll_drop(Self, @random.Rand) -> Bool
+pub fn MobDropEntry::roll_quantity(Self, @random.Rand) -> Int
+
+pub(all) struct StorageEquipData {
+  item_id : Int
+  slot : Int
+  stats : Map[String, Int]
+  slots : Int
+  level : Int
+  itemlevel : Int
+  itemexp : Int
+  vicious : Int
+} derive(Default, ToJson, @debug.Debug, @json.FromJson)
+
+pub(all) struct StorageItemData {
+  item_id : Int
+  slot : Int
+  count : Int
+} derive(Default, ToJson, @debug.Debug, @json.FromJson)
+
+pub(all) enum StorageItemEntry {
+  Equip(StorageEquipData)
+  Item(StorageItemData)
+} derive(ToJson, @debug.Debug, @json.FromJson)
+pub fn StorageItemEntry::from_server_proto(@server_proto.InventoryItemEntry) -> Self
+pub fn StorageItemEntry::to_server_proto(Self, @server_proto.InventoryType) -> @server_proto.InventoryItemEntry
+
+// Type aliases
+
+// Traits
+pub(open) trait DB {
+  fn save_json(Self, String, String, Json) -> Unit
+  fn load_json(Self, String, String) -> Json?
+}
+

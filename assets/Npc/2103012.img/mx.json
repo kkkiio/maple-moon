@@ -1,0 +1,16 @@
+{
+  "info": {
+    "dcBottom": 0,
+    "dcLeft": -8,
+    "dcRight": 8,
+    "dcTop": -16,
+    "hideName": 1,
+    "script": {
+      "0": {
+        "script": "ariant_gold4"
+      }
+    },
+    "talkMouseOnly": 1
+  },
+  "animations_path": "animation.json"
+}

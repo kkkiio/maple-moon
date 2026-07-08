@@ -1,0 +1,460 @@
+{
+  "info": {
+    "MADamage": 0,
+    "MDDamage": 220,
+    "PADamage": 260,
+    "PDDamage": 260,
+    "acc": 210,
+    "bodyAttack": 1,
+    "boss": 1,
+    "eva": 25,
+    "exp": 2400,
+    "fs": 10,
+    "hideName": 1,
+    "hpRecovery": 100,
+    "level": 80,
+    "maxHP": 120000,
+    "maxMP": 510,
+    "mobType": 6,
+    "mpRecovery": 20,
+    "pushed": 1500,
+    "skill": {
+      "0": {
+        "action": 1,
+        "effectAfter": 0,
+        "level": 1,
+        "skill": 100
+      },
+      "1": {
+        "action": 1,
+        "effectAfter": 0,
+        "level": 1,
+        "skill": 102
+      },
+      "2": {
+        "action": 1,
+        "effectAfter": 0,
+        "level": 2,
+        "skill": 122
+      },
+      "3": {
+        "action": 1,
+        "effectAfter": 0,
+        "level": 3,
+        "skill": 200
+      }
+    },
+    "speed": 10,
+    "summonType": 1,
+    "undead": 0
+  },
+  "stance_nodes": {
+    "die1": {
+      "path_key": "die1",
+      "total_duration_ms": 1590,
+      "loop_": false,
+      "first_head": null,
+      "first_bounds": null
+    },
+    "hit1": {
+      "path_key": "hit1",
+      "total_duration_ms": 600,
+      "loop_": false,
+      "first_head": {
+        "x": -9,
+        "y": -51
+      },
+      "first_bounds": {
+        "lt": {
+          "x": -23,
+          "y": -66
+        },
+        "rb": {
+          "x": 26,
+          "y": 0
+        }
+      }
+    },
+    "jump": {
+      "path_key": "jump",
+      "total_duration_ms": 100,
+      "loop_": false,
+      "first_head": {
+        "x": -10,
+        "y": -49
+      },
+      "first_bounds": {
+        "lt": {
+          "x": -23,
+          "y": -67
+        },
+        "rb": {
+          "x": 20,
+          "y": 0
+        }
+      }
+    },
+    "move": {
+      "path_key": "move",
+      "total_duration_ms": 640,
+      "loop_": true,
+      "first_head": {
+        "x": -9,
+        "y": -51
+      },
+      "first_bounds": {
+        "lt": {
+          "x": -23,
+          "y": -69
+        },
+        "rb": {
+          "x": 26,
+          "y": 0
+        }
+      }
+    },
+    "stand": {
+      "path_key": "stand",
+      "total_duration_ms": 1600,
+      "loop_": true,
+      "first_head": {
+        "x": -9,
+        "y": -51
+      },
+      "first_bounds": {
+        "lt": {
+          "x": -23,
+          "y": -69
+        },
+        "rb": {
+          "x": 26,
+          "y": 0
+        }
+      }
+    }
+  },
+  "attack_nodes": {
+    "1": {
+      "id": 1,
+      "info": {
+        "PADamage": 300,
+        "attackAfter": 500,
+        "ball": {
+          "0": {
+            "__b": 13992,
+            "__w": 40,
+            "__h": 7,
+            "origin": [
+              20,
+              3
+            ],
+            "z": 0
+          }
+        },
+        "bulletSpeed": 200,
+        "conMP": 3,
+        "effect": {
+          "0": {
+            "__b": 13985,
+            "__w": 1,
+            "__h": 1,
+            "delay": 300,
+            "origin": [
+              0,
+              0
+            ]
+          },
+          "1": {
+            "__b": 13986,
+            "__w": 78,
+            "__h": 64,
+            "delay": 80,
+            "origin": [
+              49,
+              63
+            ]
+          },
+          "2": {
+            "__b": 13987,
+            "__w": 118,
+            "__h": 58,
+            "delay": 80,
+            "origin": [
+              71,
+              56
+            ]
+          },
+          "3": {
+            "__b": 13988,
+            "__w": 116,
+            "__h": 53,
+            "delay": 80,
+            "origin": [
+              70,
+              51
+            ]
+          },
+          "4": {
+            "__b": 13989,
+            "__w": 92,
+            "__h": 53,
+            "delay": 80,
+            "origin": [
+              55,
+              51
+            ]
+          },
+          "5": {
+            "__b": 13990,
+            "__w": 96,
+            "__h": 53,
+            "delay": 80,
+            "origin": [
+              56,
+              50
+            ]
+          },
+          "6": {
+            "__b": 13991,
+            "__w": 92,
+            "__h": 40,
+            "delay": 80,
+            "origin": [
+              57,
+              41
+            ]
+          }
+        },
+        "effectAfter": 0,
+        "hit": {
+          "0": {
+            "__b": 13993,
+            "__w": 90,
+            "__h": 58,
+            "delay": 120,
+            "origin": [
+              34,
+              28
+            ]
+          },
+          "1": {
+            "__b": 13994,
+            "__w": 150,
+            "__h": 55,
+            "delay": 150,
+            "origin": [
+              52,
+              30
+            ]
+          },
+          "2": {
+            "__b": 13995,
+            "__w": 130,
+            "__h": 35,
+            "delay": 120,
+            "origin": [
+              53,
+              18
+            ]
+          },
+          "3": {
+            "__b": 13996,
+            "__w": 70,
+            "__h": 28,
+            "delay": 120,
+            "origin": [
+              39,
+              13
+            ]
+          }
+        },
+        "range": {
+          "r": 300,
+          "sp": [
+            -14,
+            -27
+          ]
+        },
+        "type": 2
+      },
+      "animation_path_key": "attack1",
+      "effects": [
+        {
+          "path_key": "attack1/info/effect",
+          "z": 0,
+          "is_area_warning": false
+        }
+      ]
+    },
+    "2": {
+      "id": 2,
+      "info": {
+        "PADamage": 350,
+        "attackAfter": 500,
+        "ball": {
+          "0": {
+            "__b": 14006,
+            "__w": 40,
+            "__h": 7,
+            "origin": [
+              20,
+              3
+            ],
+            "z": 0
+          }
+        },
+        "bulletSpeed": 200,
+        "conMP": 5,
+        "effect": {
+          "0": {
+            "__b": 14000,
+            "__w": 1,
+            "__h": 1,
+            "delay": 300,
+            "origin": [
+              0,
+              0
+            ]
+          },
+          "1": {
+            "__b": 14001,
+            "__w": 202,
+            "__h": 78,
+            "delay": 100,
+            "origin": [
+              113,
+              70
+            ]
+          },
+          "2": {
+            "__b": 14002,
+            "__w": 188,
+            "__h": 78,
+            "delay": 100,
+            "origin": [
+              108,
+              70
+            ]
+          },
+          "3": {
+            "__b": 14003,
+            "__w": 151,
+            "__h": 78,
+            "delay": 100,
+            "origin": [
+              94,
+              70
+            ]
+          },
+          "4": {
+            "__b": 14004,
+            "__w": 151,
+            "__h": 76,
+            "delay": 100,
+            "origin": [
+              94,
+              69
+            ]
+          },
+          "5": {
+            "__b": 14005,
+            "__w": 151,
+            "__h": 57,
+            "delay": 100,
+            "origin": [
+              94,
+              52
+            ]
+          }
+        },
+        "effectAfter": 0,
+        "hit": {
+          "0": {
+            "__b": 14007,
+            "__w": 86,
+            "__h": 81,
+            "delay": 120,
+            "origin": [
+              37,
+              41
+            ]
+          },
+          "1": {
+            "__b": 14008,
+            "__w": 103,
+            "__h": 97,
+            "delay": 120,
+            "origin": [
+              53,
+              50
+            ]
+          },
+          "2": {
+            "__b": 14009,
+            "__w": 70,
+            "__h": 85,
+            "delay": 120,
+            "origin": [
+              36,
+              38
+            ]
+          }
+        },
+        "range": {
+          "r": 300,
+          "sp": [
+            -13,
+            -28
+          ]
+        },
+        "type": 2
+      },
+      "animation_path_key": "attack2",
+      "effects": [
+        {
+          "path_key": "attack2/info/effect",
+          "z": 0,
+          "is_area_warning": false
+        }
+      ]
+    }
+  },
+  "skill_nodes": {
+    "100": {
+      "skill_id": 100,
+      "action": 1,
+      "animation_path_key": "skill1",
+      "effects": []
+    },
+    "102": {
+      "skill_id": 102,
+      "action": 1,
+      "animation_path_key": "skill1",
+      "effects": []
+    },
+    "122": {
+      "skill_id": 122,
+      "action": 1,
+      "animation_path_key": "skill1",
+      "effects": []
+    },
+    "200": {
+      "skill_id": 200,
+      "action": 1,
+      "animation_path_key": "skill1",
+      "effects": []
+    }
+  },
+  "mx_animations": {
+    "die1": "animations/die1.json",
+    "hit1": "animations/hit1.json",
+    "jump": "animations/jump.json",
+    "move": "animations/move.json",
+    "stand": "animations/stand.json",
+    "skill1": "animations/skill1.json",
+    "attack1": "animations/attack1.json",
+    "attack1/info/effect": "animations/attack1__info__effect.json",
+    "attack2": "animations/attack2.json",
+    "attack2/info/effect": "animations/attack2__info__effect.json"
+  }
+}

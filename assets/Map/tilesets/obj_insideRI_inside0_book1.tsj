@@ -1,0 +1,1 @@
+{"type":"tileset","name":"obj:insideRI/inside0/book1","objectalignment":"bottomleft","tilewidth":655,"tileheight":653,"tilecount":3,"tiles":[{"id":0,"image":"../images/16429.png","imagewidth":655,"imageheight":653},{"id":1,"image":"../images/16430.png","imagewidth":178,"imageheight":381},{"id":2,"image":"../images/16440.png","imagewidth":44,"imageheight":84}]}

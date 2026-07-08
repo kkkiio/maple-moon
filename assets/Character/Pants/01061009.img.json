@@ -1,0 +1,2198 @@
+{
+  "alert": {
+    "0": {
+      "pants": {
+        "__h": 13,
+        "__w": 24,
+        "map": {
+          "navel": [
+            1,
+            -5
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          98,
+          121
+        ]
+      }
+    },
+    "1": {
+      "pants": {
+        "__h": 13,
+        "__w": 23,
+        "map": {
+          "navel": [
+            0,
+            -7
+          ]
+        },
+        "origin": [
+          10,
+          6
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          46,
+          150
+        ]
+      }
+    },
+    "2": {
+      "pants": {
+        "__h": 13,
+        "__w": 22,
+        "map": {
+          "navel": [
+            0,
+            -7
+          ]
+        },
+        "origin": [
+          9,
+          6
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          178,
+          110
+        ]
+      }
+    }
+  },
+  "fly": {
+    "0": {
+      "pants": {
+        "__h": 17,
+        "__w": 24,
+        "map": {
+          "navel": [
+            -3,
+            -3
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          154,
+          51
+        ]
+      }
+    },
+    "1": {
+      "pants": {
+        "__h": 17,
+        "__w": 22,
+        "map": {
+          "navel": [
+            -5,
+            -4
+          ]
+        },
+        "origin": [
+          10,
+          6
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          178,
+          20
+        ]
+      }
+    }
+  },
+  "heal": {
+    "0": {
+      "pants": {
+        "__h": 13,
+        "__w": 23,
+        "map": {
+          "navel": [
+            0,
+            -7
+          ]
+        },
+        "origin": [
+          10,
+          6
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          46,
+          150
+        ]
+      }
+    },
+    "1": {
+      "pants": {
+        "__h": 16,
+        "__w": 26,
+        "map": {
+          "navel": [
+            0,
+            -3
+          ]
+        },
+        "origin": [
+          10,
+          6
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          128,
+          19
+        ]
+      }
+    },
+    "2": {
+      "pants": {
+        "__h": 14,
+        "__w": 21,
+        "map": {
+          "navel": [
+            -2,
+            -5
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          84,
+          173
+        ]
+      }
+    }
+  },
+  "info": {
+    "cash": 0,
+    "icon": {
+      "__h": 25,
+      "__w": 28,
+      "origin": [
+        -3,
+        25
+      ],
+      "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+      "__off": [
+        99,
+        16
+      ]
+    },
+    "iconRaw": {
+      "__h": 21,
+      "__w": 28,
+      "origin": [
+        -3,
+        25
+      ],
+      "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+      "__off": [
+        99,
+        41
+      ]
+    },
+    "incPDD": 9,
+    "islot": "Pn",
+    "price": 1500,
+    "reqDEX": 0,
+    "reqINT": 0,
+    "reqJob": 4,
+    "reqLUK": 0,
+    "reqLevel": 10,
+    "reqSTR": 0,
+    "tuc": 7,
+    "vslot": "Pn"
+  },
+  "jump": {
+    "0": {
+      "pants": {
+        "__h": 14,
+        "__w": 26,
+        "map": {
+          "navel": [
+            1,
+            -4
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          128,
+          66
+        ]
+      }
+    }
+  },
+  "ladder": {
+    "0": {
+      "pants": {
+        "__h": 15,
+        "__w": 22,
+        "map": {
+          "navel": [
+            2,
+            -6
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "backPantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          178,
+          53
+        ]
+      }
+    },
+    "1": {
+      "pants": {
+        "__h": 15,
+        "__w": 21,
+        "map": {
+          "navel": [
+            0,
+            -6
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "backPantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          0,
+          173
+        ]
+      }
+    }
+  },
+  "prone": {
+    "0": {
+      "pants": {
+        "__h": 20,
+        "__w": 22,
+        "map": {
+          "navel": [
+            -2,
+            12
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          178,
+          0
+        ]
+      }
+    }
+  },
+  "proneStab": {
+    "0": {
+      "pants": {
+        "__h": 20,
+        "__w": 22,
+        "map": {
+          "navel": [
+            -2,
+            12
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          178,
+          0
+        ]
+      }
+    },
+    "1": {
+      "pants": {
+        "__h": 20,
+        "__w": 22,
+        "map": {
+          "navel": [
+            -2,
+            12
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          178,
+          0
+        ]
+      }
+    }
+  },
+  "rope": {
+    "0": {
+      "pants": {
+        "__h": 16,
+        "__w": 21,
+        "map": {
+          "navel": [
+            1,
+            -6
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "backPantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          178,
+          149
+        ]
+      }
+    },
+    "1": {
+      "pants": {
+        "__h": 13,
+        "__w": 21,
+        "map": {
+          "navel": [
+            0,
+            -5
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "backPantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          69,
+          150
+        ]
+      }
+    }
+  },
+  "shoot1": {
+    "0": {
+      "pants": {
+        "__h": 13,
+        "__w": 22,
+        "map": {
+          "navel": [
+            0,
+            -5
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          178,
+          123
+        ]
+      }
+    },
+    "1": {
+      "pants": {
+        "__h": 13,
+        "__w": 22,
+        "map": {
+          "navel": [
+            0,
+            -5
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          178,
+          123
+        ]
+      }
+    },
+    "2": {
+      "pants": {
+        "__h": 13,
+        "__w": 22,
+        "map": {
+          "navel": [
+            0,
+            -5
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          178,
+          123
+        ]
+      }
+    }
+  },
+  "shoot2": {
+    "0": {
+      "pants": {
+        "__h": 13,
+        "__w": 22,
+        "map": {
+          "navel": [
+            -2,
+            -4
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          178,
+          136
+        ]
+      }
+    },
+    "1": {
+      "pants": {
+        "__h": 13,
+        "__w": 22,
+        "map": {
+          "navel": [
+            -2,
+            -4
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          178,
+          136
+        ]
+      }
+    },
+    "2": {
+      "pants": {
+        "__h": 13,
+        "__w": 22,
+        "map": {
+          "navel": [
+            -2,
+            -4
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          178,
+          136
+        ]
+      }
+    },
+    "3": {
+      "pants": {
+        "__h": 13,
+        "__w": 22,
+        "map": {
+          "navel": [
+            -2,
+            -4
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          178,
+          136
+        ]
+      }
+    },
+    "4": {
+      "pants": {
+        "__h": 13,
+        "__w": 22,
+        "map": {
+          "navel": [
+            -2,
+            -4
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          178,
+          136
+        ]
+      }
+    }
+  },
+  "shootF": {
+    "0": {
+      "pants": {
+        "__h": 13,
+        "__w": 24,
+        "map": {
+          "navel": [
+            5,
+            -5
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          122,
+          121
+        ]
+      }
+    },
+    "1": {
+      "pants": {
+        "__h": 13,
+        "__w": 26,
+        "map": {
+          "navel": [
+            5,
+            -5
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          128,
+          80
+        ]
+      }
+    },
+    "2": {
+      "pants": {
+        "__h": 13,
+        "__w": 26,
+        "map": {
+          "navel": [
+            5,
+            -5
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          128,
+          80
+        ]
+      }
+    }
+  },
+  "sit": {
+    "0": {
+      "pants": {
+        "__h": 10,
+        "__w": 23,
+        "map": {
+          "navel": [
+            5,
+            -4
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          24,
+          138
+        ]
+      }
+    }
+  },
+  "stabO1": {
+    "0": {
+      "pants": {
+        "__h": 14,
+        "__w": 31,
+        "map": {
+          "navel": [
+            7,
+            -4
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          62,
+          58
+        ]
+      }
+    },
+    "1": {
+      "pants": {
+        "__h": 14,
+        "__w": 31,
+        "map": {
+          "navel": [
+            1,
+            -2
+          ]
+        },
+        "origin": [
+          10,
+          6
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          0,
+          73
+        ]
+      }
+    }
+  },
+  "stabO2": {
+    "0": {
+      "pants": {
+        "__h": 14,
+        "__w": 23,
+        "map": {
+          "navel": [
+            0,
+            -5
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          23,
+          150
+        ]
+      }
+    },
+    "1": {
+      "pants": {
+        "__h": 15,
+        "__w": 31,
+        "map": {
+          "navel": [
+            -1,
+            -4
+          ]
+        },
+        "origin": [
+          10,
+          6
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          0,
+          58
+        ]
+      }
+    }
+  },
+  "stabOF": {
+    "0": {
+      "pants": {
+        "__h": 12,
+        "__w": 24,
+        "map": {
+          "navel": [
+            3,
+            -4
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          0,
+          138
+        ]
+      }
+    },
+    "1": {
+      "pants": {
+        "__h": 16,
+        "__w": 27,
+        "map": {
+          "navel": [
+            4,
+            -4
+          ]
+        },
+        "origin": [
+          10,
+          6
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          0,
+          105
+        ]
+      }
+    },
+    "2": {
+      "pants": {
+        "__h": 15,
+        "__w": 31,
+        "map": {
+          "navel": [
+            2,
+            -2
+          ]
+        },
+        "origin": [
+          10,
+          6
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          31,
+          58
+        ]
+      }
+    }
+  },
+  "stabT1": {
+    "0": {
+      "pants": {
+        "__h": 16,
+        "__w": 26,
+        "map": {
+          "navel": [
+            3,
+            -3
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          128,
+          35
+        ]
+      }
+    },
+    "1": {
+      "pants": {
+        "__h": 17,
+        "__w": 27,
+        "map": {
+          "navel": [
+            -5,
+            -3
+          ]
+        },
+        "origin": [
+          10,
+          6
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          54,
+          87
+        ]
+      }
+    },
+    "2": {
+      "pants": {
+        "__h": 14,
+        "__w": 36,
+        "map": {
+          "navel": [
+            6,
+            -4
+          ]
+        },
+        "origin": [
+          9,
+          6
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          0,
+          0
+        ]
+      }
+    }
+  },
+  "stabT2": {
+    "0": {
+      "pants": {
+        "__h": 17,
+        "__w": 25,
+        "map": {
+          "navel": [
+            0,
+            -1
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          0,
+          121
+        ]
+      }
+    },
+    "1": {
+      "pants": {
+        "__h": 18,
+        "__w": 27,
+        "map": {
+          "navel": [
+            -1,
+            0
+          ]
+        },
+        "origin": [
+          10,
+          6
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          27,
+          87
+        ]
+      }
+    },
+    "2": {
+      "pants": {
+        "__h": 14,
+        "__w": 36,
+        "map": {
+          "navel": [
+            6,
+            -4
+          ]
+        },
+        "origin": [
+          9,
+          6
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          0,
+          14
+        ]
+      }
+    }
+  },
+  "stabTF": {
+    "0": {
+      "pants": {
+        "__h": 13,
+        "__w": 32,
+        "map": {
+          "navel": [
+            2,
+            -4
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          36,
+          14
+        ]
+      }
+    },
+    "1": {
+      "pants": {
+        "__h": 14,
+        "__w": 32,
+        "map": {
+          "navel": [
+            3,
+            -5
+          ]
+        },
+        "origin": [
+          10,
+          6
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          36,
+          0
+        ]
+      }
+    },
+    "2": {
+      "pants": {
+        "__h": 20,
+        "__w": 27,
+        "map": {
+          "navel": [
+            5,
+            -5
+          ]
+        },
+        "origin": [
+          9,
+          6
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          99,
+          62
+        ]
+      }
+    },
+    "3": {
+      "pants": {
+        "__h": 14,
+        "__w": 36,
+        "map": {
+          "navel": [
+            6,
+            -4
+          ]
+        },
+        "origin": [
+          9,
+          6
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          0,
+          0
+        ]
+      }
+    }
+  },
+  "stand1": {
+    "0": {
+      "pants": {
+        "__h": 14,
+        "__w": 21,
+        "map": {
+          "navel": [
+            -3,
+            -7
+          ]
+        },
+        "origin": [
+          9,
+          6
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          63,
+          173
+        ]
+      }
+    },
+    "1": {
+      "pants": {
+        "__h": 14,
+        "__w": 22,
+        "map": {
+          "navel": [
+            -2,
+            -6
+          ]
+        },
+        "origin": [
+          9,
+          6
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          178,
+          68
+        ]
+      }
+    },
+    "2": {
+      "pants": {
+        "__h": 14,
+        "__w": 22,
+        "map": {
+          "navel": [
+            -1,
+            -7
+          ]
+        },
+        "origin": [
+          9,
+          6
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          178,
+          82
+        ]
+      }
+    }
+  },
+  "stand2": {
+    "0": {
+      "pants": {
+        "__h": 14,
+        "__w": 21,
+        "map": {
+          "navel": [
+            -3,
+            -7
+          ]
+        },
+        "origin": [
+          9,
+          6
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          63,
+          173
+        ]
+      }
+    },
+    "1": {
+      "pants": {
+        "__h": 14,
+        "__w": 22,
+        "map": {
+          "navel": [
+            -2,
+            -6
+          ]
+        },
+        "origin": [
+          9,
+          6
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          178,
+          68
+        ]
+      }
+    },
+    "2": {
+      "pants": {
+        "__h": 14,
+        "__w": 22,
+        "map": {
+          "navel": [
+            -1,
+            -7
+          ]
+        },
+        "origin": [
+          9,
+          6
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          178,
+          82
+        ]
+      }
+    }
+  },
+  "swingO1": {
+    "0": {
+      "pants": {
+        "__h": 15,
+        "__w": 25,
+        "map": {
+          "navel": [
+            0,
+            -4
+          ]
+        },
+        "origin": [
+          9,
+          6
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          77,
+          105
+        ]
+      }
+    },
+    "1": {
+      "pants": {
+        "__h": 17,
+        "__w": 24,
+        "map": {
+          "navel": [
+            -5,
+            -4
+          ]
+        },
+        "origin": [
+          10,
+          6
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          154,
+          0
+        ]
+      }
+    },
+    "2": {
+      "pants": {
+        "__h": 15,
+        "__w": 31,
+        "map": {
+          "navel": [
+            -1,
+            -4
+          ]
+        },
+        "origin": [
+          9,
+          6
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          0,
+          28
+        ]
+      }
+    }
+  },
+  "swingO2": {
+    "0": {
+      "pants": {
+        "__h": 14,
+        "__w": 21,
+        "map": {
+          "navel": [
+            -2,
+            -5
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          84,
+          173
+        ]
+      }
+    },
+    "1": {
+      "pants": {
+        "__h": 16,
+        "__w": 26,
+        "map": {
+          "navel": [
+            0,
+            -3
+          ]
+        },
+        "origin": [
+          10,
+          6
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          128,
+          19
+        ]
+      }
+    },
+    "2": {
+      "pants": {
+        "__h": 16,
+        "__w": 25,
+        "map": {
+          "navel": [
+            0,
+            -2
+          ]
+        },
+        "origin": [
+          9,
+          6
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          27,
+          105
+        ]
+      }
+    }
+  },
+  "swingO3": {
+    "0": {
+      "pants": {
+        "__h": 13,
+        "__w": 25,
+        "map": {
+          "navel": [
+            -2,
+            -3
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          68,
+          45
+        ]
+      }
+    },
+    "1": {
+      "pants": {
+        "__h": 16,
+        "__w": 24,
+        "map": {
+          "navel": [
+            -5,
+            -2
+          ]
+        },
+        "origin": [
+          10,
+          6
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          154,
+          68
+        ]
+      }
+    },
+    "2": {
+      "pants": {
+        "__h": 15,
+        "__w": 25,
+        "map": {
+          "navel": [
+            -4,
+            -4
+          ]
+        },
+        "origin": [
+          9,
+          6
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          102,
+          105
+        ]
+      }
+    }
+  },
+  "swingOF": {
+    "0": {
+      "pants": {
+        "__h": 15,
+        "__w": 26,
+        "map": {
+          "navel": [
+            3,
+            -3
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          128,
+          51
+        ]
+      }
+    },
+    "1": {
+      "pants": {
+        "__h": 18,
+        "__w": 27,
+        "map": {
+          "navel": [
+            1,
+            -4
+          ]
+        },
+        "origin": [
+          10,
+          6
+        ],
+        "z": "backPantsOverMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          0,
+          87
+        ]
+      }
+    },
+    "2": {
+      "pants": {
+        "__h": 23,
+        "__w": 23,
+        "map": {
+          "navel": [
+            -6,
+            2
+          ]
+        },
+        "origin": [
+          9,
+          6
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          0,
+          150
+        ]
+      }
+    },
+    "3": {
+      "pants": {
+        "__h": 16,
+        "__w": 29,
+        "map": {
+          "navel": [
+            6,
+            1
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          99,
+          0
+        ]
+      }
+    }
+  },
+  "swingP1": {
+    "0": {
+      "pants": {
+        "__h": 14,
+        "__w": 21,
+        "map": {
+          "navel": [
+            -1,
+            -5
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          105,
+          173
+        ]
+      }
+    },
+    "1": {
+      "pants": {
+        "__h": 16,
+        "__w": 25,
+        "map": {
+          "navel": [
+            -1,
+            -3
+          ]
+        },
+        "origin": [
+          10,
+          6
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          52,
+          105
+        ]
+      }
+    },
+    "2": {
+      "pants": {
+        "__h": 15,
+        "__w": 31,
+        "map": {
+          "navel": [
+            1,
+            -3
+          ]
+        },
+        "origin": [
+          9,
+          6
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          68,
+          15
+        ]
+      }
+    }
+  },
+  "swingP2": {
+    "0": {
+      "pants": {
+        "__h": 15,
+        "__w": 24,
+        "map": {
+          "navel": [
+            0,
+            -4
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          154,
+          100
+        ]
+      }
+    },
+    "1": {
+      "pants": {
+        "__h": 15,
+        "__w": 24,
+        "map": {
+          "navel": [
+            -1,
+            -4
+          ]
+        },
+        "origin": [
+          10,
+          6
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          154,
+          115
+        ]
+      }
+    },
+    "2": {
+      "pants": {
+        "__h": 15,
+        "__w": 31,
+        "map": {
+          "navel": [
+            2,
+            -3
+          ]
+        },
+        "origin": [
+          9,
+          6
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          68,
+          30
+        ]
+      }
+    }
+  },
+  "swingPF": {
+    "0": {
+      "pants": {
+        "__h": 13,
+        "__w": 32,
+        "map": {
+          "navel": [
+            2,
+            -4
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          36,
+          14
+        ]
+      }
+    },
+    "1": {
+      "pants": {
+        "__h": 14,
+        "__w": 32,
+        "map": {
+          "navel": [
+            3,
+            -5
+          ]
+        },
+        "origin": [
+          10,
+          6
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          36,
+          0
+        ]
+      }
+    },
+    "2": {
+      "pants": {
+        "__h": 20,
+        "__w": 25,
+        "map": {
+          "navel": [
+            5,
+            -4
+          ]
+        },
+        "origin": [
+          9,
+          6
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          128,
+          93
+        ]
+      }
+    },
+    "3": {
+      "pants": {
+        "__h": 19,
+        "__w": 26,
+        "map": {
+          "navel": [
+            1,
+            -1
+          ]
+        },
+        "origin": [
+          9,
+          6
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          128,
+          0
+        ]
+      }
+    }
+  },
+  "swingT1": {
+    "0": {
+      "pants": {
+        "__h": 14,
+        "__w": 22,
+        "map": {
+          "navel": [
+            -1,
+            -6
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          178,
+          96
+        ]
+      }
+    },
+    "1": {
+      "pants": {
+        "__h": 17,
+        "__w": 24,
+        "map": {
+          "navel": [
+            -1,
+            -3
+          ]
+        },
+        "origin": [
+          10,
+          6
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          154,
+          17
+        ]
+      }
+    },
+    "2": {
+      "pants": {
+        "__h": 15,
+        "__w": 31,
+        "map": {
+          "navel": [
+            1,
+            -4
+          ]
+        },
+        "origin": [
+          9,
+          6
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          31,
+          28
+        ]
+      }
+    }
+  },
+  "swingT2": {
+    "0": {
+      "pants": {
+        "__h": 15,
+        "__w": 25,
+        "map": {
+          "navel": [
+            2,
+            -3
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          25,
+          121
+        ]
+      }
+    },
+    "1": {
+      "pants": {
+        "__h": 13,
+        "__w": 25,
+        "map": {
+          "navel": [
+            0,
+            -5
+          ]
+        },
+        "origin": [
+          10,
+          6
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          56,
+          73
+        ]
+      }
+    },
+    "2": {
+      "pants": {
+        "__h": 15,
+        "__w": 31,
+        "map": {
+          "navel": [
+            2,
+            -3
+          ]
+        },
+        "origin": [
+          9,
+          6
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          0,
+          43
+        ]
+      }
+    }
+  },
+  "swingT3": {
+    "0": {
+      "pants": {
+        "__h": 16,
+        "__w": 24,
+        "map": {
+          "navel": [
+            0,
+            -3
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          154,
+          84
+        ]
+      }
+    },
+    "1": {
+      "pants": {
+        "__h": 14,
+        "__w": 25,
+        "map": {
+          "navel": [
+            -3,
+            -3
+          ]
+        },
+        "origin": [
+          10,
+          6
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          31,
+          73
+        ]
+      }
+    },
+    "2": {
+      "pants": {
+        "__h": 15,
+        "__w": 31,
+        "map": {
+          "navel": [
+            2,
+            -4
+          ]
+        },
+        "origin": [
+          9,
+          6
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          31,
+          43
+        ]
+      }
+    }
+  },
+  "swingTF": {
+    "0": {
+      "pants": {
+        "__h": 16,
+        "__w": 22,
+        "map": {
+          "navel": [
+            -1,
+            -4
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "backPants",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          178,
+          37
+        ]
+      }
+    },
+    "1": {
+      "pants": {
+        "__h": 17,
+        "__w": 24,
+        "map": {
+          "navel": [
+            2,
+            -4
+          ]
+        },
+        "origin": [
+          10,
+          6
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          154,
+          34
+        ]
+      }
+    },
+    "2": {
+      "pants": {
+        "__h": 16,
+        "__w": 27,
+        "map": {
+          "navel": [
+            0,
+            -4
+          ]
+        },
+        "origin": [
+          9,
+          6
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          81,
+          87
+        ]
+      }
+    },
+    "3": {
+      "pants": {
+        "__h": 15,
+        "__w": 31,
+        "map": {
+          "navel": [
+            2,
+            -1
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          68,
+          0
+        ]
+      }
+    }
+  },
+  "walk1": {
+    "0": {
+      "pants": {
+        "__h": 14,
+        "__w": 21,
+        "map": {
+          "navel": [
+            -3,
+            -7
+          ]
+        },
+        "origin": [
+          9,
+          7
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          21,
+          173
+        ]
+      }
+    },
+    "1": {
+      "pants": {
+        "__h": 14,
+        "__w": 24,
+        "map": {
+          "navel": [
+            -1,
+            -7
+          ]
+        },
+        "origin": [
+          9,
+          6
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          50,
+          121
+        ]
+      }
+    },
+    "2": {
+      "pants": {
+        "__h": 14,
+        "__w": 21,
+        "map": {
+          "navel": [
+            -3,
+            -7
+          ]
+        },
+        "origin": [
+          9,
+          7
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          42,
+          173
+        ]
+      }
+    },
+    "3": {
+      "pants": {
+        "__h": 14,
+        "__w": 24,
+        "map": {
+          "navel": [
+            -1,
+            -5
+          ]
+        },
+        "origin": [
+          9,
+          6
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          74,
+          121
+        ]
+      }
+    }
+  },
+  "walk2": {
+    "0": {
+      "pants": {
+        "__h": 14,
+        "__w": 21,
+        "map": {
+          "navel": [
+            -3,
+            -7
+          ]
+        },
+        "origin": [
+          9,
+          7
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          21,
+          173
+        ]
+      }
+    },
+    "1": {
+      "pants": {
+        "__h": 14,
+        "__w": 24,
+        "map": {
+          "navel": [
+            -1,
+            -7
+          ]
+        },
+        "origin": [
+          9,
+          6
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          50,
+          121
+        ]
+      }
+    },
+    "2": {
+      "pants": {
+        "__h": 14,
+        "__w": 21,
+        "map": {
+          "navel": [
+            -3,
+            -7
+          ]
+        },
+        "origin": [
+          9,
+          7
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          42,
+          173
+        ]
+      }
+    },
+    "3": {
+      "pants": {
+        "__h": 14,
+        "__w": 24,
+        "map": {
+          "navel": [
+            -1,
+            -5
+          ]
+        },
+        "origin": [
+          9,
+          6
+        ],
+        "z": "pantsOverShoesBelowMailChest",
+        "__i": "assets/Character/Pants/spritesheets/01061009.img.png",
+        "__off": [
+          74,
+          121
+        ]
+      }
+    }
+  }
+}

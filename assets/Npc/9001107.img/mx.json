@@ -1,0 +1,24 @@
+{
+  "info": {
+    "dcBottom": 3,
+    "dcLeft": -25,
+    "dcRight": 27,
+    "dcTop": -84,
+    "default": {
+      "__b": 4210,
+      "__w": 47,
+      "__h": 65,
+      "origin": [
+        23,
+        64
+      ],
+      "z": 0
+    },
+    "script": {
+      "0": {
+        "script": "outRabbitJump"
+      }
+    }
+  },
+  "animations_path": "animation.json"
+}

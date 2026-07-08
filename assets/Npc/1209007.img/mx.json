@@ -1,0 +1,20 @@
+{
+  "info": {
+    "dcBottom": -150,
+    "dcLeft": 0,
+    "dcRight": 75,
+    "dcTop": -210,
+    "default": {
+      "__b": 9398,
+      "__w": 90,
+      "__h": 71,
+      "origin": [
+        50,
+        71
+      ],
+      "z": 0
+    },
+    "hideName": 1
+  },
+  "animations_path": "animation.json"
+}

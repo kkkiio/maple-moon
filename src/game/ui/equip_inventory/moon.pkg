@@ -1,0 +1,13 @@
+import {
+  "KKKIIO/maple-moon/engine/log",
+  "KKKIIO/maple-moon/engine/game_server",
+  "KKKIIO/maple-moon/game/item",
+  "KKKIIO/maple-moon/game/player",
+  "KKKIIO/maple-moon/game/inventory",
+  "KKKIIO/maple-moon/game/equip/data" @equip_data,
+  "KKKIIO/maple-moon/game/item_use_events",
+  "KKKIIO/maple-moon/game/server_proto",
+  "Milky2018/selene/ecs",
+}
+
+supported_targets = "native+js"

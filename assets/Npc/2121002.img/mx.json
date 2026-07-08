@@ -1,0 +1,26 @@
+{
+  "info": {
+    "dcBottom": 1,
+    "dcLeft": -34,
+    "dcRight": 35,
+    "dcTop": -30,
+    "default": {
+      "__b": 489,
+      "__w": 70,
+      "__h": 31,
+      "origin": [
+        35,
+        31
+      ],
+      "z": 0
+    },
+    "hideName": 1,
+    "script": {
+      "0": {
+        "script": "tablet02"
+      }
+    },
+    "talkMouseOnly": 1
+  },
+  "animations_path": "animation.json"
+}

@@ -1,0 +1,19 @@
+{
+  "info": {
+    "reg": {
+      "today": "",
+      "today_cLevel": "0",
+      "today_cNum": "0",
+      "today_eNum": "0",
+      "yday_cLevel": "0",
+      "yday_cNum": "0",
+      "yday_eNum": "0"
+    },
+    "script": {
+      "0": {
+        "script": "davyJohn_enter"
+      }
+    }
+  },
+  "animations_path": "animation.json"
+}

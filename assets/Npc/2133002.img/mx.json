@@ -1,0 +1,11 @@
+{
+  "info": {
+    "name": "엘린숲 이정표",
+    "script": {
+      "0": {
+        "script": "party6_giveUp"
+      }
+    }
+  },
+  "animations_path": "animation.json"
+}

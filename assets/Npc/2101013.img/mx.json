@@ -1,0 +1,14 @@
+{
+  "info": {
+    "dcBottom": 0,
+    "dcLeft": -34,
+    "dcRight": 30,
+    "dcTop": -121,
+    "script": {
+      "0": {
+        "script": "karakasa"
+      }
+    }
+  },
+  "animations_path": "animation.json"
+}

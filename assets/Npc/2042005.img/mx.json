@@ -1,0 +1,70 @@
+{
+  "info": {
+    "reg": {
+      "r0ID0": 0,
+      "r0ID1": 0,
+      "r0ID2": 0,
+      "r0ID3": 0,
+      "r0ID4": 0,
+      "r0ID5": 0,
+      "r0Level": 0,
+      "r0Num": 0,
+      "r0PB": 0,
+      "r1ID0": 0,
+      "r1ID1": 0,
+      "r1ID2": 0,
+      "r1ID3": 0,
+      "r1ID4": 0,
+      "r1ID5": 0,
+      "r1Level": 0,
+      "r1Num": 0,
+      "r1PB": 0,
+      "r2ID0": 0,
+      "r2ID1": 0,
+      "r2ID2": 0,
+      "r2ID3": 0,
+      "r2ID4": 0,
+      "r2ID5": 0,
+      "r2Level": 0,
+      "r2Num": 0,
+      "r2PB": 0,
+      "r3ID0": 0,
+      "r3ID1": 0,
+      "r3ID2": 0,
+      "r3ID3": 0,
+      "r3ID4": 0,
+      "r3ID5": 0,
+      "r3Level": 0,
+      "r3Num": 0,
+      "r3PB": 0,
+      "r4ID0": 0,
+      "r4ID1": 0,
+      "r4ID2": 0,
+      "r4ID3": 0,
+      "r4ID4": 0,
+      "r4ID5": 0,
+      "r4Level": 0,
+      "r4Num": 0,
+      "r4PB": 0,
+      "r5ID0": 0,
+      "r5ID1": 0,
+      "r5ID2": 0,
+      "r5ID3": 0,
+      "r5ID4": 0,
+      "r5ID5": 0,
+      "r5Level": 0,
+      "r5Num": 0,
+      "r5PB": 0
+    },
+    "script": {
+      "0": {
+        "script": "mc2_enter"
+      }
+    },
+    "speak": {
+      "0": "n0",
+      "1": "n1"
+    }
+  },
+  "animations_path": "animation.json"
+}

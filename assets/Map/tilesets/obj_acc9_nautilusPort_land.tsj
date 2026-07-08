@@ -1,0 +1,1 @@
+{"type":"tileset","name":"obj:acc9/nautilusPort/land","objectalignment":"bottomleft","tilewidth":472,"tileheight":366,"tilecount":3,"tiles":[{"id":0,"image":"../images/25931.png","imagewidth":294,"imageheight":366},{"id":1,"image":"../images/25929.png","imagewidth":472,"imageheight":158},{"id":2,"image":"../images/25930.png","imagewidth":167,"imageheight":130}]}

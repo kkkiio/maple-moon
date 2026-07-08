@@ -1,0 +1,47 @@
+{ "frames": [
+   {
+    "filename": "attack2 0.aseprite",
+    "frame": { "x": 69, "y": 0, "w": 75, "h": 95 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 7, "y": 0, "w": 75, "h": 95 },
+    "sourceSize": { "w": 82, "h": 112 },
+    "duration": 350
+   },
+   {
+    "filename": "attack2 1.aseprite",
+    "frame": { "x": 69, "y": 95, "w": 72, "h": 93 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 1, "y": 2, "w": 72, "h": 93 },
+    "sourceSize": { "w": 82, "h": 112 },
+    "duration": 150
+   },
+   {
+    "filename": "attack2 2.aseprite",
+    "frame": { "x": 0, "y": 0, "w": 69, "h": 107 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 5, "w": 69, "h": 107 },
+    "sourceSize": { "w": 82, "h": 112 },
+    "duration": 500
+   }
+ ],
+ "meta": {
+  "app": "https://www.aseprite.org/",
+  "version": "1.3.14.4-arm64",
+  "image": "attack2.png",
+  "format": "RGBA8888",
+  "size": { "w": 144, "h": 188 },
+  "scale": "1",
+  "frameTags": [
+   { "name": "attack2", "from": 0, "to": 2, "direction": "forward", "color": "#000000ff" }
+  ],
+  "layers": [
+   { "name": "main", "opacity": 255, "blendMode": "normal" }
+  ],
+  "slices": [
+   { "name": "anchor_attack2", "keys": [{ "frame": 0, "bounds": {"x": 0, "y": 0, "w": 82, "h": 112 }, "pivot": {"x": 39, "y": 95 } }] }
+  ]
+ }
+}

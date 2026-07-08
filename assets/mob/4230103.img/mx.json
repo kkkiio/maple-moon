@@ -1,0 +1,134 @@
+{
+  "info": {
+    "MADamage": 0,
+    "MDDamage": 400,
+    "PADamage": 95,
+    "PDDamage": 400,
+    "acc": 100,
+    "bodyAttack": 1,
+    "eva": 18,
+    "exp": 99,
+    "fs": 10,
+    "level": 42,
+    "maxHP": 2200,
+    "maxMP": 60,
+    "mobType": 0,
+    "pushed": 100,
+    "skill": {
+      "0": {
+        "action": 1,
+        "effectAfter": 0,
+        "level": 1,
+        "skill": 100
+      }
+    },
+    "speed": 20,
+    "summonType": 1,
+    "undead": 0
+  },
+  "stance_nodes": {
+    "die1": {
+      "path_key": "die1",
+      "total_duration_ms": 480,
+      "loop_": false,
+      "first_head": {
+        "x": -19,
+        "y": -48
+      },
+      "first_bounds": null
+    },
+    "hit1": {
+      "path_key": "hit1",
+      "total_duration_ms": 600,
+      "loop_": false,
+      "first_head": {
+        "x": -3,
+        "y": -51
+      },
+      "first_bounds": {
+        "lt": {
+          "x": -30,
+          "y": -54
+        },
+        "rb": {
+          "x": 30,
+          "y": 0
+        }
+      }
+    },
+    "jump": {
+      "path_key": "jump",
+      "total_duration_ms": 100,
+      "loop_": false,
+      "first_head": {
+        "x": -6,
+        "y": -46
+      },
+      "first_bounds": {
+        "lt": {
+          "x": -33,
+          "y": -46
+        },
+        "rb": {
+          "x": 34,
+          "y": 0
+        }
+      }
+    },
+    "move": {
+      "path_key": "move",
+      "total_duration_ms": 500,
+      "loop_": true,
+      "first_head": {
+        "x": -6,
+        "y": -46
+      },
+      "first_bounds": {
+        "lt": {
+          "x": -33,
+          "y": -46
+        },
+        "rb": {
+          "x": 34,
+          "y": 0
+        }
+      }
+    },
+    "stand": {
+      "path_key": "stand",
+      "total_duration_ms": 1160,
+      "loop_": true,
+      "first_head": {
+        "x": -7,
+        "y": -45
+      },
+      "first_bounds": {
+        "lt": {
+          "x": -33,
+          "y": -45
+        },
+        "rb": {
+          "x": 34,
+          "y": 0
+        }
+      }
+    }
+  },
+  "attack_nodes": {},
+  "skill_nodes": {
+    "100": {
+      "skill_id": 100,
+      "action": 1,
+      "animation_path_key": "skill1",
+      "effects": []
+    }
+  },
+  "mx_animations": {
+    "die1": "animations/die1.json",
+    "hit1": "animations/hit1.json",
+    "jump": "animations/jump.json",
+    "move": "animations/move.json",
+    "stand": "animations/stand.json",
+    "skill1": "animations/skill1.json"
+  }
+}

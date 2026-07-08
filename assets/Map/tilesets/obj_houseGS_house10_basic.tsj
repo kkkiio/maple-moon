@@ -1,0 +1,1 @@
+{"type":"tileset","name":"obj:houseGS/house10/basic","objectalignment":"bottomleft","tilewidth":264,"tileheight":265,"tilecount":2,"tiles":[{"id":0,"image":"../images/13781.png","imagewidth":189,"imageheight":265},{"id":1,"image":"../images/13782.png","imagewidth":264,"imageheight":178}]}

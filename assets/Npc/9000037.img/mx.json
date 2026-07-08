@@ -1,0 +1,10 @@
+{
+  "info": {
+    "script": {
+      "0": {
+        "script": "Raid_solo"
+      }
+    }
+  },
+  "animations_path": "animation.json"
+}

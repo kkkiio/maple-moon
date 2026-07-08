@@ -1,0 +1,23 @@
+///|
+pub(all) enum CursorState {
+  IDLE = 0
+  CAN_CLICK = 1
+  GAME = 2
+  HOUSE = 3
+  CAN_CLICK2 = 4
+  CAN_GRAB = 5
+  GIFT = 6
+  VSCROLL = 7
+  HSCROLL = 8
+  VSCROLL_IDLE = 9
+  HSCROLL_IDLE = 10
+  GRABBING = 11
+  CLICKING = 12
+  RCLICK = 13
+  LEAF = 18
+  CHAT_BAR_VDRAG = 67
+  CHAT_BAR_HDRAG = 68
+  CHAT_BAR_BLTRDRAG = 69
+  CHAT_BAR_MOVE = 72
+  CHAT_BAR_BRTLDRAG = 73
+} derive(Eq, Compare, Hash, Debug)

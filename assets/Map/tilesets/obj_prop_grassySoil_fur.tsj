@@ -1,0 +1,1 @@
+{"type":"tileset","name":"obj:prop/grassySoil/fur","objectalignment":"bottomleft","tilewidth":128,"tileheight":85,"tilecount":3,"tiles":[{"id":0,"image":"../images/14507.png","imagewidth":90,"imageheight":85},{"id":1,"image":"../images/14508.png","imagewidth":128,"imageheight":67},{"id":2,"image":"../images/14509.png","imagewidth":77,"imageheight":41}]}

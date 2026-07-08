@@ -1,0 +1,10 @@
+{
+  "info": {
+    "script": {
+      "0": {
+        "script": "Jump_event"
+      }
+    }
+  },
+  "animations_path": "animation.json"
+}

@@ -1,0 +1,14 @@
+{
+  "info": {
+    "dcBottom": 0,
+    "dcLeft": -14,
+    "dcRight": 14,
+    "dcTop": -32,
+    "script": {
+      "0": {
+        "script": "viola_pink"
+      }
+    }
+  },
+  "animations_path": "animation.json"
+}

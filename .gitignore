@@ -1,14 +1,28 @@
-target/
 .mooncakes/
 .xmake
 build
 .cache
 node_modules
 dist
-assets
+output
 
 .vscode
 
-# windsurf rules
-.windsurfrules
 .DS_Store
+
+tools/
+.local/
+
+_build
+target
+
+.codex
+.claude
+CLAUDE.md
+
+.env.dev
+.env.test
+*.log
+
+# temporary local work
+moon.work

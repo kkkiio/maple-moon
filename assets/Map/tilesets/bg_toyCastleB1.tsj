@@ -1,0 +1,1 @@
+{"type":"tileset","name":"bg:toyCastleB1","objectalignment":"bottomleft","tilewidth":400,"tileheight":513,"tilecount":2,"tiles":[{"id":0,"image":"../images/29329.png","imagewidth":400,"imageheight":513},{"id":1,"image":"../images/29330.png","imagewidth":319,"imageheight":512}]}

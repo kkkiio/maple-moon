@@ -1,0 +1,10 @@
+{
+  "info": {
+    "dcBottom": 0,
+    "dcLeft": -16,
+    "dcRight": 16,
+    "dcTop": -16,
+    "hideName": 1
+  },
+  "animations_path": "animation.json"
+}

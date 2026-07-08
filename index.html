@@ -1,25 +1,21 @@
-<html lang="en">
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Maple Moon</title>
+    <link rel="icon" type="image/png" href="./assets/logo.png" />
+    <style type="text/css">
+      @font-face {
+        font-family: "ThaleahFat";
+        src: url("./ThaleahFat.ttf") format("truetype");
+        font-weight: normal;
+        font-style: normal;
+      }
+    </style>
+    <script src="/_build/js/release/build/KKKIIO/maple-moon/apps/game_web/game_web.js" defer></script>
+  </head>
 
-<head>
-  <style>
-    html {
-      width: 100%;
-    }
-
-    body {
-      /* background-color: #2c3e50; */
-      background-color: white;
-      margin: 0;
-      padding: 0;
-      font-family: "Droid Sans", "sans-serif";
-      /* color: #bdc3c7; */
-    }
-  </style>
-</head>
-
-<body>
-  <div id="app"></div>
-  <script src="/src/index.js" type="module"></script>
-</body>
-
+  <body>
+    <canvas id="canvas" style="display: block; margin: 0 auto; cursor: none" height="32" width="32"></canvas>
+  </body>
 </html>

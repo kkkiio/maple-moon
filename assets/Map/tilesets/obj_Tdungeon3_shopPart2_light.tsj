@@ -1,0 +1,1 @@
+{"type":"tileset","name":"obj:Tdungeon3/shopPart2/light","objectalignment":"bottomleft","tilewidth":89,"tileheight":73,"tilecount":3,"tiles":[{"id":0,"image":"../images/17322.png","imagewidth":29,"imageheight":26},{"id":1,"image":"../images/17321.png","imagewidth":89,"imageheight":73},{"id":2,"image":"../images/17323.png","imagewidth":34,"imageheight":24}]}

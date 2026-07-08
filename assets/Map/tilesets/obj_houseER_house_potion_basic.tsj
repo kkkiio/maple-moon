@@ -1,0 +1,1 @@
+{"type":"tileset","name":"obj:houseER/house_potion/basic","objectalignment":"bottomleft","tilewidth":444,"tileheight":496,"tilecount":3,"tiles":[{"id":0,"image":"../images/20257.png","imagewidth":444,"imageheight":496},{"id":1,"image":"../images/20258.png","imagewidth":64,"imageheight":199},{"id":2,"image":"../images/20260.png","imagewidth":36,"imageheight":78}]}

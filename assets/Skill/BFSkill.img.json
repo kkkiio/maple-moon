@@ -1,0 +1,55 @@
+{
+  "0": {
+    "desc": "You cry at the Wolf, and it slows down as if it's in shock. ",
+    "effect": "Effect/BasicEff/ItemSkill/Success",
+    "level": 9,
+    "mobSkillID": 126,
+    "name": "Cry",
+    "owner": 0,
+    "userCount": 5
+  },
+  "1": {
+    "desc": "You attack the Wolf. He should be momentarily stunned. ",
+    "effect": "Effect/BasicEff/ItemSkill/Success",
+    "level": 14,
+    "mobSkillID": 123,
+    "name": "Surprise Attack",
+    "owner": 0,
+    "userCount": 2
+  },
+  "2": {
+    "desc": "The Sheep are in a state of confusion.",
+    "effect": "Effect/BasicEff/ItemSkill/Success",
+    "level": 4,
+    "mobSkillID": 132,
+    "name": "Great Confusion",
+    "owner": 1,
+    "userCount": 6
+  },
+  "3": {
+    "allMap": 1,
+    "desc": "The Wolves have slowed down.",
+    "level": 10,
+    "mobSkillID": 126,
+    "name": "Sheep's Bell",
+    "owner": 0
+  },
+  "4": {
+    "allMap": 1,
+    "desc": "The Sheep are momentarily stunned.",
+    "level": 15,
+    "mobSkillID": 123,
+    "name": "Wolf's Bell",
+    "owner": 1
+  },
+  "5": {
+    "allMap": 1,
+    "desc": "The Sheep have momentarily weakened.",
+    "effect": "Effect/BasicEff/ItemSkill/Success",
+    "level": 12,
+    "mobSkillID": 122,
+    "name": "Wolf's Threat",
+    "owner": 1,
+    "userCount": 6
+  }
+}

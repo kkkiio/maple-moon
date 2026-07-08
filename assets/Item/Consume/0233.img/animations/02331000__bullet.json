@@ -1,0 +1,65 @@
+{
+  "frames": [
+    {
+      "filename": "main/0",
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 21,
+        "h": 9
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 21,
+        "h": 9
+      },
+      "sourceSize": {
+        "w": 21,
+        "h": 9
+      },
+      "duration": 100
+    }
+  ],
+  "meta": {
+    "app": "nx-maple-res",
+    "version": "1.0",
+    "image": "02331000__bullet.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 21,
+      "h": 9
+    },
+    "scale": "1",
+    "frameTags": [
+      {
+        "name": "main",
+        "from": 0,
+        "to": 0,
+        "direction": "forward"
+      }
+    ],
+    "slices": [
+      {
+        "name": "anchor_main",
+        "keys": [
+          {
+            "frame": 0,
+            "bounds": {
+              "x": 0,
+              "y": 0,
+              "w": 21,
+              "h": 9
+            },
+            "pivot": {
+              "x": 10,
+              "y": 4
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

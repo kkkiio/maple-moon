@@ -1,0 +1,1797 @@
+{
+  "BtBig": {
+    "disabled": {
+      "0": {
+        "__h": 12,
+        "__w": 13,
+        "_hash": "964a7a045ba69658f7b5ce3c8854d61857af784154b5af1957f5c531b3d931e7",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/BtBig.png",
+        "__off": [
+          0,
+          12
+        ]
+      }
+    },
+    "mouseOver": {
+      "0": {
+        "__h": 12,
+        "__w": 13,
+        "_hash": "01f8a918eeac57f0ef189f7b9b57897054abfd7ac757d2a86671a5857ad5b42e",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/BtBig.png",
+        "__off": [
+          13,
+          12
+        ]
+      }
+    },
+    "normal": {
+      "0": {
+        "__h": 12,
+        "__w": 13,
+        "_hash": "fbb0f5a4eec5402e9f6f72d89adf3fce7190457055bb0aa1a83447ccefc4caa1",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/BtBig.png",
+        "__off": [
+          0,
+          0
+        ]
+      }
+    },
+    "pressed": {
+      "0": {
+        "__h": 12,
+        "__w": 13,
+        "_hash": "6c253cc8be357f2a7da0533296f238c4d8d24d7b297fa5f86c79f0e0c6829dd7",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/BtBig.png",
+        "__off": [
+          13,
+          0
+        ]
+      }
+    }
+  },
+  "BtDungeonMap": {
+    "disabled": {
+      "0": {
+        "__h": 12,
+        "__w": 55,
+        "_hash": "262a33cd6de5f090fa38c3cb6704c7c4e1a938e891ca577d06252ab42e08f0f3",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/BtDungeonMap.png",
+        "__off": [
+          0,
+          24
+        ]
+      }
+    },
+    "mouseOver": {
+      "0": {
+        "__h": 12,
+        "__w": 55,
+        "_hash": "e5dcd5acd5fa3994e9fb77f546c32e308e55e77bf1a89a156f2ff8db9542e39e",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/BtDungeonMap.png",
+        "__off": [
+          0,
+          36
+        ]
+      }
+    },
+    "normal": {
+      "0": {
+        "__h": 12,
+        "__w": 55,
+        "_hash": "87427456716323780d0518a78bb57d82053c9de11661a9fb8a998bd4151dc879",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/BtDungeonMap.png",
+        "__off": [
+          0,
+          0
+        ]
+      }
+    },
+    "pressed": {
+      "0": {
+        "__h": 12,
+        "__w": 55,
+        "_hash": "c43532c57ebc212c837286bd295e1b408c8726e1e3bd6ecd3f6a16bbbaa33999",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/BtDungeonMap.png",
+        "__off": [
+          0,
+          12
+        ]
+      }
+    }
+  },
+  "BtMap": {
+    "disabled": {
+      "0": {
+        "__h": 12,
+        "__w": 40,
+        "_hash": "a5b9dd00bb00a51fb5800f03f997642579e3ae3df360323a1e734e196ff8e288",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/BtMap.png",
+        "__off": [
+          0,
+          24
+        ]
+      }
+    },
+    "mouseOver": {
+      "0": {
+        "__h": 12,
+        "__w": 40,
+        "_hash": "14aac9f1eacc07a49370f9dcde750ed0c0f3faf6a68c05ce5a9b44fecb48f27f",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/BtMap.png",
+        "__off": [
+          40,
+          0
+        ]
+      }
+    },
+    "normal": {
+      "0": {
+        "__h": 12,
+        "__w": 40,
+        "_hash": "ecef09ac9bb71790a69d94c657a22a72fe1dc4a27f6cd99b3c6bd4a0e7deee5d",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/BtMap.png",
+        "__off": [
+          0,
+          0
+        ]
+      }
+    },
+    "pressed": {
+      "0": {
+        "__h": 12,
+        "__w": 40,
+        "_hash": "22b3e2d445cd1e5efa75abc51e0c40ddb961a511bd80b6c3f032fa9ab142b78a",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/BtMap.png",
+        "__off": [
+          0,
+          12
+        ]
+      }
+    }
+  },
+  "BtMax": {
+    "disabled": {
+      "0": {
+        "__h": 12,
+        "__w": 13,
+        "_hash": "952de63f9c11b876760aae25473b787d77aaf9d063214abbe073aa43538585cd",
+        "_outlink": "UI/wz2_UEvent.img/UrgentEventMini/button:Maximum/disabled/0",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/BtMax.png",
+        "__off": [
+          0,
+          12
+        ]
+      }
+    },
+    "mouseOver": {
+      "0": {
+        "__h": 12,
+        "__w": 13,
+        "_hash": "6cacdf57695c37d6ef0f4a95b2bf821aa67a7396e43efeb4ba9da84306acb5ad",
+        "_outlink": "UI/wz2_UEvent.img/UrgentEventMini/button:Maximum/mouseOver/0",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/BtMax.png",
+        "__off": [
+          13,
+          12
+        ]
+      }
+    },
+    "normal": {
+      "0": {
+        "__h": 12,
+        "__w": 13,
+        "_hash": "cd1b81a5b3f2d84af332e1c10c234f4647ef2db3be7e151371fb5632f7651fcc",
+        "_outlink": "UI/wz2_UEvent.img/UrgentEventMini/button:Maximum/normal/0",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/BtMax.png",
+        "__off": [
+          0,
+          0
+        ]
+      }
+    },
+    "pressed": {
+      "0": {
+        "__h": 12,
+        "__w": 13,
+        "_hash": "cca61fccb5f27f1db596571382bd1819da1c6a8ec8f61f6eca1bed7d796f9c02",
+        "_outlink": "UI/wz2_UEvent.img/UrgentEventMini/button:Maximum/pressed/0",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/BtMax.png",
+        "__off": [
+          13,
+          0
+        ]
+      }
+    }
+  },
+  "BtMin": {
+    "disabled": {
+      "0": {
+        "__h": 12,
+        "__w": 13,
+        "_hash": "cd27452d45dc045e92ed82583559b8f1578cfd240dd6e766471bb2b820c667dd",
+        "_outlink": "UI/UIWindowBT.img/GiantBoss_Monitor/Control/BtMin/disabled/0",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/BtMin.png",
+        "__off": [
+          0,
+          12
+        ]
+      }
+    },
+    "mouseOver": {
+      "0": {
+        "__h": 12,
+        "__w": 13,
+        "_hash": "16d0287799058e9bc52194844b15b838ed99c1606ad5717cbd8c808b4f5c41e6",
+        "_outlink": "UI/UIWindowBT.img/GiantBoss_Monitor/Control/BtMin/mouseOver/0",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/BtMin.png",
+        "__off": [
+          13,
+          12
+        ]
+      }
+    },
+    "normal": {
+      "0": {
+        "__h": 12,
+        "__w": 13,
+        "_hash": "5f23dbf4a7eb14aa8b535711caec982e82a9218ef0e9df0f1c208bcdecc3ed8c",
+        "_outlink": "UI/UIWindowBT.img/GiantBoss_Monitor/Control/BtMin/normal/0",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/BtMin.png",
+        "__off": [
+          0,
+          0
+        ]
+      }
+    },
+    "pressed": {
+      "0": {
+        "__h": 12,
+        "__w": 13,
+        "_hash": "334d8d3a74ff6f3e68f7300bcb8ff3170e173ee3d91d65e7400437905aa47a64",
+        "_outlink": "UI/UIWindowBT.img/GiantBoss_Monitor/Control/BtMin/pressed/0",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/BtMin.png",
+        "__off": [
+          13,
+          0
+        ]
+      }
+    }
+  },
+  "BtNpc": {
+    "disabled": {
+      "0": {
+        "__h": 12,
+        "__w": 39,
+        "_hash": "810ed1d8f3d6ec6c2b3cbed7664f744f92862b37271afbe958aa7a6344331a72",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/BtNpc.png",
+        "__off": [
+          0,
+          24
+        ]
+      }
+    },
+    "mouseOver": {
+      "0": {
+        "__h": 12,
+        "__w": 39,
+        "_hash": "4602f24d946a237228b2280a5d9885cd9dfeea8cd8aebc5be95842266a918587",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/BtNpc.png",
+        "__off": [
+          39,
+          0
+        ]
+      }
+    },
+    "normal": {
+      "0": {
+        "__h": 12,
+        "__w": 39,
+        "_hash": "f3d8b4fc5250cf202899dad8801da9dbeb1add4f69d18fb6389288ad47113ead",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/BtNpc.png",
+        "__off": [
+          0,
+          0
+        ]
+      }
+    },
+    "pressed": {
+      "0": {
+        "__h": 12,
+        "__w": 39,
+        "_hash": "499c20d3f37cca329df609d345149c9035b053d122fefa23c5c8609a7f759bd5",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/BtNpc.png",
+        "__off": [
+          0,
+          12
+        ]
+      }
+    }
+  },
+  "BtSmall": {
+    "disabled": {
+      "0": {
+        "__h": 12,
+        "__w": 13,
+        "_hash": "c69ee8fb60ccb9606172a16ee35f188f6cc1d12daed328987a996fa0d40db1ba",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/BtSmall.png",
+        "__off": [
+          0,
+          12
+        ]
+      }
+    },
+    "mouseOver": {
+      "0": {
+        "__h": 12,
+        "__w": 13,
+        "_hash": "51a4aca044606095f10ad42cf787999501537fa21a29f02904113ea71d6d65af",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/BtSmall.png",
+        "__off": [
+          13,
+          12
+        ]
+      }
+    },
+    "normal": {
+      "0": {
+        "__h": 12,
+        "__w": 13,
+        "_hash": "cb9f50d3d336946dc68aec65f156498f6d65f44e2adf76a329858090354eac19",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/BtSmall.png",
+        "__off": [
+          0,
+          0
+        ]
+      }
+    },
+    "pressed": {
+      "0": {
+        "__h": 12,
+        "__w": 13,
+        "_hash": "c468d1f5f2779f54b87c472984594c4751503a48191bc6a502f3476486454c53",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/BtSmall.png",
+        "__off": [
+          13,
+          0
+        ]
+      }
+    }
+  },
+  "ListNpc": {
+    "c": {
+      "__h": 1,
+      "__w": 1,
+      "origin": [
+        0,
+        0
+      ],
+      "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/ListNpc.png",
+      "__off": [
+        2,
+        67
+      ]
+    },
+    "e": {
+      "__h": 1,
+      "__w": 64,
+      "_hash": "6f2b02697fb41a2a92d6956ea1593cba058678822022efaf1662e90bd550b7ec",
+      "origin": [
+        0,
+        0
+      ],
+      "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/ListNpc.png",
+      "__off": [
+        64,
+        66
+      ]
+    },
+    "n": {
+      "__h": 36,
+      "__w": 1,
+      "origin": [
+        0,
+        0
+      ],
+      "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/ListNpc.png",
+      "__off": [
+        0,
+        67
+      ]
+    },
+    "ne": {
+      "__h": 36,
+      "__w": 64,
+      "_hash": "ed4f3765bfdd4a645df24dc76441f08f3f0e999b336ff50513bdadf308be3f3e",
+      "origin": [
+        0,
+        0
+      ],
+      "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/ListNpc.png",
+      "__off": [
+        64,
+        0
+      ]
+    },
+    "nw": {
+      "__h": 36,
+      "__w": 64,
+      "_hash": "970922fcafbafe58ea5696419174c24636eca3255760d77afdd39f23dbedfea3",
+      "origin": [
+        0,
+        0
+      ],
+      "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/ListNpc.png",
+      "__off": [
+        0,
+        0
+      ]
+    },
+    "s": {
+      "__h": 30,
+      "__w": 1,
+      "origin": [
+        0,
+        0
+      ],
+      "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/ListNpc.png",
+      "__off": [
+        1,
+        67
+      ]
+    },
+    "se": {
+      "__h": 30,
+      "__w": 64,
+      "_hash": "e1e4eb7fe432826bf98a23f1aaa385d09b7c95e05449ebc5914f783cd134f557",
+      "origin": [
+        0,
+        0
+      ],
+      "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/ListNpc.png",
+      "__off": [
+        64,
+        36
+      ]
+    },
+    "sw": {
+      "__h": 30,
+      "__w": 64,
+      "_hash": "75664d1a955639aafa0651da501235d5961c9efdb6f504cf38c52ea6c2a070cf",
+      "origin": [
+        0,
+        0
+      ],
+      "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/ListNpc.png",
+      "__off": [
+        0,
+        36
+      ]
+    },
+    "w": {
+      "__h": 1,
+      "__w": 64,
+      "_hash": "3e4feb587e58a685567e570b4d4478265023c909a67653f0e4dd5b6d34789f5e",
+      "origin": [
+        0,
+        0
+      ],
+      "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/ListNpc.png",
+      "__off": [
+        0,
+        66
+      ]
+    }
+  },
+  "MaxMap": {
+    "c": {
+      "__h": 1,
+      "__w": 1,
+      "origin": [
+        0,
+        0
+      ],
+      "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/MaxMap.png",
+      "__off": [
+        147,
+        67
+      ]
+    },
+    "e": {
+      "__h": 1,
+      "__w": 9,
+      "origin": [
+        0,
+        0
+      ],
+      "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/MaxMap.png",
+      "__off": [
+        138,
+        67
+      ]
+    },
+    "n": {
+      "__h": 61,
+      "__w": 1,
+      "_hash": "45c14bdfed7261b33f993e116fa0ca228e3e8a786e1894d8cb31178ecc114ea6",
+      "origin": [
+        0,
+        0
+      ],
+      "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/MaxMap.png",
+      "__off": [
+        0,
+        94
+      ]
+    },
+    "ne": {
+      "__h": 67,
+      "__w": 64,
+      "_hash": "f29df257ba87b5901e4a667ebd97fb837f09830be6c5d6511e9d69ec57afa70f",
+      "origin": [
+        0,
+        0
+      ],
+      "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/MaxMap.png",
+      "__off": [
+        64,
+        0
+      ]
+    },
+    "nw": {
+      "__h": 67,
+      "__w": 64,
+      "_hash": "0d5f6427eb055ee86e7a5e5c5c3d82154cba6aa2159cae17602161399cb196b4",
+      "origin": [
+        0,
+        0
+      ],
+      "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/MaxMap.png",
+      "__off": [
+        0,
+        0
+      ]
+    },
+    "nw2": {
+      "__h": 67,
+      "__w": 64,
+      "_hash": "5d6e20378fb6b08976bdb69b69cc55586c0485f8f968a4c8ebd512a5251b558a",
+      "origin": [
+        0,
+        0
+      ],
+      "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/MaxMap.png",
+      "__off": [
+        128,
+        0
+      ]
+    },
+    "s": {
+      "__h": 9,
+      "__w": 1,
+      "origin": [
+        0,
+        0
+      ],
+      "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/MaxMap.png",
+      "__off": [
+        128,
+        67
+      ]
+    },
+    "se": {
+      "__h": 27,
+      "__w": 64,
+      "_inlink": "MiniMap/MinMap/se",
+      "origin": [
+        0,
+        0
+      ],
+      "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/MaxMap.png",
+      "__off": [
+        64,
+        67
+      ]
+    },
+    "sw": {
+      "__h": 27,
+      "__w": 64,
+      "_inlink": "MiniMap/MinMap/sw",
+      "origin": [
+        0,
+        0
+      ],
+      "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/MaxMap.png",
+      "__off": [
+        0,
+        67
+      ]
+    },
+    "w": {
+      "__h": 1,
+      "__w": 9,
+      "origin": [
+        0,
+        0
+      ],
+      "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/MaxMap.png",
+      "__off": [
+        129,
+        67
+      ]
+    }
+  },
+  "MaxMapMirror": {
+    "c": {
+      "__h": 1,
+      "__w": 1,
+      "origin": [
+        0,
+        0
+      ],
+      "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/MaxMapMirror.png",
+      "__off": [
+        147,
+        67
+      ]
+    },
+    "e": {
+      "__h": 1,
+      "__w": 9,
+      "origin": [
+        0,
+        0
+      ],
+      "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/MaxMapMirror.png",
+      "__off": [
+        138,
+        67
+      ]
+    },
+    "n": {
+      "__h": 61,
+      "__w": 1,
+      "_hash": "4ed2db64e6ff9491de950ae6094c98ac50626a112b5b405b3e23241185acafd9",
+      "origin": [
+        0,
+        0
+      ],
+      "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/MaxMapMirror.png",
+      "__off": [
+        0,
+        94
+      ]
+    },
+    "ne": {
+      "__h": 67,
+      "__w": 64,
+      "_hash": "04a11763febc3c8a89030929b73fd50b551c67d3650434e886e7736f5d9214f5",
+      "origin": [
+        32,
+        33
+      ],
+      "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/MaxMapMirror.png",
+      "__off": [
+        64,
+        0
+      ]
+    },
+    "nw": {
+      "__h": 67,
+      "__w": 64,
+      "_hash": "821cc5163dafc9f5838311150fbaf6851474ef68cd4a1fc13282994dd545fbed",
+      "origin": [
+        32,
+        33
+      ],
+      "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/MaxMapMirror.png",
+      "__off": [
+        0,
+        0
+      ]
+    },
+    "nw2": {
+      "__h": 67,
+      "__w": 64,
+      "_hash": "8170a2e79972264317afeb1979c2746d4e69f0d40873893d1a58f3f4bdbfb97c",
+      "origin": [
+        32,
+        33
+      ],
+      "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/MaxMapMirror.png",
+      "__off": [
+        128,
+        0
+      ]
+    },
+    "s": {
+      "__h": 9,
+      "__w": 1,
+      "origin": [
+        0,
+        0
+      ],
+      "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/MaxMapMirror.png",
+      "__off": [
+        128,
+        67
+      ]
+    },
+    "se": {
+      "__h": 27,
+      "__w": 64,
+      "_hash": "652ac9e95ad91e9d97904967445121717939cb03ec3de43d8622b98e5f53b7bb",
+      "origin": [
+        32,
+        13
+      ],
+      "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/MaxMapMirror.png",
+      "__off": [
+        64,
+        67
+      ]
+    },
+    "sw": {
+      "__h": 27,
+      "__w": 64,
+      "_hash": "6711212dededdcf297778b840ff066ab98058144e6a8410d05b24bd3eef1a796",
+      "origin": [
+        32,
+        13
+      ],
+      "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/MaxMapMirror.png",
+      "__off": [
+        0,
+        67
+      ]
+    },
+    "w": {
+      "__h": 1,
+      "__w": 9,
+      "origin": [
+        0,
+        0
+      ],
+      "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/MaxMapMirror.png",
+      "__off": [
+        129,
+        67
+      ]
+    }
+  },
+  "Min": {
+    "c": {
+      "__h": 20,
+      "__w": 1,
+      "origin": [
+        0,
+        0
+      ],
+      "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/Min.png",
+      "__off": [
+        0,
+        40
+      ]
+    },
+    "e": {
+      "__h": 20,
+      "__w": 64,
+      "_hash": "6c13bcdc8f5b14c7314b5acead62d52f2afc3b299a47732fa6ff32831e9d2b61",
+      "origin": [
+        0,
+        0
+      ],
+      "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/Min.png",
+      "__off": [
+        0,
+        20
+      ]
+    },
+    "w": {
+      "__h": 20,
+      "__w": 64,
+      "_hash": "4850096f0005f896c9158b4da5bf58a4f7603881815e9834c1dcb9521713b0e0",
+      "origin": [
+        0,
+        0
+      ],
+      "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/Min.png",
+      "__off": [
+        0,
+        0
+      ]
+    }
+  },
+  "MinMap": {
+    "c": {
+      "__h": 27,
+      "__w": 64,
+      "_inlink": "MiniMap/MinMap/se",
+      "origin": [
+        0,
+        0
+      ],
+      "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/MinMap.png",
+      "__off": [
+        64,
+        27
+      ]
+    },
+    "e": {
+      "__h": 1,
+      "__w": 9,
+      "origin": [
+        0,
+        0
+      ],
+      "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/MinMap.png",
+      "__off": [
+        11,
+        54
+      ]
+    },
+    "n": {
+      "__h": 21,
+      "__w": 1,
+      "origin": [
+        0,
+        0
+      ],
+      "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/MinMap.png",
+      "__off": [
+        0,
+        54
+      ]
+    },
+    "ne": {
+      "__h": 27,
+      "__w": 64,
+      "_hash": "e7ffed5b7dfe08ee506fda1930aaa551d1c6fda4436dffecea12d9b00ca580c4",
+      "origin": [
+        0,
+        0
+      ],
+      "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/MinMap.png",
+      "__off": [
+        0,
+        27
+      ]
+    },
+    "nw": {
+      "__h": 27,
+      "__w": 64,
+      "_hash": "785777e1928147a8613b41db92b8082b8964ff09071c810eed3e0048a58bc65d",
+      "origin": [
+        0,
+        0
+      ],
+      "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/MinMap.png",
+      "__off": [
+        0,
+        0
+      ]
+    },
+    "s": {
+      "__h": 9,
+      "__w": 1,
+      "origin": [
+        0,
+        0
+      ],
+      "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/MinMap.png",
+      "__off": [
+        1,
+        54
+      ]
+    },
+    "se": {
+      "__h": 27,
+      "__w": 64,
+      "_hash": "7ed5a186f2b49862d23407fb6c49747595478844deab020648be3fc53612c8b5",
+      "origin": [
+        0,
+        0
+      ],
+      "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/MinMap.png",
+      "__off": [
+        64,
+        27
+      ]
+    },
+    "sw": {
+      "__h": 27,
+      "__w": 64,
+      "_hash": "c6e758f07b6576f718caa90124a6126b50d01b7b18449fea3cb3fc281c0a2e29",
+      "origin": [
+        0,
+        0
+      ],
+      "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/MinMap.png",
+      "__off": [
+        64,
+        0
+      ]
+    },
+    "w": {
+      "__h": 1,
+      "__w": 9,
+      "origin": [
+        0,
+        0
+      ],
+      "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/MinMap.png",
+      "__off": [
+        2,
+        54
+      ]
+    }
+  },
+  "MinMapMirror": {
+    "c": {
+      "__h": 27,
+      "__w": 64,
+      "_inlink": "MiniMap/MinMapMirror/se",
+      "origin": [
+        32,
+        13
+      ],
+      "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/MinMapMirror.png",
+      "__off": [
+        64,
+        27
+      ]
+    },
+    "e": {
+      "__h": 1,
+      "__w": 9,
+      "origin": [
+        0,
+        0
+      ],
+      "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/MinMapMirror.png",
+      "__off": [
+        11,
+        54
+      ]
+    },
+    "n": {
+      "__h": 21,
+      "__w": 1,
+      "origin": [
+        0,
+        10
+      ],
+      "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/MinMapMirror.png",
+      "__off": [
+        0,
+        54
+      ]
+    },
+    "ne": {
+      "__h": 27,
+      "__w": 64,
+      "_hash": "9bb52254261951bc9619f29c4f2d60b1ba244877d93c08432d6dacfe3b7711ec",
+      "origin": [
+        32,
+        13
+      ],
+      "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/MinMapMirror.png",
+      "__off": [
+        0,
+        27
+      ]
+    },
+    "nw": {
+      "__h": 27,
+      "__w": 64,
+      "_hash": "8c69c3498f975bf644b7b3dcc4b58d9ce876327efc92e5e45128e2d96ff6d777",
+      "origin": [
+        32,
+        13
+      ],
+      "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/MinMapMirror.png",
+      "__off": [
+        0,
+        0
+      ]
+    },
+    "s": {
+      "__h": 9,
+      "__w": 1,
+      "origin": [
+        0,
+        0
+      ],
+      "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/MinMapMirror.png",
+      "__off": [
+        1,
+        54
+      ]
+    },
+    "se": {
+      "__h": 27,
+      "__w": 64,
+      "_hash": "13d1c61371e803b4fdda52ad17e8f8afe5212cc5e0e7b54c468153a320337cd5",
+      "origin": [
+        32,
+        13
+      ],
+      "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/MinMapMirror.png",
+      "__off": [
+        64,
+        27
+      ]
+    },
+    "sw": {
+      "__h": 27,
+      "__w": 64,
+      "_hash": "a26cace83f0b474ec7ef7b2525d663754faec420267207f66821d12861568253",
+      "origin": [
+        32,
+        13
+      ],
+      "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/MinMapMirror.png",
+      "__off": [
+        64,
+        0
+      ]
+    },
+    "w": {
+      "__h": 1,
+      "__w": 9,
+      "origin": [
+        0,
+        0
+      ],
+      "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/MinMapMirror.png",
+      "__off": [
+        2,
+        54
+      ]
+    }
+  },
+  "MinMirror": {
+    "c": {
+      "__h": 20,
+      "__w": 1,
+      "origin": [
+        0,
+        0
+      ],
+      "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/MinMirror.png",
+      "__off": [
+        0,
+        40
+      ]
+    },
+    "e": {
+      "__h": 20,
+      "__w": 64,
+      "_hash": "bd95642928a529c5aedc73b00dd5cc8f77c2f866a7e3abe02615a87c73c149c7",
+      "origin": [
+        0,
+        0
+      ],
+      "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/MinMirror.png",
+      "__off": [
+        0,
+        20
+      ]
+    },
+    "w": {
+      "__h": 20,
+      "__w": 64,
+      "_hash": "345ed90be68ff6c39045469e044af9c93e9d5e991b3c228dcb73591e9c01ece2",
+      "origin": [
+        0,
+        0
+      ],
+      "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/MinMirror.png",
+      "__off": [
+        0,
+        0
+      ]
+    }
+  },
+  "iconDirection": {
+    "e": {
+      "0": {
+        "__h": 20,
+        "__w": 18,
+        "_hash": "a952e5fbe01e8a92a54143bda13a5bce5b0c2bd734744671b12c403af0651e53",
+        "origin": [
+          0,
+          0
+        ],
+        "z": 0,
+        "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/iconDirection.png",
+        "__off": [
+          18,
+          0
+        ]
+      },
+      "1": {
+        "__h": 20,
+        "__w": 18,
+        "_inlink": "MiniMap/iconDirection/e/0",
+        "origin": [
+          -1,
+          0
+        ],
+        "z": 0,
+        "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/iconDirection.png",
+        "__off": [
+          18,
+          0
+        ]
+      },
+      "2": {
+        "__h": 20,
+        "__w": 18,
+        "_inlink": "MiniMap/iconDirection/e/0",
+        "origin": [
+          -2,
+          0
+        ],
+        "z": 0,
+        "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/iconDirection.png",
+        "__off": [
+          18,
+          0
+        ]
+      },
+      "3": {
+        "__h": 20,
+        "__w": 18,
+        "_inlink": "MiniMap/iconDirection/e/0",
+        "origin": [
+          -3,
+          0
+        ],
+        "z": 0,
+        "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/iconDirection.png",
+        "__off": [
+          18,
+          0
+        ]
+      }
+    },
+    "n": {
+      "0": {
+        "__h": 18,
+        "__w": 20,
+        "_hash": "7cabe908a0a05e3c4501a543d47e7f1f82e3c688099ded76513a8cc73f78aaf1",
+        "origin": [
+          0,
+          -3
+        ],
+        "z": 0,
+        "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/iconDirection.png",
+        "__off": [
+          36,
+          0
+        ]
+      },
+      "1": {
+        "__h": 18,
+        "__w": 20,
+        "_inlink": "MiniMap/iconDirection/n/0",
+        "origin": [
+          0,
+          -2
+        ],
+        "z": 0,
+        "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/iconDirection.png",
+        "__off": [
+          36,
+          0
+        ]
+      },
+      "2": {
+        "__h": 18,
+        "__w": 20,
+        "_inlink": "MiniMap/iconDirection/n/0",
+        "origin": [
+          0,
+          -1
+        ],
+        "z": 0,
+        "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/iconDirection.png",
+        "__off": [
+          36,
+          0
+        ]
+      },
+      "3": {
+        "__h": 18,
+        "__w": 20,
+        "_inlink": "MiniMap/iconDirection/n/0",
+        "origin": [
+          0,
+          0
+        ],
+        "z": 0,
+        "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/iconDirection.png",
+        "__off": [
+          36,
+          0
+        ]
+      }
+    },
+    "ne": {
+      "0": {
+        "__h": 17,
+        "__w": 17,
+        "_hash": "8d2fd7cedd9f87bc5e038aa5151c3a2c644384b5faa8441b5bf949d8ac996abf",
+        "origin": [
+          0,
+          -3
+        ],
+        "z": 0,
+        "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/iconDirection.png",
+        "__off": [
+          37,
+          20
+        ]
+      },
+      "1": {
+        "__h": 17,
+        "__w": 17,
+        "_inlink": "MiniMap/iconDirection/ne/0",
+        "origin": [
+          -1,
+          -2
+        ],
+        "z": 0,
+        "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/iconDirection.png",
+        "__off": [
+          37,
+          20
+        ]
+      },
+      "2": {
+        "__h": 17,
+        "__w": 17,
+        "_inlink": "MiniMap/iconDirection/ne/0",
+        "origin": [
+          -2,
+          -1
+        ],
+        "z": 0,
+        "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/iconDirection.png",
+        "__off": [
+          37,
+          20
+        ]
+      },
+      "3": {
+        "__h": 17,
+        "__w": 17,
+        "_inlink": "MiniMap/iconDirection/ne/0",
+        "origin": [
+          -3,
+          0
+        ],
+        "z": 0,
+        "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/iconDirection.png",
+        "__off": [
+          37,
+          20
+        ]
+      }
+    },
+    "nw": {
+      "0": {
+        "__h": 17,
+        "__w": 17,
+        "_hash": "2ca7111dbb48d2496b612742f32690f3fb3353bf85b4a979048b9e7d574712b9",
+        "origin": [
+          -3,
+          -3
+        ],
+        "z": 0,
+        "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/iconDirection.png",
+        "__off": [
+          20,
+          20
+        ]
+      },
+      "1": {
+        "__h": 17,
+        "__w": 17,
+        "_inlink": "MiniMap/iconDirection/nw/0",
+        "origin": [
+          -2,
+          -2
+        ],
+        "z": 0,
+        "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/iconDirection.png",
+        "__off": [
+          20,
+          20
+        ]
+      },
+      "2": {
+        "__h": 17,
+        "__w": 17,
+        "_inlink": "MiniMap/iconDirection/nw/0",
+        "origin": [
+          -1,
+          -1
+        ],
+        "z": 0,
+        "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/iconDirection.png",
+        "__off": [
+          20,
+          20
+        ]
+      },
+      "3": {
+        "__h": 17,
+        "__w": 17,
+        "_inlink": "MiniMap/iconDirection/nw/0",
+        "origin": [
+          0,
+          0
+        ],
+        "z": 0,
+        "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/iconDirection.png",
+        "__off": [
+          20,
+          20
+        ]
+      }
+    },
+    "s": {
+      "0": {
+        "__h": 18,
+        "__w": 20,
+        "_hash": "c3f091927757901b6cdede43bdefd7fa2f4042dbb8b88cc3f5db02645f260f8c",
+        "origin": [
+          0,
+          0
+        ],
+        "z": 0,
+        "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/iconDirection.png",
+        "__off": [
+          0,
+          20
+        ]
+      },
+      "1": {
+        "__h": 18,
+        "__w": 20,
+        "_inlink": "MiniMap/iconDirection/s/0",
+        "origin": [
+          0,
+          -1
+        ],
+        "z": 0,
+        "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/iconDirection.png",
+        "__off": [
+          0,
+          20
+        ]
+      },
+      "2": {
+        "__h": 18,
+        "__w": 20,
+        "_inlink": "MiniMap/iconDirection/s/0",
+        "origin": [
+          0,
+          -2
+        ],
+        "z": 0,
+        "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/iconDirection.png",
+        "__off": [
+          0,
+          20
+        ]
+      },
+      "3": {
+        "__h": 18,
+        "__w": 20,
+        "_inlink": "MiniMap/iconDirection/s/0",
+        "origin": [
+          0,
+          -3
+        ],
+        "z": 0,
+        "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/iconDirection.png",
+        "__off": [
+          0,
+          20
+        ]
+      }
+    },
+    "se": {
+      "0": {
+        "__h": 17,
+        "__w": 17,
+        "_hash": "5e3fb5695e6ac41fb5c78cfed44da16a004300ac54bd8f440e033cfe4de6bb83",
+        "origin": [
+          0,
+          0
+        ],
+        "z": 0,
+        "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/iconDirection.png",
+        "__off": [
+          17,
+          38
+        ]
+      },
+      "1": {
+        "__h": 17,
+        "__w": 17,
+        "_inlink": "MiniMap/iconDirection/se/0",
+        "origin": [
+          -1,
+          -1
+        ],
+        "z": 0,
+        "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/iconDirection.png",
+        "__off": [
+          17,
+          38
+        ]
+      },
+      "2": {
+        "__h": 17,
+        "__w": 17,
+        "_inlink": "MiniMap/iconDirection/se/0",
+        "origin": [
+          -2,
+          -2
+        ],
+        "z": 0,
+        "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/iconDirection.png",
+        "__off": [
+          17,
+          38
+        ]
+      },
+      "3": {
+        "__h": 17,
+        "__w": 17,
+        "_inlink": "MiniMap/iconDirection/se/0",
+        "origin": [
+          -3,
+          -3
+        ],
+        "z": 0,
+        "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/iconDirection.png",
+        "__off": [
+          17,
+          38
+        ]
+      }
+    },
+    "sw": {
+      "0": {
+        "__h": 17,
+        "__w": 17,
+        "_hash": "2b78cc9c81221566ca9cefe0553d2aa5fc7fbec244b04911fed38f9e882763af",
+        "origin": [
+          -3,
+          0
+        ],
+        "z": 0,
+        "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/iconDirection.png",
+        "__off": [
+          0,
+          38
+        ]
+      },
+      "1": {
+        "__h": 17,
+        "__w": 17,
+        "_inlink": "MiniMap/iconDirection/sw/0",
+        "origin": [
+          -2,
+          -1
+        ],
+        "z": 0,
+        "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/iconDirection.png",
+        "__off": [
+          0,
+          38
+        ]
+      },
+      "2": {
+        "__h": 17,
+        "__w": 17,
+        "_inlink": "MiniMap/iconDirection/sw/0",
+        "origin": [
+          -1,
+          -2
+        ],
+        "z": 0,
+        "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/iconDirection.png",
+        "__off": [
+          0,
+          38
+        ]
+      },
+      "3": {
+        "__h": 17,
+        "__w": 17,
+        "_inlink": "MiniMap/iconDirection/sw/0",
+        "origin": [
+          0,
+          -3
+        ],
+        "z": 0,
+        "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/iconDirection.png",
+        "__off": [
+          0,
+          38
+        ]
+      }
+    },
+    "w": {
+      "0": {
+        "__h": 20,
+        "__w": 18,
+        "_hash": "6b5918a67fb2f18a56caaa821c4cb517f70ac4a5a21df0b720493910258937d8",
+        "origin": [
+          -3,
+          0
+        ],
+        "z": 0,
+        "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/iconDirection.png",
+        "__off": [
+          0,
+          0
+        ]
+      },
+      "1": {
+        "__h": 20,
+        "__w": 18,
+        "_inlink": "MiniMap/iconDirection/w/0",
+        "origin": [
+          -2,
+          0
+        ],
+        "z": 0,
+        "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/iconDirection.png",
+        "__off": [
+          0,
+          0
+        ]
+      },
+      "2": {
+        "__h": 20,
+        "__w": 18,
+        "_inlink": "MiniMap/iconDirection/w/0",
+        "origin": [
+          -1,
+          0
+        ],
+        "z": 0,
+        "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/iconDirection.png",
+        "__off": [
+          0,
+          0
+        ]
+      },
+      "3": {
+        "__h": 20,
+        "__w": 18,
+        "_inlink": "MiniMap/iconDirection/w/0",
+        "origin": [
+          0,
+          0
+        ],
+        "z": 0,
+        "__i": "assets/spritesheets/UI/UIWindow2.img/MiniMap/iconDirection.png",
+        "__off": [
+          0,
+          0
+        ]
+      }
+    }
+  },
+  "iconNpc": {
+    "0": {
+      "__h": 15,
+      "__w": 13,
+      "_hash": "667c5b473cf1d6956dade5a1648a605f34936a61c2a5f006d1a1f21394b49fb7",
+      "origin": [
+        6,
+        16
+      ],
+      "z": 0,
+      "__i": "assets/images/UI/74944.png"
+    },
+    "1": {
+      "__h": 15,
+      "__w": 13,
+      "_inlink": "MiniMap/iconNpc/0",
+      "origin": [
+        6,
+        15
+      ],
+      "z": 0,
+      "__i": "assets/images/UI/74944.png"
+    },
+    "2": {
+      "__h": 15,
+      "__w": 13,
+      "_inlink": "MiniMap/iconNpc/0",
+      "origin": [
+        6,
+        15
+      ],
+      "z": 0,
+      "__i": "assets/images/UI/74944.png"
+    },
+    "3": {
+      "__h": 15,
+      "__w": 13,
+      "_inlink": "MiniMap/iconNpc/0",
+      "origin": [
+        6,
+        15
+      ],
+      "z": 0,
+      "__i": "assets/images/UI/74944.png"
+    }
+  },
+  "iconPortal": {
+    "0": {
+      "__h": 15,
+      "__w": 13,
+      "_hash": "30c2a4d7103039667307b1ec8eaaf7adabacc87cc29c8797bafd11f1b7cd5110",
+      "origin": [
+        6,
+        7
+      ],
+      "z": 0,
+      "__i": "assets/images/UI/74989.png"
+    },
+    "1": {
+      "__h": 15,
+      "__w": 13,
+      "_inlink": "MiniMap/iconPortal/0",
+      "origin": [
+        6,
+        7
+      ],
+      "z": 0,
+      "__i": "assets/images/UI/74989.png"
+    },
+    "2": {
+      "__h": 15,
+      "__w": 13,
+      "_inlink": "MiniMap/iconPortal/0",
+      "origin": [
+        6,
+        6
+      ],
+      "z": 0,
+      "__i": "assets/images/UI/74989.png"
+    },
+    "3": {
+      "__h": 15,
+      "__w": 13,
+      "_inlink": "MiniMap/iconPortal/0",
+      "origin": [
+        6,
+        6
+      ],
+      "z": 0,
+      "__i": "assets/images/UI/74989.png"
+    }
+  }
+}

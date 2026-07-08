@@ -1,0 +1,1 @@
+{"type":"tileset","name":"obj:signboard/dryRock/board","objectalignment":"bottomleft","tilewidth":113,"tileheight":236,"tilecount":2,"tiles":[{"id":0,"image":"../images/23515.png","imagewidth":113,"imageheight":236},{"id":1,"image":"../images/23516.png","imagewidth":69,"imageheight":77}]}

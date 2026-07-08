@@ -1,0 +1,12 @@
+{
+  "info": {
+    "script": {
+      "0": {
+        "end": 20090630,
+        "script": "moonFlower",
+        "start": 20080903
+      }
+    }
+  },
+  "animations_path": "animation.json"
+}

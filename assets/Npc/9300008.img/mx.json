@@ -1,0 +1,13 @@
+{
+  "info": {
+    "quest": "shouwei2",
+    "reg": {
+      "name": ""
+    },
+    "speak": {
+      "0": "n0",
+      "1": "n1"
+    }
+  },
+  "animations_path": "animation.json"
+}

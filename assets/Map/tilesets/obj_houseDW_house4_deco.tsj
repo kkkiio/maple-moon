@@ -1,0 +1,1 @@
+{"type":"tileset","name":"obj:houseDW/house4/deco","objectalignment":"bottomleft","tilewidth":520,"tileheight":150,"tilecount":3,"tiles":[{"id":0,"image":"../images/20312.png","imagewidth":520,"imageheight":150},{"id":1,"image":"../images/20311.png","imagewidth":158,"imageheight":103},{"id":2,"image":"../images/20310.png","imagewidth":150,"imageheight":101}]}

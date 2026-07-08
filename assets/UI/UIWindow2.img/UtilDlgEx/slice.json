@@ -1,0 +1,60 @@
+{
+  "frames": [
+    {
+      "filename": "slice",
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 519,
+        "h": 85
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 519,
+        "h": 85
+      },
+      "sourceSize": {
+        "w": 519,
+        "h": 85
+      },
+      "duration": 100
+    }
+  ],
+  "meta": {
+    "app": "nx-maple-res",
+    "version": "1.0",
+    "image": "slice.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 519,
+      "h": 85
+    },
+    "scale": "1",
+    "frameTags": [],
+    "slices": [
+      {
+        "name": "nine_slice",
+        "keys": [
+          {
+            "frame": 0,
+            "bounds": {
+              "x": 0,
+              "y": 0,
+              "w": 519,
+              "h": 85
+            },
+            "center": {
+              "x": 0,
+              "y": 28,
+              "w": 519,
+              "h": 13
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

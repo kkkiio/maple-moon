@@ -1,0 +1,1 @@
+{"type":"tileset","name":"obj:guide/common/sign","objectalignment":"bottomleft","tilewidth":75,"tileheight":135,"tilecount":3,"tiles":[{"id":0,"image":"../images/25301.png","imagewidth":53,"imageheight":121},{"id":1,"image":"../images/25302.png","imagewidth":43,"imageheight":111},{"id":2,"image":"../images/25303.png","imagewidth":75,"imageheight":135}]}

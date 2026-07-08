@@ -1,0 +1,14 @@
+{
+  "info": {
+    "dcBottom": 0,
+    "dcLeft": -56,
+    "dcRight": 65,
+    "dcTop": -85,
+    "script": {
+      "0": {
+        "script": "sca_auto"
+      }
+    }
+  },
+  "animations_path": "animation.json"
+}

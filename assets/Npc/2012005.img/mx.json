@@ -1,0 +1,10 @@
+{
+  "info": {
+    "float": 1,
+    "speak": {
+      "0": "n0",
+      "1": "n1"
+    }
+  },
+  "animations_path": "animation.json"
+}

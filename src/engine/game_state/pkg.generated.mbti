@@ -1,0 +1,40 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/engine/game_state"
+
+import {
+  "KKKIIO/maple-moon/game/server_proto",
+  "Milky2018/selene/ecs",
+}
+
+// Values
+pub fn current_phase() -> GamePhase
+
+pub fn in_phase((GamePhase) -> Bool) -> (@ecs.World) -> Bool
+
+pub fn init_state(GamePhase) -> Unit
+
+pub fn on_enter_phase((GamePhase) -> Bool) -> () -> Bool
+
+pub fn on_exit_phase((GamePhase) -> Bool) -> () -> Bool
+
+pub fn previous_phase() -> GamePhase?
+
+pub fn set_next_phase(GamePhase) -> Unit
+
+pub fn transition(from~ : (GamePhase) -> Bool, to~ : (GamePhase) -> Bool) -> () -> Bool
+
+// Errors
+
+// Types and methods
+pub(all) enum GamePhase {
+  GameSetup
+  SelectCharacter
+  GameStart(map_id~ : Int, portal_id~ : Int, set_field_message~ : @server_proto.SetFieldMessage)
+  GameTransiting(map_id~ : Int, portal_id~ : Int)
+  GameActive(map_id~ : Int, portal_id~ : Int)
+}
+
+// Type aliases
+
+// Traits
+

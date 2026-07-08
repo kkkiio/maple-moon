@@ -1,0 +1,10 @@
+{
+  "info": {
+    "script": {
+      "0": {
+        "script": "gateKeeper"
+      }
+    }
+  },
+  "animations_path": "animation.json"
+}

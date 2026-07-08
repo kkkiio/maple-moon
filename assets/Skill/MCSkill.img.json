@@ -1,0 +1,84 @@
+{
+  "0": {
+    "desc": "Seals up a single member from the opposing party.",
+    "level": 10,
+    "mobSkillID": 120,
+    "name": " Seal (1 person)",
+    "spendCP": 14,
+    "target": 1
+  },
+  "1": {
+    "desc": " Puts everyone in the opposing party in a state of darkness at an 80% success rate.",
+    "level": 6,
+    "mobSkillID": 121,
+    "name": " Darkness (Party)",
+    "spendCP": 17,
+    "target": 2
+  },
+  "2": {
+    "desc": "Puts everyone in the opposing party in a state of weakness at an 80% success rate.",
+    "level": 7,
+    "mobSkillID": 122,
+    "name": "Weakness(Party)",
+    "spendCP": 19,
+    "target": 2
+  },
+  "3": {
+    "desc": "Stuns a single member from the opposing party.",
+    "level": 11,
+    "mobSkillID": 123,
+    "name": "Stun (1 person)",
+    "spendCP": 22,
+    "target": 1
+  },
+  "4": {
+    "desc": "Curses everyone in the opposing party.",
+    "level": 7,
+    "mobSkillID": 124,
+    "name": "Curse (Party)",
+    "spendCP": 12,
+    "target": 2
+  },
+  "5": {
+    "desc": "Poisons everyone in the opposing party at an 80% success rate.",
+    "level": 6,
+    "mobSkillID": 125,
+    "name": "Poisoned (Party)",
+    "spendCP": 19,
+    "target": 2
+  },
+  "6": {
+    "desc": "Slows down everyone in the opposing party at an 80% success rate.",
+    "level": 6,
+    "mobSkillID": 126,
+    "name": "Slow (Party)",
+    "spendCP": 16,
+    "target": 2
+  },
+  "7": {
+    "desc": "Cancels the buff of a single member of the opposing party.",
+    "level": 9,
+    "mobSkillID": 127,
+    "name": "Cancel Buff (1 person)",
+    "spendCP": 18,
+    "target": 1
+  },
+  "8": {
+    "desc": "Random",
+    "name": "Random",
+    "prop": 100,
+    "spendCP": 10,
+    "target": 1,
+    "time": 30,
+    "type": 8
+  },
+  "9": {
+    "desc": "Random",
+    "name": "Random",
+    "prop": 100,
+    "spendCP": 10,
+    "target": 2,
+    "time": 30,
+    "type": 8
+  }
+}

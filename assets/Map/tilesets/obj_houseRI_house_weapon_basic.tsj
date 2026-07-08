@@ -1,0 +1,1 @@
+{"type":"tileset","name":"obj:houseRI/house_weapon/basic","objectalignment":"bottomleft","tilewidth":503,"tileheight":276,"tilecount":3,"tiles":[{"id":0,"image":"../images/6055.png","imagewidth":503,"imageheight":113},{"id":1,"image":"../images/6054.png","imagewidth":380,"imageheight":276},{"id":2,"image":"../images/6053.png","imagewidth":96,"imageheight":84}]}

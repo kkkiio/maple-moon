@@ -1,0 +1,131 @@
+{
+  "frames": [
+    {
+      "filename": "main/0",
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 20,
+        "h": 15
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 20,
+        "h": 15
+      },
+      "sourceSize": {
+        "w": 20,
+        "h": 15
+      },
+      "duration": 100
+    },
+    {
+      "filename": "main/1",
+      "frame": {
+        "x": 20,
+        "y": 0,
+        "w": 20,
+        "h": 15
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 20,
+        "h": 15
+      },
+      "sourceSize": {
+        "w": 20,
+        "h": 15
+      },
+      "duration": 100
+    },
+    {
+      "filename": "main/2",
+      "frame": {
+        "x": 40,
+        "y": 0,
+        "w": 20,
+        "h": 15
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 20,
+        "h": 15
+      },
+      "sourceSize": {
+        "w": 20,
+        "h": 15
+      },
+      "duration": 100
+    },
+    {
+      "filename": "main/3",
+      "frame": {
+        "x": 60,
+        "y": 0,
+        "w": 20,
+        "h": 15
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 20,
+        "h": 15
+      },
+      "sourceSize": {
+        "w": 20,
+        "h": 15
+      },
+      "duration": 100
+    }
+  ],
+  "meta": {
+    "app": "nx-maple-res",
+    "version": "1.0",
+    "image": "02070013__bullet.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 80,
+      "h": 15
+    },
+    "scale": "1",
+    "frameTags": [
+      {
+        "name": "main",
+        "from": 0,
+        "to": 3,
+        "direction": "forward"
+      }
+    ],
+    "slices": [
+      {
+        "name": "anchor_main",
+        "keys": [
+          {
+            "frame": 0,
+            "bounds": {
+              "x": 0,
+              "y": 0,
+              "w": 20,
+              "h": 15
+            },
+            "pivot": {
+              "x": 10,
+              "y": 7
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

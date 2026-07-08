@@ -1,0 +1,14 @@
+{
+  "info": {
+    "dcBottom": 0,
+    "dcLeft": -48,
+    "dcRight": 66,
+    "dcTop": -152,
+    "script": {
+      "0": {
+        "script": "hontale_enterToE"
+      }
+    }
+  },
+  "animations_path": "animation.json"
+}

@@ -1,0 +1,38 @@
+{ "frames": [
+   {
+    "filename": "animation 0.aseprite",
+    "frame": { "x": 0, "y": 0, "w": 103, "h": 137 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 103, "h": 137 },
+    "sourceSize": { "w": 103, "h": 137 },
+    "duration": 1000
+   },
+   {
+    "filename": "animation 1.aseprite",
+    "frame": { "x": 103, "y": 0, "w": 103, "h": 137 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 103, "h": 137 },
+    "sourceSize": { "w": 103, "h": 137 },
+    "duration": 1000
+   }
+ ],
+ "meta": {
+  "app": "https://www.aseprite.org/",
+  "version": "1.3.14.4-arm64",
+  "image": "animation.png",
+  "format": "RGBA8888",
+  "size": { "w": 206, "h": 137 },
+  "scale": "1",
+  "frameTags": [
+   { "name": "stand", "from": 0, "to": 1, "direction": "forward", "color": "#000000ff" }
+  ],
+  "layers": [
+   { "name": "main", "opacity": 255, "blendMode": "normal" }
+  ],
+  "slices": [
+   { "name": "anchor_stand", "keys": [{ "frame": 0, "bounds": {"x": 0, "y": 0, "w": 103, "h": 137 }, "pivot": {"x": 51, "y": 137 } }] }
+  ]
+ }
+}

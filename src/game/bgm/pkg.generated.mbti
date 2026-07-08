@@ -1,0 +1,16 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/game/bgm"
+
+// Values
+pub fn clear_bgm() -> Unit
+
+pub fn sync_map_bgm(String) -> Unit
+
+// Errors
+
+// Types and methods
+
+// Type aliases
+
+// Traits
+

@@ -1,0 +1,18 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/engine/utils/lru_cache"
+
+// Values
+
+// Errors
+
+// Types and methods
+type Cache[K, V]
+pub fn[K, V] Cache::clear(Self[K, V]) -> Unit
+pub fn[K : Hash + Eq, V] Cache::get(Self[K, V], K) -> V?
+pub fn[K : Eq + Hash, V] Cache::new(Int) -> Self[K, V]
+pub fn[K : Hash + Eq, V] Cache::set(Self[K, V], K, V) -> Unit
+
+// Type aliases
+
+// Traits
+

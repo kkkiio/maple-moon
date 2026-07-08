@@ -1,0 +1,24 @@
+{
+  "info": {
+    "reg": {
+      "r0ID": 0,
+      "r0Level": 0,
+      "r0RD": "",
+      "r0Staff": 6,
+      "r1ID": 0,
+      "r1Level": 0,
+      "r1RD": "",
+      "r1Staff": 6,
+      "r2ID": 0,
+      "r2Level": 0,
+      "r2RD": "",
+      "r2Staff": 6
+    },
+    "script": {
+      "0": {
+        "script": "aMatchEnt"
+      }
+    }
+  },
+  "animations_path": "animation.json"
+}

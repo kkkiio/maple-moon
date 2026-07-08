@@ -1,0 +1,16 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/engine/lazy"
+
+// Values
+
+// Errors
+
+// Types and methods
+type Lazy[T]
+pub fn[T] Lazy::get(Self[T]) -> T
+pub fn[T] Lazy::new(() -> T) -> Self[T]
+
+// Type aliases
+
+// Traits
+

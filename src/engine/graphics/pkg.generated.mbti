@@ -1,0 +1,107 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/engine/graphics"
+
+import {
+  "KKKIIO/maple-moon/game/animation",
+  "Milky2018/selene/ecs",
+  "Milky2018/selene/entity",
+  "Milky2018/selene/math",
+}
+
+// Values
+pub const BACKGROUND_ZINDEX : Int = 1000
+
+pub const CHAR_LOOK_ZINDEX : Int = 70000
+
+pub const CURSOR_ZINDEX : Int = 200000
+
+pub const DAMAGE_NUMBER_ZINDEX : Int = 75000
+
+pub const DROP_LAYER_ZINDEX : Int = 76000
+
+pub const EFFECT_ZINDEX : Int = 90000
+
+pub const FOREGROUND_ZINDEX : Int = 80000
+
+pub const MAP_LAYER_MAX : Int = 7
+
+pub const MAP_LAYER_MIN : Int = 0
+
+pub const MAP_LAYER_STRIDE : Int = 5000
+
+pub const MAP_LOCAL_MAX : Int = 999
+
+pub const MAP_PASS_CHAR : Int = 1600
+
+pub const MAP_PASS_DROP : Int = 2000
+
+pub const MAP_PASS_MOB : Int = 1400
+
+pub const MAP_PASS_NPC : Int = 1200
+
+pub const MAP_PASS_OBJ : Int = 200
+
+pub const MAP_PASS_PLAYER : Int = 1800
+
+pub const MAP_PASS_REACTOR : Int = 800
+
+pub const MAP_PASS_TILE : Int = 400
+
+pub const MAP_Y_BIAS_MAX : Int = 1023
+
+pub const MINI_MAP_ZINDEX_ : Int = 101000
+
+pub const MOB_HP_BAR_ZINDEX : Int = 74000
+
+pub const OBJECT_TILE_LAYER_ZINDEX : Int = 30000
+
+pub const PORTAL_ZINDEX : Int = 79000
+
+pub const UI_ZINDEX : Int = 100000
+
+pub fn add_effect(@entity.Entity, EffectAnimation, z? : Int, speed? : Double, flip? : Bool, offset? : @math.Vec2) -> Unit
+
+pub fn clamp_map_local(Int) -> Int
+
+pub fn clamp_map_y_bias(Int) -> Int
+
+pub fn compose_map_z(Int, Int, Int, Int) -> Int
+
+pub fn effect_layer_system(@ecs.World) -> Unit
+
+pub let fps : UInt
+
+pub fn map_drop_z(Int, Int) -> Int
+
+pub let map_layers : FixedArray[Int]
+
+pub fn map_mob_z(Int, Int) -> Int
+
+pub fn map_npc_z(Int, Int) -> Int
+
+pub fn map_obj_local(Int, Int) -> Int
+
+pub fn map_obj_z(Int, Int, Int) -> Int
+
+pub fn map_player_z(Int, Int) -> Int
+
+pub fn map_tile_local(Int) -> Int
+
+pub fn map_tile_z(Int, Int) -> Int
+
+pub fn map_y_bias_from_world_y(Int) -> Int
+
+pub let view_size : (Int, Int)
+
+// Errors
+
+// Types and methods
+pub(all) struct EffectAnimation {
+  animation : @animation.Animation
+  duration_ms : Int
+}
+
+// Type aliases
+
+// Traits
+

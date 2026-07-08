@@ -1,0 +1,2743 @@
+{
+  "Border": {
+    "0": {
+      "__h": 537,
+      "__w": 654,
+      "_hash": "55e4442c8f63ee78617ff7efc8031e422264d38573d9e411e2ad32930f7bb7e8",
+      "origin": [
+        0,
+        0
+      ],
+      "z": -2,
+      "__i": "assets/images/UI/75818.png"
+    }
+  },
+  "BtAll": {
+    "disabled": {
+      "0": {
+        "__h": 16,
+        "__w": 78,
+        "_hash": "3f4ed1fb1de553ad46b3202b04ca2d5c506e978108a194dddd7749ee79f97d07",
+        "origin": [
+          -13,
+          -24
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAll#75822"
+      }
+    },
+    "mouseOver": {
+      "0": {
+        "__h": 16,
+        "__w": 78,
+        "_hash": "296014485e59dec84b24f703cf2cc380048cee9f7581e2fd07cc70cee38bb21e",
+        "origin": [
+          -13,
+          -24
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAll#75820"
+      }
+    },
+    "normal": {
+      "0": {
+        "__h": 16,
+        "__w": 78,
+        "_hash": "318f31059cc27d94a8b9a6d6243a2f26e2b365ad902c50d772a5ebf373dba7a7",
+        "origin": [
+          -13,
+          -24
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAll#75819"
+      }
+    },
+    "pressed": {
+      "0": {
+        "__h": 16,
+        "__w": 78,
+        "_hash": "e783e0469529b9407da73b065ed195cb923612bf395baef3c00975552869d17a",
+        "origin": [
+          -13,
+          -24
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAll#75821"
+      }
+    }
+  },
+  "BtAnother": {
+    "WorldList": {
+      "grandis": {
+        "Map130": {
+          "disabled": {
+            "0": {
+              "__h": 18,
+              "__w": 100,
+              "_inlink": "WorldMap/BtAnother/WorldList/grandis/Map130/pressed/0",
+              "origin": [
+                -17,
+                -24
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75930"
+            }
+          },
+          "mouseOver": {
+            "0": {
+              "__h": 18,
+              "__w": 100,
+              "_hash": "9beca29aeced0ae0ac49b35244a73b48f1f9d122cfaf19ee3d55ecbe3be5fb9e",
+              "origin": [
+                -17,
+                -24
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75931"
+            }
+          },
+          "normal": {
+            "0": {
+              "__h": 18,
+              "__w": 100,
+              "_hash": "e45b83bf018b410c6411d4116fceee9d896fd8340902c7f6c47d1bbcf59fd093",
+              "origin": [
+                -17,
+                -24
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75929"
+            }
+          },
+          "pressed": {
+            "0": {
+              "__h": 18,
+              "__w": 100,
+              "_hash": "9e077ae9c42f44187f880985a6c50a8f88e0653e5df5002e7b9a61bf16bf8782",
+              "origin": [
+                -17,
+                -24
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75930"
+            }
+          }
+        },
+        "Map140": {
+          "disabled": {
+            "0": {
+              "__h": 18,
+              "__w": 100,
+              "_inlink": "WorldMap/BtAnother/WorldList/grandis/Map140/pressed/0",
+              "origin": [
+                -17,
+                -43
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75934"
+            }
+          },
+          "mouseOver": {
+            "0": {
+              "__h": 18,
+              "__w": 100,
+              "_hash": "84af6a2b226d4737c39100e02f010f94a45cfc277efc109a72df49d6a79fc040",
+              "origin": [
+                -17,
+                -43
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75935"
+            }
+          },
+          "normal": {
+            "0": {
+              "__h": 18,
+              "__w": 100,
+              "_hash": "82cc01da03c5f50043db60ce7ce929ce3fc2d55c146a98975a5542e3773cdf98",
+              "origin": [
+                -17,
+                -43
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75933"
+            }
+          },
+          "pressed": {
+            "0": {
+              "__h": 18,
+              "__w": 100,
+              "_hash": "3faca9d116fb3d1bf3d057d1b61a8c0f653d2142135f969090899dc7b83fa022",
+              "origin": [
+                -17,
+                -43
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75934"
+            }
+          }
+        },
+        "Map180": {
+          "disabled": {
+            "0": {
+              "__h": 18,
+              "__w": 100,
+              "_inlink": "WorldMap/BtAnother/WorldList/grandis/Map180/pressed/0",
+              "origin": [
+                -17,
+                -62
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75938"
+            }
+          },
+          "mouseOver": {
+            "0": {
+              "__h": 18,
+              "__w": 100,
+              "_hash": "227e8816af359e7dbd5792efe33b2fccb91363d1bb95d3d76c5741386b03af44",
+              "origin": [
+                -17,
+                -62
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75939"
+            }
+          },
+          "normal": {
+            "0": {
+              "__h": 18,
+              "__w": 100,
+              "_hash": "c2f802a9bc6fe601fcd2a5bdfa75febe8cca0370e77a54c639d4cccce0591bdb",
+              "origin": [
+                -17,
+                -62
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75937"
+            }
+          },
+          "pressed": {
+            "0": {
+              "__h": 18,
+              "__w": 100,
+              "_hash": "2101fc8cf73c269a18ac18e60953f4068466106ec9b1e6f53ab81ac18394d433",
+              "origin": [
+                -17,
+                -62
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75938"
+            }
+          }
+        },
+        "backgrnd1": {
+          "__h": 29,
+          "__w": 134,
+          "_outlink": "UI/UIWindowBT.img/WorldMap/BtAnother/AnotherWorld/backgrnd1",
+          "origin": [
+            0,
+            0
+          ],
+          "z": -1,
+          "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#12556"
+        },
+        "backgrnd2": {
+          "__h": 1,
+          "__w": 134,
+          "_outlink": "UI/UIWindowBT.img/WorldMap/BtAnother/AnotherWorld/backgrnd2",
+          "origin": [
+            0,
+            0
+          ],
+          "z": -1,
+          "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#12557"
+        },
+        "backgrnd3": {
+          "__h": 24,
+          "__w": 134,
+          "_outlink": "UI/UIWindowBT.img/WorldMap/BtAnother/AnotherWorld/backgrnd3",
+          "origin": [
+            0,
+            0
+          ],
+          "z": -1,
+          "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#12558"
+        }
+      },
+      "maple": {
+        "Map010": {
+          "disabled": {
+            "0": {
+              "__h": 18,
+              "__w": 100,
+              "_inlink": "WorldMap/BtAnother/WorldList/maple/Map010/pressed/0",
+              "origin": [
+                -17,
+                -24
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75831"
+            }
+          },
+          "mouseOver": {
+            "0": {
+              "__h": 18,
+              "__w": 100,
+              "_hash": "ec47bbac4fef6a3ff65ac4c05ef517cc2d6252534321443cdf42b46d37929f73",
+              "origin": [
+                -17,
+                -24
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75832"
+            }
+          },
+          "normal": {
+            "0": {
+              "__h": 18,
+              "__w": 100,
+              "_hash": "87192d4cb816bbe8e062c5b7ed1f8bbe887838c33e7f186f63a82c09cb4e78aa",
+              "origin": [
+                -17,
+                -24
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75830"
+            }
+          },
+          "pressed": {
+            "0": {
+              "__h": 18,
+              "__w": 100,
+              "_hash": "76f060e77a6c12941a2244bc226df58d6e75eca5b5a106e26b8c47aa0a5dba16",
+              "origin": [
+                -17,
+                -24
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75831"
+            }
+          }
+        },
+        "Map011": {
+          "disabled": {
+            "0": {
+              "__h": 13,
+              "__w": 100,
+              "_inlink": "WorldMap/BtAnother/WorldList/maple/Map011/normal/0",
+              "origin": [
+                -17,
+                -43
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75834"
+            }
+          },
+          "mouseOver": {
+            "0": {
+              "__h": 14,
+              "__w": 100,
+              "_hash": "a9dbc087f2c072cb8b570d5c92ba09d06889f084a82d23331367b279a8b0e5d9",
+              "origin": [
+                -17,
+                -43
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75836"
+            }
+          },
+          "normal": {
+            "0": {
+              "__h": 13,
+              "__w": 100,
+              "_hash": "3791f1476865e51ed00a26405b26eebf185350fbfd4e19409bb92007c994ff88",
+              "origin": [
+                -17,
+                -43
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75834"
+            }
+          },
+          "pressed": {
+            "0": {
+              "__h": 13,
+              "__w": 100,
+              "_hash": "586372ca5bbb60d9972a84dd8a43f724a445aa4d783626a79527039ef9833207",
+              "origin": [
+                -17,
+                -43
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75835"
+            }
+          }
+        },
+        "Map012": {
+          "disabled": {
+            "0": {
+              "__h": 13,
+              "__w": 100,
+              "_inlink": "WorldMap/BtAnother/WorldList/maple/Map012/normal/0",
+              "origin": [
+                -17,
+                -57
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75838"
+            }
+          },
+          "mouseOver": {
+            "0": {
+              "__h": 14,
+              "__w": 100,
+              "_hash": "9bb73727dfac273775cd39bbbb313511b505c1938a33860699adb4868c1de147",
+              "origin": [
+                -17,
+                -57
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75840"
+            }
+          },
+          "normal": {
+            "0": {
+              "__h": 13,
+              "__w": 100,
+              "_hash": "8b28d1496a9ff6eb84aefc1e86e99fcdeffc53bf3d8df556f3d6360b686f5fc0",
+              "origin": [
+                -17,
+                -57
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75838"
+            }
+          },
+          "pressed": {
+            "0": {
+              "__h": 13,
+              "__w": 100,
+              "_hash": "41318800a9f34060bdccc5c4687ca702c2f6977a168c86fff6e1408b0caafbe0",
+              "origin": [
+                -17,
+                -57
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75839"
+            }
+          }
+        },
+        "Map017": {
+          "disabled": {
+            "0": {
+              "__h": 13,
+              "__w": 100,
+              "_inlink": "WorldMap/BtAnother/WorldList/maple/Map017/normal/0",
+              "origin": [
+                -17,
+                -71
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75842"
+            }
+          },
+          "mouseOver": {
+            "0": {
+              "__h": 14,
+              "__w": 100,
+              "_hash": "33c5a62eb41ba75a7ea94440df0338f257b7cc85f14aaf78052525a79e8f665c",
+              "origin": [
+                -17,
+                -71
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75844"
+            }
+          },
+          "normal": {
+            "0": {
+              "__h": 13,
+              "__w": 100,
+              "_hash": "25d18f9115311e5d8b8d95da008c2fe6e1b4d19c709e13623f8fe7aa89eb2bb4",
+              "origin": [
+                -17,
+                -71
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75842"
+            }
+          },
+          "pressed": {
+            "0": {
+              "__h": 13,
+              "__w": 100,
+              "_hash": "fbcffa397a95f5138fbf47f2ad8eaee94fe45663d47b8e51769b4e2266c25c27",
+              "origin": [
+                -17,
+                -71
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75843"
+            }
+          }
+        },
+        "Map020": {
+          "disabled": {
+            "0": {
+              "__h": 18,
+              "__w": 100,
+              "_inlink": "WorldMap/BtAnother/WorldList/maple/Map020/pressed/0",
+              "origin": [
+                -17,
+                -146
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75859"
+            }
+          },
+          "mouseOver": {
+            "0": {
+              "__h": 18,
+              "__w": 100,
+              "_hash": "74f0712aaaa4302bc4d761d703638e49ac1ec62576f59bb152c5a7765740066a",
+              "origin": [
+                -17,
+                -146
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75860"
+            }
+          },
+          "normal": {
+            "0": {
+              "__h": 18,
+              "__w": 100,
+              "_hash": "f7c0767f69e4f407201ff98e1bc5bcc404ec105356d20739e1d3a151843f1c37",
+              "origin": [
+                -17,
+                -146
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75858"
+            }
+          },
+          "pressed": {
+            "0": {
+              "__h": 18,
+              "__w": 100,
+              "_hash": "197beaa07a627b990209f250af14e12aa4bd709e60842654e86d3e02ef8a100e",
+              "origin": [
+                -17,
+                -146
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75859"
+            }
+          }
+        },
+        "Map021": {
+          "disabled": {
+            "0": {
+              "__h": 13,
+              "__w": 100,
+              "_inlink": "WorldMap/BtAnother/WorldList/maple/Map021/normal/0",
+              "origin": [
+                -17,
+                -165
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75862"
+            }
+          },
+          "mouseOver": {
+            "0": {
+              "__h": 14,
+              "__w": 100,
+              "_hash": "ec7ba6c68ae7fbce9ea32efda8d583b0bc4c99e7cbbc8994a37c7539bdcb3187",
+              "origin": [
+                -17,
+                -165
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75864"
+            }
+          },
+          "normal": {
+            "0": {
+              "__h": 13,
+              "__w": 100,
+              "_hash": "54e9f1fb04b648edaa3594fb0430a502dc1f9ea2d9481cb008f373a2b8d6758b",
+              "origin": [
+                -17,
+                -165
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75862"
+            }
+          },
+          "pressed": {
+            "0": {
+              "__h": 13,
+              "__w": 100,
+              "_hash": "018cd4f81bb65f44a5775bfd1309683d2a40434ade2f0cdfe86d95fb8e66f2ce",
+              "origin": [
+                -17,
+                -165
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75863"
+            }
+          }
+        },
+        "Map022": {
+          "disabled": {
+            "0": {
+              "__h": 13,
+              "__w": 100,
+              "_inlink": "WorldMap/BtAnother/WorldList/maple/Map022/normal/0",
+              "origin": [
+                -17,
+                -179
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75866"
+            }
+          },
+          "mouseOver": {
+            "0": {
+              "__h": 14,
+              "__w": 100,
+              "_hash": "f29a7cc7db31a11582a26b88a94b430b2ef7b4b71e5869572dfd52aeed40fd51",
+              "origin": [
+                -17,
+                -179
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75868"
+            }
+          },
+          "normal": {
+            "0": {
+              "__h": 13,
+              "__w": 100,
+              "_hash": "39ed65ff4b06c80d6bc144e06bd0c16b3b6a007ceab799566590b2095174a017",
+              "origin": [
+                -17,
+                -179
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75866"
+            }
+          },
+          "pressed": {
+            "0": {
+              "__h": 13,
+              "__w": 100,
+              "_hash": "51b410914af47a8e38ab5b962c3f71dc3a0403d5796ad24b5cb7a001f812c08d",
+              "origin": [
+                -17,
+                -179
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75867"
+            }
+          }
+        },
+        "Map030": {
+          "disabled": {
+            "0": {
+              "__h": 18,
+              "__w": 100,
+              "_inlink": "WorldMap/BtAnother/WorldList/maple/Map030/pressed/0",
+              "origin": [
+                -17,
+                -216
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75875"
+            }
+          },
+          "mouseOver": {
+            "0": {
+              "__h": 18,
+              "__w": 100,
+              "_hash": "640e767b94193bfb68f453d6aed32ef182f6c41eb95804d7248f30f4104cd296",
+              "origin": [
+                -17,
+                -216
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75876"
+            }
+          },
+          "normal": {
+            "0": {
+              "__h": 18,
+              "__w": 100,
+              "_hash": "b15737099207e8ff64efef7d3838f74f3acb7ab4b422134bee1066ea26dd5710",
+              "origin": [
+                -17,
+                -216
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75874"
+            }
+          },
+          "pressed": {
+            "0": {
+              "__h": 18,
+              "__w": 100,
+              "_hash": "1c09b7ac317565568b8efe1135d6b74bea39a0294d078401609b6696f377601b",
+              "origin": [
+                -17,
+                -216
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75875"
+            }
+          }
+        },
+        "Map031": {
+          "disabled": {
+            "0": {
+              "__h": 13,
+              "__w": 100,
+              "_inlink": "WorldMap/BtAnother/WorldList/maple/Map031/normal/0",
+              "origin": [
+                -17,
+                -235
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75878"
+            }
+          },
+          "mouseOver": {
+            "0": {
+              "__h": 14,
+              "__w": 101,
+              "_hash": "86ac41712d108d0ea98acdf0a52c7ec25dd0960003409e6a2ed77929afb6d661",
+              "origin": [
+                -17,
+                -235
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75880"
+            }
+          },
+          "normal": {
+            "0": {
+              "__h": 13,
+              "__w": 100,
+              "_hash": "b6eb5f11f6dbd9710f615e28c1c3c952467e9f2cc7db583a61220eb8f15520f5",
+              "origin": [
+                -17,
+                -235
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75878"
+            }
+          },
+          "pressed": {
+            "0": {
+              "__h": 13,
+              "__w": 100,
+              "_hash": "729b1e2fe49a24f0ad044c4b6331e43c0805ff50e1a96f332ba453aada43c275",
+              "origin": [
+                -17,
+                -235
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75879"
+            }
+          }
+        },
+        "Map032": {
+          "disabled": {
+            "0": {
+              "__h": 13,
+              "__w": 100,
+              "_inlink": "WorldMap/BtAnother/WorldList/maple/Map032/normal/0",
+              "origin": [
+                -17,
+                -249
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75882"
+            }
+          },
+          "mouseOver": {
+            "0": {
+              "__h": 14,
+              "__w": 100,
+              "_hash": "cf66c83ee583f2acbea3c38e21c6d9b5f7863faf19997ba08eb2a41c2d5f7784",
+              "origin": [
+                -17,
+                -249
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75884"
+            }
+          },
+          "normal": {
+            "0": {
+              "__h": 13,
+              "__w": 100,
+              "_hash": "57e73a4e986bb047113296eca3cc42fb8deb3c454f12ae480f936cb38645c3a5",
+              "origin": [
+                -17,
+                -249
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75882"
+            }
+          },
+          "pressed": {
+            "0": {
+              "__h": 13,
+              "__w": 100,
+              "_hash": "4baeefd851ab1723a2890df24067994c54012474fdd8e3ea5a77396220b1527a",
+              "origin": [
+                -17,
+                -249
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75883"
+            }
+          }
+        },
+        "Map040": {
+          "disabled": {
+            "0": {
+              "__h": 18,
+              "__w": 100,
+              "_inlink": "WorldMap/BtAnother/WorldList/maple/Map040/pressed/0",
+              "origin": [
+                -17,
+                -197
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75871"
+            }
+          },
+          "mouseOver": {
+            "0": {
+              "__h": 18,
+              "__w": 100,
+              "_hash": "b3f8891c0dca39e5c36d38a3dc7635d2e63088d24cda4e364a501f8152244972",
+              "origin": [
+                -17,
+                -197
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75872"
+            }
+          },
+          "normal": {
+            "0": {
+              "__h": 18,
+              "__w": 100,
+              "_hash": "15ea2ebf499fa5a4d3e4d48b90570042fbcd8786ba11d6300822a3697ecb5067",
+              "origin": [
+                -17,
+                -197
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75870"
+            }
+          },
+          "pressed": {
+            "0": {
+              "__h": 18,
+              "__w": 100,
+              "_hash": "0857f2f75d306000a28b15549d0f1e8c3d4c1a352ccd7f411c5de63dda1e01a6",
+              "origin": [
+                -17,
+                -197
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75871"
+            }
+          }
+        },
+        "Map050": {
+          "disabled": {
+            "0": {
+              "__h": 18,
+              "__w": 100,
+              "_inlink": "WorldMap/BtAnother/WorldList/maple/Map050/pressed/0",
+              "origin": [
+                -17,
+                -267
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75887"
+            }
+          },
+          "mouseOver": {
+            "0": {
+              "__h": 18,
+              "__w": 100,
+              "_hash": "97b0631ed51709d3e5ab37825ef2f699ac747b8f25332d9bee5c6766096073ad",
+              "origin": [
+                -17,
+                -267
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75888"
+            }
+          },
+          "normal": {
+            "0": {
+              "__h": 18,
+              "__w": 100,
+              "_hash": "b984e65d3887f47b0f05e535db6c4a8cff11c8dc98d0882e5415a1e399933cb6",
+              "origin": [
+                -17,
+                -267
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75886"
+            }
+          },
+          "pressed": {
+            "0": {
+              "__h": 18,
+              "__w": 100,
+              "_hash": "e5475b18b193dc9fb1eab639c18f97fe56f06e3b04073c475d91333bca9f7bbf",
+              "origin": [
+                -17,
+                -267
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75887"
+            }
+          }
+        },
+        "Map052": {
+          "disabled": {
+            "0": {
+              "__h": 13,
+              "__w": 100,
+              "_inlink": "WorldMap/BtAnother/WorldList/maple/Map052/normal/0",
+              "origin": [
+                -17,
+                -286
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75890"
+            }
+          },
+          "mouseOver": {
+            "0": {
+              "__h": 14,
+              "__w": 100,
+              "_hash": "6dde3b5902237ad098d26d7b065fa8b30d1ea2993caaf04202a0a6a53d667647",
+              "origin": [
+                -17,
+                -286
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75892"
+            }
+          },
+          "normal": {
+            "0": {
+              "__h": 13,
+              "__w": 100,
+              "_hash": "19220e6c7613dd7bf4a53e3b526576133e7ae0d575b77670d085f1aecbcd2c78",
+              "origin": [
+                -17,
+                -286
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75890"
+            }
+          },
+          "pressed": {
+            "0": {
+              "__h": 13,
+              "__w": 100,
+              "_hash": "3e29f2eff2845d920483d6dd11dbfa304fea32c8d5214000306643a39207f519",
+              "origin": [
+                -17,
+                -286
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75891"
+            }
+          }
+        },
+        "Map060": {
+          "disabled": {
+            "0": {
+              "__h": 18,
+              "__w": 100,
+              "_inlink": "WorldMap/BtAnother/WorldList/maple/Map060/pressed/0",
+              "origin": [
+                -17,
+                -337
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75899"
+            }
+          },
+          "mouseOver": {
+            "0": {
+              "__h": 18,
+              "__w": 100,
+              "_hash": "ae3fb32bed31c79e91ac7f1884d6b5f2c320afebe7f4fc553d4c50603586182f",
+              "origin": [
+                -17,
+                -337
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75900"
+            }
+          },
+          "normal": {
+            "0": {
+              "__h": 18,
+              "__w": 100,
+              "_hash": "7862a00256c8e49c2c6dbee561ea904985e44b1254c827858c07648219aaf2f0",
+              "origin": [
+                -17,
+                -337
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75898"
+            }
+          },
+          "pressed": {
+            "0": {
+              "__h": 18,
+              "__w": 100,
+              "_hash": "299b2bdad9d4b66298d0f6eea73d7761b472b0f88535905a507aeebd6b3e2733",
+              "origin": [
+                -17,
+                -337
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75899"
+            }
+          }
+        },
+        "Map070": {
+          "disabled": {
+            "0": {
+              "__h": 18,
+              "__w": 100,
+              "_inlink": "WorldMap/BtAnother/WorldList/maple/Map070/pressed/0",
+              "origin": [
+                -17,
+                -318
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75895"
+            }
+          },
+          "mouseOver": {
+            "0": {
+              "__h": 18,
+              "__w": 100,
+              "_hash": "a4b6a5755a04c21f881bbaced552c857ee9bcaedcab1d0cb19f7c3f4f33d4c55",
+              "origin": [
+                -17,
+                -318
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75896"
+            }
+          },
+          "normal": {
+            "0": {
+              "__h": 18,
+              "__w": 100,
+              "_hash": "b122ffc99e6c3bed00d7abd073ed0c99675c61ef776721705f0e0a6b557c9ae0",
+              "origin": [
+                -17,
+                -318
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75894"
+            }
+          },
+          "pressed": {
+            "0": {
+              "__h": 18,
+              "__w": 100,
+              "_hash": "872d2282d196c5341de7e1be861c25cef72744daca74a040d2f87e44be689ec2",
+              "origin": [
+                -17,
+                -318
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75895"
+            }
+          }
+        },
+        "Map080": {
+          "disabled": {
+            "0": {
+              "__h": 18,
+              "__w": 100,
+              "_inlink": "WorldMap/BtAnother/WorldList/maple/Map080/pressed/0",
+              "origin": [
+                -17,
+                -356
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75903"
+            }
+          },
+          "mouseOver": {
+            "0": {
+              "__h": 18,
+              "__w": 100,
+              "_hash": "bea7aa09e92bdf4c48dff9c4672231fe484278a88842e2afb2aade81d87a879c",
+              "origin": [
+                -17,
+                -356
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75904"
+            }
+          },
+          "normal": {
+            "0": {
+              "__h": 18,
+              "__w": 100,
+              "_hash": "aa44fe175ddf45ca852bb3a048b7d987e5367cb1f97edf842f67dbb12a808dba",
+              "origin": [
+                -17,
+                -356
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75902"
+            }
+          },
+          "pressed": {
+            "0": {
+              "__h": 18,
+              "__w": 100,
+              "_hash": "bb5b3ba1fca2466b6a32639b1bb2f07e66930ca456939bafa87b3a0592b767ae",
+              "origin": [
+                -17,
+                -356
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75903"
+            }
+          }
+        },
+        "Map081": {
+          "disabled": {
+            "0": {
+              "__h": 13,
+              "__w": 100,
+              "_inlink": "WorldMap/BtAnother/WorldList/maple/Map081/normal/0",
+              "origin": [
+                -17,
+                -375
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75906"
+            }
+          },
+          "mouseOver": {
+            "0": {
+              "__h": 14,
+              "__w": 100,
+              "_hash": "f9c77ff23adfd7b0f8ebb92ffbbc406847ccf5eee9d65c590c6926773244f775",
+              "origin": [
+                -17,
+                -375
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75908"
+            }
+          },
+          "normal": {
+            "0": {
+              "__h": 13,
+              "__w": 100,
+              "_hash": "cb7212ecae142781f67ba743c162bb17ec1a47e661cbe6299d88d1a97e04c052",
+              "origin": [
+                -17,
+                -375
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75906"
+            }
+          },
+          "pressed": {
+            "0": {
+              "__h": 13,
+              "__w": 100,
+              "_hash": "b49af5f48689cee572f990944627627a04baf9674cb25ab3d8761789ef795c08",
+              "origin": [
+                -17,
+                -375
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75907"
+            }
+          }
+        },
+        "Map090": {
+          "disabled": {
+            "0": {
+              "__h": 18,
+              "__w": 100,
+              "_inlink": "WorldMap/BtAnother/WorldList/maple/Map090/pressed/0",
+              "origin": [
+                -17,
+                -89
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75847"
+            }
+          },
+          "mouseOver": {
+            "0": {
+              "__h": 18,
+              "__w": 100,
+              "_hash": "182f46cb99239c23ba5c6da4514138d5e1c2f929ed5f9ddbbf728f96d0171014",
+              "origin": [
+                -17,
+                -89
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75848"
+            }
+          },
+          "normal": {
+            "0": {
+              "__h": 18,
+              "__w": 100,
+              "_hash": "ec5652a6880b8a25a8a995e5f67c5b98ef398205810a2b178f65fafd4493d233",
+              "origin": [
+                -17,
+                -89
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75846"
+            }
+          },
+          "pressed": {
+            "0": {
+              "__h": 18,
+              "__w": 100,
+              "_hash": "2eaf9641bd6c21f12ae8cd368965da1b3875c9d7e5c1468f49590f1d650341be",
+              "origin": [
+                -17,
+                -89
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75847"
+            }
+          }
+        },
+        "Map100": {
+          "disabled": {
+            "0": {
+              "__h": 18,
+              "__w": 100,
+              "_inlink": "WorldMap/BtAnother/WorldList/maple/Map100/pressed/0",
+              "origin": [
+                -17,
+                -108
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75851"
+            }
+          },
+          "mouseOver": {
+            "0": {
+              "__h": 18,
+              "__w": 100,
+              "_hash": "7131ab76c78d92d1b6a7169e0f574f40234aa864cf6eb18693a214c598593716",
+              "origin": [
+                -17,
+                -108
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75852"
+            }
+          },
+          "normal": {
+            "0": {
+              "__h": 18,
+              "__w": 100,
+              "_hash": "10de8d9254625b4a28df06c5cfa5e5087501df991954538cb514621c37395802",
+              "origin": [
+                -17,
+                -108
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75850"
+            }
+          },
+          "pressed": {
+            "0": {
+              "__h": 18,
+              "__w": 100,
+              "_hash": "60c422e5531c69501d86b5d6e6af57bd1c2d10a84924c8b2c2569d08157e90e4",
+              "origin": [
+                -17,
+                -108
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75851"
+            }
+          }
+        },
+        "Map101": {
+          "disabled": {
+            "0": {
+              "__h": 13,
+              "__w": 100,
+              "_inlink": "WorldMap/BtAnother/WorldList/maple/Map101/normal/0",
+              "origin": [
+                -17,
+                -127
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75854"
+            }
+          },
+          "mouseOver": {
+            "0": {
+              "__h": 14,
+              "__w": 100,
+              "_hash": "45d45d8b898bd3face139745881b4c3353f6c9a2b518835fd95a2713b51e256f",
+              "origin": [
+                -17,
+                -127
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75856"
+            }
+          },
+          "normal": {
+            "0": {
+              "__h": 13,
+              "__w": 100,
+              "_hash": "258491775f9928614ff03b866f635306a8c2c63e6ea8a805b1d24c7c967765c1",
+              "origin": [
+                -17,
+                -127
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75854"
+            }
+          },
+          "pressed": {
+            "0": {
+              "__h": 13,
+              "__w": 100,
+              "_hash": "43e754a45b3740bc946747fa32dd62cc7a7d85c008efc68122a7be414d42d517",
+              "origin": [
+                -17,
+                -127
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75855"
+            }
+          }
+        },
+        "Map110": {
+          "disabled": {
+            "0": {
+              "__h": 18,
+              "__w": 100,
+              "_inlink": "WorldMap/BtAnother/WorldList/maple/Map110/pressed/0",
+              "origin": [
+                -17,
+                -393
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75911"
+            }
+          },
+          "mouseOver": {
+            "0": {
+              "__h": 18,
+              "__w": 100,
+              "_hash": "54fd2285bcc027381f0544ee1da050617b9c5b3ed4783c5ab9fe99404b77e73f",
+              "origin": [
+                -17,
+                -393
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75912"
+            }
+          },
+          "normal": {
+            "0": {
+              "__h": 18,
+              "__w": 100,
+              "_hash": "a3503912743b73ac5274084527c924e4de6d4ea7685ca3faa6475676d850a4ce",
+              "origin": [
+                -17,
+                -393
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75910"
+            }
+          },
+          "pressed": {
+            "0": {
+              "__h": 18,
+              "__w": 100,
+              "_hash": "ac626e2b5124d082fdf6b3c006e45fe4d4c4278b9092325c2f3615a4cd782230",
+              "origin": [
+                -17,
+                -393
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75911"
+            }
+          }
+        },
+        "Map170": {
+          "disabled": {
+            "0": {
+              "__h": 13,
+              "__w": 100,
+              "_inlink": "WorldMap/BtAnother/WorldList/maple/Map170/normal/0",
+              "origin": [
+                -17,
+                -300
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75914"
+            }
+          },
+          "mouseOver": {
+            "0": {
+              "__h": 14,
+              "__w": 100,
+              "_hash": "e428d4bb060235e712aeb74ab098287063a0ad8e832240e78dbc772a0ad3bdaa",
+              "origin": [
+                -17,
+                -300
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75916"
+            }
+          },
+          "normal": {
+            "0": {
+              "__h": 13,
+              "__w": 100,
+              "_hash": "f91718441c2de86724f68f18523d9bd6dadfc16aa9a8599c3c9418dc8a1e107d",
+              "origin": [
+                -17,
+                -300
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75914"
+            }
+          },
+          "pressed": {
+            "0": {
+              "__h": 13,
+              "__w": 100,
+              "_hash": "28a04d1621497812036f32972076825131a6af1284e5089ded1846c6a9666515",
+              "origin": [
+                -17,
+                -300
+              ],
+              "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75915"
+            }
+          }
+        },
+        "backgrnd1": {
+          "__h": 29,
+          "__w": 134,
+          "_hash": "3b2c682279d96e88b5f1fdfa0b6032ba4704780dbb426b451b226f0663e4a998",
+          "_outlink": "UI/UIWindowBT.img/WorldMap/BtAnother/AnotherWorld/backgrnd1",
+          "origin": [
+            0,
+            0
+          ],
+          "z": -1,
+          "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#12556"
+        },
+        "backgrnd2": {
+          "__h": 1,
+          "__w": 134,
+          "_hash": "663173cdb8739b7ae5400188d75fef187255dc019980e99dec41160a03a5d8c3",
+          "_outlink": "UI/UIWindowBT.img/WorldMap/BtAnother/AnotherWorld/backgrnd2",
+          "origin": [
+            0,
+            0
+          ],
+          "z": -1,
+          "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#12557"
+        },
+        "backgrnd3": {
+          "__h": 24,
+          "__w": 134,
+          "_hash": "8b92dba4a07e5f791a240dc3b4b119fadbc766009138fdfa210b3faa51241fe3",
+          "_outlink": "UI/UIWindowBT.img/WorldMap/BtAnother/AnotherWorld/backgrnd3",
+          "origin": [
+            0,
+            0
+          ],
+          "z": -1,
+          "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#12558"
+        },
+        "disabled": {
+          "Map013": {
+            "disabled": {
+              "0": {
+                "__h": 13,
+                "__w": 100,
+                "_inlink": "WorldMap/BtAnother/WorldList/maple/disabled/Map013/normal/0",
+                "origin": [
+                  -17,
+                  -71
+                ],
+                "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75922"
+              }
+            },
+            "mouseOver": {
+              "0": {
+                "__h": 14,
+                "__w": 100,
+                "_hash": "a035c04b6837c4930e7e7341dca9a0c5a60b228f87a490ea3f7c4756b1bcaaa3",
+                "origin": [
+                  -17,
+                  -71
+                ],
+                "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75924"
+              }
+            },
+            "normal": {
+              "0": {
+                "__h": 13,
+                "__w": 100,
+                "_hash": "e4fb91840d749405534e9f3e16aa3f272458725f234c018aec31697dcb11be94",
+                "origin": [
+                  -17,
+                  -71
+                ],
+                "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75922"
+              }
+            },
+            "pressed": {
+              "0": {
+                "__h": 13,
+                "__w": 100,
+                "_hash": "4f7b3a2d5ca9fdad41deed1f9840f61c85d024191085a51db8448c729d6765cb",
+                "origin": [
+                  -17,
+                  -71
+                ],
+                "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75923"
+              }
+            }
+          },
+          "Map051": {
+            "disabled": {
+              "0": {
+                "__h": 13,
+                "__w": 100,
+                "_inlink": "WorldMap/BtAnother/WorldList/maple/disabled/Map051/normal/0",
+                "origin": [
+                  -17,
+                  -272
+                ],
+                "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75918"
+              }
+            },
+            "mouseOver": {
+              "0": {
+                "__h": 14,
+                "__w": 100,
+                "_hash": "fb3b4bd8f13d8b044e5ca15a5c3488db92e3831a8d26c32d5f1a7d50ea6c4ce2",
+                "origin": [
+                  -17,
+                  -272
+                ],
+                "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75920"
+              }
+            },
+            "normal": {
+              "0": {
+                "__h": 13,
+                "__w": 100,
+                "_hash": "265d7e8668bf2fb17c3ca50b7046936570f342057c2ea9912a4013f1cd4c4d1f",
+                "origin": [
+                  -17,
+                  -272
+                ],
+                "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75918"
+              }
+            },
+            "pressed": {
+              "0": {
+                "__h": 13,
+                "__w": 100,
+                "_hash": "a67444e46f32b2f39f8c85497d7087276d809a124214a0abfe7f01c9efa8585f",
+                "origin": [
+                  -17,
+                  -272
+                ],
+                "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75919"
+              }
+            }
+          }
+        }
+      }
+    },
+    "disabled": {
+      "0": {
+        "__h": 16,
+        "__w": 78,
+        "_hash": "e11ce0e71ac7a3fb68fedaf4738baf0337e92a9c5b7112316ebde9a5c3c5cdf1",
+        "origin": [
+          -95,
+          -24
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75826"
+      }
+    },
+    "mouseOver": {
+      "0": {
+        "__h": 16,
+        "__w": 78,
+        "_hash": "d70b85806071dee0140e98e8e1cb668830f904f3ddd9a0475a4cc4667ec85a38",
+        "origin": [
+          -95,
+          -24
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75824"
+      }
+    },
+    "normal": {
+      "0": {
+        "__h": 16,
+        "__w": 78,
+        "_hash": "637847538d8f90eb2d372a44db9f10e2907dbf0065a262b2b8193c7cebc81165",
+        "origin": [
+          -95,
+          -24
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75823"
+      }
+    },
+    "pressed": {
+      "0": {
+        "__h": 16,
+        "__w": 78,
+        "_hash": "20976e046aacd944a55ba35479f1ded62d9dcfb0fa97943ae40793d9866b64a7",
+        "origin": [
+          -95,
+          -24
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnother#75825"
+      }
+    }
+  },
+  "BtAnotherWorld": {
+    "disabled": {
+      "0": {
+        "__h": 16,
+        "__w": 78,
+        "_hash": "dd01e29a35e6be272fde0e152943528f614b1ad6348d9ec6f0958b1bc2099a71",
+        "origin": [
+          -13,
+          -24
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnotherWorld#75976"
+      }
+    },
+    "mouseOver": {
+      "0": {
+        "__h": 16,
+        "__w": 78,
+        "_hash": "b946741a90db39389dd17451190c9ae570013cd0fc241d3ee46f35a0aa099b01",
+        "origin": [
+          -13,
+          -24
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnotherWorld#75974"
+      }
+    },
+    "normal": {
+      "0": {
+        "__h": 16,
+        "__w": 78,
+        "_hash": "dc495135183f8977f2694addc5e31a91ed2b36cea80fe42cdbf656cd51bc98e5",
+        "origin": [
+          -13,
+          -24
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnotherWorld#75973"
+      }
+    },
+    "pressed": {
+      "0": {
+        "__h": 16,
+        "__w": 78,
+        "_hash": "fb9f42b04c168905e70a1a354b676c9b82db64d699b049c2789a5c828f6f1e51",
+        "origin": [
+          -13,
+          -24
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAnotherWorld#75975"
+      }
+    }
+  },
+  "BtAutoFly_1": {
+    "disabled": {
+      "0": {
+        "__h": 16,
+        "__w": 99,
+        "_hash": "0432ae926dc61dbbb202e1de8b2e5c9c81ea6b3acb9860401bedc7e59f5c7d26",
+        "origin": [
+          -468,
+          -25
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAutoFly_1#75980"
+      }
+    },
+    "mouseOver": {
+      "0": {
+        "__h": 16,
+        "__w": 99,
+        "_hash": "950cee124210c5a999e16388f5a86556dfcf81b5f3dfe65c821cfc4f5cc0c195",
+        "origin": [
+          -468,
+          -25
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAutoFly_1#75978"
+      }
+    },
+    "normal": {
+      "0": {
+        "__h": 16,
+        "__w": 99,
+        "_hash": "9cb225011f8651b08daa34f88a9f53d06a9164d50edaf15a26fa5d45cdb67757",
+        "origin": [
+          -468,
+          -25
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAutoFly_1#75977"
+      }
+    },
+    "pressed": {
+      "0": {
+        "__h": 16,
+        "__w": 99,
+        "_hash": "af24e813044f49c51b19aa047976cca77c6fc11035649a6be2e8a1efb0c7eeb4",
+        "origin": [
+          -468,
+          -25
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAutoFly_1#75979"
+      }
+    }
+  },
+  "BtAutoFly_2": {
+    "disabled": {
+      "0": {
+        "__h": 16,
+        "__w": 99,
+        "_hash": "f37e48577eb7914aa9d4ef2a931e6a695352a6627bb5d69d6e0320ddd1ecb6bf",
+        "origin": [
+          -468,
+          -25
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAutoFly_2#75984"
+      }
+    },
+    "mouseOver": {
+      "0": {
+        "__h": 16,
+        "__w": 99,
+        "_hash": "7c0444aa5ca9812c1657755117c97d02f8077fb419cf324c88eeac4f05e1fa24",
+        "origin": [
+          -468,
+          -25
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAutoFly_2#75982"
+      }
+    },
+    "normal": {
+      "0": {
+        "__h": 16,
+        "__w": 99,
+        "_hash": "f530d0b281b83cd3b2981ef082a06a72ca6a37e1a302a3de3b7116e261034fb4",
+        "origin": [
+          -468,
+          -25
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAutoFly_2#75981"
+      }
+    },
+    "pressed": {
+      "0": {
+        "__h": 16,
+        "__w": 99,
+        "_hash": "e39004773d6106e5f569116b43ea33bf5cb5f87ff8fc7d83709b1d630abade01",
+        "origin": [
+          -468,
+          -25
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtAutoFly_2#75983"
+      }
+    }
+  },
+  "BtBefore": {
+    "disabled": {
+      "0": {
+        "__h": 16,
+        "__w": 61,
+        "_hash": "628a7472ca5e4ceaea7f5494d0f59e6337b41072100b9f5e92a648e0f254cc70",
+        "origin": [
+          -515,
+          -510
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtBefore#75952"
+      }
+    },
+    "mouseOver": {
+      "0": {
+        "__h": 16,
+        "__w": 61,
+        "_hash": "4506000ea85ea31dfc2515f8b0c053baea69a157ad6c149c82c1738b473c993b",
+        "origin": [
+          -515,
+          -510
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtBefore#75950"
+      }
+    },
+    "normal": {
+      "0": {
+        "__h": 16,
+        "__w": 61,
+        "_hash": "e8e315e88b40505b5dee2fc0a6cad822154e80cf784fb6882e80da92905a2ce8",
+        "origin": [
+          -515,
+          -510
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtBefore#75949"
+      }
+    },
+    "pressed": {
+      "0": {
+        "__h": 16,
+        "__w": 61,
+        "_hash": "b63ca145e16fbd83156dc4fac9ad6113641fb499f148513e4359cd6cd7868983",
+        "origin": [
+          -515,
+          -510
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtBefore#75951"
+      }
+    }
+  },
+  "BtNaviRegister": {
+    "disabled": {
+      "0": {
+        "__h": 16,
+        "__w": 99,
+        "_hash": "dee69a28bd76983759d1b34e94a2389acece3a7f0b1f78a5f463f78dcf1bad30",
+        "origin": [
+          -365,
+          -25
+        ],
+        "z": 0,
+        "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtNaviRegister#75944"
+      }
+    },
+    "mouseOver": {
+      "0": {
+        "__h": 16,
+        "__w": 99,
+        "_hash": "04b38bbec63f3f0721747726ff4d6ecf58a4f4639791e78924a6b37886179f1d",
+        "origin": [
+          -365,
+          -25
+        ],
+        "z": 0,
+        "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtNaviRegister#75942"
+      }
+    },
+    "normal": {
+      "0": {
+        "__h": 16,
+        "__w": 99,
+        "_hash": "420c505e595f1c4f4da94c57a63cf54305120a0feb9bbbc9a600217569c25a06",
+        "origin": [
+          -365,
+          -25
+        ],
+        "z": 0,
+        "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtNaviRegister#75941"
+      }
+    },
+    "pressed": {
+      "0": {
+        "__h": 16,
+        "__w": 99,
+        "_hash": "ff021d9bdaefd08e7372997bc36b4caffe9f936327170623a227d98f5717fec1",
+        "origin": [
+          -365,
+          -25
+        ],
+        "z": 0,
+        "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtNaviRegister#75943"
+      }
+    }
+  },
+  "BtNext": {
+    "disabled": {
+      "0": {
+        "__h": 16,
+        "__w": 61,
+        "_hash": "04d98aa40b39e6ce39c1b99b923e33ba78602bf7dea9fd69bf641c2c9f24b996",
+        "origin": [
+          -580,
+          -510
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtNext#75956"
+      }
+    },
+    "mouseOver": {
+      "0": {
+        "__h": 16,
+        "__w": 61,
+        "_hash": "f017f7929fc8be11da757e937f469bb3805f716190e734a7b587cdbf6dd51d73",
+        "origin": [
+          -580,
+          -510
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtNext#75954"
+      }
+    },
+    "normal": {
+      "0": {
+        "__h": 16,
+        "__w": 61,
+        "_hash": "1fd93786bfdb7516740a6579c5a150a59a4ae52ba3bff52e1f8670533c61dde2",
+        "origin": [
+          -580,
+          -510
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtNext#75953"
+      }
+    },
+    "pressed": {
+      "0": {
+        "__h": 16,
+        "__w": 61,
+        "_hash": "ff54da604febc938df999a65fffe55a84e071409360d7bc818560b021b98987e",
+        "origin": [
+          -580,
+          -510
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtNext#75955"
+      }
+    }
+  },
+  "BtSearch": {
+    "disabled": {
+      "0": {
+        "__h": 16,
+        "__w": 72,
+        "_hash": "78230630c4b52e8bff0628a388b7e385c6df2c0ca8dd941dbb88e12566ad2e3d",
+        "origin": [
+          -571,
+          -26
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtSearch#75948"
+      }
+    },
+    "mouseOver": {
+      "0": {
+        "__h": 16,
+        "__w": 72,
+        "_hash": "3ff01ba4324d67bdbc2d46fc50e630df2fd19cd438d9de4961e77ed705227a28",
+        "origin": [
+          -571,
+          -25
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtSearch#75946"
+      }
+    },
+    "normal": {
+      "0": {
+        "__h": 16,
+        "__w": 72,
+        "_hash": "bf8871b91b998412d7e7717c97d18a48d22264916ca77bf56ff8d00a00f268f8",
+        "origin": [
+          -571,
+          -25
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtSearch#75945"
+      }
+    },
+    "pressed": {
+      "0": {
+        "__h": 16,
+        "__w": 72,
+        "_hash": "7c1d0df26e54255b630468b89e8d806544aa609dfbd4d2fcf6d4b3302551a1c0",
+        "origin": [
+          -571,
+          -25
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/BtSearch#75947"
+      }
+    }
+  },
+  "NoticeIcon": {
+    "0": {
+      "__h": 22,
+      "__w": 29,
+      "_hash": "6616ab53bbc18708dcb8e90cb28eb22cb15a6acfb915978a3a6dd8f8ac2d1df6",
+      "_outlink": "UI/UIWindowBT.img/WorldMap/NoticeIcon/0",
+      "delay": 600,
+      "origin": [
+        0,
+        0
+      ],
+      "z": 0,
+      "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/NoticeIcon#12518"
+    },
+    "1": {
+      "__h": 22,
+      "__w": 29,
+      "_hash": "5115a1fd2bc2e2c401fc80eb4792b60656533a4513d29e7baf3f46242e45e672",
+      "_outlink": "UI/UIWindowBT.img/WorldMap/NoticeIcon/1",
+      "delay": 150,
+      "origin": [
+        0,
+        0
+      ],
+      "z": 0,
+      "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/NoticeIcon#12519"
+    },
+    "2": {
+      "__h": 22,
+      "__w": 29,
+      "_hash": "92cda9ca147855b66cd95ed050b6da81b84d776ca2780a599c49c89d11174756",
+      "_outlink": "UI/UIWindowBT.img/WorldMap/NoticeIcon/2",
+      "delay": 150,
+      "origin": [
+        0,
+        0
+      ],
+      "z": 0,
+      "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/NoticeIcon#12520"
+    },
+    "3": {
+      "__h": 26,
+      "__w": 29,
+      "_hash": "7748477a5c68a68a2d3bac7f5b9beb1d4963f557095e34bcfa856c544625466c",
+      "_outlink": "UI/UIWindowBT.img/WorldMap/NoticeIcon/3",
+      "delay": 150,
+      "origin": [
+        0,
+        4
+      ],
+      "z": 0,
+      "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/NoticeIcon#12521"
+    },
+    "4": {
+      "__h": 29,
+      "__w": 29,
+      "_hash": "1fd6b56ba78077dc4ffa9c61e8c4e1510c7fdf3a0e8648035ba1b228ca1e4d3c",
+      "_outlink": "UI/UIWindowBT.img/WorldMap/NoticeIcon/4",
+      "delay": 150,
+      "origin": [
+        0,
+        7
+      ],
+      "z": 0,
+      "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/NoticeIcon#12522"
+    },
+    "5": {
+      "__h": 32,
+      "__w": 29,
+      "_hash": "a00f23b46ca356d21284d5b2a85e7c6f50128dcf0421e81262f2f67d016ec1c2",
+      "_outlink": "UI/UIWindowBT.img/WorldMap/NoticeIcon/5",
+      "delay": 150,
+      "origin": [
+        0,
+        10
+      ],
+      "z": 0,
+      "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/NoticeIcon#12523"
+    },
+    "6": {
+      "__h": 32,
+      "__w": 29,
+      "_hash": "13e4c3a6c4826581862c1b9e915cdf1b1750955b6b04c2971b5a3c777a141f68",
+      "_outlink": "UI/UIWindowBT.img/WorldMap/NoticeIcon/6",
+      "delay": 150,
+      "origin": [
+        0,
+        10
+      ],
+      "z": 0,
+      "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/NoticeIcon#12524"
+    },
+    "7": {
+      "__h": 32,
+      "__w": 29,
+      "_hash": "19b80a8892d3df6c18afa8c9d2c75c1c60c6d68cc2a1527e94ecf27587ca7ef4",
+      "_outlink": "UI/UIWindowBT.img/WorldMap/NoticeIcon/7",
+      "delay": 600,
+      "origin": [
+        0,
+        10
+      ],
+      "z": 0,
+      "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/NoticeIcon#12525"
+    },
+    "8": {
+      "__h": 32,
+      "__w": 29,
+      "_outlink": "UI/UIWindowBT.img/WorldMap/NoticeIcon/6",
+      "delay": 150,
+      "origin": [
+        0,
+        10
+      ],
+      "z": 0,
+      "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/NoticeIcon#12524"
+    },
+    "9": {
+      "__h": 29,
+      "__w": 29,
+      "_outlink": "UI/UIWindowBT.img/WorldMap/NoticeIcon/4",
+      "delay": 150,
+      "origin": [
+        0,
+        7
+      ],
+      "z": 0,
+      "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/NoticeIcon#12522"
+    }
+  },
+  "WorldMapSearch": {
+    "BtAllsearch": {
+      "disabled": {
+        "0": {
+          "__h": 16,
+          "__w": 36,
+          "_hash": "f8dfedd9daf9162f9aa04ad7b77831a743f11aa077ae31e185c6a2579b66ddda",
+          "origin": [
+            -99,
+            -24
+          ],
+          "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/WorldMapSearch#75962"
+        }
+      },
+      "mouseOver": {
+        "0": {
+          "__h": 16,
+          "__w": 36,
+          "_hash": "cfdda0adbd0b9d175c369dab59379a7d6388233c6599b368823a4a7e183223de",
+          "origin": [
+            -99,
+            -24
+          ],
+          "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/WorldMapSearch#75960"
+        }
+      },
+      "normal": {
+        "0": {
+          "__h": 16,
+          "__w": 36,
+          "_hash": "b041ed95c818b2598cd1672386854577bac047f90d89da6644555c82b5118a6d",
+          "origin": [
+            -99,
+            -24
+          ],
+          "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/WorldMapSearch#75959"
+        }
+      },
+      "pressed": {
+        "0": {
+          "__h": 16,
+          "__w": 36,
+          "_hash": "432ecc46828faeb88028cec5f57cd19b525fdc066535dff7cccbaaac5c16449e",
+          "origin": [
+            -99,
+            -24
+          ],
+          "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/WorldMapSearch#75961"
+        }
+      }
+    },
+    "BtLevelMob": {
+      "disabled": {
+        "0": {
+          "__h": 16,
+          "__w": 123,
+          "_hash": "346ca63c4360ed29d618c96afcc7f29afabf8165751f4c9550f573b19e976907",
+          "origin": [
+            -12,
+            -44
+          ],
+          "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/WorldMapSearch#75966"
+        }
+      },
+      "mouseOver": {
+        "0": {
+          "__h": 16,
+          "__w": 123,
+          "_hash": "d3647406da449c9f6f489a49262e8c8702fc3dc006493e9c8413d0fec89fbaf6",
+          "origin": [
+            -12,
+            -44
+          ],
+          "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/WorldMapSearch#75964"
+        }
+      },
+      "normal": {
+        "0": {
+          "__h": 16,
+          "__w": 123,
+          "_hash": "b98bc0f07c22e10abf771a705d5c17f25efcd743b725abea82a02d39d8ec4658",
+          "origin": [
+            -12,
+            -44
+          ],
+          "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/WorldMapSearch#75963"
+        }
+      },
+      "pressed": {
+        "0": {
+          "__h": 16,
+          "__w": 123,
+          "_hash": "175750305daf0e9e5455fd172d87ae326dce390daaddff2b34ae2fc7bc8ef670",
+          "origin": [
+            -12,
+            -44
+          ],
+          "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/WorldMapSearch#75965"
+        }
+      }
+    },
+    "backgrnd": {
+      "__h": 537,
+      "__w": 147,
+      "_hash": "85c55b69b0dd9bf33a6cf8b014085de050f1ad5f580efd05fb4c28dc4741b6e2",
+      "origin": [
+        0,
+        0
+      ],
+      "z": -2,
+      "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/WorldMapSearch#75957"
+    },
+    "notice": {
+      "__h": 59,
+      "__w": 88,
+      "_hash": "9220c68d8562bea5f6c490cc88c44d2c174e2db92b7a523ebcaf77ff98027b1b",
+      "origin": [
+        -28,
+        -220
+      ],
+      "z": -1,
+      "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/WorldMapSearch#75958"
+    },
+    "resultField": {
+      "icon": {
+        "__h": 11,
+        "__w": 11,
+        "_hash": "f06783aa7bb4cf427ef83cab4adcd0391f6f04cb16923239af82d79cc7508024",
+        "origin": [
+          0,
+          -1
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/WorldMapSearch#75972"
+      },
+      "mouseOverBase": {
+        "__h": 13,
+        "__w": 115,
+        "_hash": "492773d695adc0911717c133ce3a7d3e79afb741c204ff46e5a783856825486c",
+        "_outlink": "UI/UIWindowBT.img/WorldMap/WorldMapSearch/resultField/mouseOverBase",
+        "origin": [
+          0,
+          0
+        ],
+        "z": -1,
+        "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/WorldMapSearch#12538"
+      }
+    },
+    "resultMob": {
+      "icon": {
+        "__h": 11,
+        "__w": 11,
+        "_hash": "e5225d442202030a0a881f4e9b0abde10acc596b0ba0fa09ccf300444d0ab677",
+        "origin": [
+          0,
+          -1
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/WorldMapSearch#75968"
+      },
+      "mouseOverBase": {
+        "__h": 13,
+        "__w": 115,
+        "_hash": "9b137e04609e5d1a691eac100876a2b2c217f8e6b439c3d8e779cf1f180add13",
+        "_outlink": "UI/UIWindowBT.img/WorldMap/WorldMapSearch/resultMob/mouseOverBase",
+        "origin": [
+          0,
+          0
+        ],
+        "z": -1,
+        "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/WorldMapSearch#12534"
+      }
+    },
+    "resultNpc": {
+      "icon": {
+        "__h": 11,
+        "__w": 11,
+        "_hash": "4e840ead319f490c8440e2030517a28eb7fd95dbb043c86505a1fe7cc904624f",
+        "origin": [
+          0,
+          -1
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/WorldMapSearch#75970"
+      },
+      "mouseOverBase": {
+        "__h": 13,
+        "__w": 115,
+        "_hash": "1e35d94bf793e19390001d15b653478e5623fcf48f6739d16ce5cf1131f8062e",
+        "_outlink": "UI/UIWindowBT.img/WorldMap/WorldMapSearch/resultNpc/mouseOverBase",
+        "origin": [
+          0,
+          0
+        ],
+        "z": -1,
+        "__i": "assets/spritesheets/UI/UIWindow2.img/WorldMap/WorldMapSearch#12536"
+      }
+    }
+  },
+  "combo:regionSearch1": {
+    "boxWidth": 132,
+    "contents": {
+      "regionSearch1": {
+        "0": {
+          "data": "WorldMap010",
+          "focused": "ffffffff",
+          "focusedBack": "ff2ea7ed",
+          "font": 30112,
+          "fontColor": "ff2ea7ed",
+          "string": "Victoria Island"
+        },
+        "1": {
+          "data": "WorldMap0103",
+          "focused": "ffffffff",
+          "focusedBack": "ff2ea7ed",
+          "font": 30012,
+          "fontColor": "ff6e6e6e",
+          "string": "Partem"
+        },
+        "2": {
+          "data": "WorldMap011",
+          "focused": "ffffffff",
+          "focusedBack": "ff2ea7ed",
+          "font": 30012,
+          "fontColor": "ff6e6e6e",
+          "string": "Nautilus"
+        },
+        "3": {
+          "data": "WorldMap017",
+          "focused": "ffffffff",
+          "focusedBack": "ff2ea7ed",
+          "font": 30012,
+          "fontColor": "ff6e6e6e",
+          "string": "Ellinel"
+        },
+        "4": {
+          "data": "WorldMap0102",
+          "focused": "ffffffff",
+          "focusedBack": "ff2ea7ed",
+          "font": 30012,
+          "fontColor": "ff6e6e6e",
+          "string": "Elodin"
+        },
+        "5": {
+          "data": "WorldMap018",
+          "focused": "ffffffff",
+          "focusedBack": "ff2ea7ed",
+          "font": 30012,
+          "fontColor": "ff6e6e6e",
+          "string": "Gold Beach"
+        },
+        "6": {
+          "data": "WorldMap019",
+          "focused": "ffffffff",
+          "focusedBack": "ff2ea7ed",
+          "font": 30012,
+          "fontColor": "ff6e6e6e",
+          "string": "Mushroom Castle"
+        },
+        "7": {
+          "data": "WorldMap012",
+          "focused": "ffffffff",
+          "focusedBack": "ff2ea7ed",
+          "font": 30012,
+          "fontColor": "ff6e6e6e",
+          "string": "Sleepywood"
+        },
+        "8": {
+          "data": "WorldMap0101",
+          "focused": "ffffffff",
+          "focusedBack": "ff2ea7ed",
+          "font": 30012,
+          "fontColor": "ff6e6e6e",
+          "string": "Kerning Tower"
+        },
+        "9": {
+          "data": "WorldMap090",
+          "focused": "ffffffff",
+          "focusedBack": "ff2ea7ed",
+          "font": 30112,
+          "fontColor": "ff2ea7ed",
+          "string": "Ereve"
+        },
+        "10": {
+          "data": "WorldMap100",
+          "focused": "ffffffff",
+          "focusedBack": "ff2ea7ed",
+          "font": 30112,
+          "fontColor": "ff2ea7ed",
+          "string": "Rien"
+        },
+        "11": {
+          "data": "WorldMap101",
+          "focused": "ffffffff",
+          "focusedBack": "ff2ea7ed",
+          "font": 30012,
+          "fontColor": "ff6e6e6e",
+          "string": "Riena Strait"
+        },
+        "12": {
+          "data": "WorldMap020",
+          "focused": "ffffffff",
+          "focusedBack": "ff2ea7ed",
+          "font": 30112,
+          "fontColor": "ff2ea7ed",
+          "string": "El Nath"
+        },
+        "13": {
+          "data": "WorldMap021",
+          "focused": "ffffffff",
+          "focusedBack": "ff2ea7ed",
+          "font": 30012,
+          "fontColor": "ff6e6e6e",
+          "string": "Abandoned Mine"
+        },
+        "14": {
+          "data": "WorldMap022",
+          "focused": "ffffffff",
+          "focusedBack": "ff2ea7ed",
+          "font": 30012,
+          "fontColor": "ff6e6e6e",
+          "string": "Lion King's Castle"
+        },
+        "15": {
+          "data": "WorldMap040",
+          "focused": "ffffffff",
+          "focusedBack": "ff2ea7ed",
+          "font": 30112,
+          "fontColor": "ff2ea7ed",
+          "string": "Aqua Road"
+        },
+        "16": {
+          "data": "WorldMap030",
+          "focused": "ffffffff",
+          "focusedBack": "ff2ea7ed",
+          "font": 30112,
+          "fontColor": "ff2ea7ed",
+          "string": "Ludus Lake"
+        },
+        "17": {
+          "data": "WorldMap031",
+          "focused": "ffffffff",
+          "focusedBack": "ff2ea7ed",
+          "font": 30012,
+          "fontColor": "ff6e6e6e",
+          "string": "Clocktower Bottom Floor"
+        },
+        "18": {
+          "data": "WorldMap032",
+          "focused": "ffffffff",
+          "focusedBack": "ff2ea7ed",
+          "font": 30012,
+          "fontColor": "ff6e6e6e",
+          "string": "Ellin Forest"
+        },
+        "19": {
+          "data": "WorldMap033",
+          "focused": "ffffffff",
+          "focusedBack": "ff2ea7ed",
+          "font": 30012,
+          "fontColor": "ff6e6e6e",
+          "string": "Fantasy Theme World"
+        },
+        "20": {
+          "data": "WorldMap050",
+          "focused": "ffffffff",
+          "focusedBack": "ff2ea7ed",
+          "font": 30112,
+          "fontColor": "ff2ea7ed",
+          "string": "Minar Forest"
+        },
+        "21": {
+          "data": "WorldMap052",
+          "focused": "ffffffff",
+          "focusedBack": "ff2ea7ed",
+          "font": 30012,
+          "fontColor": "ff6e6e6e",
+          "string": "Stone Colossus"
+        },
+        "22": {
+          "data": "WorldMap170",
+          "focused": "ffffffff",
+          "focusedBack": "ff2ea7ed",
+          "font": 30012,
+          "fontColor": "ff6e6e6e",
+          "string": "Kritias"
+        },
+        "23": {
+          "data": "WorldMap070",
+          "focused": "ffffffff",
+          "focusedBack": "ff2ea7ed",
+          "font": 30112,
+          "fontColor": "ff2ea7ed",
+          "string": "Nihal Desert"
+        },
+        "24": {
+          "data": "WorldMap060",
+          "focused": "ffffffff",
+          "focusedBack": "ff2ea7ed",
+          "font": 30112,
+          "fontColor": "ff2ea7ed",
+          "string": "Mu Lung Garden"
+        },
+        "25": {
+          "data": "WorldMap061",
+          "focused": "ffffffff",
+          "focusedBack": "ff2ea7ed",
+          "font": 30012,
+          "fontColor": "ff6e6e6e",
+          "string": "Golden Temple"
+        },
+        "26": {
+          "data": "WorldMap080",
+          "focused": "ffffffff",
+          "focusedBack": "ff2ea7ed",
+          "font": 30112,
+          "fontColor": "ff2ea7ed",
+          "string": "Temple of Time"
+        },
+        "27": {
+          "data": "WorldMap081",
+          "focused": "ffffffff",
+          "focusedBack": "ff2ea7ed",
+          "font": 30012,
+          "fontColor": "ff6e6e6e",
+          "string": "Gate to the Future"
+        },
+        "28": {
+          "data": "WorldMap110",
+          "focused": "ffffffff",
+          "focusedBack": "ff2ea7ed",
+          "font": 30112,
+          "fontColor": "ff2ea7ed",
+          "string": "Edelstein"
+        },
+        "29": {
+          "data": "WorldMap111",
+          "focused": "ffffffff",
+          "focusedBack": "ff2ea7ed",
+          "font": 30012,
+          "fontColor": "ff6e6e6e",
+          "string": "Scrapyard"
+        },
+        "default": {
+          "font": 30012,
+          "fontColor": "ff4c4c4c",
+          "string": "Select Region"
+        }
+      }
+    },
+    "fType": 30112,
+    "fTypeColor": "ff4c4c4c",
+    "id": 0,
+    "lt": [
+      139,
+      24
+    ],
+    "rb": [
+      270,
+      42
+    ],
+    "sButtonUOL": "UI/Basic.img/ComboBox",
+    "textTop": 1
+  },
+  "combo:regionSearch2": {
+    "boxWidth": 132,
+    "contents": {
+      "regionSearch2": {
+        "0": {
+          "data": "WorldMap130",
+          "focused": "ffffffff",
+          "focusedBack": "ff2ea7ed",
+          "font": 30112,
+          "fontColor": "ff2ea7ed",
+          "string": "Pantheon"
+        },
+        "1": {
+          "data": "WorldMap140",
+          "focused": "ffffffff",
+          "focusedBack": "ff2ea7ed",
+          "font": 30112,
+          "fontColor": "ff2ea7ed",
+          "string": "Heliseum"
+        },
+        "2": {
+          "data": "WorldMap141",
+          "focused": "ffffffff",
+          "focusedBack": "ff2ea7ed",
+          "font": 30012,
+          "fontColor": "ff6e6e6e",
+          "string": "Tyrant's Castle"
+        },
+        "3": {
+          "data": "WorldMap180",
+          "focused": "ffffffff",
+          "focusedBack": "ff2ea7ed",
+          "font": 30112,
+          "fontColor": "ff2ea7ed",
+          "string": "Vulpes"
+        },
+        "4": {
+          "data": "WorldMap181",
+          "focused": "ffffffff",
+          "focusedBack": "ff2ea7ed",
+          "font": 30012,
+          "fontColor": "ff6e6e6e",
+          "string": "Fox Valley"
+        },
+        "5": {
+          "data": "WorldMap190",
+          "focused": "ffffffff",
+          "focusedBack": "ff2ea7ed",
+          "font": 30112,
+          "fontColor": "ff2ea7ed",
+          "string": "Savage Terminal"
+        },
+        "6": {
+          "data": "WorldMap200",
+          "focused": "ffffffff",
+          "focusedBack": "ff2ea7ed",
+          "font": 30112,
+          "fontColor": "ff2ea7ed",
+          "string": "Verdel"
+        },
+        "7": {
+          "data": "WorldMap210",
+          "focused": "ffffffff",
+          "focusedBack": "ff2ea7ed",
+          "font": 30112,
+          "fontColor": "ff2ea7ed",
+          "string": "Cheong-woon"
+        },
+        "default": {
+          "font": 30012,
+          "fontColor": "ff4c4c4c",
+          "string": "Select Region"
+        }
+      }
+    },
+    "fType": 30112,
+    "fTypeColor": "ff4c4c4c",
+    "id": 1,
+    "lt": [
+      139,
+      24
+    ],
+    "rb": [
+      270,
+      42
+    ],
+    "sButtonUOL": "UI/Basic.img/ComboBox",
+    "textTop": 1
+  },
+  "combo:regionSearch3": {
+    "boxWidth": 132,
+    "contents": {
+      "regionSearch3": {
+        "0": {
+          "data": "WorldMap0821",
+          "focused": "ffffffff",
+          "focusedBack": "ff2ea7ed",
+          "font": 30112,
+          "fontColor": "ff2ea7ed",
+          "string": "Vanishing Journey"
+        },
+        "1": {
+          "data": "WorldMap0822",
+          "focused": "ffffffff",
+          "focusedBack": "ff2ea7ed",
+          "font": 30112,
+          "fontColor": "ff2ea7ed",
+          "string": "Chu Chu Island"
+        },
+        "2": {
+          "data": "WorldMap0823",
+          "focused": "ffffffff",
+          "focusedBack": "ff2ea7ed",
+          "font": 30112,
+          "fontColor": "ff2ea7ed",
+          "string": "Lachelein the Dreaming City"
+        },
+        "3": {
+          "data": "WorldMap0824",
+          "focused": "ffffffff",
+          "focusedBack": "ff2ea7ed",
+          "font": 30112,
+          "fontColor": "ff2ea7ed",
+          "string": "Arcana"
+        },
+        "4": {
+          "data": "WorldMap0825",
+          "focused": "ffffffff",
+          "focusedBack": "ff2ea7ed",
+          "font": 30112,
+          "fontColor": "ff2ea7ed",
+          "string": "Morass, the Swamp of Memory"
+        },
+        "5": {
+          "data": "WorldMap0826",
+          "focused": "ffffffff",
+          "focusedBack": "ff2ea7ed",
+          "font": 30112,
+          "fontColor": "ff2ea7ed",
+          "string": "Esfera: Origin Sea"
+        },
+        "6": {
+          "data": "WorldMap0827",
+          "focused": "ffffffff",
+          "focusedBack": "ff2ea7ed",
+          "font": 30112,
+          "fontColor": "ff2ea7ed",
+          "string": "Tenebris"
+        },
+        "7": {
+          "data": "WorldMap08271",
+          "focused": "ffffffff",
+          "focusedBack": "ff2ea7ed",
+          "font": 30012,
+          "fontColor": "ff6e6e6e",
+          "string": "Moonbridge"
+        },
+        "8": {
+          "data": "WorldMap08272",
+          "focused": "ffffffff",
+          "focusedBack": "ff2ea7ed",
+          "font": 30012,
+          "fontColor": "ff6e6e6e",
+          "string": "Labyrinth of Suffering"
+        },
+        "9": {
+          "data": "WorldMap08273",
+          "focused": "ffffffff",
+          "focusedBack": "ff2ea7ed",
+          "font": 30012,
+          "fontColor": "ff6e6e6e",
+          "string": "Limina"
+        },
+        "default": {
+          "font": 30012,
+          "fontColor": "ff4c4c4c",
+          "string": "Select Region"
+        }
+      }
+    },
+    "fType": 30112,
+    "fTypeColor": "ff4c4c4c",
+    "id": 2,
+    "lt": [
+      139,
+      24
+    ],
+    "rb": [
+      270,
+      42
+    ],
+    "sButtonUOL": "UI/Basic.img/ComboBox",
+    "textTop": 1
+  },
+  "combo:worldSearch": {
+    "boxWidth": 122,
+    "contents": {
+      "worldSearch": {
+        "0": {
+          "data": "WorldMap",
+          "focused": "ffffffff",
+          "focusedBack": "ff2ea7ed",
+          "font": 30012,
+          "fontColor": "ff6e6e6e",
+          "string": "Maple World"
+        },
+        "1": {
+          "data": "GWorldMap",
+          "focused": "ffffffff",
+          "focusedBack": "ff2ea7ed",
+          "font": 30012,
+          "fontColor": "ff6e6e6e",
+          "string": "Grandis"
+        },
+        "2": {
+          "data": "WorldMap082",
+          "focused": "ffffffff",
+          "focusedBack": "ff2ea7ed",
+          "font": 30012,
+          "fontColor": "ff6e6e6e",
+          "string": "Arcane River"
+        },
+        "3": {
+          "data": "MWorldMap",
+          "focused": "ffffffff",
+          "focusedBack": "ff2ea7ed",
+          "font": 30012,
+          "fontColor": "ff6e6e6e",
+          "string": "Mirror World"
+        }
+      }
+    },
+    "fType": 30112,
+    "fTypeColor": "ff4c4c4c",
+    "id": 0,
+    "lt": [
+      13,
+      24
+    ],
+    "rb": [
+      134,
+      42
+    ],
+    "sButtonUOL": "UI/Basic.img/ComboBox",
+    "textTop": 1
+  },
+  "title": {
+    "__h": 15,
+    "__w": 57,
+    "_hash": "19b2931b481f16353b8b7db853d1c5c441881da8960e8803cc40829a1068792a",
+    "origin": [
+      0,
+      0
+    ],
+    "__i": "assets/images/UI/75817.png"
+  }
+}

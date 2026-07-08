@@ -1,0 +1,52 @@
+{
+  "Class": {
+    "0": {
+      "Class": "Warrior",
+      "Desc": "Warrior - at 1st job status.",
+      "Equip": "Has defense equips and weapons.",
+      "InitSPDesc": "SP: All skills blank (Unused SP: 61)",
+      "InitStatDesc": "AP: STR35, Unused AP: 123",
+      "Item": "Has potions, chair and 100,000 mesos.",
+      "StartMap": "Starting Map: Perion"
+    },
+    "1": {
+      "Class": "Magician",
+      "Desc": "Magician - at 1st job status.",
+      "Equip": "Has defense equips and weapons.",
+      "InitSPDesc": "SP: All skills blank (Unused SP: 67)",
+      "InitStatDesc": "AP: INT20,  Unused AP: 138",
+      "Item": "Has potions, chair and 100,000 mesos.",
+      "StartMap": "Starting Map: Ellinia"
+    },
+    "2": {
+      "Class": "Bowman",
+      "Desc": "Bowman - at 1st job status.",
+      "Equip": "Has defense equips and 2 weapons.",
+      "InitSPDesc": "SP: All skills blank (Unused SP: 61)",
+      "InitStatDesc": "AP: DEX25, Unused AP: 133",
+      "Item": "Has potions, chair and 100,000 mesos.",
+      "StartMap": "Starting Map: Henesys"
+    },
+    "3": {
+      "Class": "Thief",
+      "Desc": "Thief - at 1st job status.",
+      "Equip": "Has defense equips and 2 weapons.",
+      "InitSPDesc": "SP: All skills blank (Unused SP: 61)",
+      "InitStatDesc": "AP: DEX25, Unused AP: 133",
+      "Item": "Has potions, chair and 100,000 mesos.",
+      "StartMap": "Starting Map: Kerning City"
+    },
+    "4": {
+      "Class": "Pirate",
+      "Desc": "Pirate - at 1st job status.",
+      "Equip": "Has defense equips and 2 weapons.",
+      "InitSPDesc": "SP: All skills blank (Unused SP: 61)",
+      "InitStatDesc": "AP: DEX20, Unused AP: 138",
+      "Item": "Has potions, chair and 100,000 mesos.",
+      "StartMap": "Starting Map: Nautilus"
+    },
+    "Finish_Desc": "All settings are complete.\\r\\nTo change previous settings, click the #bBACK#k button.\\r\\nTo proceed with the character creation, click the #bFINISH#k button.\\r\\n#rOnce the character is created, it cannot be undone.#k",
+    "Step4_M_Desc": "Would you like to distribute SP to the \\n#rImproved MaxMP Increased skill?#k\\nUpon selecting this option, SP will be used and character will be created with the increased MP.\\n#rSkill Description:#k This skill boosts up the amount of increase on MaxMP after each Level Up or AP used on MaxMP; Required Skill: #bAt least Level 5 on Improving MP Recovery.#k",
+    "Step4_W_Desc": "Would you like to distribute SP to the \\n#rImproved MaxHP Increased skill?#k\\nUpon selecting this option, SP will be used and character will be created with the increased HP.\\n#rSkill Description:#k This skill boosts up the amount of increase on MaxHP after each Level Up or AP used on MaxHP; Required Skill: #bAt least Level 5 on Improving HP Recovery.#k"
+  }
+}

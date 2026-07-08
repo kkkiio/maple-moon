@@ -1,0 +1,36 @@
+import {
+  "moonbitlang/core/random",
+  "KKKIIO/maple-moon/engine/randx",
+  "KKKIIO/maple-moon/engine/legacy_types",
+  "KKKIIO/maple-moon/game/player",
+  "KKKIIO/maple-moon/game/character",
+  "KKKIIO/maple-moon/game/equip",
+  "KKKIIO/maple-moon/game/skill",
+  "KKKIIO/maple-moon/game/skill_cast",
+  "KKKIIO/maple-moon/game/combat_system",
+  "KKKIIO/maple-moon/game/weapon",
+  "Milky2018/selene/event",
+  "Milky2018/selene/ecs",
+}
+
+import {
+  "KKKIIO/maple-moon/game/combat_proto",
+  "KKKIIO/maple-moon/game/character_presentation",
+  "KKKIIO/maple-moon/game/item",
+  "KKKIIO/maple-moon/game/equip/slot",
+  "moonbitlang/x/fs",
+  "moonbitlang/core/json",
+  "KKKIIO/maple-moon/engine/utils",
+  "Milky2018/selene/ecs",
+} for "test"
+
+import {
+  "KKKIIO/maple-moon/engine/legacy_types",
+  "Milky2018/selene/ecs",
+} for "wbtest"
+
+supported_targets = "native+js"
+
+options(
+  overrides: [ "Milky2018/selene_raylib/platform_asset_io" ],
+)

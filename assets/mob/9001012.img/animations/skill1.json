@@ -1,0 +1,146 @@
+{ "frames": [
+   {
+    "filename": "skill1 0.aseprite",
+    "frame": { "x": 307, "y": 317, "w": 78, "h": 85 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 29, "y": 13, "w": 78, "h": 85 },
+    "sourceSize": { "w": 117, "h": 108 },
+    "duration": 120
+   },
+   {
+    "filename": "skill1 1.aseprite",
+    "frame": { "x": 217, "y": 216, "w": 90, "h": 98 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 23, "y": 6, "w": 90, "h": 98 },
+    "sourceSize": { "w": 117, "h": 108 },
+    "duration": 120
+   },
+   {
+    "filename": "skill1 2.aseprite",
+    "frame": { "x": 108, "y": 216, "w": 109, "h": 103 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 6, "y": 3, "w": 109, "h": 103 },
+    "sourceSize": { "w": 117, "h": 108 },
+    "duration": 120
+   },
+   {
+    "filename": "skill1 3.aseprite",
+    "frame": { "x": 0, "y": 216, "w": 108, "h": 106 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 8, "y": 1, "w": 108, "h": 106 },
+    "sourceSize": { "w": 117, "h": 108 },
+    "duration": 120
+   },
+   {
+    "filename": "skill1 4.aseprite",
+    "frame": { "x": 224, "y": 108, "w": 111, "h": 108 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 6, "y": 0, "w": 111, "h": 108 },
+    "sourceSize": { "w": 117, "h": 108 },
+    "duration": 120
+   },
+   {
+    "filename": "skill1 5.aseprite",
+    "frame": { "x": 0, "y": 108, "w": 112, "h": 108 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 5, "y": 0, "w": 112, "h": 108 },
+    "sourceSize": { "w": 117, "h": 108 },
+    "duration": 120
+   },
+   {
+    "filename": "skill1 6.aseprite",
+    "frame": { "x": 112, "y": 108, "w": 112, "h": 108 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 5, "y": 0, "w": 112, "h": 108 },
+    "sourceSize": { "w": 117, "h": 108 },
+    "duration": 120
+   },
+   {
+    "filename": "skill1 7.aseprite",
+    "frame": { "x": 349, "y": 0, "w": 114, "h": 108 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 3, "y": 0, "w": 114, "h": 108 },
+    "sourceSize": { "w": 117, "h": 108 },
+    "duration": 120
+   },
+   {
+    "filename": "skill1 8.aseprite",
+    "frame": { "x": 0, "y": 0, "w": 117, "h": 108 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 117, "h": 108 },
+    "sourceSize": { "w": 117, "h": 108 },
+    "duration": 120
+   },
+   {
+    "filename": "skill1 9.aseprite",
+    "frame": { "x": 234, "y": 0, "w": 115, "h": 108 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 2, "y": 0, "w": 115, "h": 108 },
+    "sourceSize": { "w": 117, "h": 108 },
+    "duration": 120
+   },
+   {
+    "filename": "skill1 10.aseprite",
+    "frame": { "x": 117, "y": 0, "w": 117, "h": 108 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 117, "h": 108 },
+    "sourceSize": { "w": 117, "h": 108 },
+    "duration": 120
+   },
+   {
+    "filename": "skill1 11.aseprite",
+    "frame": { "x": 335, "y": 108, "w": 113, "h": 106 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 3, "y": 1, "w": 113, "h": 106 },
+    "sourceSize": { "w": 117, "h": 108 },
+    "duration": 120
+   },
+   {
+    "filename": "skill1 12.aseprite",
+    "frame": { "x": 335, "y": 214, "w": 114, "h": 103 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 1, "y": 3, "w": 114, "h": 103 },
+    "sourceSize": { "w": 117, "h": 108 },
+    "duration": 120
+   },
+   {
+    "filename": "skill1 13.aseprite",
+    "frame": { "x": 217, "y": 314, "w": 90, "h": 98 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 23, "y": 6, "w": 90, "h": 98 },
+    "sourceSize": { "w": 117, "h": 108 },
+    "duration": 120
+   }
+ ],
+ "meta": {
+  "app": "https://www.aseprite.org/",
+  "version": "1.3.14.4-arm64",
+  "image": "skill1.png",
+  "format": "RGBA8888",
+  "size": { "w": 463, "h": 412 },
+  "scale": "1",
+  "frameTags": [
+   { "name": "skill1", "from": 0, "to": 13, "direction": "forward", "color": "#000000ff" }
+  ],
+  "layers": [
+   { "name": "main", "opacity": 255, "blendMode": "normal" }
+  ],
+  "slices": [
+   { "name": "anchor_skill1", "keys": [{ "frame": 0, "bounds": {"x": 0, "y": 0, "w": 117, "h": 108 }, "pivot": {"x": 71, "y": 98 } }] }
+  ]
+ }
+}

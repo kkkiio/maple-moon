@@ -1,0 +1,16 @@
+{
+  "info": {
+    "default": {
+      "__b": 10652,
+      "__w": 98,
+      "__h": 96,
+      "origin": [
+        22,
+        96
+      ],
+      "z": 0
+    },
+    "trunkPut": 100
+  },
+  "animations_path": "animation.json"
+}

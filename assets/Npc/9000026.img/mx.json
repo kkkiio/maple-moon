@@ -1,0 +1,12 @@
+{
+  "info": {
+    "dcBottom": -30,
+    "dcLeft": -45,
+    "dcRight": 45,
+    "dcTop": -135,
+    "speak": {
+      "0": "n0"
+    }
+  },
+  "animations_path": "animation.json"
+}

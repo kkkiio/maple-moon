@@ -1,0 +1,16 @@
+{
+  "info": {
+    "dcBottom": -649,
+    "dcLeft": 0,
+    "dcRight": 1,
+    "dcTop": -650,
+    "hideName": 1,
+    "script": {
+      "0": {
+        "script": "secretNPC"
+      }
+    },
+    "talkMouseOnly": 1
+  },
+  "animations_path": "animation.json"
+}

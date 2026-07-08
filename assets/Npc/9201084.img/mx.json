@@ -1,0 +1,10 @@
+{
+  "info": {
+    "script": {
+      "0": {
+        "script": "Tomb_Hall"
+      }
+    }
+  },
+  "animations_path": "animation.json"
+}

@@ -1,0 +1,1 @@
+{"type":"tileset","name":"obj:guide/milepost/mureung","objectalignment":"bottomleft","tilewidth":129,"tileheight":243,"tilecount":2,"tiles":[{"id":0,"image":"../images/25421.png","imagewidth":59,"imageheight":59},{"id":1,"image":"../images/25415.png","imagewidth":129,"imageheight":243}]}

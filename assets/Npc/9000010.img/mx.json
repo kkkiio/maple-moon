@@ -1,0 +1,15 @@
+{
+  "info": {
+    "dcMark": 1,
+    "script": {
+      "0": {
+        "script": "Event06"
+      }
+    },
+    "speak": {
+      "0": "n0",
+      "1": "n1"
+    }
+  },
+  "animations_path": "animation.json"
+}

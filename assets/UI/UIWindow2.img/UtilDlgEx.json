@@ -1,0 +1,1506 @@
+{
+  "BtAllLevel": {
+    "ToolTip": "Click to display quests of all levels.",
+    "disabled": {
+      "0": {
+        "__h": 16,
+        "__w": 85,
+        "_inlink": "Quest/list/BtAllLevel/disabled/0",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtAllLevel.png",
+        "__off": [
+          0,
+          32
+        ]
+      }
+    },
+    "mouseOver": {
+      "0": {
+        "__h": 16,
+        "__w": 85,
+        "_inlink": "Quest/list/BtAllLevel/mouseOver/0",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtAllLevel.png",
+        "__off": [
+          0,
+          48
+        ]
+      }
+    },
+    "normal": {
+      "0": {
+        "__h": 16,
+        "__w": 85,
+        "_inlink": "Quest/list/BtAllLevel/normal/0",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtAllLevel.png",
+        "__off": [
+          0,
+          0
+        ]
+      }
+    },
+    "pressed": {
+      "0": {
+        "__h": 16,
+        "__w": 85,
+        "_inlink": "Quest/list/BtAllLevel/pressed/0",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtAllLevel.png",
+        "__off": [
+          0,
+          16
+        ]
+      }
+    }
+  },
+  "BtClose": {
+    "disabled": {
+      "0": {
+        "__h": 16,
+        "__w": 91,
+        "_hash": "4b7c03ccc3725f287289b0f86f2463c377f73339bac4c7667fb4230e7a665503",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtClose.png",
+        "__off": [
+          0,
+          54
+        ]
+      }
+    },
+    "keyFocused": {
+      "0": {
+        "__h": 22,
+        "__w": 97,
+        "_hash": "dcf6b1fbecc77fb64a59b6f857de017e8697521c667b2c720440f3bce829569a",
+        "origin": [
+          3,
+          3
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtClose.png",
+        "__off": [
+          0,
+          0
+        ]
+      }
+    },
+    "mouseOver": {
+      "0": {
+        "__h": 16,
+        "__w": 91,
+        "_hash": "c9d34ac8589bdb968c1b205b8af48501460e10fefd75a1c917ccad6aeffa44c1",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtClose.png",
+        "__off": [
+          0,
+          70
+        ]
+      }
+    },
+    "normal": {
+      "0": {
+        "__h": 16,
+        "__w": 91,
+        "_hash": "f7c7d619c9bbb36b8012844cc2c0e479516ccc3bfbd7e66da2d8a31c84c23e2c",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtClose.png",
+        "__off": [
+          0,
+          22
+        ]
+      }
+    },
+    "pressed": {
+      "0": {
+        "__h": 16,
+        "__w": 91,
+        "_hash": "d2367a087b9564ad854afde7faea79883355999dc5ce79fc5e9752ad358e38af",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtClose.png",
+        "__off": [
+          0,
+          38
+        ]
+      }
+    }
+  },
+  "BtMyLevel": {
+    "ToolTip": "Click to display quests for my level.",
+    "disabled": {
+      "0": {
+        "__h": 16,
+        "__w": 85,
+        "_inlink": "Quest/list/BtMyLevel/disabled/0",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtMyLevel.png",
+        "__off": [
+          0,
+          32
+        ]
+      }
+    },
+    "mouseOver": {
+      "0": {
+        "__h": 16,
+        "__w": 85,
+        "_inlink": "Quest/list/BtMyLevel/mouseOver/0",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtMyLevel.png",
+        "__off": [
+          0,
+          48
+        ]
+      }
+    },
+    "normal": {
+      "0": {
+        "__h": 16,
+        "__w": 85,
+        "_inlink": "Quest/list/BtMyLevel/normal/0",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtMyLevel.png",
+        "__off": [
+          0,
+          0
+        ]
+      }
+    },
+    "pressed": {
+      "0": {
+        "__h": 16,
+        "__w": 85,
+        "_inlink": "Quest/list/BtMyLevel/pressed/0",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtMyLevel.png",
+        "__off": [
+          0,
+          16
+        ]
+      }
+    }
+  },
+  "BtNext": {
+    "disabled": {
+      "0": {
+        "__h": 16,
+        "__w": 40,
+        "_hash": "6230688782b5fb504d3443d00c09058898d88eb7d9340f794b7f6cd03c986f8e",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtNext.png",
+        "__off": [
+          46,
+          16
+        ]
+      }
+    },
+    "keyFocused": {
+      "0": {
+        "__h": 22,
+        "__w": 46,
+        "_inlink": "UtilDlgEx/BtPrev/keyFocused/0",
+        "origin": [
+          3,
+          3
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtNext.png",
+        "__off": [
+          0,
+          0
+        ]
+      }
+    },
+    "mouseOver": {
+      "0": {
+        "__h": 16,
+        "__w": 40,
+        "_hash": "270f64988e74eda870f546988886133b480f66cc6d0cc0f0f1d7fd66f7531bb5",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtNext.png",
+        "__off": [
+          0,
+          38
+        ]
+      }
+    },
+    "normal": {
+      "0": {
+        "__h": 16,
+        "__w": 40,
+        "_hash": "e1cadb1829359385dd6a5fc273abaa775dc7398716d9cdb0c2059f63d1d82e89",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtNext.png",
+        "__off": [
+          0,
+          22
+        ]
+      }
+    },
+    "pressed": {
+      "0": {
+        "__h": 16,
+        "__w": 40,
+        "_hash": "10b5f92c5b8059c812111378b3f45cfc255ceb989b66bb9b37dc75bf7eefca2a",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtNext.png",
+        "__off": [
+          46,
+          0
+        ]
+      }
+    }
+  },
+  "BtNo": {
+    "disabled": {
+      "0": {
+        "__h": 16,
+        "__w": 57,
+        "_inlink": "Quest/BtNo/disabled/0",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtNo.png",
+        "__off": [
+          62,
+          0
+        ]
+      }
+    },
+    "keyFocused": {
+      "0": {
+        "__h": 22,
+        "__w": 62,
+        "_inlink": "Quest/BtOK/keyFocused/0",
+        "origin": [
+          3,
+          3
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtNo.png",
+        "__off": [
+          0,
+          0
+        ]
+      }
+    },
+    "mouseOver": {
+      "0": {
+        "__h": 16,
+        "__w": 57,
+        "_inlink": "Quest/BtNo/mouseOver/0",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtNo.png",
+        "__off": [
+          62,
+          16
+        ]
+      }
+    },
+    "normal": {
+      "0": {
+        "__h": 16,
+        "__w": 57,
+        "_inlink": "Quest/BtNo/normal/0",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtNo.png",
+        "__off": [
+          0,
+          22
+        ]
+      }
+    },
+    "pressed": {
+      "0": {
+        "__h": 16,
+        "__w": 57,
+        "_inlink": "Quest/BtNo/pressed/0",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtNo.png",
+        "__off": [
+          0,
+          38
+        ]
+      }
+    }
+  },
+  "BtOK": {
+    "disabled": {
+      "0": {
+        "__h": 16,
+        "__w": 40,
+        "_hash": "b8b254ec94d4bb6e734fa1c66c541ca94f5aca27121577287d88bbc9a36cfb09",
+        "_outlink": "UI/UIWindow.img/PartyReward/BtOK/disabled/0",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtOK.png",
+        "__off": [
+          46,
+          16
+        ]
+      }
+    },
+    "keyFocused": {
+      "0": {
+        "__h": 22,
+        "__w": 46,
+        "_inlink": "UtilDlgEx/BtPrev/keyFocused/0",
+        "origin": [
+          3,
+          3
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtOK.png",
+        "__off": [
+          0,
+          0
+        ]
+      }
+    },
+    "mouseOver": {
+      "0": {
+        "__h": 16,
+        "__w": 40,
+        "_hash": "fbe1c54f0a201d11931a75559d653f6a7b2a304f33c721a1eaf0a5a5728f5eb5",
+        "_outlink": "UI/UIWindow.img/PartyReward/BtOK/mouseOver/0",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtOK.png",
+        "__off": [
+          0,
+          38
+        ]
+      }
+    },
+    "normal": {
+      "0": {
+        "__h": 16,
+        "__w": 40,
+        "_hash": "78c1b0065f2c2e0f0f589b0c56eb4748a481244111be460f6d9b061608a195cb",
+        "_outlink": "UI/UIWindow.img/PartyReward/BtOK/normal/0",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtOK.png",
+        "__off": [
+          0,
+          22
+        ]
+      }
+    },
+    "pressed": {
+      "0": {
+        "__h": 16,
+        "__w": 40,
+        "_hash": "17e8f5d7bc91dc4c8bb13470d424caa866638f2793032c1bf7126ce65b9fb6e8",
+        "_outlink": "UI/UIWindow.img/PartyReward/BtOK/pressed/0",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtOK.png",
+        "__off": [
+          46,
+          0
+        ]
+      }
+    }
+  },
+  "BtPrev": {
+    "disabled": {
+      "0": {
+        "__h": 16,
+        "__w": 40,
+        "_hash": "4f87817540aa0ee43a5535b0962dc9e4f7252a39c667cb3834a2c80750207bee",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtPrev.png",
+        "__off": [
+          46,
+          16
+        ]
+      }
+    },
+    "keyFocused": {
+      "0": {
+        "__h": 22,
+        "__w": 46,
+        "_hash": "5437fe1a7c83a766481b33ae5f63abd692104d83720cf620c2e6b99414e28a15",
+        "origin": [
+          3,
+          3
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtPrev.png",
+        "__off": [
+          0,
+          0
+        ]
+      }
+    },
+    "mouseOver": {
+      "0": {
+        "__h": 16,
+        "__w": 40,
+        "_hash": "9ff47f315e80e1f6aa99121c10d837f5649376ffa6580f421bd0efd3af27a929",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtPrev.png",
+        "__off": [
+          0,
+          38
+        ]
+      }
+    },
+    "normal": {
+      "0": {
+        "__h": 16,
+        "__w": 40,
+        "_hash": "2704b834aa6ca4329824601721dab4733ada1b6062f7a9d0ce35538b8d0caad7",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtPrev.png",
+        "__off": [
+          0,
+          22
+        ]
+      }
+    },
+    "pressed": {
+      "0": {
+        "__h": 16,
+        "__w": 40,
+        "_hash": "d2bdc954ada6474a67d42bba7c305cb54cdec2150418876aa3813e969db68e7d",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtPrev.png",
+        "__off": [
+          46,
+          0
+        ]
+      }
+    }
+  },
+  "BtQAfter": {
+    "disabled": {
+      "0": {
+        "__h": 16,
+        "__w": 68,
+        "_hash": "00a5e9e30e5631a9279509bda515fb930d133af9f2a6b9f6d8de9d482301dd72",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtQAfter.png",
+        "__off": [
+          0,
+          54
+        ]
+      }
+    },
+    "keyFocused": {
+      "0": {
+        "__h": 22,
+        "__w": 74,
+        "_hash": "a98be83bdb8433b414396c822e4121bb418d818bb4e4d3e5fbcbffcdc9c05e5e",
+        "origin": [
+          3,
+          3
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtQAfter.png",
+        "__off": [
+          0,
+          0
+        ]
+      }
+    },
+    "mouseOver": {
+      "0": {
+        "__h": 16,
+        "__w": 68,
+        "_hash": "162a28594cddc7da518502c1a23d0c8b34941e4dd16b62e7d4c2b0d75cf2bdcc",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtQAfter.png",
+        "__off": [
+          74,
+          0
+        ]
+      }
+    },
+    "normal": {
+      "0": {
+        "__h": 16,
+        "__w": 68,
+        "_hash": "dc6c61d74fe84ed92f9c0c3c69b000460e65283a8014a0293308c324631d19f7",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtQAfter.png",
+        "__off": [
+          0,
+          22
+        ]
+      }
+    },
+    "pressed": {
+      "0": {
+        "__h": 16,
+        "__w": 68,
+        "_hash": "38ec28e560dbab446e24910ada332633248c862cf3e5c3b29a22b5e5893f05a3",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtQAfter.png",
+        "__off": [
+          0,
+          38
+        ]
+      }
+    }
+  },
+  "BtQCNo": {
+    "disabled": {
+      "0": {
+        "__h": 16,
+        "__w": 56,
+        "_hash": "05a7d5b13c2331e748c0fdc4cdb9c8a07cf36355e326c980c0818448390a4967",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtQCNo.png",
+        "__off": [
+          62,
+          0
+        ]
+      }
+    },
+    "keyFocused": {
+      "0": {
+        "__h": 22,
+        "__w": 62,
+        "_inlink": "Quest/BtOK/keyFocused/0",
+        "origin": [
+          3,
+          3
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtQCNo.png",
+        "__off": [
+          0,
+          0
+        ]
+      }
+    },
+    "mouseOver": {
+      "0": {
+        "__h": 16,
+        "__w": 56,
+        "_hash": "20b26bc407a9d80295e2ba11cd13ac7424a6345230e659d2a2ce509597908d04",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtQCNo.png",
+        "__off": [
+          62,
+          16
+        ]
+      }
+    },
+    "normal": {
+      "0": {
+        "__h": 16,
+        "__w": 56,
+        "_hash": "a6c677d55604f6669c2a3a5c2df4331c4750b29f3a704cbe27442936ae95cbac",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtQCNo.png",
+        "__off": [
+          0,
+          22
+        ]
+      }
+    },
+    "pressed": {
+      "0": {
+        "__h": 16,
+        "__w": 56,
+        "_hash": "ea665fc84e5ce5a5817c6c498d620a7ab1dec0872d9bcb146ef85c7bbdcca5d3",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtQCNo.png",
+        "__off": [
+          0,
+          38
+        ]
+      }
+    }
+  },
+  "BtQCYes": {
+    "disabled": {
+      "0": {
+        "__h": 16,
+        "__w": 56,
+        "_hash": "eb43f759ebdee82aa9539a32f6f9e6b006668db9bbe7206bf60a5fc46c01a2e4",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtQCYes.png",
+        "__off": [
+          62,
+          0
+        ]
+      }
+    },
+    "keyFocused": {
+      "0": {
+        "__h": 22,
+        "__w": 62,
+        "_inlink": "Quest/BtOK/keyFocused/0",
+        "origin": [
+          3,
+          3
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtQCYes.png",
+        "__off": [
+          0,
+          0
+        ]
+      }
+    },
+    "mouseOver": {
+      "0": {
+        "__h": 16,
+        "__w": 56,
+        "_hash": "c00381b5600542796cf00e1a43a54c9bbd20a2ef75965d7d63b0854f56fbca00",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtQCYes.png",
+        "__off": [
+          62,
+          16
+        ]
+      }
+    },
+    "normal": {
+      "0": {
+        "__h": 16,
+        "__w": 56,
+        "_hash": "d59c2bc0a960aca07c09cdaa76a063e54d6807cb98dcd896c6ecffa01b593626",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtQCYes.png",
+        "__off": [
+          0,
+          22
+        ]
+      }
+    },
+    "pressed": {
+      "0": {
+        "__h": 16,
+        "__w": 56,
+        "_hash": "e9ba82346afd57eacd33f82a493ebac1e93962981e35da0fbb90878c6572de08",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtQCYes.png",
+        "__off": [
+          0,
+          38
+        ]
+      }
+    }
+  },
+  "BtQGiveup": {
+    "disabled": {
+      "0": {
+        "__h": 16,
+        "__w": 57,
+        "_hash": "9e084f18ec437cdbabdd0eeeda7b740455315e8fb1afafa00a30b5e83776812e",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtQGiveup.png",
+        "__off": [
+          62,
+          0
+        ]
+      }
+    },
+    "keyFocused": {
+      "0": {
+        "__h": 22,
+        "__w": 62,
+        "_inlink": "Quest/BtOK/keyFocused/0",
+        "origin": [
+          3,
+          3
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtQGiveup.png",
+        "__off": [
+          0,
+          0
+        ]
+      }
+    },
+    "mouseOver": {
+      "0": {
+        "__h": 16,
+        "__w": 57,
+        "_hash": "af4b26700fbc159c194d308deb726823f24dfcd74b05b495e7afcb2c6a98ebe5",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtQGiveup.png",
+        "__off": [
+          62,
+          16
+        ]
+      }
+    },
+    "normal": {
+      "0": {
+        "__h": 16,
+        "__w": 57,
+        "_hash": "134e1e751f4ee6ba18f4fa7a5e092bd751339a88a6bf66dd304a38e5ab40e1b2",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtQGiveup.png",
+        "__off": [
+          0,
+          22
+        ]
+      }
+    },
+    "pressed": {
+      "0": {
+        "__h": 16,
+        "__w": 57,
+        "_hash": "a3a2654fa6625a7a33ee7723bda74f99fe59874f4bf45cc1b5c1f1fdf058eeb4",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtQGiveup.png",
+        "__off": [
+          0,
+          38
+        ]
+      }
+    }
+  },
+  "BtQNo": {
+    "disabled": {
+      "0": {
+        "__h": 16,
+        "__w": 57,
+        "_hash": "c07193d1df8a332c4268812773c761b497728e91f916c19656e00721876af510",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtQNo.png",
+        "__off": [
+          62,
+          0
+        ]
+      }
+    },
+    "keyFocused": {
+      "0": {
+        "__h": 22,
+        "__w": 62,
+        "_inlink": "Quest/BtOK/keyFocused/0",
+        "origin": [
+          3,
+          3
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtQNo.png",
+        "__off": [
+          0,
+          0
+        ]
+      }
+    },
+    "mouseOver": {
+      "0": {
+        "__h": 16,
+        "__w": 57,
+        "_hash": "93bb51465f565e4229319e6a724c88b29e1e9a0c89299781626d72f3629db235",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtQNo.png",
+        "__off": [
+          62,
+          16
+        ]
+      }
+    },
+    "normal": {
+      "0": {
+        "__h": 16,
+        "__w": 57,
+        "_hash": "b66ad33f4c145f2e275b0001ec6fafe1bbd0dd6f0281d62e0f9b08e2948e438a",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtQNo.png",
+        "__off": [
+          0,
+          22
+        ]
+      }
+    },
+    "pressed": {
+      "0": {
+        "__h": 16,
+        "__w": 57,
+        "_hash": "504079dad2a150c05df053fe92c3e3f28f14e586ee1e69f3db4abe4c0b922ff6",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtQNo.png",
+        "__off": [
+          0,
+          38
+        ]
+      }
+    }
+  },
+  "BtQStart": {
+    "disabled": {
+      "0": {
+        "__h": 16,
+        "__w": 58,
+        "_hash": "fc3e43fba6ddd44404a67d1816415247299f32013acc8a860bb7ccab8048a749",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtQStart.png",
+        "__off": [
+          66,
+          0
+        ]
+      }
+    },
+    "keyFocused": {
+      "0": {
+        "__h": 22,
+        "__w": 66,
+        "_outlink": "UI/UIWindowString.img/Scenario/quest_info/BtGiveup/keyFocused/0",
+        "origin": [
+          3,
+          3
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtQStart.png",
+        "__off": [
+          0,
+          0
+        ]
+      }
+    },
+    "mouseOver": {
+      "0": {
+        "__h": 16,
+        "__w": 58,
+        "_hash": "94a5d163a4372da5dacae7c74ef91d44e21a7b6eb98be6383f39fe71fd8a560c",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtQStart.png",
+        "__off": [
+          66,
+          16
+        ]
+      }
+    },
+    "normal": {
+      "0": {
+        "__h": 16,
+        "__w": 58,
+        "_hash": "a681f490c32f45b6eaf4211fdf0fc0f11c864f78bd86e9361fc6bc76a904953c",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtQStart.png",
+        "__off": [
+          0,
+          22
+        ]
+      }
+    },
+    "pressed": {
+      "0": {
+        "__h": 16,
+        "__w": 58,
+        "_hash": "c02c73c06c8164d7b59f56e1662f6304e69ffad31a878940c2c1260d784390d7",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtQStart.png",
+        "__off": [
+          0,
+          38
+        ]
+      }
+    }
+  },
+  "BtQYes": {
+    "disabled": {
+      "0": {
+        "__h": 16,
+        "__w": 57,
+        "_inlink": "Quest/BtOK/disabled/0",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtQYes.png",
+        "__off": [
+          62,
+          0
+        ]
+      }
+    },
+    "keyFocused": {
+      "0": {
+        "__h": 22,
+        "__w": 62,
+        "_inlink": "Quest/BtOK/keyFocused/0",
+        "origin": [
+          3,
+          3
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtQYes.png",
+        "__off": [
+          0,
+          0
+        ]
+      }
+    },
+    "mouseOver": {
+      "0": {
+        "__h": 16,
+        "__w": 57,
+        "_inlink": "Quest/BtOK/mouseOver/0",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtQYes.png",
+        "__off": [
+          62,
+          16
+        ]
+      }
+    },
+    "normal": {
+      "0": {
+        "__h": 16,
+        "__w": 57,
+        "_inlink": "Quest/BtOK/normal/0",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtQYes.png",
+        "__off": [
+          0,
+          22
+        ]
+      }
+    },
+    "pressed": {
+      "0": {
+        "__h": 16,
+        "__w": 57,
+        "_inlink": "Quest/BtOK/pressed/0",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtQYes.png",
+        "__off": [
+          0,
+          38
+        ]
+      }
+    }
+  },
+  "BtYes": {
+    "disabled": {
+      "0": {
+        "__h": 16,
+        "__w": 57,
+        "_hash": "9330e2ef7c4a1388678c2215c38687677e1b928f65e621cbd6b04b51e629f435",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtYes.png",
+        "__off": [
+          62,
+          0
+        ]
+      }
+    },
+    "keyFocused": {
+      "0": {
+        "__h": 22,
+        "__w": 62,
+        "_inlink": "Quest/BtOK/keyFocused/0",
+        "origin": [
+          3,
+          3
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtYes.png",
+        "__off": [
+          0,
+          0
+        ]
+      }
+    },
+    "mouseOver": {
+      "0": {
+        "__h": 16,
+        "__w": 57,
+        "_hash": "f43946030f7e34fd4e6b3ce1cb9bb6906246560a6b95d23c89ab05712a98890d",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtYes.png",
+        "__off": [
+          62,
+          16
+        ]
+      }
+    },
+    "normal": {
+      "0": {
+        "__h": 16,
+        "__w": 57,
+        "_hash": "d841da49f44071b718c315b016a0e50113be027d264dac7ac8c156936667ef0c",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtYes.png",
+        "__off": [
+          0,
+          22
+        ]
+      }
+    },
+    "pressed": {
+      "0": {
+        "__h": 16,
+        "__w": 57,
+        "_hash": "28848cba1a59487979e95433888c94fb14ef96d6a2ee10253a0963dad117ca9f",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/BtYes.png",
+        "__off": [
+          0,
+          38
+        ]
+      }
+    }
+  },
+  "QDeliveryIcon": {
+    "0": {
+      "__h": 32,
+      "__w": 24,
+      "_hash": "ac2a13e6b405668a3741b01cd14c301e734b612f28a3c7e21e25ca2d2fea7008",
+      "delay": 150,
+      "origin": [
+        23,
+        31
+      ],
+      "z": 0,
+      "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/QDeliveryIcon.png",
+      "__off": [
+        0,
+        36
+      ]
+    },
+    "1": {
+      "__h": 35,
+      "__w": 29,
+      "_hash": "670b6cb73dc02686f68e1fb31c81568cc006da2f6da355b1add7c88a571f2a39",
+      "delay": 150,
+      "origin": [
+        25,
+        34
+      ],
+      "z": 0,
+      "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/QDeliveryIcon.png",
+      "__off": [
+        31,
+        0
+      ]
+    },
+    "2": {
+      "__h": 36,
+      "__w": 31,
+      "_hash": "9012ef7232d9ed33470e805686329fde9a4baab2c3e10206681c09921e8d74d4",
+      "delay": 150,
+      "origin": [
+        25,
+        35
+      ],
+      "z": 0,
+      "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/QDeliveryIcon.png",
+      "__off": [
+        0,
+        0
+      ]
+    },
+    "3": {
+      "__h": 35,
+      "__w": 29,
+      "_inlink": "UtilDlgEx/QDeliveryIcon/1",
+      "delay": 150,
+      "origin": [
+        25,
+        34
+      ],
+      "z": 0,
+      "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/QDeliveryIcon.png",
+      "__off": [
+        31,
+        0
+      ]
+    },
+    "4": {
+      "__h": 36,
+      "__w": 31,
+      "_inlink": "UtilDlgEx/QDeliveryIcon/2",
+      "delay": 150,
+      "origin": [
+        25,
+        35
+      ],
+      "z": 0,
+      "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/QDeliveryIcon.png",
+      "__off": [
+        0,
+        0
+      ]
+    },
+    "5": {
+      "__h": 35,
+      "__w": 29,
+      "_inlink": "UtilDlgEx/QDeliveryIcon/1",
+      "delay": 150,
+      "origin": [
+        25,
+        34
+      ],
+      "z": 0,
+      "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/QDeliveryIcon.png",
+      "__off": [
+        31,
+        0
+      ]
+    },
+    "6": {
+      "__h": 32,
+      "__w": 26,
+      "_hash": "ed585c4dec647010ceff06f873c76524e3d9ac77611ab84793aed06fca0b54d9",
+      "delay": 150,
+      "origin": [
+        25,
+        31
+      ],
+      "z": 0,
+      "__i": "assets/spritesheets/UI/UIWindow2.img/UtilDlgEx/QDeliveryIcon.png",
+      "__off": [
+        60,
+        0
+      ]
+    }
+  },
+  "bar": {
+    "__h": 19,
+    "__w": 109,
+    "_hash": "3f15d1f7ca408f4f18c4ab6c48041bc43d9422cd3a549af827ec5d069eb3fefb",
+    "origin": [
+      0,
+      0
+    ],
+    "__i": "assets/images/UI/79020.png"
+  },
+  "c": {
+    "__h": 13,
+    "__w": 519,
+    "_hash": "53e6a87ff43fbaec55a5e6753a55d886926b4b9aed860570cde437c10cea6b64",
+    "origin": [
+      0,
+      0
+    ],
+    "__i": "assets/images/UI/79012.png"
+  },
+  "dot0": {
+    "__h": 7,
+    "__w": 6,
+    "_hash": "fd03dea3deedcef41bc5f2b45004f55a9a0088cd3fc033f692ebe1952066cfef",
+    "_outlink": "UI/UIWindow.img/UtilDlgEx/dot0",
+    "origin": [
+      0,
+      0
+    ],
+    "__i": "assets/images/UI/94340.png"
+  },
+  "dot1": {
+    "__h": 7,
+    "__w": 6,
+    "_hash": "892fe982e92b8212279f30dcb8c46cedfb477b23b6f33c3e082a7e7137bb2127",
+    "_outlink": "UI/UIWindow.img/UtilDlgEx/dot1",
+    "origin": [
+      0,
+      0
+    ],
+    "__i": "assets/images/UI/94341.png"
+  },
+  "ic": {
+    "__h": 13,
+    "__w": 519,
+    "_hash": "ba4d3fa84c5b9221ee0fb62973065de9025b1d16d4ef61f06e14e59573d9273e",
+    "origin": [
+      0,
+      0
+    ],
+    "__i": "assets/images/UI/79015.png"
+  },
+  "is": {
+    "__h": 44,
+    "__w": 519,
+    "_hash": "765e9f20dac8ecbb1fbeda84bb5e76981e96156c3153c49ee832cce1d4cc7ec3",
+    "origin": [
+      0,
+      0
+    ],
+    "__i": "assets/images/UI/79016.png"
+  },
+  "it": {
+    "__h": 28,
+    "__w": 519,
+    "_hash": "d22d4d358efb4a3d7111aa9db671188cf89d45a0e222ded6cf3ee4648f0985c8",
+    "origin": [
+      0,
+      0
+    ],
+    "__i": "assets/images/UI/79014.png"
+  },
+  "line": {
+    "__h": 2,
+    "__w": 332,
+    "_hash": "f2a861def478e5c1b1246a0f5ae62416709568b52704090e4c96bde9202d5419",
+    "_outlink": "UI/UIWindow.img/UtilDlgEx/line",
+    "origin": [
+      0,
+      0
+    ],
+    "__i": "assets/images/UI/94339.png"
+  },
+  "list0": {
+    "__h": 15,
+    "__w": 138,
+    "_hash": "26edeb5159fd87f1330d77d70d7b87ca0875a7e36a26758d2aea3591c61d06b9",
+    "origin": [
+      0,
+      0
+    ],
+    "__i": "assets/images/UI/79086.png"
+  },
+  "list1": {
+    "__h": 17,
+    "__w": 120,
+    "_hash": "fa8e05f3cfe353f5691d184fec8a6211d3c82002a55d42f19383413431a42d05",
+    "origin": [
+      0,
+      0
+    ],
+    "__i": "assets/images/UI/79087.png"
+  },
+  "list2": {
+    "__h": 15,
+    "__w": 50,
+    "_hash": "7754f77a9fd959267ead1c51120b35d3c0710ed496d5e429125349096f68be84",
+    "origin": [
+      0,
+      0
+    ],
+    "__i": "assets/images/UI/79088.png"
+  },
+  "list3": {
+    "__h": 15,
+    "__w": 123,
+    "_hash": "76452f5fc4781e7b10df86f327d30ade4db73c4efeaf831106efcc3b976f3c00",
+    "origin": [
+      0,
+      0
+    ],
+    "__i": "assets/images/UI/79089.png"
+  },
+  "list4": {
+    "__h": 17,
+    "__w": 124,
+    "_hash": "0c50568cf1dfafa415c351d11799c63e2b06cad9e4a0ab597d53db175db72a39",
+    "origin": [
+      0,
+      1
+    ],
+    "z": 0,
+    "__i": "assets/images/UI/79090.png"
+  },
+  "list5": {
+    "__h": 15,
+    "__w": 137,
+    "_hash": "3793812636d4680b0a2eb43f50fa30714a84b616b346e3b801c7d52499403117",
+    "origin": [
+      1,
+      -1
+    ],
+    "z": 0,
+    "__i": "assets/images/UI/79091.png"
+  },
+  "list6": {
+    "__h": 20,
+    "__w": 221,
+    "_hash": "4f382bbe756b27ad7a072608b8acb28c1b91847c2b27925be602631727223946",
+    "origin": [
+      -4,
+      2
+    ],
+    "z": 0,
+    "__i": "assets/images/UI/79092.png"
+  },
+  "notice": {
+    "__h": 157,
+    "__w": 305,
+    "_hash": "ce13b308e8585203386e3309cf371e0dab87e384134b2d1e6c4905e2907110cb",
+    "origin": [
+      0,
+      0
+    ],
+    "__i": "assets/images/UI/79093.png"
+  },
+  "s": {
+    "__h": 44,
+    "__w": 519,
+    "_hash": "570fc7784767c7be966bcb8732b767302da96ccdcd1cafe95ade319a4ac9cee3",
+    "origin": [
+      0,
+      0
+    ],
+    "__i": "assets/images/UI/79013.png"
+  },
+  "t": {
+    "__h": 28,
+    "__w": 519,
+    "_hash": "ec4e749a73f317a87903512ced76d409ecab845e9d1b6f2067b2a4004e12d685",
+    "origin": [
+      0,
+      0
+    ],
+    "__i": "assets/images/UI/79011.png"
+  }
+}

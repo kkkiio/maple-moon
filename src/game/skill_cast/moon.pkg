@@ -1,0 +1,17 @@
+import {
+  "KKKIIO/maple-moon/engine/log",
+  "KKKIIO/maple-moon/engine/legacy_types",
+  "KKKIIO/maple-moon/game/combat_system",
+  "KKKIIO/maple-moon/game/combat_proto",
+  "KKKIIO/maple-moon/game/character",
+  "KKKIIO/maple-moon/game/char_look",
+  "KKKIIO/maple-moon/game/maple_stat",
+  "KKKIIO/maple-moon/game/weapon",
+}
+
+import {
+  "moonbitlang/core/json",
+  "moonbitlang/core/random",
+} for "test"
+
+supported_targets = "native+js"

@@ -1,0 +1,26 @@
+{
+  "info": {
+    "dcBottom": 63,
+    "dcLeft": -32,
+    "dcRight": 32,
+    "dcTop": -116,
+    "default": {
+      "__b": 1616,
+      "__w": 97,
+      "__h": 102,
+      "origin": [
+        49,
+        102
+      ],
+      "z": 0
+    },
+    "hideName": 1,
+    "script": {
+      "0": {
+        "script": "secret_wall"
+      }
+    },
+    "talkMouseOnly": 1
+  },
+  "animations_path": "animation.json"
+}

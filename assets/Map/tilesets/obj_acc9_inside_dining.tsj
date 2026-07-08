@@ -1,0 +1,1 @@
+{"type":"tileset","name":"obj:acc9/inside/dining","objectalignment":"bottomleft","tilewidth":600,"tileheight":450,"tilecount":2,"tiles":[{"id":0,"image":"../images/26118.png","imagewidth":400,"imageheight":450},{"id":1,"image":"../images/26119.png","imagewidth":600,"imageheight":450}]}

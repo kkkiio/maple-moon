@@ -1,0 +1,26 @@
+{
+  "info": {
+    "dcBottom": 123,
+    "dcLeft": -335,
+    "dcRight": 335,
+    "dcTop": 60,
+    "default": {
+      "__b": 2767,
+      "__w": 126,
+      "__h": 77,
+      "origin": [
+        64,
+        77
+      ],
+      "z": 0
+    },
+    "hideName": 1,
+    "script": {
+      "0": {
+        "script": "ariant_oasis"
+      }
+    },
+    "talkMouseOnly": 1
+  },
+  "animations_path": "animation.json"
+}

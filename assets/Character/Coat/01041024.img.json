@@ -1,0 +1,4019 @@
+{
+  "alert": {
+    "0": {
+      "mail": {
+        "__h": 19,
+        "__w": 20,
+        "map": {
+          "navel": [
+            -1,
+            0
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          146,
+          121
+        ]
+      },
+      "mailArm": {
+        "__h": 14,
+        "__w": 8,
+        "map": {
+          "navel": [
+            -9,
+            6
+          ]
+        },
+        "origin": [
+          4,
+          4
+        ],
+        "z": "mailArmOverHair",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          70,
+          55
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 20,
+        "__w": 18,
+        "map": {
+          "navel": [
+            -2,
+            0
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          78,
+          185
+        ]
+      },
+      "mailArm": {
+        "__h": 13,
+        "__w": 7,
+        "map": {
+          "navel": [
+            -8,
+            5
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmOverHair",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          243,
+          26
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 20,
+        "__w": 18,
+        "map": {
+          "navel": [
+            -3,
+            1
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          96,
+          185
+        ]
+      },
+      "mailArm": {
+        "__h": 15,
+        "__w": 7,
+        "map": {
+          "navel": [
+            -8,
+            5
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmOverHair",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          236,
+          158
+        ]
+      }
+    }
+  },
+  "fly": {
+    "0": {
+      "mail": {
+        "__h": 21,
+        "__w": 21,
+        "map": {
+          "navel": [
+            -1,
+            2
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          50,
+          163
+        ]
+      },
+      "mailArm": {
+        "__h": 9,
+        "__w": 8,
+        "map": {
+          "navel": [
+            -9,
+            7
+          ]
+        },
+        "origin": [
+          4,
+          4
+        ],
+        "z": "mailArmOverHair",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          253,
+          76
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 21,
+        "__w": 21,
+        "map": {
+          "navel": [
+            -1,
+            2
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          50,
+          163
+        ]
+      },
+      "mailArm": {
+        "__h": 9,
+        "__w": 8,
+        "map": {
+          "navel": [
+            -9,
+            7
+          ]
+        },
+        "origin": [
+          4,
+          4
+        ],
+        "z": "mailArmOverHair",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          253,
+          76
+        ]
+      }
+    }
+  },
+  "heal": {
+    "0": {
+      "mail": {
+        "__h": 20,
+        "__w": 18,
+        "map": {
+          "navel": [
+            -2,
+            0
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          78,
+          185
+        ]
+      },
+      "mailArm": {
+        "__h": 13,
+        "__w": 7,
+        "map": {
+          "navel": [
+            -8,
+            5
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmOverHair",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          243,
+          26
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 21,
+        "__w": 18,
+        "map": {
+          "navel": [
+            -3,
+            2
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          166,
+          48
+        ]
+      },
+      "mailArm": {
+        "__h": 7,
+        "__w": 17,
+        "map": {
+          "navel": [
+            15,
+            5
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmBelowHead",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          225,
+          143
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 19,
+        "__w": 16,
+        "map": {
+          "navel": [
+            -4,
+            0
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          206,
+          171
+        ]
+      },
+      "mailArm": {
+        "__h": 9,
+        "__w": 17,
+        "map": {
+          "navel": [
+            12,
+            9
+          ]
+        },
+        "origin": [
+          4,
+          4
+        ],
+        "z": "mailArmBelowHead",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          225,
+          134
+        ]
+      }
+    }
+  },
+  "info": {
+    "cash": 0,
+    "icon": {
+      "__h": 28,
+      "__w": 30,
+      "origin": [
+        -1,
+        28
+      ],
+      "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+      "__off": [
+        78,
+        43
+      ]
+    },
+    "iconRaw": {
+      "__h": 26,
+      "__w": 30,
+      "origin": [
+        -1,
+        28
+      ],
+      "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+      "__off": [
+        0,
+        74
+      ]
+    },
+    "incMHP": 20,
+    "incPDD": 30,
+    "islot": "Ma",
+    "price": 8000,
+    "reqDEX": 0,
+    "reqINT": 0,
+    "reqJob": 1,
+    "reqLUK": 0,
+    "reqLevel": 25,
+    "reqSTR": 80,
+    "tuc": 7,
+    "vslot": "Ma"
+  },
+  "jump": {
+    "0": {
+      "mail": {
+        "__h": 19,
+        "__w": 21,
+        "map": {
+          "navel": [
+            -2,
+            1
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          92,
+          163
+        ]
+      },
+      "mailArm": {
+        "__h": 9,
+        "__w": 8,
+        "map": {
+          "navel": [
+            -10,
+            6
+          ]
+        },
+        "origin": [
+          4,
+          4
+        ],
+        "z": "mailArmOverHair",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          253,
+          85
+        ]
+      }
+    }
+  },
+  "ladder": {
+    "0": {
+      "mail": {
+        "__h": 26,
+        "__w": 21,
+        "map": {
+          "navel": [
+            1,
+            5
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "backMailChestOverPants",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          185,
+          0
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 26,
+        "__w": 21,
+        "map": {
+          "navel": [
+            0,
+            5
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "backMailChestOverPants",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          185,
+          26
+        ]
+      }
+    }
+  },
+  "prone": {
+    "0": {
+      "mail": {
+        "__h": 18,
+        "__w": 43,
+        "map": {
+          "navel": [
+            23,
+            5
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          0,
+          0
+        ]
+      },
+      "mailArm": {
+        "__h": 8,
+        "__w": 9,
+        "map": {
+          "navel": [
+            -1,
+            1
+          ]
+        },
+        "origin": [
+          4,
+          4
+        ],
+        "z": "mailArmOverHair",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          253,
+          94
+        ]
+      }
+    }
+  },
+  "proneStab": {
+    "0": {
+      "mail": {
+        "__h": 18,
+        "__w": 43,
+        "map": {
+          "navel": [
+            23,
+            5
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          0,
+          0
+        ]
+      },
+      "mailArm": {
+        "__h": 8,
+        "__w": 9,
+        "map": {
+          "navel": [
+            -1,
+            1
+          ]
+        },
+        "origin": [
+          4,
+          4
+        ],
+        "z": "mailArmOverHair",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          253,
+          94
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 18,
+        "__w": 43,
+        "map": {
+          "navel": [
+            23,
+            5
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          0,
+          0
+        ]
+      },
+      "mailArm": {
+        "__h": 8,
+        "__w": 18,
+        "map": {
+          "navel": [
+            16,
+            0
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmOverHair",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          225,
+          98
+        ]
+      }
+    }
+  },
+  "rope": {
+    "0": {
+      "mail": {
+        "__h": 27,
+        "__w": 19,
+        "map": {
+          "navel": [
+            0,
+            7
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "backMailChestOverPants",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          166,
+          0
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 22,
+        "__w": 21,
+        "map": {
+          "navel": [
+            0,
+            1
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "backMailChestOverPants",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          185,
+          124
+        ]
+      }
+    }
+  },
+  "shoot1": {
+    "0": {
+      "mail": {
+        "__h": 20,
+        "__w": 27,
+        "map": {
+          "navel": [
+            8,
+            1
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          0,
+          121
+        ]
+      },
+      "mailArm": {
+        "__h": 9,
+        "__w": 14,
+        "map": {
+          "navel": [
+            0,
+            10
+          ]
+        },
+        "origin": [
+          4,
+          4
+        ],
+        "z": "mailArmOverHair",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          56,
+          212
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 20,
+        "__w": 27,
+        "map": {
+          "navel": [
+            8,
+            1
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          27,
+          121
+        ]
+      },
+      "mailArm": {
+        "__h": 11,
+        "__w": 11,
+        "map": {
+          "navel": [
+            -9,
+            10
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmOverHair",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          253,
+          0
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 20,
+        "__w": 27,
+        "map": {
+          "navel": [
+            8,
+            1
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          27,
+          121
+        ]
+      },
+      "mailArm": {
+        "__h": 11,
+        "__w": 11,
+        "map": {
+          "navel": [
+            -9,
+            10
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmOverHair",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          253,
+          0
+        ]
+      }
+    }
+  },
+  "shoot2": {
+    "0": {
+      "mail": {
+        "__h": 19,
+        "__w": 21,
+        "map": {
+          "navel": [
+            0,
+            1
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          125,
+          121
+        ]
+      },
+      "mailArm": {
+        "__h": 8,
+        "__w": 11,
+        "map": {
+          "navel": [
+            -8,
+            8
+          ]
+        },
+        "origin": [
+          4,
+          4
+        ],
+        "z": "mailArmOverHair",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          253,
+          51
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 19,
+        "__w": 21,
+        "map": {
+          "navel": [
+            0,
+            1
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          126,
+          141
+        ]
+      },
+      "mailArm": {
+        "__h": 7,
+        "__w": 13,
+        "map": {
+          "navel": [
+            2,
+            8
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmOverHair",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          190,
+          172
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 19,
+        "__w": 21,
+        "map": {
+          "navel": [
+            -1,
+            2
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          147,
+          141
+        ]
+      },
+      "mailArm": {
+        "__h": 6,
+        "__w": 7,
+        "map": {
+          "navel": [
+            -10,
+            7
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmOverHair",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          253,
+          102
+        ]
+      }
+    },
+    "3": {
+      "mail": {
+        "__h": 19,
+        "__w": 21,
+        "map": {
+          "navel": [
+            -1,
+            2
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          71,
+          163
+        ]
+      },
+      "mailArm": {
+        "__h": 8,
+        "__w": 11,
+        "map": {
+          "navel": [
+            -7,
+            7
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmOverHair",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          253,
+          59
+        ]
+      }
+    },
+    "4": {
+      "mail": {
+        "__h": 19,
+        "__w": 19,
+        "map": {
+          "navel": [
+            -3,
+            2
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          206,
+          57
+        ]
+      },
+      "mailArm": {
+        "__h": 8,
+        "__w": 14,
+        "map": {
+          "navel": [
+            -6,
+            7
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmOverHair",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          98,
+          212
+        ]
+      }
+    }
+  },
+  "shootF": {
+    "0": {
+      "mail": {
+        "__h": 22,
+        "__w": 28,
+        "map": {
+          "navel": [
+            11,
+            3
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          110,
+          24
+        ]
+      },
+      "mailArm": {
+        "__h": 11,
+        "__w": 12,
+        "map": {
+          "navel": [
+            -1,
+            12
+          ]
+        },
+        "origin": [
+          4,
+          4
+        ],
+        "z": "mailArmOverHair",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          11,
+          240
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 22,
+        "__w": 28,
+        "map": {
+          "navel": [
+            10,
+            4
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          110,
+          46
+        ]
+      },
+      "mailArm": {
+        "__h": 10,
+        "__w": 11,
+        "map": {
+          "navel": [
+            -9,
+            6
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmOverHair",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          253,
+          11
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 22,
+        "__w": 28,
+        "map": {
+          "navel": [
+            10,
+            4
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          110,
+          46
+        ]
+      },
+      "mailArm": {
+        "__h": 10,
+        "__w": 11,
+        "map": {
+          "navel": [
+            -9,
+            6
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmOverHair",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          253,
+          11
+        ]
+      }
+    }
+  },
+  "sit": {
+    "0": {
+      "mail": {
+        "__h": 17,
+        "__w": 13,
+        "map": {
+          "navel": [
+            -5,
+            0
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          225,
+          106
+        ]
+      },
+      "mailArm": {
+        "__h": 13,
+        "__w": 6,
+        "map": {
+          "navel": [
+            -9,
+            6
+          ]
+        },
+        "origin": [
+          4,
+          4
+        ],
+        "z": "mailArmOverHair",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          243,
+          39
+        ]
+      }
+    }
+  },
+  "stabO1": {
+    "0": {
+      "mail": {
+        "__h": 21,
+        "__w": 27,
+        "map": {
+          "navel": [
+            7,
+            2
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          138,
+          84
+        ]
+      },
+      "mailArm": {
+        "__h": 10,
+        "__w": 12,
+        "map": {
+          "navel": [
+            -9,
+            7
+          ]
+        },
+        "origin": [
+          4,
+          4
+        ],
+        "z": "mailArm",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          23,
+          240
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 19,
+        "__w": 20,
+        "map": {
+          "navel": [
+            -3,
+            2
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          113,
+          163
+        ]
+      },
+      "mailArm": {
+        "__h": 7,
+        "__w": 19,
+        "map": {
+          "navel": [
+            18,
+            6
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmOverHair",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          152,
+          172
+        ]
+      }
+    }
+  },
+  "stabO2": {
+    "0": {
+      "mail": {
+        "__h": 20,
+        "__w": 26,
+        "map": {
+          "navel": [
+            6,
+            1
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          26,
+          141
+        ]
+      },
+      "mailArm": {
+        "__h": 7,
+        "__w": 12,
+        "map": {
+          "navel": [
+            -10,
+            7
+          ]
+        },
+        "origin": [
+          4,
+          4
+        ],
+        "z": "mailArmOverHair",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          19,
+          205
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 19,
+        "__w": 27,
+        "map": {
+          "navel": [
+            -2,
+            1
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          54,
+          121
+        ]
+      },
+      "mailArm": {
+        "__h": 7,
+        "__w": 19,
+        "map": {
+          "navel": [
+            16,
+            6
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmOverHair",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          171,
+          172
+        ]
+      }
+    }
+  },
+  "stabOF": {
+    "0": {
+      "mail": {
+        "__h": 20,
+        "__w": 20,
+        "map": {
+          "navel": [
+            2,
+            3
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          40,
+          185
+        ]
+      },
+      "mailArm": {
+        "__h": 9,
+        "__w": 13,
+        "map": {
+          "navel": [
+            -1,
+            10
+          ]
+        },
+        "origin": [
+          4,
+          4
+        ],
+        "z": "mailArmOverHair",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          66,
+          226
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 18,
+        "__w": 35,
+        "map": {
+          "navel": [
+            15,
+            -1
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          0,
+          37
+        ]
+      },
+      "mailArm": {
+        "__h": 8,
+        "__w": 16,
+        "map": {
+          "navel": [
+            0,
+            4
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmOverHair",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          225,
+          150
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 19,
+        "__w": 33,
+        "map": {
+          "navel": [
+            7,
+            2
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          0,
+          55
+        ]
+      },
+      "mailArm": {
+        "__h": 7,
+        "__w": 19,
+        "map": {
+          "navel": [
+            19,
+            6
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmOverHair",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          0,
+          205
+        ]
+      }
+    }
+  },
+  "stabT1": {
+    "0": {
+      "mail": {
+        "__h": 21,
+        "__w": 21,
+        "map": {
+          "navel": [
+            0,
+            3
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          89,
+          74
+        ]
+      },
+      "mailArm": {
+        "__h": 8,
+        "__w": 19,
+        "map": {
+          "navel": [
+            -3,
+            10
+          ]
+        },
+        "origin": [
+          4,
+          4
+        ],
+        "z": "mailArmBelowHead",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          172,
+          163
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 20,
+        "__w": 24,
+        "map": {
+          "navel": [
+            -1,
+            1
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          102,
+          141
+        ]
+      },
+      "mailArm": {
+        "__h": 9,
+        "__w": 20,
+        "map": {
+          "navel": [
+            -4,
+            9
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmBelowHead",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          133,
+          163
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 19,
+        "__w": 36,
+        "map": {
+          "navel": [
+            10,
+            1
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          0,
+          18
+        ]
+      },
+      "mailArm": {
+        "__h": 7,
+        "__w": 12,
+        "map": {
+          "navel": [
+            -5,
+            6
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmBelowHead",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          31,
+          205
+        ]
+      }
+    }
+  },
+  "stabT2": {
+    "0": {
+      "mail": {
+        "__h": 21,
+        "__w": 25,
+        "map": {
+          "navel": [
+            3,
+            4
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          25,
+          163
+        ]
+      },
+      "mailArm": {
+        "__h": 11,
+        "__w": 17,
+        "map": {
+          "navel": [
+            -5,
+            12
+          ]
+        },
+        "origin": [
+          4,
+          4
+        ],
+        "z": "mailArmBelowHead",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          225,
+          123
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 20,
+        "__w": 25,
+        "map": {
+          "navel": [
+            4,
+            3
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          77,
+          141
+        ]
+      },
+      "mailArm": {
+        "__h": 9,
+        "__w": 19,
+        "map": {
+          "navel": [
+            1,
+            12
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmBelowHead",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          166,
+          130
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 20,
+        "__w": 35,
+        "map": {
+          "navel": [
+            9,
+            3
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          43,
+          0
+        ]
+      },
+      "mailArm": {
+        "__h": 14,
+        "__w": 14,
+        "map": {
+          "navel": [
+            -3,
+            7
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmBelowHead",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          0,
+          212
+        ]
+      }
+    }
+  },
+  "stabTF": {
+    "0": {
+      "mail": {
+        "__h": 21,
+        "__w": 29,
+        "map": {
+          "navel": [
+            6,
+            2
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          60,
+          74
+        ]
+      },
+      "mailArm": {
+        "__h": 9,
+        "__w": 20,
+        "map": {
+          "navel": [
+            -9,
+            13
+          ]
+        },
+        "origin": [
+          4,
+          4
+        ],
+        "z": "mailArm",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          110,
+          89
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 21,
+        "__w": 28,
+        "map": {
+          "navel": [
+            4,
+            3
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          0,
+          100
+        ]
+      },
+      "mailArm": {
+        "__h": 8,
+        "__w": 19,
+        "map": {
+          "navel": [
+            -9,
+            11
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArm",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          153,
+          163
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 23,
+        "__w": 18,
+        "map": {
+          "navel": [
+            0,
+            3
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          185,
+          101
+        ]
+      },
+      "mailArm": {
+        "__h": 8,
+        "__w": 19,
+        "map": {
+          "navel": [
+            -5,
+            11
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmBelowHead",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          133,
+          172
+        ]
+      },
+      "mailArmOverHair": {
+        "__h": 8,
+        "__w": 13,
+        "map": {
+          "navel": [
+            0,
+            1
+          ]
+        },
+        "origin": [
+          6,
+          8
+        ],
+        "z": "mailArmOverHair",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          112,
+          212
+        ]
+      }
+    },
+    "3": {
+      "mail": {
+        "__h": 19,
+        "__w": 36,
+        "map": {
+          "navel": [
+            10,
+            1
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          0,
+          18
+        ]
+      },
+      "mailArm": {
+        "__h": 7,
+        "__w": 12,
+        "map": {
+          "navel": [
+            -5,
+            6
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmBelowHead",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          31,
+          205
+        ]
+      }
+    }
+  },
+  "stand1": {
+    "0": {
+      "mail": {
+        "__h": 19,
+        "__w": 17,
+        "map": {
+          "navel": [
+            -6,
+            0
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          206,
+          114
+        ]
+      },
+      "mailArm": {
+        "__h": 12,
+        "__w": 9,
+        "map": {
+          "navel": [
+            -11,
+            5
+          ]
+        },
+        "origin": [
+          3,
+          4
+        ],
+        "z": "mailArm",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          243,
+          64
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 19,
+        "__w": 19,
+        "map": {
+          "navel": [
+            -3,
+            1
+          ]
+        },
+        "origin": [
+          10,
+          9
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          149,
+          185
+        ]
+      },
+      "mailArm": {
+        "__h": 12,
+        "__w": 10,
+        "map": {
+          "navel": [
+            -10,
+            6
+          ]
+        },
+        "origin": [
+          3,
+          4
+        ],
+        "z": "mailArm",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          243,
+          52
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 19,
+        "__w": 19,
+        "map": {
+          "navel": [
+            -2,
+            0
+          ]
+        },
+        "origin": [
+          10,
+          9
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          168,
+          185
+        ]
+      },
+      "mailArm": {
+        "__h": 12,
+        "__w": 11,
+        "map": {
+          "navel": [
+            -10,
+            5
+          ]
+        },
+        "origin": [
+          4,
+          4
+        ],
+        "z": "mailArm",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          0,
+          240
+        ]
+      }
+    }
+  },
+  "stand2": {
+    "0": {
+      "mail": {
+        "__h": 19,
+        "__w": 17,
+        "map": {
+          "navel": [
+            -6,
+            0
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          206,
+          133
+        ]
+      },
+      "mailArm": {
+        "__h": 14,
+        "__w": 7,
+        "map": {
+          "navel": [
+            -9,
+            4
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArm",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          36,
+          18
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 19,
+        "__w": 19,
+        "map": {
+          "navel": [
+            -3,
+            1
+          ]
+        },
+        "origin": [
+          10,
+          9
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          187,
+          185
+        ]
+      },
+      "mailArm": {
+        "__h": 14,
+        "__w": 7,
+        "map": {
+          "navel": [
+            -9,
+            5
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArm",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          0,
+          226
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 19,
+        "__w": 19,
+        "map": {
+          "navel": [
+            -2,
+            0
+          ]
+        },
+        "origin": [
+          10,
+          9
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          206,
+          0
+        ]
+      },
+      "mailArm": {
+        "__h": 14,
+        "__w": 7,
+        "map": {
+          "navel": [
+            -9,
+            5
+          ]
+        },
+        "origin": [
+          3,
+          4
+        ],
+        "z": "mailArm",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          7,
+          226
+        ]
+      }
+    }
+  },
+  "swingO1": {
+    "0": {
+      "mail": {
+        "__h": 19,
+        "__w": 19,
+        "map": {
+          "navel": [
+            -4,
+            3
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          206,
+          19
+        ]
+      },
+      "mailArm": {
+        "__h": 11,
+        "__w": 9,
+        "map": {
+          "navel": [
+            9,
+            4
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArm",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          253,
+          21
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 21,
+        "__w": 19,
+        "map": {
+          "navel": [
+            -6,
+            1
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          166,
+          27
+        ]
+      },
+      "mailArm": {
+        "__h": 8,
+        "__w": 11,
+        "map": {
+          "navel": [
+            7,
+            7
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmOverHair",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          253,
+          43
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 19,
+        "__w": 28,
+        "map": {
+          "navel": [
+            -3,
+            1
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          33,
+          55
+        ]
+      },
+      "mailArm": {
+        "__h": 14,
+        "__w": 14,
+        "map": {
+          "navel": [
+            -4,
+            14
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmOverHair",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          168,
+          141
+        ]
+      }
+    }
+  },
+  "swingO2": {
+    "0": {
+      "mail": {
+        "__h": 19,
+        "__w": 16,
+        "map": {
+          "navel": [
+            -4,
+            0
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          206,
+          171
+        ]
+      },
+      "mailArm": {
+        "__h": 9,
+        "__w": 17,
+        "map": {
+          "navel": [
+            12,
+            9
+          ]
+        },
+        "origin": [
+          4,
+          4
+        ],
+        "z": "mailArmBelowHead",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          225,
+          134
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 21,
+        "__w": 18,
+        "map": {
+          "navel": [
+            -3,
+            2
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          166,
+          48
+        ]
+      },
+      "mailArm": {
+        "__h": 7,
+        "__w": 17,
+        "map": {
+          "navel": [
+            15,
+            5
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmBelowHead",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          225,
+          143
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 20,
+        "__w": 25,
+        "map": {
+          "navel": [
+            1,
+            3
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          52,
+          141
+        ]
+      },
+      "mailArm": {
+        "__h": 11,
+        "__w": 13,
+        "map": {
+          "navel": [
+            -7,
+            7
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArm",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          40,
+          226
+        ]
+      }
+    }
+  },
+  "swingO3": {
+    "0": {
+      "mail": {
+        "__h": 18,
+        "__w": 33,
+        "map": {
+          "navel": [
+            9,
+            1
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          35,
+          37
+        ]
+      },
+      "mailArm": {
+        "__h": 8,
+        "__w": 14,
+        "map": {
+          "navel": [
+            -6,
+            8
+          ]
+        },
+        "origin": [
+          4,
+          4
+        ],
+        "z": "mailArm",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          191,
+          163
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 20,
+        "__w": 16,
+        "map": {
+          "navel": [
+            -5,
+            3
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          114,
+          185
+        ]
+      },
+      "mailArm": {
+        "__h": 8,
+        "__w": 14,
+        "map": {
+          "navel": [
+            11,
+            6
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArm",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          70,
+          212
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 19,
+        "__w": 19,
+        "map": {
+          "navel": [
+            -8,
+            3
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          206,
+          38
+        ]
+      },
+      "mailArm": {
+        "__h": 11,
+        "__w": 9,
+        "map": {
+          "navel": [
+            5,
+            4
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArm",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          253,
+          32
+        ]
+      }
+    }
+  },
+  "swingOF": {
+    "0": {
+      "mail": {
+        "__h": 23,
+        "__w": 30,
+        "map": {
+          "navel": [
+            4,
+            5
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          30,
+          74
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 23,
+        "__w": 32,
+        "map": {
+          "navel": [
+            3,
+            6
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "backMailChestOverPants",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          78,
+          0
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 20,
+        "__w": 31,
+        "map": {
+          "navel": [
+            6,
+            4
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          78,
+          23
+        ]
+      }
+    },
+    "3": {
+      "mail": {
+        "__h": 22,
+        "__w": 25,
+        "map": {
+          "navel": [
+            1,
+            7
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          0,
+          163
+        ]
+      },
+      "mailArm": {
+        "__h": 15,
+        "__w": 6,
+        "map": {
+          "navel": [
+            11,
+            4
+          ]
+        },
+        "origin": [
+          4,
+          4
+        ],
+        "z": "mailArm",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          236,
+          173
+        ]
+      }
+    }
+  },
+  "swingP1": {
+    "0": {
+      "mail": {
+        "__h": 18,
+        "__w": 18,
+        "map": {
+          "navel": [
+            -2,
+            0
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          225,
+          18
+        ]
+      },
+      "mailArm": {
+        "__h": 15,
+        "__w": 9,
+        "map": {
+          "navel": [
+            4,
+            17
+          ]
+        },
+        "origin": [
+          4,
+          4
+        ],
+        "z": "mailArmOverHairBelowWeapon",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          68,
+          37
+        ]
+      },
+      "mailArmOverHair": {
+        "__h": 18,
+        "__w": 13,
+        "map": {
+          "navel": [
+            -10,
+            16
+          ]
+        },
+        "origin": [
+          6,
+          8
+        ],
+        "z": "mailArmOverHair",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          225,
+          54
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 21,
+        "__w": 28,
+        "map": {
+          "navel": [
+            6,
+            3
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          110,
+          68
+        ]
+      },
+      "mailArmOverHair": {
+        "__h": 12,
+        "__w": 13,
+        "map": {
+          "navel": [
+            5,
+            11
+          ]
+        },
+        "origin": [
+          7,
+          6
+        ],
+        "z": "mailArmOverHair",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          27,
+          226
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 19,
+        "__w": 28,
+        "map": {
+          "navel": [
+            -1,
+            2
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          138,
+          19
+        ]
+      },
+      "mailArm": {
+        "__h": 15,
+        "__w": 11,
+        "map": {
+          "navel": [
+            11,
+            2
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArm",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          225,
+          188
+        ]
+      }
+    }
+  },
+  "swingP2": {
+    "0": {
+      "mail": {
+        "__h": 26,
+        "__w": 18,
+        "map": {
+          "navel": [
+            -1,
+            7
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          185,
+          52
+        ]
+      },
+      "mailArm": {
+        "__h": 8,
+        "__w": 18,
+        "map": {
+          "navel": [
+            13,
+            5
+          ]
+        },
+        "origin": [
+          4,
+          4
+        ],
+        "z": "mailArm",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          225,
+          90
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 24,
+        "__w": 28,
+        "map": {
+          "navel": [
+            6,
+            5
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          110,
+          0
+        ]
+      },
+      "mailArm": {
+        "__h": 8,
+        "__w": 14,
+        "map": {
+          "navel": [
+            9,
+            2
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArm",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          84,
+          212
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 19,
+        "__w": 28,
+        "map": {
+          "navel": [
+            0,
+            2
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          138,
+          38
+        ]
+      },
+      "mailArm": {
+        "__h": 16,
+        "__w": 21,
+        "map": {
+          "navel": [
+            6,
+            7
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmBelowHead",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          43,
+          20
+        ]
+      }
+    }
+  },
+  "swingPF": {
+    "0": {
+      "mail": {
+        "__h": 21,
+        "__w": 29,
+        "map": {
+          "navel": [
+            6,
+            2
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          60,
+          74
+        ]
+      },
+      "mailArm": {
+        "__h": 9,
+        "__w": 20,
+        "map": {
+          "navel": [
+            -9,
+            13
+          ]
+        },
+        "origin": [
+          4,
+          4
+        ],
+        "z": "mailArm",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          110,
+          89
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 21,
+        "__w": 28,
+        "map": {
+          "navel": [
+            4,
+            3
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          0,
+          100
+        ]
+      },
+      "mailArm": {
+        "__h": 8,
+        "__w": 19,
+        "map": {
+          "navel": [
+            -9,
+            11
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArm",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          153,
+          163
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 23,
+        "__w": 18,
+        "map": {
+          "navel": [
+            -1,
+            4
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          185,
+          78
+        ]
+      },
+      "mailArm": {
+        "__h": 15,
+        "__w": 9,
+        "map": {
+          "navel": [
+            11,
+            16
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmOverHair",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          61,
+          55
+        ]
+      },
+      "mailArmOverHair": {
+        "__h": 18,
+        "__w": 13,
+        "map": {
+          "navel": [
+            -6,
+            16
+          ]
+        },
+        "origin": [
+          6,
+          8
+        ],
+        "z": "mailArmOverHair",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          225,
+          72
+        ]
+      }
+    },
+    "3": {
+      "mail": {
+        "__h": 19,
+        "__w": 22,
+        "map": {
+          "navel": [
+            1,
+            1
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          103,
+          121
+        ]
+      },
+      "mailArm": {
+        "__h": 15,
+        "__w": 11,
+        "map": {
+          "navel": [
+            13,
+            2
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmOverHair",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          64,
+          20
+        ]
+      }
+    }
+  },
+  "swingT1": {
+    "0": {
+      "mail": {
+        "__h": 18,
+        "__w": 18,
+        "map": {
+          "navel": [
+            -3,
+            -1
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          225,
+          0
+        ]
+      },
+      "mailArm": {
+        "__h": 13,
+        "__w": 10,
+        "map": {
+          "navel": [
+            0,
+            15
+          ]
+        },
+        "origin": [
+          4,
+          4
+        ],
+        "z": "mailArmOverHairBelowWeapon",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          243,
+          0
+        ]
+      },
+      "mailArmOverHair": {
+        "__h": 18,
+        "__w": 13,
+        "map": {
+          "navel": [
+            -11,
+            15
+          ]
+        },
+        "origin": [
+          6,
+          8
+        ],
+        "z": "mailArmOverHair",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          225,
+          36
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 21,
+        "__w": 18,
+        "map": {
+          "navel": [
+            -4,
+            2
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          166,
+          69
+        ]
+      },
+      "mailArm": {
+        "__h": 9,
+        "__w": 14,
+        "map": {
+          "navel": [
+            15,
+            5
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmOverHairBelowWeapon",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          28,
+          212
+        ]
+      },
+      "mailArmOverHair": {
+        "__h": 12,
+        "__w": 13,
+        "map": {
+          "navel": [
+            5,
+            10
+          ]
+        },
+        "origin": [
+          7,
+          6
+        ],
+        "z": "mailArmOverHair",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          14,
+          226
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 19,
+        "__w": 28,
+        "map": {
+          "navel": [
+            -1,
+            1
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          28,
+          100
+        ]
+      },
+      "mailArm": {
+        "__h": 15,
+        "__w": 11,
+        "map": {
+          "navel": [
+            11,
+            1
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArm",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          225,
+          158
+        ]
+      }
+    }
+  },
+  "swingT2": {
+    "0": {
+      "mail": {
+        "__h": 22,
+        "__w": 26,
+        "map": {
+          "navel": [
+            1,
+            4
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          0,
+          141
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 19,
+        "__w": 26,
+        "map": {
+          "navel": [
+            5,
+            1
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          112,
+          100
+        ]
+      },
+      "mailArm": {
+        "__h": 6,
+        "__w": 15,
+        "map": {
+          "navel": [
+            7,
+            4
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArm",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          225,
+          203
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 19,
+        "__w": 28,
+        "map": {
+          "navel": [
+            0,
+            2
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          56,
+          100
+        ]
+      },
+      "mailArm": {
+        "__h": 16,
+        "__w": 21,
+        "map": {
+          "navel": [
+            6,
+            7
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmBelowHeadOverMailChest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          185,
+          146
+        ]
+      }
+    }
+  },
+  "swingT3": {
+    "0": {
+      "mail": {
+        "__h": 20,
+        "__w": 19,
+        "map": {
+          "navel": [
+            -3,
+            2
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          166,
+          90
+        ]
+      },
+      "mailArm": {
+        "__h": 9,
+        "__w": 10,
+        "map": {
+          "navel": [
+            1,
+            4
+          ]
+        },
+        "origin": [
+          4,
+          4
+        ],
+        "z": "mailArm",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          253,
+          67
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 16,
+        "__w": 21,
+        "map": {
+          "navel": [
+            -2,
+            -1
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          138,
+          105
+        ]
+      },
+      "mailArm": {
+        "__h": 14,
+        "__w": 19,
+        "map": {
+          "navel": [
+            5,
+            4
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmBelowHeadOverMailChest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          206,
+          190
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 19,
+        "__w": 28,
+        "map": {
+          "navel": [
+            0,
+            1
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          84,
+          100
+        ]
+      },
+      "mailArm": {
+        "__h": 13,
+        "__w": 14,
+        "map": {
+          "navel": [
+            16,
+            9
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmBelowHead",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          14,
+          212
+        ]
+      }
+    }
+  },
+  "swingTF": {
+    "0": {
+      "mail": {
+        "__h": 27,
+        "__w": 21,
+        "map": {
+          "navel": [
+            0,
+            9
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "backMailChestOverPants",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          138,
+          57
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 20,
+        "__w": 20,
+        "map": {
+          "navel": [
+            1,
+            1
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          0,
+          185
+        ]
+      },
+      "mailArm": {
+        "__h": 9,
+        "__w": 14,
+        "map": {
+          "navel": [
+            -3,
+            8
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmBelowHeadOverMailChest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          42,
+          212
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 20,
+        "__w": 20,
+        "map": {
+          "navel": [
+            -3,
+            3
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          20,
+          185
+        ]
+      },
+      "mailArm": {
+        "__h": 19,
+        "__w": 17,
+        "map": {
+          "navel": [
+            9,
+            18
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmOverHair",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          206,
+          152
+        ]
+      }
+    },
+    "3": {
+      "mail": {
+        "__h": 19,
+        "__w": 28,
+        "map": {
+          "navel": [
+            1,
+            3
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          138,
+          0
+        ]
+      },
+      "mailArm": {
+        "__h": 15,
+        "__w": 11,
+        "map": {
+          "navel": [
+            13,
+            3
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmOverHair",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          225,
+          173
+        ]
+      }
+    }
+  },
+  "walk1": {
+    "0": {
+      "mail": {
+        "__h": 19,
+        "__w": 18,
+        "map": {
+          "navel": [
+            -4,
+            1
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          206,
+          76
+        ]
+      },
+      "mailArm": {
+        "__h": 9,
+        "__w": 12,
+        "map": {
+          "navel": [
+            -9,
+            7
+          ]
+        },
+        "origin": [
+          4,
+          3
+        ],
+        "z": "mailArm",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          79,
+          226
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 20,
+        "__w": 18,
+        "map": {
+          "navel": [
+            -5,
+            1
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          166,
+          110
+        ]
+      },
+      "mailArm": {
+        "__h": 14,
+        "__w": 7,
+        "map": {
+          "navel": [
+            -9,
+            4
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArm",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          236,
+          188
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 19,
+        "__w": 18,
+        "map": {
+          "navel": [
+            -4,
+            1
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          206,
+          76
+        ]
+      },
+      "mailArm": {
+        "__h": 9,
+        "__w": 12,
+        "map": {
+          "navel": [
+            -9,
+            7
+          ]
+        },
+        "origin": [
+          4,
+          3
+        ],
+        "z": "mailArm",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          79,
+          226
+        ]
+      }
+    },
+    "3": {
+      "mail": {
+        "__h": 19,
+        "__w": 22,
+        "map": {
+          "navel": [
+            -1,
+            3
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          81,
+          121
+        ]
+      },
+      "mailArm": {
+        "__h": 9,
+        "__w": 13,
+        "map": {
+          "navel": [
+            -10,
+            10
+          ]
+        },
+        "origin": [
+          4,
+          2
+        ],
+        "z": "mailArm",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          53,
+          226
+        ]
+      }
+    }
+  },
+  "walk2": {
+    "0": {
+      "mail": {
+        "__h": 19,
+        "__w": 18,
+        "map": {
+          "navel": [
+            -4,
+            1
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          206,
+          95
+        ]
+      },
+      "mailArm": {
+        "__h": 13,
+        "__w": 7,
+        "map": {
+          "navel": [
+            -9,
+            4
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArm",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          243,
+          13
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 20,
+        "__w": 18,
+        "map": {
+          "navel": [
+            -5,
+            1
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          60,
+          185
+        ]
+      },
+      "mailArm": {
+        "__h": 14,
+        "__w": 7,
+        "map": {
+          "navel": [
+            -8,
+            4
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArm",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          159,
+          57
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 19,
+        "__w": 18,
+        "map": {
+          "navel": [
+            -4,
+            1
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          206,
+          95
+        ]
+      },
+      "mailArm": {
+        "__h": 13,
+        "__w": 7,
+        "map": {
+          "navel": [
+            -9,
+            4
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArm",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          243,
+          13
+        ]
+      }
+    },
+    "3": {
+      "mail": {
+        "__h": 19,
+        "__w": 19,
+        "map": {
+          "navel": [
+            -4,
+            3
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          130,
+          185
+        ]
+      },
+      "mailArm": {
+        "__h": 14,
+        "__w": 7,
+        "map": {
+          "navel": [
+            -10,
+            7
+          ]
+        },
+        "origin": [
+          3,
+          4
+        ],
+        "z": "mailArm",
+        "__i": "assets/Character/Coat/spritesheets/01041024.img.png",
+        "__off": [
+          159,
+          105
+        ]
+      }
+    }
+  }
+}

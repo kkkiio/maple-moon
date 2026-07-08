@@ -1,0 +1,9 @@
+import {
+  "KKKIIO/maple-moon/game/transform2d",
+  "Milky2018/selene/camera" @selene_camera,
+  "Milky2018/selene/entity",
+  "Milky2018/selene/math",
+  "Milky2018/selene/system",
+  "Milky2018/selene/transform",
+  "Milky2018/selene/ecs",
+}

@@ -1,0 +1,213 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/game/physics"
+
+import {
+  "KKKIIO/maple-moon/engine/utils",
+  "KKKIIO/maple-moon/game/res_types",
+  "Milky2018/selene/math",
+  "moonbitlang/core/debug",
+  "moonbitlang/core/json",
+}
+
+// Values
+pub fn empty_physics() -> Physics
+
+pub let flyfriction : Double
+
+pub let friction : Double
+
+pub fn get_absolute_coord(@utils.Linear, Double, Double) -> Int
+
+pub let gravforce : Double
+
+pub let groundslip : Double
+
+pub let slopefactor : Double
+
+pub let swimfriction : Double
+
+pub let swimgravforce : Double
+
+// Errors
+
+// Types and methods
+type Foothold derive(Default, @debug.Debug)
+pub fn Foothold::b(Self) -> Int
+pub fn Foothold::ground_below(Self, Double) -> Double
+pub fn Foothold::hcontains(Self, Int) -> Bool
+pub fn Foothold::hdelta(Self) -> Int
+pub fn Foothold::horizontal(Self) -> @res_types.Range[Int]
+pub fn Foothold::id(Self) -> Int
+pub fn Foothold::is_blocking(Self, @res_types.Range[Int]) -> Bool
+pub fn Foothold::is_floor(Self) -> Bool
+pub fn Foothold::is_left_edge(Self) -> Bool
+pub fn Foothold::is_right_edge(Self) -> Bool
+pub fn Foothold::is_wall(Self) -> Bool
+pub fn Foothold::l(Self) -> Int
+pub fn Foothold::layer(Self) -> Int
+pub fn Foothold::new(NxFoothold, Int, Int) -> Self
+pub fn Foothold::next(Self) -> Int
+pub fn Foothold::prev(Self) -> Int
+pub fn Foothold::r(Self) -> Int
+pub fn Foothold::slope(Self) -> Double
+pub fn Foothold::t(Self) -> Int
+pub fn Foothold::vcontains(Self, Int) -> Bool
+pub fn Foothold::vdelta(Self) -> Int
+pub fn Foothold::vertical(Self) -> @res_types.Range[Int]
+pub fn Foothold::x1(Self) -> Int
+pub fn Foothold::x2(Self) -> Int
+pub fn Foothold::y1(Self) -> Int
+pub fn Foothold::y2(Self) -> Int
+
+type FootholdTree
+pub fn FootholdTree::from_resource(NxFootholdTree) -> Self raise
+pub fn FootholdTree::get_borders(Self) -> @res_types.Range[Int]
+pub fn FootholdTree::get_edge(Self, Int, Bool) -> Double
+pub fn FootholdTree::get_fhid_below(Self, Double, Double) -> Int
+pub fn FootholdTree::get_ground_below_by_id(Self, Int, Double) -> Double
+pub fn FootholdTree::get_wall(Self, Int, Bool, Double) -> Double
+pub fn FootholdTree::get_walls(Self) -> @res_types.Range[Int]
+pub fn FootholdTree::get_y_below(Self, @res_types.Point[Int]) -> Int
+pub fn FootholdTree::limit_movement(Self, PhysicsObject) -> Unit
+pub fn FootholdTree::update_fh(Self, PhysicsObject) -> Unit
+
+pub struct Movement {
+  t : MovementType
+  command : Int
+  xpos : Int
+  ypos : Int
+  lastx : Int
+  lasty : Int
+  fh : Int
+  newstate : Int
+  duration : Int
+} derive(ToJson, @debug.Debug, @json.FromJson)
+pub fn Movement::default() -> Self
+pub fn Movement::from_coords(Int, Int, Int, Int, Int, Int) -> Self
+pub fn Movement::from_physics_object(PhysicsObject, Int) -> Self
+pub fn Movement::hasmoved(Self, Self) -> Bool
+pub fn Movement::new(MovementType, Int, Int, Int, Int, Int, Int, Int, Int) -> Self
+
+type MovementType derive(Compare, Eq, ToJson, @debug.Debug, @json.FromJson)
+
+pub struct MovingObject {
+  x : @utils.Linear
+  y : @utils.Linear
+  mut hspeed : Double
+  mut vspeed : Double
+  mut on_pos_change : (@math.Vec2) -> Unit
+}
+pub fn MovingObject::crnt_x(Self) -> Double
+pub fn MovingObject::crnt_y(Self) -> Double
+pub fn MovingObject::do_move(Self) -> Unit
+pub fn MovingObject::get_absolute(Self, Double, Double, Double) -> @res_types.Point[Int]
+pub fn MovingObject::get_absolute_x(Self, Double, Double) -> Int
+pub fn MovingObject::get_absolute_y(Self, Double, Double) -> Int
+pub fn MovingObject::get_last_x(Self) -> Int
+pub fn MovingObject::get_last_y(Self) -> Int
+pub fn MovingObject::get_position(Self) -> @res_types.Point[Int]
+pub fn MovingObject::get_x(Self) -> Int
+pub fn MovingObject::get_y(Self) -> Int
+pub fn MovingObject::hmobile(Self) -> Bool
+pub fn MovingObject::limitx(Self, Double) -> Unit
+pub fn MovingObject::limity(Self, Double) -> Unit
+pub fn MovingObject::mobile(Self) -> Bool
+pub fn MovingObject::movexuntil(Self, Double, Int) -> Unit
+pub fn MovingObject::moveyuntil(Self, Double, Int) -> Unit
+pub fn MovingObject::new(on_pos_change~ : (@math.Vec2) -> Unit) -> Self
+pub fn MovingObject::next_x(Self) -> Double
+pub fn MovingObject::next_y(Self) -> Double
+pub fn MovingObject::normalize(Self) -> Unit
+pub fn MovingObject::set_hspeed(Self, Double) -> Unit
+pub fn MovingObject::set_on_pos_change(Self, (@math.Vec2) -> Unit) -> Unit
+pub fn MovingObject::set_position(Self, @math.Vec2) -> Unit
+pub fn MovingObject::set_vspeed(Self, Double) -> Unit
+pub fn MovingObject::set_x(Self, Double) -> Unit
+pub fn MovingObject::set_y(Self, Double) -> Unit
+pub fn MovingObject::vmobile(Self) -> Bool
+
+pub(all) struct NxFoothold {
+  prev : Int
+  next : Int
+  x1 : Int
+  x2 : Int
+  y1 : Int
+  y2 : Int
+} derive(@json.FromJson)
+
+pub(all) struct NxFootholdTree(Map[Int, Map[Int, Map[Int, NxFoothold]]])
+pub impl @json.FromJson for NxFootholdTree
+
+pub struct Physics {
+  fh_tree : FootholdTree
+}
+pub fn Physics::from_resource(NxFootholdTree) -> Self raise
+pub fn Physics::get_fht(Self) -> FootholdTree
+pub fn Physics::get_y_below(Self, @res_types.Point[Int]) -> @res_types.Point[Int]
+pub fn Physics::move_object(Self, PhysicsObject) -> Unit
+
+pub struct PhysicsObject {
+  moving_object : MovingObject
+  mut t : PhysicsObjectType
+  mut flags : Int
+  mut fh_id : Int
+  mut fh_slope : Double
+  mut fhlayer : Int
+  mut groundbelow : Double
+  mut on_ground : Bool
+  mut enablejd : Bool
+  mut hforce : Double
+  mut vforce : Double
+  mut hacc : Double
+  mut vacc : Double
+}
+pub fn PhysicsObject::clear_flag(Self, PhysicsObjectFlag) -> Unit
+pub fn PhysicsObject::clear_flags(Self) -> Unit
+pub fn PhysicsObject::do_move(Self) -> Unit
+pub fn PhysicsObject::get_absolute(Self, Double, Double, Double) -> @res_types.Point[Int]
+pub fn PhysicsObject::get_absolute_x(Self, Double, Double) -> Int
+pub fn PhysicsObject::get_absolute_y(Self, Double, Double) -> Int
+pub fn PhysicsObject::get_hspeed(Self) -> Double
+pub fn PhysicsObject::get_last_x(Self) -> Int
+pub fn PhysicsObject::get_last_y(Self) -> Int
+pub fn PhysicsObject::get_position(Self) -> @res_types.Point[Int]
+pub fn PhysicsObject::get_vspeed(Self) -> Double
+pub fn PhysicsObject::get_x(Self) -> Int
+pub fn PhysicsObject::get_y(Self) -> Int
+pub fn PhysicsObject::is_flag_not_set(Self, PhysicsObjectFlag) -> Bool
+pub fn PhysicsObject::is_flag_set(Self, PhysicsObjectFlag) -> Bool
+pub fn PhysicsObject::is_on_ground(Self) -> Bool
+pub fn PhysicsObject::limitx(Self, Double) -> Unit
+pub fn PhysicsObject::limity(Self, Double) -> Unit
+pub fn PhysicsObject::new(on_pos_change~ : (@math.Vec2) -> Unit) -> Self
+pub fn PhysicsObject::set_fhid(Self, Int) -> Unit
+pub fn PhysicsObject::set_fhlayer(Self, Int) -> Unit
+pub fn PhysicsObject::set_flag(Self, PhysicsObjectFlag) -> Unit
+pub fn PhysicsObject::set_hforce(Self, Double) -> Unit
+pub fn PhysicsObject::set_hspeed(Self, Double) -> Unit
+pub fn PhysicsObject::set_position(Self, @math.Vec2) -> Unit
+pub fn PhysicsObject::set_t(Self, PhysicsObjectType) -> Unit
+pub fn PhysicsObject::set_vforce(Self, Double) -> Unit
+pub fn PhysicsObject::set_vspeed(Self, Double) -> Unit
+pub fn PhysicsObject::set_x(Self, Double) -> Unit
+pub fn PhysicsObject::set_y(Self, Double) -> Unit
+
+pub(all) enum PhysicsObjectFlag {
+  NO_GRAVITY
+  TURN_AT_EDGES
+  CHECK_BELOW
+} derive(Compare, Eq, ToJson, @debug.Debug)
+pub fn PhysicsObjectFlag::int_value(Self) -> Int
+
+pub(all) enum PhysicsObjectType {
+  NORMAL
+  ICE
+  SWIMMING
+  FLYING
+  FIXATED
+} derive(Compare, Eq, ToJson, @debug.Debug)
+
+// Type aliases
+
+// Traits
+

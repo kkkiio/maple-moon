@@ -1,0 +1,124 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/game/ui/quest_icon"
+
+import {
+  "KKKIIO/maple-moon/engine/resource",
+  "KKKIIO/maple-moon/engine/ui",
+  "KKKIIO/maple-moon/game/npc",
+  "KKKIIO/maple-moon/game/physics",
+  "KKKIIO/maple-moon/game/player",
+  "KKKIIO/maple-moon/game/quest",
+  "KKKIIO/maple-moon/game/res_types",
+  "Milky2018/selene/ecs",
+  "Milky2018/selene/entity",
+  "moonbitlang/core/debug",
+  "moonbitlang/core/json",
+}
+
+// Values
+pub fn bind_player(@player.Player) -> Unit
+
+pub fn build_quest_talk_args(Int, Int) -> @npc.TalkArgs?
+
+pub fn build_talk_args_for_quest(NpcQuest, Array[@quest.NxQuestPhaseSays], (@npc.TalkArgs) -> Unit) -> @npc.TalkArgs?
+
+pub fn get_demo_quest_selection() -> DemoQuestSelection?
+
+pub fn next_talk(@quest.NxQuestPhaseSays, TalkState, Bool?) -> QuestTalk?
+
+pub fn query_npc_icon(Int) -> QuestIconQueryResult?
+
+pub fn quest_icon_query_revision() -> Int
+
+pub fn quest_icon_system(@ecs.World) -> Unit
+
+pub fn refresh_all() -> Unit
+
+pub fn refresh_quest(Int) -> Unit
+
+pub fn remove_npc(Int) -> Unit
+
+pub fn select_demo_quest_by_npcs(Array[Int]) -> DemoQuestSelection?
+
+pub fn set_resources_for_test(@resource.NxAnimation, @resource.NxAnimation, @resource.NxAnimation) -> Unit
+
+pub fn setup(@quest.QuestResource, Json, MapQuestsResource, (@npc.TalkArgs) -> Unit) -> Unit
+
+pub fn upsert_npc(Int, Int, @entity.Entity, @physics.MovingObject) -> Unit
+
+// Errors
+
+// Types and methods
+pub enum Action {
+  StartQuest
+  CompleteQuest
+} derive(@debug.Debug)
+
+pub(all) struct DemoQuestSelection {
+  quest_id : Int
+  npc_id : Int
+  has_level_check : Bool
+} derive(@debug.Debug)
+
+pub enum ExpectResponse {
+  NEXT(() -> QuestTalk?)
+  YES_NO((Bool) -> (QuestTalk?, Action?))
+  OK(() -> Action?)
+  SELECT((Int) -> QuestTalk?)
+}
+
+type MapQuests
+pub fn MapQuests::add_npc(Self, Int, @entity.Entity, @physics.MovingObject) -> Unit
+pub fn MapQuests::build_quest_talk_args(Self, Int, Int, (@npc.TalkArgs) -> Unit) -> @npc.TalkArgs?
+pub fn MapQuests::clear(Self) -> Unit
+pub fn MapQuests::query_npc_icon(Self, Int) -> QuestIconQueryResult?
+pub fn MapQuests::remove_npc(Self, Int) -> Unit
+pub fn MapQuests::send_cursor(Self, Bool, @res_types.Point[Int], @res_types.Point[Int]) -> @ui.CursorState?
+pub fn MapQuests::set_player(Self, @player.Player) -> Unit
+pub fn MapQuests::update_quest(Self, Int) -> Unit
+
+type MapQuestsResource
+pub fn MapQuestsResource::load() -> Self
+pub fn MapQuestsResource::new(@resource.NxAnimation, @resource.NxAnimation, @resource.NxAnimation) -> Self
+
+type Module
+pub fn Module::query_npc_icon(Self, Int) -> QuestIconQueryResult?
+
+pub(all) struct NpcQuest {
+  npc_id : Int
+  icon_state : QuestIconState
+  icon : @resource.NxAnimation
+  icon_offset : @res_types.Point[Int]
+  icon_size : @res_types.Point[Int]
+  quest_id : Int
+  in_progress_quest : (Int, Bool)?
+}
+
+pub(all) struct QuestIconQueryResult {
+  npc_id : Int
+  quest_id : Int
+  state : QuestIconState
+}
+
+pub(all) enum QuestIconState {
+  AVAILABLE
+  IN_PROGRESS
+  COMPLETED
+} derive(Eq, ToJson, @debug.Debug, @json.FromJson)
+
+pub struct QuestTalk {
+  content : String
+  expect_response : ExpectResponse
+}
+
+pub(all) enum TalkState {
+  Narrative(next~ : Int)
+  YesReply(next~ : Int)
+  NoReply(next~ : Int)
+  Ask(next~ : Int, expect_answer~ : Int, error_replys~ : Array[String], answer~ : Int)
+} derive(@debug.Debug)
+
+// Type aliases
+
+// Traits
+

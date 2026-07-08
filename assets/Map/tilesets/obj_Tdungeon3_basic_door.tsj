@@ -1,0 +1,1 @@
+{"type":"tileset","name":"obj:Tdungeon3/basic/door","objectalignment":"bottomleft","tilewidth":785,"tileheight":262,"tilecount":2,"tiles":[{"id":0,"image":"../images/17144.png","imagewidth":785,"imageheight":261},{"id":1,"image":"../images/17143.png","imagewidth":416,"imageheight":262}]}

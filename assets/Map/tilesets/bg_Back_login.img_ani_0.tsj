@@ -1,0 +1,1 @@
+{"type":"tileset","name":"bg:Back/login.img/ani/0","objectalignment":"bottomleft","tilewidth":10,"tileheight":10,"image":"bg_Back_login.img_ani_0.png","imagewidth":30,"imageheight":10,"columns":3,"tilecount":3,"tiles":[{"id":0,"animation":[{"tileid":0,"duration":80},{"tileid":1,"duration":80},{"tileid":2,"duration":80}]}]}

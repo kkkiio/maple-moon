@@ -1,0 +1,1 @@
+{"type":"tileset","name":"obj:acc12/rienTW/polearm","objectalignment":"bottomleft","tilewidth":1034,"tileheight":390,"tilecount":3,"tiles":[{"id":0,"image":"../images/24843.png","imagewidth":1034,"imageheight":390},{"id":1,"image":"../images/24844.png","imagewidth":273,"imageheight":250},{"id":2,"image":"../images/24845.png","imagewidth":231,"imageheight":101}]}

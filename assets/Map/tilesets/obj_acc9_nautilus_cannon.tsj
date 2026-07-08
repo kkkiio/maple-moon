@@ -1,0 +1,1 @@
+{"type":"tileset","name":"obj:acc9/nautilus/cannon","objectalignment":"bottomleft","tilewidth":321,"tileheight":500,"tilecount":2,"tiles":[{"id":0,"image":"../images/25852.png","imagewidth":321,"imageheight":500},{"id":1,"image":"../images/25853.png","imagewidth":113,"imageheight":141}]}

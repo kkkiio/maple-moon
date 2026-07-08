@@ -1,0 +1,74 @@
+{ "frames": [
+   {
+    "filename": "die1 0.aseprite",
+    "frame": { "x": 0, "y": 0, "w": 155, "h": 81 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 28, "y": 0, "w": 155, "h": 81 },
+    "sourceSize": { "w": 183, "h": 85 },
+    "duration": 150
+   },
+   {
+    "filename": "die1 1.aseprite",
+    "frame": { "x": 155, "y": 0, "w": 169, "h": 69 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 1, "y": 15, "w": 169, "h": 69 },
+    "sourceSize": { "w": 183, "h": 85 },
+    "duration": 150
+   },
+   {
+    "filename": "die1 2.aseprite",
+    "frame": { "x": 324, "y": 68, "w": 169, "h": 68 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 1, "y": 16, "w": 169, "h": 68 },
+    "sourceSize": { "w": 183, "h": 85 },
+    "duration": 150
+   },
+   {
+    "filename": "die1 3.aseprite",
+    "frame": { "x": 155, "y": 69, "w": 169, "h": 68 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 1, "y": 17, "w": 169, "h": 68 },
+    "sourceSize": { "w": 183, "h": 85 },
+    "duration": 150
+   },
+   {
+    "filename": "die1 4.aseprite",
+    "frame": { "x": 324, "y": 0, "w": 170, "h": 68 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 17, "w": 170, "h": 68 },
+    "sourceSize": { "w": 183, "h": 85 },
+    "duration": 150
+   },
+   {
+    "filename": "die1 5.aseprite",
+    "frame": { "x": 324, "y": 136, "w": 169, "h": 67 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 1, "y": 17, "w": 169, "h": 67 },
+    "sourceSize": { "w": 183, "h": 85 },
+    "duration": 150
+   }
+ ],
+ "meta": {
+  "app": "https://www.aseprite.org/",
+  "version": "1.3.14.4-arm64",
+  "image": "die1.png",
+  "format": "RGBA8888",
+  "size": { "w": 494, "h": 203 },
+  "scale": "1",
+  "frameTags": [
+   { "name": "die1", "from": 0, "to": 5, "direction": "forward", "color": "#000000ff" }
+  ],
+  "layers": [
+   { "name": "main", "opacity": 255, "blendMode": "normal" }
+  ],
+  "slices": [
+   { "name": "anchor_die1", "keys": [{ "frame": 0, "bounds": {"x": 0, "y": 0, "w": 183, "h": 85 }, "pivot": {"x": 105, "y": 80 } }] }
+  ]
+ }
+}

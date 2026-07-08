@@ -1,0 +1,173 @@
+{ "frames": [
+   {
+    "filename": "regen 0.aseprite",
+    "frame": { "x": 0, "y": 145, "w": 133, "h": 155 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 18, "y": 0, "w": 133, "h": 155 },
+    "sourceSize": { "w": 151, "h": 155 },
+    "duration": 90
+   },
+   {
+    "filename": "regen 1.aseprite",
+    "frame": { "x": 133, "y": 145, "w": 123, "h": 144 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 21, "y": 4, "w": 123, "h": 144 },
+    "sourceSize": { "w": 151, "h": 155 },
+    "duration": 90
+   },
+   {
+    "filename": "regen 2.aseprite",
+    "frame": { "x": 256, "y": 145, "w": 106, "h": 124 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 28, "y": 14, "w": 106, "h": 124 },
+    "sourceSize": { "w": 151, "h": 155 },
+    "duration": 90
+   },
+   {
+    "filename": "regen 3.aseprite",
+    "frame": { "x": 362, "y": 145, "w": 86, "h": 101 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 37, "y": 25, "w": 86, "h": 101 },
+    "sourceSize": { "w": 151, "h": 155 },
+    "duration": 90
+   },
+   {
+    "filename": "regen 4.aseprite",
+    "frame": { "x": 447, "y": 279, "w": 64, "h": 75 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 47, "y": 38, "w": 64, "h": 75 },
+    "sourceSize": { "w": 151, "h": 155 },
+    "duration": 90
+   },
+   {
+    "filename": "regen 5.aseprite",
+    "frame": { "x": 538, "y": 145, "w": 58, "h": 71 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 48, "y": 41, "w": 58, "h": 71 },
+    "sourceSize": { "w": 151, "h": 155 },
+    "duration": 90
+   },
+   {
+    "filename": "regen 6.aseprite",
+    "frame": { "x": 150, "y": 0, "w": 148, "h": 145 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 6, "w": 148, "h": 145 },
+    "sourceSize": { "w": 151, "h": 155 },
+    "duration": 90
+   },
+   {
+    "filename": "regen 7.aseprite",
+    "frame": { "x": 298, "y": 0, "w": 148, "h": 145 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 6, "w": 148, "h": 145 },
+    "sourceSize": { "w": 151, "h": 155 },
+    "duration": 90
+   },
+   {
+    "filename": "regen 8.aseprite",
+    "frame": { "x": 446, "y": 0, "w": 148, "h": 145 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 6, "w": 148, "h": 145 },
+    "sourceSize": { "w": 151, "h": 155 },
+    "duration": 90
+   },
+   {
+    "filename": "regen 9.aseprite",
+    "frame": { "x": 0, "y": 0, "w": 150, "h": 145 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 6, "w": 150, "h": 145 },
+    "sourceSize": { "w": 151, "h": 155 },
+    "duration": 90
+   },
+   {
+    "filename": "regen 10.aseprite",
+    "frame": { "x": 0, "y": 300, "w": 55, "h": 74 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 49, "y": 38, "w": 55, "h": 74 },
+    "sourceSize": { "w": 151, "h": 155 },
+    "duration": 90
+   },
+   {
+    "filename": "regen 11.aseprite",
+    "frame": { "x": 133, "y": 289, "w": 75, "h": 58 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 43, "y": 87, "w": 75, "h": 58 },
+    "sourceSize": { "w": 151, "h": 155 },
+    "duration": 90
+   },
+   {
+    "filename": "regen 12.aseprite",
+    "frame": { "x": 511, "y": 279, "w": 80, "h": 57 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 40, "y": 88, "w": 80, "h": 57 },
+    "sourceSize": { "w": 151, "h": 155 },
+    "duration": 90
+   },
+   {
+    "filename": "regen 13.aseprite",
+    "frame": { "x": 362, "y": 246, "w": 85, "h": 57 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 37, "y": 88, "w": 85, "h": 57 },
+    "sourceSize": { "w": 151, "h": 155 },
+    "duration": 90
+   },
+   {
+    "filename": "regen 14.aseprite",
+    "frame": { "x": 448, "y": 145, "w": 89, "h": 68 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 35, "y": 77, "w": 89, "h": 68 },
+    "sourceSize": { "w": 151, "h": 155 },
+    "duration": 90
+   },
+   {
+    "filename": "regen 15.aseprite",
+    "frame": { "x": 448, "y": 213, "w": 90, "h": 66 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 35, "y": 77, "w": 90, "h": 66 },
+    "sourceSize": { "w": 151, "h": 155 },
+    "duration": 90
+   },
+   {
+    "filename": "regen 16.aseprite",
+    "frame": { "x": 256, "y": 269, "w": 90, "h": 64 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 34, "y": 77, "w": 90, "h": 64 },
+    "sourceSize": { "w": 151, "h": 155 },
+    "duration": 90
+   }
+ ],
+ "meta": {
+  "app": "https://www.aseprite.org/",
+  "version": "1.3.14.4-arm64",
+  "image": "regen.png",
+  "format": "RGBA8888",
+  "size": { "w": 596, "h": 374 },
+  "scale": "1",
+  "frameTags": [
+   { "name": "regen", "from": 0, "to": 16, "direction": "forward", "color": "#000000ff" }
+  ],
+  "layers": [
+   { "name": "main", "opacity": 255, "blendMode": "normal" }
+  ],
+  "slices": [
+   { "name": "anchor_regen", "keys": [{ "frame": 0, "bounds": {"x": 0, "y": 0, "w": 151, "h": 155 }, "pivot": {"x": 73, "y": 141 } }] }
+  ]
+ }
+}

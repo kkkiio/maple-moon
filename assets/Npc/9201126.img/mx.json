@@ -1,0 +1,18 @@
+{
+  "info": {
+    "dcBottom": -5,
+    "dcLeft": -53,
+    "dcRight": 49,
+    "dcTop": -162,
+    "script": {
+      "0": {
+        "script": "goKerningCity"
+      }
+    },
+    "speak": {
+      "0": "n0",
+      "1": "n1"
+    }
+  },
+  "animations_path": "animation.json"
+}

@@ -1,0 +1,153 @@
+{
+  "info": {
+    "MADamage": 170,
+    "MDDamage": 195,
+    "PADamage": 160,
+    "PDDamage": 180,
+    "acc": 140,
+    "bodyAttack": 1,
+    "eva": 22,
+    "exp": 138,
+    "fs": 10,
+    "level": 48,
+    "maxHP": 2800,
+    "maxMP": 250,
+    "pushed": 450,
+    "speed": -20,
+    "summonType": 0,
+    "undead": 0
+  },
+  "stance_nodes": {
+    "die1": {
+      "path_key": "die1",
+      "total_duration_ms": 1210,
+      "loop_": false,
+      "first_head": {
+        "x": -15,
+        "y": -41
+      },
+      "first_bounds": {
+        "lt": {
+          "x": -69,
+          "y": -65
+        },
+        "rb": {
+          "x": 71,
+          "y": 0
+        }
+      }
+    },
+    "hit1": {
+      "path_key": "hit1",
+      "total_duration_ms": 1100,
+      "loop_": false,
+      "first_head": {
+        "x": -15,
+        "y": -41
+      },
+      "first_bounds": {
+        "lt": {
+          "x": -69,
+          "y": -65
+        },
+        "rb": {
+          "x": 71,
+          "y": 0
+        }
+      }
+    },
+    "move": {
+      "path_key": "move",
+      "total_duration_ms": 880,
+      "loop_": true,
+      "first_head": {
+        "x": -15,
+        "y": -41
+      },
+      "first_bounds": {
+        "lt": {
+          "x": -68,
+          "y": -65
+        },
+        "rb": {
+          "x": 72,
+          "y": 0
+        }
+      }
+    },
+    "stand": {
+      "path_key": "stand",
+      "total_duration_ms": 880,
+      "loop_": true,
+      "first_head": {
+        "x": -15,
+        "y": -41
+      },
+      "first_bounds": {
+        "lt": {
+          "x": -69,
+          "y": -65
+        },
+        "rb": {
+          "x": 71,
+          "y": 0
+        }
+      }
+    }
+  },
+  "attack_nodes": {
+    "1": {
+      "id": 1,
+      "info": {
+        "attackAfter": 1520,
+        "conMP": 5,
+        "effectAfter": 1040,
+        "hit": {
+          "0": {
+            "__b": 6061,
+            "__w": 82,
+            "__h": 102,
+            "delay": 110,
+            "origin": [
+              41,
+              51
+            ]
+          },
+          "1": {
+            "__b": 6062,
+            "__w": 42,
+            "__h": 106,
+            "delay": 110,
+            "origin": [
+              21,
+              53
+            ]
+          },
+          "attach": 1
+        },
+        "magic": 1,
+        "range": {
+          "lt": [
+            -94,
+            -103
+          ],
+          "rb": [
+            29,
+            16
+          ]
+        },
+        "type": 0
+      },
+      "animation_path_key": "attack1",
+      "effects": []
+    }
+  },
+  "skill_nodes": {},
+  "mx_animations": {
+    "die1": "animations/die1.json",
+    "hit1": "animations/hit1.json",
+    "move": "animations/move.json",
+    "stand": "animations/stand.json",
+    "attack1": "animations/attack1.json"
+  }
+}

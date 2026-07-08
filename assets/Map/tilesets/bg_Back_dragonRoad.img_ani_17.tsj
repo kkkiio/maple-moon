@@ -1,0 +1,1 @@
+{"type":"tileset","name":"bg:Back/dragonRoad.img/ani/17","objectalignment":"bottomleft","tilewidth":800,"tileheight":600,"image":"bg_Back_dragonRoad.img_ani_17.png","imagewidth":3200,"imageheight":600,"columns":4,"tilecount":4,"tiles":[{"id":0,"animation":[{"tileid":0,"duration":600},{"tileid":1,"duration":600},{"tileid":2,"duration":300},{"tileid":3,"duration":300}]}]}

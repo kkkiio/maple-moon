@@ -1,0 +1,16 @@
+{
+  "info": {
+    "reg": {
+      "name": ""
+    },
+    "script": {
+      "0": {
+        "script": "levelUP"
+      }
+    },
+    "speak": {
+      "0": "n0"
+    }
+  },
+  "animations_path": "animation.json"
+}

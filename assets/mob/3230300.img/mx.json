@@ -1,0 +1,126 @@
+{
+  "info": {
+    "MADamage": 0,
+    "MDDamage": 155,
+    "PADamage": 90,
+    "PDDamage": 120,
+    "acc": 150,
+    "bodyAttack": 1,
+    "eva": 27,
+    "exp": 150,
+    "fs": 10,
+    "level": 35,
+    "maxHP": 1700,
+    "maxMP": 300,
+    "mobType": 5,
+    "pushed": 500,
+    "skill": {
+      "0": {
+        "action": 1,
+        "effectAfter": 0,
+        "level": 1,
+        "skill": 120
+      },
+      "1": {
+        "action": 1,
+        "effectAfter": 0,
+        "level": 1,
+        "skill": 124
+      }
+    },
+    "speed": -15,
+    "summonType": 1,
+    "undead": 0
+  },
+  "stance_nodes": {
+    "die1": {
+      "path_key": "die1",
+      "total_duration_ms": 1140,
+      "loop_": false,
+      "first_head": {
+        "x": -7,
+        "y": -47
+      },
+      "first_bounds": null
+    },
+    "hit1": {
+      "path_key": "hit1",
+      "total_duration_ms": 600,
+      "loop_": false,
+      "first_head": {
+        "x": -7,
+        "y": -47
+      },
+      "first_bounds": {
+        "lt": {
+          "x": -23,
+          "y": -57
+        },
+        "rb": {
+          "x": 22,
+          "y": -23
+        }
+      }
+    },
+    "move": {
+      "path_key": "move",
+      "total_duration_ms": 900,
+      "loop_": true,
+      "first_head": {
+        "x": -7,
+        "y": -47
+      },
+      "first_bounds": {
+        "lt": {
+          "x": -23,
+          "y": -57
+        },
+        "rb": {
+          "x": 22,
+          "y": -23
+        }
+      }
+    },
+    "stand": {
+      "path_key": "stand",
+      "total_duration_ms": 900,
+      "loop_": true,
+      "first_head": {
+        "x": -7,
+        "y": -47
+      },
+      "first_bounds": {
+        "lt": {
+          "x": -23,
+          "y": -57
+        },
+        "rb": {
+          "x": 22,
+          "y": -23
+        }
+      }
+    }
+  },
+  "attack_nodes": {},
+  "skill_nodes": {
+    "120": {
+      "skill_id": 120,
+      "action": 1,
+      "animation_path_key": "skill1",
+      "effects": []
+    },
+    "124": {
+      "skill_id": 124,
+      "action": 1,
+      "animation_path_key": "skill1",
+      "effects": []
+    }
+  },
+  "mx_animations": {
+    "die1": "animations/die1.json",
+    "hit1": "animations/hit1.json",
+    "move": "animations/move.json",
+    "stand": "animations/stand.json",
+    "skill1": "animations/skill1.json"
+  }
+}

@@ -131,7 +131,7 @@ pub fn Mob::load(
   randomizer : @random.Rand,
 ) -> Mob {
   let strid = @utils.stoi_left_pad0(mid, 7)
-  let mx_path = "assets/mob/Mob/\{strid}.img/mx.json"
+  let mx_path = "assets/mob/\{strid}.img/mx.json"
   let mx_src = @resource.require_json(mx_path)
   let mx_mob : MxMob = @json.from_json(mx_src) catch {
     err => abort("failed to decode mob mx: \{mid}, error=\{err}")

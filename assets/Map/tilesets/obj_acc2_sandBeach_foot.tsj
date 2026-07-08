@@ -1,0 +1,1 @@
+{"type":"tileset","name":"obj:acc2/sandBeach/foot","objectalignment":"bottomleft","tilewidth":801,"tileheight":165,"tilecount":3,"tiles":[{"id":0,"image":"../images/9238.png","imagewidth":801,"imageheight":165},{"id":1,"image":"../images/9240.png","imagewidth":592,"imageheight":165},{"id":2,"image":"../images/9239.png","imagewidth":208,"imageheight":139}]}

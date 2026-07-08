@@ -1,0 +1,14 @@
+{
+  "info": {
+    "dcBottom": -55,
+    "dcLeft": -70,
+    "dcRight": 75,
+    "dcTop": -200,
+    "script": {
+      "0": {
+        "script": "giveSap"
+      }
+    }
+  },
+  "animations_path": "animation.json"
+}

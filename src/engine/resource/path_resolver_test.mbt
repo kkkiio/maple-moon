@@ -65,8 +65,8 @@ test "resolve_ref resolves tiled external tileset path" {
 ///|
 test "resolve_resource_path keeps mob source root behavior" {
   inspect(
-    resolve_resource_path("mob", "Mob/1210102.img/mx.json"),
-    content="assets/mob/Mob/1210102.img/mx.json",
+    resolve_resource_path("mob", "1210102.img/mx.json"),
+    content="assets/mob/1210102.img/mx.json",
   )
 }
 

@@ -934,14 +934,18 @@ fn LocalServer::spawn_mobs_for_map(self : LocalServer, map_id : Int) -> Unit {
           }
           let mob_strid = @utils.stoi_left_pad0(monster_id, 7)
           let mob_node = @resource.require_json(
-            "assets/mob/" + mob_strid + ".img.json",
+            "assets/mob/" + mob_strid + ".img/mx.json",
           )
-          guard mob_node is { "info": { "maxHP": Number(max_hp, ..), .. }, .. } else {
-            continue
+          let max_hp = match mob_node {
+            { "info": { "maxHP": Number(max_hp, ..), .. }, .. } =>
+              max_hp.to_int()
+            { "info": { "maxHP": String(raw), .. }, .. } =>
+              @string.parse_int(raw) catch { _ => continue }
+            _ => continue
           }
           self.pending_mob_spawns.push({
             msg: spawn_msg,
-            max_hp: max_hp.to_int(),
+            max_hp,
           })
         }
         "n" => {

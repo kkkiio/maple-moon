@@ -1,0 +1,1 @@
+{"type":"tileset","name":"obj:connect/rope/6","objectalignment":"bottomleft","tilewidth":46,"tileheight":257,"tilecount":3,"tiles":[{"id":0,"image":"../images/24260.png","imagewidth":46,"imageheight":257},{"id":1,"image":"../images/24259.png","imagewidth":43,"imageheight":180},{"id":2,"image":"../images/24258.png","imagewidth":36,"imageheight":100}]}

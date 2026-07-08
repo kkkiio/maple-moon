@@ -1,14 +1,14 @@
 ///|
-test "parse_nx_mob" {
-  let content = @fs.read_file_to_string("assets/Mob/1210102.img.json")
+test "parse_mx_mob" {
+  let content = @fs.read_file_to_string("assets/mob/1210102.img/mx.json")
   let json = @json.parse(content)
-  let nx_mob : @monster.NxMob = @json.from_json(json)
-  json_inspect(nx_mob.meta, content={
-    "can_move": true,
-    "can_jump": true,
-    "can_fly": false,
-  })
-  json_inspect(nx_mob.info, content={
+  let mx_mob : @monster.MxMob = @json.from_json(json)
+  inspect(mx_mob.stance_nodes.contains("stand"), content="true")
+  inspect(mx_mob.stance_nodes.contains("move"), content="true")
+  inspect(mx_mob.stance_nodes.contains("jump"), content="true")
+  inspect(mx_mob.stance_nodes.contains("hit1"), content="true")
+  inspect(mx_mob.stance_nodes.contains("die1"), content="true")
+  json_inspect(mx_mob.info, content={
     "magic_damage": 0,
     "md_damage": 10,
     "pa_damage": 42,

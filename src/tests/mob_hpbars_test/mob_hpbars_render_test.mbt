@@ -15,7 +15,7 @@ fn load_test_mob() -> @monster.Mob {
 ///|
 fn attach_visible_mob_sprite(entity : @entity.Entity) -> Unit {
   let stand = @ms_animation.Animation::single_frame(
-    "assets/mob/0100101.img_stand.png",
+    "assets/mob/0100101.img/animations/stand.png",
     @math.Vec2(35.0, 34.0),
     pivot=@math.Vec2(16.0, 34.0),
   )

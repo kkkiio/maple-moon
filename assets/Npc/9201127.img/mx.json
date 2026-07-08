@@ -1,0 +1,18 @@
+{
+  "info": {
+    "dcBottom": -6,
+    "dcLeft": -63,
+    "dcRight": 50,
+    "dcTop": -174,
+    "script": {
+      "0": {
+        "script": "goNautilus"
+      }
+    },
+    "speak": {
+      "0": "n0",
+      "1": "n1"
+    }
+  },
+  "animations_path": "animation.json"
+}

@@ -1,0 +1,10 @@
+{
+  "info": {
+    "script": {
+      "0": {
+        "script": "bush1"
+      }
+    }
+  },
+  "animations_path": "animation.json"
+}

@@ -1,0 +1,1 @@
+{"type":"tileset","name":"bg:Back/Rien.img/ani/10","objectalignment":"bottomleft","tilewidth":93,"tileheight":450,"image":"bg_Back_Rien.img_ani_10.png","imagewidth":186,"imageheight":450,"columns":2,"tilecount":2,"tiles":[{"id":0,"animation":[{"tileid":0,"duration":3400},{"tileid":1,"duration":3400}]}]}

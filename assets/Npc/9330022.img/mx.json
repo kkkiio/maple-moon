@@ -1,0 +1,15 @@
+{
+  "info": {
+    "quest": "hair_night2",
+    "script": {
+      "0": {
+        "script": "hair_taiwan2"
+      }
+    },
+    "speak": {
+      "0": "n0",
+      "1": "n1"
+    }
+  },
+  "animations_path": "animation.json"
+}

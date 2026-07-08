@@ -1,0 +1,1 @@
+{"type":"tileset","name":"obj:signboard/market/obj","objectalignment":"bottomleft","tilewidth":56,"tileheight":61,"tilecount":3,"tiles":[{"id":0,"image":"../images/23653.png","imagewidth":56,"imageheight":26},{"id":1,"image":"../images/23648.png","imagewidth":35,"imageheight":61},{"id":2,"image":"../images/23652.png","imagewidth":51,"imageheight":31}]}

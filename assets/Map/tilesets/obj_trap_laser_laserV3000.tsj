@@ -1,0 +1,1 @@
+{"type":"tileset","name":"obj:trap/laser/laserV3000","objectalignment":"bottomleft","tilewidth":53,"tileheight":117,"tilecount":3,"tiles":[{"id":0,"image":"../images/7697.png","imagewidth":17,"imageheight":117},{"id":1,"image":"../images/7681.png","imagewidth":44,"imageheight":36},{"id":2,"image":"../images/7684.png","imagewidth":53,"imageheight":114}]}

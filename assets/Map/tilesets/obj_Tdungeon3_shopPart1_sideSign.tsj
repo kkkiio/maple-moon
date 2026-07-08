@@ -1,0 +1,1 @@
+{"type":"tileset","name":"obj:Tdungeon3/shopPart1/sideSign","objectalignment":"bottomleft","tilewidth":80,"tileheight":97,"tilecount":2,"tiles":[{"id":0,"image":"../images/17219.png","imagewidth":80,"imageheight":97},{"id":1,"image":"../images/17215.png","imagewidth":66,"imageheight":78}]}

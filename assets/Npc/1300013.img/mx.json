@@ -1,0 +1,21 @@
+{
+  "info": {
+    "default": {
+      "__b": 9804,
+      "__w": 109,
+      "__h": 154,
+      "origin": [
+        54,
+        153
+      ],
+      "z": 0
+    },
+    "hideName": 1,
+    "script": {
+      "0": {
+        "script": "TD_MC_violetaEnter"
+      }
+    }
+  },
+  "animations_path": "animation.json"
+}

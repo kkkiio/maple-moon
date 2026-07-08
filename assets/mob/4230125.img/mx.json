@@ -1,0 +1,119 @@
+{
+  "info": {
+    "MADamage": 0,
+    "MDDamage": 190,
+    "PADamage": 140,
+    "PDDamage": 170,
+    "acc": 120,
+    "bodyAttack": 1,
+    "elemAttr": "H3",
+    "eva": 18,
+    "exp": 107,
+    "fs": 10,
+    "level": 44,
+    "maxHP": 2450,
+    "maxMP": 0,
+    "mobType": 7,
+    "pushed": 100,
+    "speed": 20,
+    "summonType": 1,
+    "undead": 1
+  },
+  "stance_nodes": {
+    "die1": {
+      "path_key": "die1",
+      "total_duration_ms": 1200,
+      "loop_": false,
+      "first_head": {
+        "x": -6,
+        "y": -63
+      },
+      "first_bounds": null
+    },
+    "hit1": {
+      "path_key": "hit1",
+      "total_duration_ms": 600,
+      "loop_": false,
+      "first_head": {
+        "x": -6,
+        "y": -63
+      },
+      "first_bounds": {
+        "lt": {
+          "x": -26,
+          "y": -64
+        },
+        "rb": {
+          "x": 30,
+          "y": 0
+        }
+      }
+    },
+    "jump": {
+      "path_key": "jump",
+      "total_duration_ms": 140,
+      "loop_": false,
+      "first_head": {
+        "x": -17,
+        "y": -40
+      },
+      "first_bounds": {
+        "lt": {
+          "x": -37,
+          "y": -41
+        },
+        "rb": {
+          "x": 41,
+          "y": 0
+        }
+      }
+    },
+    "move": {
+      "path_key": "move",
+      "total_duration_ms": 700,
+      "loop_": true,
+      "first_head": {
+        "x": -17,
+        "y": -55
+      },
+      "first_bounds": {
+        "lt": {
+          "x": -37,
+          "y": -56
+        },
+        "rb": {
+          "x": 35,
+          "y": 0
+        }
+      }
+    },
+    "stand": {
+      "path_key": "stand",
+      "total_duration_ms": 540,
+      "loop_": true,
+      "first_head": {
+        "x": -13,
+        "y": -56
+      },
+      "first_bounds": {
+        "lt": {
+          "x": -33,
+          "y": -57
+        },
+        "rb": {
+          "x": 32,
+          "y": 0
+        }
+      }
+    }
+  },
+  "attack_nodes": {},
+  "skill_nodes": {},
+  "mx_animations": {
+    "die1": "animations/die1.json",
+    "hit1": "animations/hit1.json",
+    "jump": "animations/jump.json",
+    "move": "animations/move.json",
+    "stand": "animations/stand.json"
+  }
+}

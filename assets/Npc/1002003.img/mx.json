@@ -1,0 +1,17 @@
+{
+  "info": {
+    "reg": {
+      "level": 0
+    },
+    "script": {
+      "0": {
+        "script": "friend00"
+      }
+    },
+    "speak": {
+      "0": "n0",
+      "1": "n1"
+    }
+  },
+  "animations_path": "animation.json"
+}

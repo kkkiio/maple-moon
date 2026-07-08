@@ -1,0 +1,1 @@
+{"type":"tileset","name":"obj:guide/midForest/danger","objectalignment":"bottomleft","tilewidth":80,"tileheight":87,"tilecount":3,"tiles":[{"id":0,"image":"../images/25299.png","imagewidth":67,"imageheight":77},{"id":1,"image":"../images/25298.png","imagewidth":67,"imageheight":80},{"id":2,"image":"../images/25300.png","imagewidth":80,"imageheight":87}]}

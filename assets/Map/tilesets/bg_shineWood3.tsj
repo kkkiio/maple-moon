@@ -1,0 +1,1 @@
+{"type":"tileset","name":"bg:shineWood3","objectalignment":"bottomleft","tilewidth":492,"tileheight":600,"tilecount":2,"tiles":[{"id":0,"image":"../images/29708.png","imagewidth":135,"imageheight":135},{"id":1,"image":"../images/29709.png","imagewidth":492,"imageheight":600}]}

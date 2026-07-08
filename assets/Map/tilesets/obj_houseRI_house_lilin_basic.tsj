@@ -1,0 +1,1 @@
+{"type":"tileset","name":"obj:houseRI/house_lilin/basic","objectalignment":"bottomleft","tilewidth":484,"tileheight":282,"tilecount":3,"tiles":[{"id":0,"image":"../images/6045.png","imagewidth":164,"imageheight":163},{"id":1,"image":"../images/6047.png","imagewidth":484,"imageheight":282},{"id":2,"image":"../images/6046.png","imagewidth":358,"imageheight":176}]}

@@ -1,0 +1,213 @@
+{
+  "info": {
+    "HPgaugeHide": 1,
+    "MADamage": 0,
+    "MDDamage": 115,
+    "PADamage": 350,
+    "PDDamage": 550,
+    "acc": 150,
+    "bodyAttack": 1,
+    "boss": 1,
+    "eva": 15,
+    "exp": 0,
+    "fs": 10,
+    "hpTagBgcolor": 5,
+    "hpTagColor": 1,
+    "level": 80,
+    "maxHP": 150000,
+    "maxMP": 345,
+    "mobType": 1,
+    "pushed": 1500,
+    "skill": {
+      "0": {
+        "action": 1,
+        "effectAfter": 480,
+        "level": 6,
+        "skill": 127
+      }
+    },
+    "speed": -20,
+    "summonType": 1,
+    "undead": 0
+  },
+  "stance_nodes": {
+    "die1": {
+      "path_key": "die1",
+      "total_duration_ms": 1890,
+      "loop_": false,
+      "first_head": {
+        "x": -11,
+        "y": -101
+      },
+      "first_bounds": {
+        "lt": {
+          "x": -33,
+          "y": -92
+        },
+        "rb": {
+          "x": 61,
+          "y": -11
+        }
+      }
+    },
+    "hit1": {
+      "path_key": "hit1",
+      "total_duration_ms": 600,
+      "loop_": false,
+      "first_head": {
+        "x": -11,
+        "y": -101
+      },
+      "first_bounds": {
+        "lt": {
+          "x": -33,
+          "y": -92
+        },
+        "rb": {
+          "x": 61,
+          "y": -11
+        }
+      }
+    },
+    "move": {
+      "path_key": "move",
+      "total_duration_ms": 720,
+      "loop_": true,
+      "first_head": {
+        "x": -32,
+        "y": -90
+      },
+      "first_bounds": {
+        "lt": {
+          "x": -54,
+          "y": -88
+        },
+        "rb": {
+          "x": 42,
+          "y": -6
+        }
+      }
+    },
+    "stand": {
+      "path_key": "stand",
+      "total_duration_ms": 720,
+      "loop_": true,
+      "first_head": {
+        "x": -32,
+        "y": -90
+      },
+      "first_bounds": {
+        "lt": {
+          "x": -49,
+          "y": -88
+        },
+        "rb": {
+          "x": 41,
+          "y": -5
+        }
+      }
+    }
+  },
+  "attack_nodes": {
+    "1": {
+      "id": 1,
+      "info": {
+        "PADamage": 370,
+        "attackAfter": 1320,
+        "conMP": 1,
+        "hit": {
+          "0": {
+            "__b": 9315,
+            "__w": 109,
+            "__h": 111,
+            "delay": 120,
+            "origin": [
+              58,
+              93
+            ]
+          },
+          "1": {
+            "__b": 9316,
+            "__w": 108,
+            "__h": 84,
+            "delay": 120,
+            "origin": [
+              54,
+              79
+            ]
+          },
+          "2": {
+            "__b": 9317,
+            "__w": 111,
+            "__h": 84,
+            "delay": 120,
+            "origin": [
+              55,
+              76
+            ]
+          },
+          "3": {
+            "__b": 9318,
+            "__w": 118,
+            "__h": 95,
+            "delay": 120,
+            "origin": [
+              58,
+              80
+            ]
+          },
+          "4": {
+            "__b": 9319,
+            "__w": 126,
+            "__h": 105,
+            "delay": 120,
+            "origin": [
+              61,
+              85
+            ]
+          },
+          "5": {
+            "__b": 9320,
+            "__w": 126,
+            "__h": 82,
+            "delay": 120,
+            "origin": [
+              60,
+              71
+            ]
+          },
+          "attach": 1
+        },
+        "range": {
+          "lt": [
+            -300,
+            -200
+          ],
+          "rb": [
+            -50,
+            0
+          ]
+        },
+        "type": 0
+      },
+      "animation_path_key": "attack1",
+      "effects": []
+    }
+  },
+  "skill_nodes": {
+    "127": {
+      "skill_id": 127,
+      "action": 1,
+      "animation_path_key": "skill1",
+      "effects": []
+    }
+  },
+  "mx_animations": {
+    "die1": "animations/die1.json",
+    "hit1": "animations/hit1.json",
+    "move": "animations/move.json",
+    "stand": "animations/stand.json",
+    "skill1": "animations/skill1.json",
+    "attack1": "animations/attack1.json"
+  }
+}

@@ -1,0 +1,1 @@
+{"type":"tileset","name":"obj:acc1/quest/shadow","objectalignment":"bottomleft","tilewidth":360,"tileheight":316,"tilecount":2,"tiles":[{"id":0,"image":"../images/21170.png","imagewidth":360,"imageheight":180},{"id":1,"image":"../images/21173.png","imagewidth":306,"imageheight":316}]}

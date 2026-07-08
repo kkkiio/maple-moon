@@ -1,0 +1,9 @@
+{
+  "info": {
+    "dcBottom": 0,
+    "dcLeft": -16,
+    "dcRight": 22,
+    "dcTop": -60
+  },
+  "animations_path": "animation.json"
+}

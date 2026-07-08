@@ -1,0 +1,25 @@
+{
+  "info": {
+    "dcBottom": -28,
+    "dcLeft": -26,
+    "dcRight": 20,
+    "dcTop": -130,
+    "default": {
+      "__b": 4259,
+      "__w": 161,
+      "__h": 86,
+      "origin": [
+        70,
+        86
+      ],
+      "z": 0
+    },
+    "hideName": 1,
+    "script": {
+      "0": {
+        "script": "s4tornado"
+      }
+    }
+  },
+  "animations_path": "animation.json"
+}

@@ -1,0 +1,10 @@
+{
+  "info": {
+    "script": {
+      "0": {
+        "script": "jenu_homun"
+      }
+    }
+  },
+  "animations_path": "animation.json"
+}

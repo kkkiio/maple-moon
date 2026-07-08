@@ -1,0 +1,112 @@
+{ "frames": [
+   {
+    "filename": "animation 0.aseprite",
+    "frame": { "x": 110, "y": 0, "w": 54, "h": 79 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 54, "h": 79 },
+    "sourceSize": { "w": 55, "h": 79 },
+    "duration": 240
+   },
+   {
+    "filename": "animation 1.aseprite",
+    "frame": { "x": 0, "y": 79, "w": 54, "h": 79 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 54, "h": 79 },
+    "sourceSize": { "w": 55, "h": 79 },
+    "duration": 240
+   },
+   {
+    "filename": "animation 2.aseprite",
+    "frame": { "x": 110, "y": 0, "w": 54, "h": 79 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 54, "h": 79 },
+    "sourceSize": { "w": 55, "h": 79 },
+    "duration": 240
+   },
+   {
+    "filename": "animation 3.aseprite",
+    "frame": { "x": 0, "y": 0, "w": 55, "h": 79 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 55, "h": 79 },
+    "sourceSize": { "w": 55, "h": 79 },
+    "duration": 240
+   },
+   {
+    "filename": "animation 4.aseprite",
+    "frame": { "x": 55, "y": 0, "w": 55, "h": 79 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 55, "h": 79 },
+    "sourceSize": { "w": 55, "h": 79 },
+    "duration": 240
+   },
+   {
+    "filename": "animation 5.aseprite",
+    "frame": { "x": 0, "y": 0, "w": 55, "h": 79 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 55, "h": 79 },
+    "sourceSize": { "w": 55, "h": 79 },
+    "duration": 240
+   },
+   {
+    "filename": "animation 6.aseprite",
+    "frame": { "x": 110, "y": 0, "w": 54, "h": 79 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 54, "h": 79 },
+    "sourceSize": { "w": 55, "h": 79 },
+    "duration": 1000
+   },
+   {
+    "filename": "animation 7.aseprite",
+    "frame": { "x": 54, "y": 79, "w": 54, "h": 79 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 54, "h": 79 },
+    "sourceSize": { "w": 55, "h": 79 },
+    "duration": 600
+   },
+   {
+    "filename": "animation 8.aseprite",
+    "frame": { "x": 108, "y": 79, "w": 54, "h": 79 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 54, "h": 79 },
+    "sourceSize": { "w": 55, "h": 79 },
+    "duration": 600
+   },
+   {
+    "filename": "animation 9.aseprite",
+    "frame": { "x": 54, "y": 79, "w": 54, "h": 79 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 54, "h": 79 },
+    "sourceSize": { "w": 55, "h": 79 },
+    "duration": 80
+   }
+ ],
+ "meta": {
+  "app": "https://www.aseprite.org/",
+  "version": "1.3.14.4-arm64",
+  "image": "animation.png",
+  "format": "RGBA8888",
+  "size": { "w": 164, "h": 158 },
+  "scale": "1",
+  "frameTags": [
+   { "name": "say", "from": 0, "to": 5, "direction": "forward", "color": "#000000ff" },
+   { "name": "stand", "from": 6, "to": 9, "direction": "forward", "color": "#000000ff" }
+  ],
+  "layers": [
+   { "name": "main", "opacity": 255, "blendMode": "normal" }
+  ],
+  "slices": [
+   { "name": "anchor_say", "keys": [{ "frame": 0, "bounds": {"x": 0, "y": 0, "w": 55, "h": 79 }, "pivot": {"x": 25, "y": 77 } }] },
+   { "name": "anchor_stand", "keys": [{ "frame": 0, "bounds": {"x": 0, "y": 0, "w": 55, "h": 79 }, "pivot": {"x": 25, "y": 77 } }] }
+  ]
+ }
+}

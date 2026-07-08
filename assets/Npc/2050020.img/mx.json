@@ -1,0 +1,18 @@
+{
+  "info": {
+    "dcBottom": -46,
+    "dcLeft": 39,
+    "dcRight": 128,
+    "dcTop": -82,
+    "default": {
+      "__b": 1737,
+      "__w": 150,
+      "__h": 78,
+      "origin": [
+        75,
+        78
+      ]
+    }
+  },
+  "animations_path": "animation.json"
+}

@@ -1,0 +1,10 @@
+{
+  "info": {
+    "script": {
+      "0": {
+        "script": "face_ariant2"
+      }
+    }
+  },
+  "animations_path": "animation.json"
+}

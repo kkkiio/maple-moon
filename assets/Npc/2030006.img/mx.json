@@ -1,0 +1,24 @@
+{
+  "info": {
+    "dcBottom": -37,
+    "dcLeft": -90,
+    "dcRight": 90,
+    "dcTop": -320,
+    "default": {
+      "__b": 2883,
+      "__w": 119,
+      "__h": 170,
+      "origin": [
+        59,
+        166
+      ],
+      "z": 0
+    },
+    "script": {
+      "0": {
+        "script": "holyStone"
+      }
+    }
+  },
+  "animations_path": "animation.json"
+}

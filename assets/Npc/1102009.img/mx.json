@@ -1,0 +1,26 @@
+{
+  "info": {
+    "dcBottom": 0,
+    "dcLeft": -1,
+    "dcRight": 0,
+    "dcTop": -1,
+    "default": {
+      "__b": 14273,
+      "__w": 48,
+      "__h": 82,
+      "delay": 3000,
+      "origin": [
+        21,
+        82
+      ]
+    },
+    "hideName": 1,
+    "script": {
+      "0": {
+        "script": "tutorNineheart"
+      }
+    },
+    "talkMouseOnly": 1
+  },
+  "animations_path": "animation.json"
+}

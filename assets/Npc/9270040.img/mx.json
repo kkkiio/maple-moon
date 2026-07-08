@@ -1,0 +1,10 @@
+{
+  "info": {
+    "MapleTV": 1,
+    "MapleTVadX": -121,
+    "MapleTVadY": "-270",
+    "MapleTVmsgX": 65393,
+    "MapleTVmsgY": -386
+  },
+  "animations_path": "animation.json"
+}

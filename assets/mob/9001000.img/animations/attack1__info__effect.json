@@ -1,0 +1,146 @@
+{ "frames": [
+   {
+    "filename": "attack1__info__effect 0.aseprite",
+    "frame": { "x": 187, "y": 195, "w": 37, "h": 51 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 18, "y": 5, "w": 37, "h": 51 },
+    "sourceSize": { "w": 73, "h": 75 },
+    "duration": 30
+   },
+   {
+    "filename": "attack1__info__effect 1.aseprite",
+    "frame": { "x": 0, "y": 186, "w": 47, "h": 50 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 8, "y": 6, "w": 47, "h": 50 },
+    "sourceSize": { "w": 73, "h": 75 },
+    "duration": 30
+   },
+   {
+    "filename": "attack1__info__effect 2.aseprite",
+    "frame": { "x": 0, "y": 142, "w": 56, "h": 44 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 1, "y": 13, "w": 56, "h": 44 },
+    "sourceSize": { "w": 73, "h": 75 },
+    "duration": 30
+   },
+   {
+    "filename": "attack1__info__effect 3.aseprite",
+    "frame": { "x": 62, "y": 134, "w": 63, "h": 63 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 4, "y": 6, "w": 63, "h": 63 },
+    "sourceSize": { "w": 73, "h": 75 },
+    "duration": 30
+   },
+   {
+    "filename": "attack1__info__effect 4.aseprite",
+    "frame": { "x": 0, "y": 75, "w": 62, "h": 67 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 5, "y": 6, "w": 62, "h": 67 },
+    "sourceSize": { "w": 73, "h": 75 },
+    "duration": 30
+   },
+   {
+    "filename": "attack1__info__effect 5.aseprite",
+    "frame": { "x": 203, "y": 131, "w": 63, "h": 64 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 5, "y": 6, "w": 63, "h": 64 },
+    "sourceSize": { "w": 73, "h": 75 },
+    "duration": 75
+   },
+   {
+    "filename": "attack1__info__effect 6.aseprite",
+    "frame": { "x": 207, "y": 67, "w": 67, "h": 64 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 5, "y": 6, "w": 67, "h": 64 },
+    "sourceSize": { "w": 73, "h": 75 },
+    "duration": 75
+   },
+   {
+    "filename": "attack1__info__effect 7.aseprite",
+    "frame": { "x": 207, "y": 0, "w": 66, "h": 67 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 4, "y": 4, "w": 66, "h": 67 },
+    "sourceSize": { "w": 73, "h": 75 },
+    "duration": 75
+   },
+   {
+    "filename": "attack1__info__effect 8.aseprite",
+    "frame": { "x": 141, "y": 0, "w": 66, "h": 69 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 4, "y": 2, "w": 66, "h": 69 },
+    "sourceSize": { "w": 73, "h": 75 },
+    "duration": 75
+   },
+   {
+    "filename": "attack1__info__effect 9.aseprite",
+    "frame": { "x": 139, "y": 69, "w": 64, "h": 65 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 4, "y": 5, "w": 64, "h": 65 },
+    "sourceSize": { "w": 73, "h": 75 },
+    "duration": 75
+   },
+   {
+    "filename": "attack1__info__effect 10.aseprite",
+    "frame": { "x": 73, "y": 0, "w": 68, "h": 67 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 1, "y": 4, "w": 68, "h": 67 },
+    "sourceSize": { "w": 73, "h": 75 },
+    "duration": 75
+   },
+   {
+    "filename": "attack1__info__effect 11.aseprite",
+    "frame": { "x": 0, "y": 0, "w": 73, "h": 75 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 73, "h": 75 },
+    "sourceSize": { "w": 73, "h": 75 },
+    "duration": 75
+   },
+   {
+    "filename": "attack1__info__effect 12.aseprite",
+    "frame": { "x": 73, "y": 67, "w": 66, "h": 67 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 3, "y": 4, "w": 66, "h": 67 },
+    "sourceSize": { "w": 73, "h": 75 },
+    "duration": 75
+   },
+   {
+    "filename": "attack1__info__effect 13.aseprite",
+    "frame": { "x": 125, "y": 134, "w": 62, "h": 64 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 5, "y": 6, "w": 62, "h": 64 },
+    "sourceSize": { "w": 73, "h": 75 },
+    "duration": 100
+   }
+ ],
+ "meta": {
+  "app": "https://www.aseprite.org/",
+  "version": "1.3.14.4-arm64",
+  "image": "attack1__info__effect.png",
+  "format": "RGBA8888",
+  "size": { "w": 274, "h": 246 },
+  "scale": "1",
+  "frameTags": [
+   { "name": "attack1/info/effect", "from": 0, "to": 13, "direction": "forward", "color": "#000000ff" }
+  ],
+  "layers": [
+   { "name": "main", "opacity": 255, "blendMode": "normal" }
+  ],
+  "slices": [
+   { "name": "anchor_attack1/info/effect", "keys": [{ "frame": 0, "bounds": {"x": 0, "y": 0, "w": 73, "h": 75 }, "pivot": {"x": 40, "y": 66 } }] }
+  ]
+ }
+}

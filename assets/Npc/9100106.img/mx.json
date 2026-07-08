@@ -1,0 +1,14 @@
+{
+  "info": {
+    "dcBottom": 0,
+    "dcLeft": -50,
+    "dcRight": 32,
+    "dcTop": -135,
+    "script": {
+      "0": {
+        "script": "gachapon7"
+      }
+    }
+  },
+  "animations_path": "animation.json"
+}

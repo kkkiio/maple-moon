@@ -1,0 +1,10 @@
+{
+  "info": {
+    "speak": {
+      "0": "n0",
+      "1": "n1"
+    },
+    "trunkPut": 150
+  },
+  "animations_path": "animation.json"
+}

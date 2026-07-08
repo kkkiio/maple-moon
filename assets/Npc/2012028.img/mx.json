@@ -1,0 +1,16 @@
+{
+  "info": {
+    "dcBottom": -102,
+    "dcLeft": -10,
+    "dcRight": 10,
+    "dcTop": -138,
+    "hideName": 1,
+    "script": {
+      "0": {
+        "script": "elizaHarp2"
+      }
+    },
+    "talkMouseOnly": 1
+  },
+  "animations_path": "animation.json"
+}

@@ -1,0 +1,14 @@
+{
+  "info": {
+    "dcBottom": 0,
+    "dcLeft": -64,
+    "dcRight": 64,
+    "dcTop": -146,
+    "script": {
+      "0": {
+        "script": "guildquest1_bonus"
+      }
+    }
+  },
+  "animations_path": "animation.json"
+}

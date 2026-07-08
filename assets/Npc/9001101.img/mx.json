@@ -1,0 +1,15 @@
+{
+  "info": {
+    "default": {
+      "__b": 14397,
+      "__w": 47,
+      "__h": 65,
+      "origin": [
+        23,
+        65
+      ],
+      "z": 0
+    }
+  },
+  "animations_path": "animation.json"
+}

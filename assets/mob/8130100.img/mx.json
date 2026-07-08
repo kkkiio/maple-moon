@@ -1,0 +1,574 @@
+{
+  "info": {
+    "HPgaugeHide": 1,
+    "MADamage": 605,
+    "MDDamage": 450,
+    "PADamage": 450,
+    "PDDamage": 420,
+    "acc": 150,
+    "bodyAttack": 1,
+    "boss": 1,
+    "elemAttr": "S1H3",
+    "eva": 30,
+    "exp": 2000,
+    "hpRecovery": 100,
+    "hpTagBgcolor": 5,
+    "hpTagColor": 1,
+    "level": 80,
+    "maxHP": 50000,
+    "maxMP": 500,
+    "mobType": 6,
+    "mpRecovery": 5,
+    "pushed": 3000,
+    "rareItemDropLevel": 2,
+    "speed": -20,
+    "summonType": 0,
+    "undead": 0
+  },
+  "stance_nodes": {
+    "die1": {
+      "path_key": "die1",
+      "total_duration_ms": 700,
+      "loop_": false,
+      "first_head": {
+        "x": -26,
+        "y": -109
+      },
+      "first_bounds": null
+    },
+    "hit1": {
+      "path_key": "hit1",
+      "total_duration_ms": 600,
+      "loop_": false,
+      "first_head": {
+        "x": -34,
+        "y": -110
+      },
+      "first_bounds": {
+        "lt": {
+          "x": -69,
+          "y": -160
+        },
+        "rb": {
+          "x": 33,
+          "y": 0
+        }
+      }
+    },
+    "move": {
+      "path_key": "move",
+      "total_duration_ms": 900,
+      "loop_": true,
+      "first_head": {
+        "x": -21,
+        "y": -117
+      },
+      "first_bounds": {
+        "lt": {
+          "x": -66,
+          "y": -162
+        },
+        "rb": {
+          "x": 39,
+          "y": 0
+        }
+      }
+    },
+    "stand": {
+      "path_key": "stand",
+      "total_duration_ms": 300,
+      "loop_": true,
+      "first_head": {
+        "x": -18,
+        "y": -109
+      },
+      "first_bounds": {
+        "lt": {
+          "x": -63,
+          "y": -156
+        },
+        "rb": {
+          "x": 42,
+          "y": 0
+        }
+      }
+    }
+  },
+  "attack_nodes": {
+    "1": {
+      "id": 1,
+      "info": {
+        "attackAfter": 1300,
+        "conMP": 2,
+        "effect": {
+          "0": {
+            "__b": 3382,
+            "__w": 25,
+            "__h": 28,
+            "delay": 75,
+            "origin": [
+              14,
+              105
+            ]
+          },
+          "1": {
+            "__b": 3383,
+            "__w": 25,
+            "__h": 30,
+            "delay": 75,
+            "origin": [
+              14,
+              105
+            ]
+          },
+          "2": {
+            "__b": 3384,
+            "__w": 104,
+            "__h": 100,
+            "delay": 75,
+            "origin": [
+              52,
+              150
+            ]
+          },
+          "3": {
+            "__b": 3385,
+            "__w": 106,
+            "__h": 102,
+            "delay": 75,
+            "origin": [
+              53,
+              151
+            ]
+          },
+          "4": {
+            "__b": 3386,
+            "__w": 114,
+            "__h": 111,
+            "delay": 75,
+            "origin": [
+              58,
+              155
+            ]
+          },
+          "5": {
+            "__b": 3387,
+            "__w": 114,
+            "__h": 111,
+            "delay": 75,
+            "origin": [
+              58,
+              155
+            ]
+          },
+          "6": {
+            "__b": 3388,
+            "__w": 114,
+            "__h": 111,
+            "delay": 75,
+            "origin": [
+              58,
+              155
+            ]
+          },
+          "7": {
+            "__b": 3389,
+            "__w": 114,
+            "__h": 111,
+            "delay": 75,
+            "origin": [
+              58,
+              155
+            ]
+          }
+        },
+        "effectAfter": 700,
+        "elemAttr": "F",
+        "hit": {
+          "0": {
+            "__b": 3390,
+            "__w": 113,
+            "__h": 114,
+            "delay": 60,
+            "origin": [
+              -79,
+              193
+            ]
+          },
+          "1": {
+            "__b": 3391,
+            "__w": 141,
+            "__h": 126,
+            "delay": 120,
+            "origin": [
+              32,
+              111
+            ]
+          },
+          "2": {
+            "__b": 3392,
+            "__w": 140,
+            "__h": 133,
+            "delay": 120,
+            "origin": [
+              32,
+              111
+            ]
+          },
+          "3": {
+            "__b": 3393,
+            "__w": 131,
+            "__h": 131,
+            "delay": 120,
+            "origin": [
+              32,
+              111
+            ]
+          },
+          "4": {
+            "__b": 3394,
+            "__w": 59,
+            "__h": 123,
+            "delay": 120,
+            "origin": [
+              32,
+              111
+            ]
+          },
+          "5": {
+            "__b": 3395,
+            "__w": 57,
+            "__h": 123,
+            "delay": 120,
+            "origin": [
+              32,
+              111
+            ]
+          },
+          "6": {
+            "__b": 3396,
+            "__w": 44,
+            "__h": 121,
+            "delay": 120,
+            "origin": [
+              32,
+              111
+            ]
+          }
+        },
+        "magic": 1,
+        "range": {
+          "r": 250,
+          "sp": [
+            -28,
+            -69
+          ]
+        },
+        "type": 1
+      },
+      "animation_path_key": "attack1",
+      "effects": [
+        {
+          "path_key": "attack1/info/effect",
+          "z": 0,
+          "is_area_warning": false
+        }
+      ]
+    },
+    "2": {
+      "id": 2,
+      "info": {
+        "attackAfter": 400,
+        "ball": {
+          "0": {
+            "__b": 3412,
+            "__w": 61,
+            "__h": 32,
+            "origin": [
+              32,
+              16
+            ]
+          },
+          "1": {
+            "__b": 3413,
+            "__w": 68,
+            "__h": 33,
+            "origin": [
+              32,
+              18
+            ]
+          },
+          "2": {
+            "__b": 3414,
+            "__w": 59,
+            "__h": 31,
+            "origin": [
+              32,
+              16
+            ]
+          }
+        },
+        "conMP": 2,
+        "effect": {
+          "0": {
+            "__b": 3405,
+            "__w": 47,
+            "__h": 74,
+            "origin": [
+              -55,
+              131
+            ]
+          },
+          "1": {
+            "__b": 3406,
+            "__w": 47,
+            "__h": 69,
+            "origin": [
+              -55,
+              126
+            ]
+          },
+          "2": {
+            "__b": 3407,
+            "__w": 47,
+            "__h": 69,
+            "origin": [
+              -55,
+              126
+            ]
+          },
+          "3": {
+            "__b": 3408,
+            "__w": 158,
+            "__h": 89,
+            "origin": [
+              122,
+              125
+            ]
+          },
+          "4": {
+            "__b": 3409,
+            "__w": 87,
+            "__h": 108,
+            "origin": [
+              121,
+              136
+            ]
+          },
+          "5": {
+            "__b": 3410,
+            "__w": 96,
+            "__h": 115,
+            "origin": [
+              126,
+              140
+            ]
+          },
+          "6": {
+            "__b": 3411,
+            "__w": 99,
+            "__h": 122,
+            "origin": [
+              127,
+              145
+            ]
+          }
+        },
+        "effectAfter": 100,
+        "elemAttr": "F",
+        "hit": {
+          "0": {
+            "__b": 3415,
+            "__w": 100,
+            "__h": 113,
+            "origin": [
+              50,
+              56
+            ]
+          },
+          "1": {
+            "__b": 3416,
+            "__w": 100,
+            "__h": 104,
+            "origin": [
+              50,
+              58
+            ]
+          },
+          "2": {
+            "__b": 3417,
+            "__w": 103,
+            "__h": 114,
+            "origin": [
+              52,
+              63
+            ]
+          },
+          "3": {
+            "__b": 3418,
+            "__w": 106,
+            "__h": 90,
+            "origin": [
+              53,
+              45
+            ],
+            "z": 0
+          }
+        },
+        "magic": 1,
+        "range": {
+          "r": 250,
+          "sp": [
+            -28,
+            -69
+          ]
+        },
+        "type": 2
+      },
+      "animation_path_key": "attack2",
+      "effects": [
+        {
+          "path_key": "attack2/info/effect",
+          "z": 0,
+          "is_area_warning": false
+        }
+      ]
+    },
+    "3": {
+      "id": 3,
+      "info": {
+        "attackAfter": 400,
+        "conMP": 2,
+        "effect": {
+          "0": {
+            "__b": 3423,
+            "__w": 243,
+            "__h": 112,
+            "origin": [
+              138,
+              139
+            ]
+          },
+          "1": {
+            "__b": 3424,
+            "__w": 243,
+            "__h": 112,
+            "origin": [
+              138,
+              139
+            ]
+          },
+          "2": {
+            "__b": 3425,
+            "__w": 243,
+            "__h": 111,
+            "origin": [
+              138,
+              139
+            ]
+          },
+          "3": {
+            "__b": 3426,
+            "__w": 240,
+            "__h": 110,
+            "origin": [
+              138,
+              139
+            ]
+          }
+        },
+        "effectAfter": 500,
+        "hit": {
+          "0": {
+            "__b": 3427,
+            "__w": 78,
+            "__h": 72,
+            "delay": 120,
+            "origin": [
+              39,
+              36
+            ],
+            "z": 0
+          },
+          "1": {
+            "__b": 3428,
+            "__w": 77,
+            "__h": 78,
+            "delay": 90,
+            "origin": [
+              48,
+              32
+            ],
+            "z": 0
+          },
+          "2": {
+            "__b": 3429,
+            "__w": 83,
+            "__h": 94,
+            "delay": 120,
+            "origin": [
+              55,
+              49
+            ],
+            "z": 0
+          },
+          "3": {
+            "__b": 3430,
+            "__w": 77,
+            "__h": 78,
+            "delay": 90,
+            "origin": [
+              42,
+              43
+            ],
+            "z": 0
+          },
+          "4": {
+            "__b": 3431,
+            "__w": 77,
+            "__h": 78,
+            "delay": 150,
+            "origin": [
+              31,
+              34
+            ],
+            "z": 0
+          }
+        },
+        "magic": 1,
+        "range": {
+          "lt": [
+            -330,
+            -160
+          ],
+          "rb": [
+            105,
+            0
+          ]
+        },
+        "type": 0
+      },
+      "animation_path_key": "attack3",
+      "effects": [
+        {
+          "path_key": "attack3/info/effect",
+          "z": 0,
+          "is_area_warning": false
+        }
+      ]
+    }
+  },
+  "skill_nodes": {},
+  "mx_animations": {
+    "die1": "animations/die1.json",
+    "hit1": "animations/hit1.json",
+    "move": "animations/move.json",
+    "stand": "animations/stand.json",
+    "attack1": "animations/attack1.json",
+    "attack1/info/effect": "animations/attack1__info__effect.json",
+    "attack2": "animations/attack2.json",
+    "attack2/info/effect": "animations/attack2__info__effect.json",
+    "attack3": "animations/attack3.json",
+    "attack3/info/effect": "animations/attack3__info__effect.json"
+  }
+}

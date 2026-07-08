@@ -1,0 +1,17 @@
+{
+  "info": {
+    "dcBottom": 0,
+    "dcLeft": -46,
+    "dcRight": 35,
+    "dcTop": -140,
+    "script": {
+      "0": {
+        "script": "aqua_taxi"
+      }
+    },
+    "speak": {
+      "0": "n0"
+    }
+  },
+  "animations_path": "animation.json"
+}

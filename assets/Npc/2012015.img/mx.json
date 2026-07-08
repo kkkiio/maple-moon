@@ -1,0 +1,15 @@
+{
+  "info": {
+    "dcBottom": -20,
+    "dcLeft": -25,
+    "dcRight": 25,
+    "dcTop": -116,
+    "float": 1,
+    "script": {
+      "0": {
+        "script": "ossyria3_2"
+      }
+    }
+  },
+  "animations_path": "animation.json"
+}

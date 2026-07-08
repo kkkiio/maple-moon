@@ -1,0 +1,15 @@
+{
+  "info": {
+    "dcBottom": 0,
+    "dcLeft": -41,
+    "dcRight": 37,
+    "dcTop": -23,
+    "hideName": 1,
+    "script": {
+      "0": {
+        "script": "s4holycharge"
+      }
+    }
+  },
+  "animations_path": "animation.json"
+}

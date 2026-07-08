@@ -1,0 +1,14 @@
+{
+  "info": {
+    "dcBottom": 0,
+    "dcLeft": -57,
+    "dcRight": 72,
+    "dcTop": -149,
+    "script": {
+      "0": {
+        "script": "sca_DitRoi"
+      }
+    }
+  },
+  "animations_path": "animation.json"
+}

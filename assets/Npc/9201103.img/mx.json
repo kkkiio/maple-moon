@@ -1,0 +1,11 @@
+{
+  "info": {
+    "script": {
+      "0": {
+        "script": "tcg4_6_8241"
+      }
+    },
+    "speak": {}
+  },
+  "animations_path": "animation.json"
+}

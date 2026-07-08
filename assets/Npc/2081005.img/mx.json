@@ -1,0 +1,14 @@
+{
+  "info": {
+    "dcBottom": 0,
+    "dcLeft": -79,
+    "dcRight": 76,
+    "dcTop": -130,
+    "script": {
+      "0": {
+        "script": "hontale_keroben"
+      }
+    }
+  },
+  "animations_path": "animation.json"
+}

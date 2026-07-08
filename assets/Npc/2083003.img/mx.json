@@ -1,0 +1,23 @@
+{
+  "info": {
+    "dcBottom": 4,
+    "dcLeft": -111,
+    "dcRight": 73,
+    "dcTop": -144,
+    "default": {
+      "__b": 6100,
+      "__w": 157,
+      "__h": 76,
+      "origin": [
+        78,
+        75
+      ]
+    },
+    "script": {
+      "0": {
+        "script": "hontale_Bdoor"
+      }
+    }
+  },
+  "animations_path": "animation.json"
+}

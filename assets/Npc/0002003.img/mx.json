@@ -1,0 +1,17 @@
+{
+  "info": {
+    "dcMark": 1,
+    "script": {
+      "0": {
+        "script": "begin5"
+      }
+    },
+    "speak": {
+      "0": "n0",
+      "1": "n1",
+      "2": "n2",
+      "3": "n3"
+    }
+  },
+  "animations_path": "animation.json"
+}

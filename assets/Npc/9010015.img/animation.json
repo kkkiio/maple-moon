@@ -1,0 +1,74 @@
+{ "frames": [
+   {
+    "filename": "animation 0.aseprite",
+    "frame": { "x": 115, "y": 67, "w": 54, "h": 68 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 1, "w": 54, "h": 68 },
+    "sourceSize": { "w": 58, "h": 69 },
+    "duration": 150
+   },
+   {
+    "filename": "animation 1.aseprite",
+    "frame": { "x": 54, "y": 69, "w": 52, "h": 67 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 2, "w": 52, "h": 67 },
+    "sourceSize": { "w": 58, "h": 69 },
+    "duration": 150
+   },
+   {
+    "filename": "animation 2.aseprite",
+    "frame": { "x": 0, "y": 68, "w": 54, "h": 66 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 3, "w": 54, "h": 66 },
+    "sourceSize": { "w": 58, "h": 69 },
+    "duration": 150
+   },
+   {
+    "filename": "animation 3.aseprite",
+    "frame": { "x": 115, "y": 0, "w": 55, "h": 67 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 2, "w": 55, "h": 67 },
+    "sourceSize": { "w": 58, "h": 69 },
+    "duration": 150
+   },
+   {
+    "filename": "animation 4.aseprite",
+    "frame": { "x": 0, "y": 0, "w": 58, "h": 68 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 1, "w": 58, "h": 68 },
+    "sourceSize": { "w": 58, "h": 69 },
+    "duration": 150
+   },
+   {
+    "filename": "animation 5.aseprite",
+    "frame": { "x": 58, "y": 0, "w": 57, "h": 69 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 57, "h": 69 },
+    "sourceSize": { "w": 58, "h": 69 },
+    "duration": 150
+   }
+ ],
+ "meta": {
+  "app": "https://www.aseprite.org/",
+  "version": "1.3.14.4-arm64",
+  "image": "animation.png",
+  "format": "RGBA8888",
+  "size": { "w": 170, "h": 136 },
+  "scale": "1",
+  "frameTags": [
+   { "name": "stand", "from": 0, "to": 5, "direction": "forward", "color": "#000000ff" }
+  ],
+  "layers": [
+   { "name": "main", "opacity": 255, "blendMode": "normal" }
+  ],
+  "slices": [
+   { "name": "anchor_stand", "keys": [{ "frame": 0, "bounds": {"x": 0, "y": 0, "w": 58, "h": 69 }, "pivot": {"x": 28, "y": 69 } }] }
+  ]
+ }
+}

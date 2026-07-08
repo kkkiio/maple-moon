@@ -1,0 +1,11 @@
+{
+  "info": {
+    "dcBottom": 0,
+    "dcLeft": -38,
+    "dcRight": 34,
+    "dcTop": -73,
+    "trunkGet": 1000,
+    "trunkPut": 500
+  },
+  "animations_path": "animation.json"
+}

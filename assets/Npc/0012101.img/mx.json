@@ -1,0 +1,15 @@
+{
+  "info": {
+    "script": {
+      "0": {
+        "script": "rein"
+      }
+    },
+    "speak": {
+      "0": "n0",
+      "1": "n1",
+      "2": "n2"
+    }
+  },
+  "animations_path": "animation.json"
+}

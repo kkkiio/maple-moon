@@ -1,0 +1,14 @@
+{
+  "info": {
+    "dcBottom": 1,
+    "dcLeft": -81,
+    "dcRight": 77,
+    "dcTop": -149,
+    "script": {
+      "0": {
+        "script": "nihal_taxi"
+      }
+    }
+  },
+  "animations_path": "animation.json"
+}

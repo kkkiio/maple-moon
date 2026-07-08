@@ -1,0 +1,16 @@
+{
+  "info": {
+    "dcBottom": -272,
+    "dcLeft": -16,
+    "dcRight": 18,
+    "dcTop": -307,
+    "hideName": 1,
+    "script": {
+      "0": {
+        "script": "alceCircle1"
+      }
+    },
+    "talkMouseOnly": 1
+  },
+  "animations_path": "animation.json"
+}

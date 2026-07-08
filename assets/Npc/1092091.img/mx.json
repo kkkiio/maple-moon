@@ -1,0 +1,11 @@
+{
+  "info": {
+    "hideName": 1,
+    "script": {
+      "0": {
+        "script": "mom_cow"
+      }
+    }
+  },
+  "animations_path": "animation.json"
+}

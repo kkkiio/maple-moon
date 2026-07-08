@@ -1,0 +1,14 @@
+{
+  "info": {
+    "dcBottom": 0,
+    "dcLeft": -38,
+    "dcRight": 26,
+    "dcTop": -84,
+    "script": {
+      "0": {
+        "script": "party2_out"
+      }
+    }
+  },
+  "animations_path": "animation.json"
+}

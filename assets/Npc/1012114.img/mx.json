@@ -1,0 +1,10 @@
+{
+  "info": {
+    "script": {
+      "0": {
+        "script": "moonrabbit_tiger"
+      }
+    }
+  },
+  "animations_path": "animation.json"
+}

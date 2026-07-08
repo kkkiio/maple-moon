@@ -69,12 +69,14 @@ fn nx_portal_from_tiled_object(obj : @tiled.TiledObject) -> NxPortal raise {
   let pn = tiled_object_string_required(obj, "pn")
   let tm = tiled_object_int_required(obj, "tm")
   let tn = tiled_object_string_required(obj, "tn")
+  let x = tiled_object_int_required(obj, "x")
+  let y = tiled_object_int_required(obj, "y")
   let pt_id = tiled_object_int_required(obj, "pt")
   let pt = match PortalType::typebyid(pt_id) {
     Some(pt) => pt
     None => fail("invalid portal type `pt=\{pt_id}`, object_id=\{obj.id}")
   }
-  { pn, tm, tn, x: obj.x.to_int(), y: obj.y.to_int(), pt }
+  { pn, tm, tn, x, y, pt }
 }
 
 ///|
@@ -188,49 +190,7 @@ pub fn MapPortals::find_warp_at(
 
 ///|
 pub fn MapPortalAnimations::load() -> MapPortalAnimations {
-  fn atlas_animation(
-    path : String,
-    frame_count : Int,
-    frame_width : Double,
-    frame_height : Double,
-    pivot : @selene_math.Vec2,
-  ) -> @ms_animation.Animation {
-    let image = @resource.load_image(path)
-    let frames : Array[@ms_animation.AnimationFrame] = []
-    for frame_index = 0
-        frame_index < frame_count
-        frame_index = frame_index + 1 {
-      frames.push({
-        image,
-        size: @selene_math.Vec2(frame_width, frame_height),
-        offset: @selene_math.Vec2(frame_width * frame_index.to_double(), 0.0),
-        pivot,
-        duration: 0.1,
-      })
-    }
-    @ms_animation.Animation::new(frames, loop_=true)
-  }
-  let ani1 = atlas_animation(
-    "assets/portal/continue.png",
-    7,
-    128.0,
-    122.0,
-    @selene_math.Vec2(62, 119),
-  )
-  let ani2 = atlas_animation(
-    "assets/portal/regular.png",
-    8,
-    89.0,
-    257.0,
-    @selene_math.Vec2(44, 248),
-  )
-  {
-    animations: Map::from_array([
-      (PortalType::HIDDEN, ani1),
-      (PortalType::REGULAR, ani2),
-      (PortalType::SCRIPTED, ani2),
-    ]),
-  }
+  { animations: Map([]) }
 }
 
 ///|

@@ -160,6 +160,10 @@ fn apply_map_object_z(event : @tiled.TiledObjectSpawnedEvent) -> Unit {
     set_entity_z(event.object_entity, @graphics.FOREGROUND_ZINDEX + index)
     return
   }
+  if event.layer.name == "portal" {
+    set_entity_z(event.object_entity, @graphics.PORTAL_ZINDEX)
+    return
+  }
   guard parse_map_layer_name(event.layer.name) is Some((layer_from_name, kind)) else {
     return
   }

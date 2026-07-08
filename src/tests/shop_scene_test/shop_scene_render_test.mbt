@@ -150,8 +150,12 @@ test "shop scene npc render snapshot on map 102000001" {
     raw_delta=0.016,
   )
 
-  debug_inspect(@entity.iter_entities().to_array().length(), content=(#|61
-  ))
+  debug_inspect(
+    @entity.iter_entities().to_array().length(),
+    content=(
+      #|61
+    ),
+  )
   @capture_app.snapshot(
     "src/tests/shop_scene_test/__snapshot__/shop_scene_map_102000001_npcs.png",
     capture.png,

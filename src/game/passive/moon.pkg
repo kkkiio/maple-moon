@@ -32,7 +32,5 @@ import {
 supported_targets = "native+js"
 
 options(
-  overrides: [
-    "Milky2018/selene_raylib/platform_asset_io",
-  ],
+  overrides: [ "Milky2018/selene_raylib/platform_asset_io" ],
 )

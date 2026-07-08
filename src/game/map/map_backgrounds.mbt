@@ -865,10 +865,7 @@ test "parallax screen axis matches exported Tiled coordinate space" {
   let moving_screen_x = maple_background_axis_screen(
     -683.0, 683.0, -396.0, 0.05, -400.0, -4.0, true,
   )
-  let expected_moving_x = -396.0 +
-    (1.0 - 0.05) * (0.0 - 400.0) -
-    -683.0 -
-    4.0
+  let expected_moving_x = -396.0 + (1.0 - 0.05) * (0.0 - 400.0) - -683.0 - 4.0
   assert_true((moving_screen_x - expected_moving_x).abs() < 0.000001)
 }
 

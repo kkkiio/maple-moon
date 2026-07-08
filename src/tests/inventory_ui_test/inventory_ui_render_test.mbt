@@ -85,8 +85,12 @@ test "inventory ui renders equip tab with icon count and meso" {
     height=540,
     raw_delta=0.016,
   )
-  debug_inspect(@entity.iter_entities().to_array().length(), content=(#|34
-  ))
+  debug_inspect(
+    @entity.iter_entities().to_array().length(),
+    content=(
+      #|34
+    ),
+  )
   @capture_app.snapshot(
     "src/tests/inventory_ui_test/__snapshot__/inventory_ui_default.png",
     capture.png,
@@ -107,8 +111,12 @@ test "inventory ui renders use tab with icon count and meso" {
     height=540,
     raw_delta=0.016,
   )
-  debug_inspect(@entity.iter_entities().to_array().length(), content=(#|34
-  ))
+  debug_inspect(
+    @entity.iter_entities().to_array().length(),
+    content=(
+      #|34
+    ),
+  )
   @capture_app.snapshot(
     "src/tests/inventory_ui_test/__snapshot__/inventory_ui_use_tab.png",
     capture.png,

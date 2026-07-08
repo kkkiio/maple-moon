@@ -44,6 +44,7 @@ pub fn mock_server_latest_sent_json(type_code : Int) -> Json? {
   mock_server_latest_sent_json_internal(type_code)
 }
 
+///|
 let raylib_capture_window_open : Ref[Bool] = { val: false }
 
 ///|
@@ -98,14 +99,14 @@ pub fn capture_after_frames(
   }
   ensure_native_context(width~, height~)
   let captures = app
-  .with_image_smooth(image_smooth)
-  .run_frames_capture(
-    frames,
-    capture_width=width,
-    capture_height=height,
-    raw_delta~,
-    capture_frame_indexes=Some([frames - 1]),
-  )
+    .with_image_smooth(image_smooth)
+    .run_frames_capture(
+      frames,
+      capture_width=width,
+      capture_height=height,
+      raw_delta~,
+      capture_frame_indexes=Some([frames - 1]),
+    )
   if captures.length() != 1 {
     fail(
       "capture_after_frames expected exactly one capture, got \{captures.length()}",

@@ -106,8 +106,12 @@ test "select char ui renders character and start button chooses first character"
   assert_true(emitted_character_list.val)
   assert_true(@entity.iter_entities().to_array().length() >= 10)
 
-  debug_inspect(@entity.iter_entities().to_array().length(), content=(#|17
-  ))
+  debug_inspect(
+    @entity.iter_entities().to_array().length(),
+    content=(
+      #|17
+    ),
+  )
   @capture_app.snapshot(
     "src/tests/select_char_ui_test/__snapshot__/select_char_ui_default.png",
     capture.png,

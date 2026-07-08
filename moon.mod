@@ -23,11 +23,13 @@ keywords = [ ]
 description = ""
 
 preferred_target = "native"
+
 supported_targets = "native+js"
 
 warnings = "-28"
 
+source = "src"
+
 options(
-  source: "src",
   link: { "native": { "cc": "clang" } },
 )

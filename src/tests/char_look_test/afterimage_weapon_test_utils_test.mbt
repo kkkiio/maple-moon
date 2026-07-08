@@ -166,7 +166,11 @@ fn snapshot_afterimage_case(
     height=220,
     raw_delta=0.016,
   )
-  debug_inspect(@entity.iter_entities().to_array().length(), content=(#|11
-  ))
+  debug_inspect(
+    @entity.iter_entities().to_array().length(),
+    content=(
+      #|11
+    ),
+  )
   @capture_app.snapshot(snapshot_path, capture.png)
 }

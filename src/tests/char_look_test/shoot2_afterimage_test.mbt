@@ -129,8 +129,12 @@ test "crossbow shoot2 afterimage without range should render" {
     height=200,
     raw_delta=0.016,
   )
-  debug_inspect(@entity.iter_entities().to_array().length(), content=(#|11
-  ))
+  debug_inspect(
+    @entity.iter_entities().to_array().length(),
+    content=(
+      #|11
+    ),
+  )
   @capture_app.snapshot(
     "src/tests/char_look_test/__snapshot__/crossbow_shoot2_afterimage_left.png",
     capture.png,

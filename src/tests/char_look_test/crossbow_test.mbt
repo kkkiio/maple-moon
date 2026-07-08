@@ -108,8 +108,12 @@ test "character with crossbow equipment" {
     height=200,
     raw_delta=0.016,
   )
-  debug_inspect(@entity.iter_entities().to_array().length(), content=(#|10
-  ))
+  debug_inspect(
+    @entity.iter_entities().to_array().length(),
+    content=(
+      #|10
+    ),
+  )
   @capture_app.snapshot(
     "src/tests/char_look_test/__snapshot__/crossbow_stand1.png",
     capture.png,

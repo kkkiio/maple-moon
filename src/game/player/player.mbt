@@ -775,12 +775,6 @@ fn init {
       Some(player) => player.character.get_position()
       None => @struct.Point::new(0, 0)
     }
-    {
-      "ok": true,
-      "code": "OK",
-      "map_id": map_id,
-      "x": pos.x,
-      "y": pos.y,
-    }
+    { "ok": true, "code": "OK", "map_id": map_id, "x": pos.x, "y": pos.y }
   })
 }

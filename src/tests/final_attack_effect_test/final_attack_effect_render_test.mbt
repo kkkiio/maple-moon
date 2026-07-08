@@ -72,8 +72,12 @@ test "final attack hit effect with EFFECT_ZINDEX stays visible" {
     raw_delta=0.016,
   )
 
-  debug_inspect(@entity.iter_entities().to_array().length(), content=(#|3
-  ))
+  debug_inspect(
+    @entity.iter_entities().to_array().length(),
+    content=(
+      #|3
+    ),
+  )
   @capture_app.snapshot(
     "src/tests/final_attack_effect_test/__snapshot__/final_attack_hit_z_effect_layer.png",
     capture.png,

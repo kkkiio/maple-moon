@@ -75,8 +75,12 @@ test "quest_log_ui renders in-progress & completed tab" {
     raw_delta=0.016,
   )
 
-  debug_inspect(@entity.iter_entities().to_array().length(), content=(#|26
-  ))
+  debug_inspect(
+    @entity.iter_entities().to_array().length(),
+    content=(
+      #|26
+    ),
+  )
   @capture_app.snapshot(
     "src/tests/quest_log_ui_test/__snapshot__/quest_log_ui_in_progress.png",
     capture.png,
@@ -93,8 +97,12 @@ test "quest_log_ui renders in-progress & completed tab" {
     height=540,
     raw_delta=0.016,
   )
-  debug_inspect(@entity.iter_entities().to_array().length(), content=(#|26
-  ))
+  debug_inspect(
+    @entity.iter_entities().to_array().length(),
+    content=(
+      #|26
+    ),
+  )
   @capture_app.snapshot(
     "src/tests/quest_log_ui_test/__snapshot__/quest_log_ui_in_progress_second_selected.png",
     capture2.png,
@@ -109,8 +117,12 @@ test "quest_log_ui renders in-progress & completed tab" {
     height=540,
     raw_delta=0.016,
   )
-  debug_inspect(@entity.iter_entities().to_array().length(), content=(#|24
-  ))
+  debug_inspect(
+    @entity.iter_entities().to_array().length(),
+    content=(
+      #|24
+    ),
+  )
   @capture_app.snapshot(
     "src/tests/quest_log_ui_test/__snapshot__/quest_log_ui_completed.png",
     capture3.png,

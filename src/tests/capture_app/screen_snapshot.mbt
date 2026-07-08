@@ -15,11 +15,9 @@
 ///   artifact.png,
 /// )
 /// ```
-pub fn snapshot(
-  path : String,
-  actual : Bytes,
-) -> Unit raise {
-  let update_snapshot = @env.get_env_var("UPDATE_GRAPHICS_SNAPS") is Some("true")
+pub fn snapshot(path : String, actual : Bytes) -> Unit raise {
+  let update_snapshot = @env.get_env_var("UPDATE_GRAPHICS_SNAPS")
+    is Some("true")
   let should_write_snapshot = update_snapshot || !@fs.path_exists(path)
   try {
     if should_write_snapshot {

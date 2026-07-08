@@ -80,8 +80,12 @@ test "mini map ui renders normal frame" {
     height=240,
     raw_delta=0.016,
   )
-  debug_inspect(@entity.iter_entities().to_array().length(), content=(#|9
-  ))
+  debug_inspect(
+    @entity.iter_entities().to_array().length(),
+    content=(
+      #|9
+    ),
+  )
   @capture_app.snapshot(
     "src/tests/mini_map_ui_test/__snapshot__/mini_map_ui_normal.png",
     capture.png,
@@ -145,8 +149,12 @@ test "mini map ui renders portal marker from real map 100030000" {
     height=240,
     raw_delta=0.016,
   )
-  debug_inspect(@entity.iter_entities().to_array().length(), content=(#|12
-  ))
+  debug_inspect(
+    @entity.iter_entities().to_array().length(),
+    content=(
+      #|12
+    ),
+  )
   @capture_app.snapshot(
     "src/tests/mini_map_ui_test/__snapshot__/mini_map_ui_with_portal_marker.png",
     capture.png,

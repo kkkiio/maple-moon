@@ -174,8 +174,12 @@ test "npc_talk_ui quest 2090 keeps cursor above ui and grows with content" {
   assert_true(has_window_material)
   assert_true(has_cursor_node)
 
-  debug_inspect(@entity.iter_entities().to_array().length(), content=(#|11
-  ))
+  debug_inspect(
+    @entity.iter_entities().to_array().length(),
+    content=(
+      #|11
+    ),
+  )
   @capture_app.snapshot(
     "src/tests/npc_talk_ui_test/__snapshot__/npc_talk_ui_quest_2090.png",
     capture.png,

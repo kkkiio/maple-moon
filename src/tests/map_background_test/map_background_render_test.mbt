@@ -78,8 +78,12 @@ test "map 101010102 tween lighting alpha background start" {
   let start_alpha = min_sprite_alpha()
   assert_true(start_alpha >= 0.0)
   assert_true(visible_sprite_count() > 0)
-  debug_inspect(@entity.iter_entities().to_array().length(), content=(#|713
-  ))
+  debug_inspect(
+    @entity.iter_entities().to_array().length(),
+    content=(
+      #|713
+    ),
+  )
   @capture_app.snapshot(
     "src/tests/map_background_test/__snapshot__/map_101010102_bg_alpha_start.png",
     capture.png,
@@ -104,8 +108,12 @@ test "map 101010102 tween lighting alpha background mid" {
   let after_motion_alpha = min_sprite_alpha()
   assert_true(after_motion_alpha >= 0.0)
   assert_true(visible_sprite_count() > 0)
-  debug_inspect(@entity.iter_entities().to_array().length(), content=(#|713
-  ))
+  debug_inspect(
+    @entity.iter_entities().to_array().length(),
+    content=(
+      #|713
+    ),
+  )
   @capture_app.snapshot(
     "src/tests/map_background_test/__snapshot__/map_101010102_bg_alpha_mid.png",
     capture.png,
@@ -183,19 +191,19 @@ test "map 100000000 background" {
     let viewport_pos = @ms_camera.world_to_viewport(global_pos)
     let global_z = @transform.global_transforms()
       .get(entity)
-      .map(fn(transform) {
-        transform.translation().z.round().to_int()
-      })
+      .map(fn(transform) { transform.translation().z.round().to_int() })
       .unwrap_or(0)
-    background_sprite_positions.push((
-      width,
-      height,
-      global_pos[@math.X].round().to_int(),
-      global_pos[@math.Y].round().to_int(),
-      viewport_pos[@math.X].round().to_int(),
-      viewport_pos[@math.Y].round().to_int(),
-      global_z,
-    ))
+    background_sprite_positions.push(
+      (
+        width,
+        height,
+        global_pos[@math.X].round().to_int(),
+        global_pos[@math.Y].round().to_int(),
+        viewport_pos[@math.X].round().to_int(),
+        viewport_pos[@math.Y].round().to_int(),
+        global_z,
+      ),
+    )
   }
   background_sprite_positions.sort_by(fn(lhs, rhs) {
     let lhs_key = lhs.0.compare(rhs.0)
@@ -224,43 +232,47 @@ test "map 100000000 background" {
       item.destination_rect is Some(rect) else {
       continue
     }
-    draw_29100_commands.push((
-      rect.x.round().to_int(),
-      rect.y.round().to_int(),
-      rect.width.round().to_int(),
-      rect.height.round().to_int(),
-      item.depth.map(fn(depth) { depth.round().to_int() }).unwrap_or(0),
-    ))
+    draw_29100_commands.push(
+      (
+        rect.x.round().to_int(),
+        rect.y.round().to_int(),
+        rect.width.round().to_int(),
+        rect.height.round().to_int(),
+        item.depth.map(fn(depth) { depth.round().to_int() }).unwrap_or(0),
+      ),
+    )
   }
-  debug_inspect((
-    @entity.iter_entities().to_array().length(),
+  debug_inspect(
     (
-      camera_top_left[@math.X].round().to_int(),
-      camera_top_left[@math.Y].round().to_int(),
+      @entity.iter_entities().to_array().length(),
+      (
+        camera_top_left[@math.X].round().to_int(),
+        camera_top_left[@math.Y].round().to_int(),
+      ),
+      background_sprite_positions,
+      draw_29100_commands,
     ),
-    background_sprite_positions,
-    draw_29100_commands,
-  ), content=(
-    #|(
-    #|  1626,
-    #|  (-683, -384),
-    #|  [
-    #|    (315, 268, -103, -231, 580, 153, 2006),
-    #|    (1024, 257, -818, 214, -135, 598, 2008),
-    #|    (1024, 257, 1230, 214, 1913, 598, 2012),
-    #|    (1024, 294, 206, 177, 889, 561, 2010),
-    #|    (1024, 294, 2254, 177, 2937, 561, 2014),
-    #|    (1024, 579, -779, -202, -96, 182, 2002),
-    #|    (1024, 579, 245, -202, 928, 182, 2002),
-    #|    (1024, 579, 1269, -202, 1952, 182, 2002),
-    #|    (1024, 579, 2293, -202, 2976, 182, 2002),
-    #|    (1024, 579, 3317, -202, 4000, 182, 2002),
-    #|    (2493, 340, -1071, 37, -388, 421, 2004),
-    #|  ],
-    #|  [(-388, 421, 2493, 340, 2004)],
-    #|)
-
-  ))
+    content=(
+      #|(
+      #|  1626,
+      #|  (-683, -384),
+      #|  [
+      #|    (315, 268, -103, -231, 580, 153, 2006),
+      #|    (1024, 257, -818, 214, -135, 598, 2008),
+      #|    (1024, 257, 1230, 214, 1913, 598, 2012),
+      #|    (1024, 294, 206, 177, 889, 561, 2010),
+      #|    (1024, 294, 2254, 177, 2937, 561, 2014),
+      #|    (1024, 579, -779, -202, -96, 182, 2002),
+      #|    (1024, 579, 245, -202, 928, 182, 2002),
+      #|    (1024, 579, 1269, -202, 1952, 182, 2002),
+      #|    (1024, 579, 2293, -202, 2976, 182, 2002),
+      #|    (1024, 579, 3317, -202, 4000, 182, 2002),
+      #|    (2493, 340, -1071, 37, -388, 421, 2004),
+      #|  ],
+      #|  [(-388, 421, 2493, 340, 2004)],
+      #|)
+    ),
+  )
   @capture_app.snapshot(
     "src/tests/map_background_test/__snapshot__/map_100000000_bg.png",
     capture.png,

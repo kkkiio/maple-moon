@@ -154,6 +154,8 @@ just build
 
 `just check` 覆盖 JS 与 native target, 但只做类型检查, 不进入 native C 编译/链接.
 
+`.mbti` 文件是 MoonBit 生成的包接口摘要, 记录 public API 签名, 供依赖包和文档示例检查使用.
+
 `moon info` 可能会更新 `pkg.generated.mbti` 的文件末尾空行. 这类纯空行 diff 是生成器输出, 不要回滚或清理; 只需要检查 public API 是否有语义变化.
 
 `just test` 运行所有 native target 测试，包括普通逻辑测试、数据测试和 native raylib 图形快照测试:

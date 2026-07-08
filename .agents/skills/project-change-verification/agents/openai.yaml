@@ -1,4 +1,0 @@
-interface:
-  display_name: "Project Change Verification"
-  short_description: "Verify code/resource changes and delegate runtime checks."
-  default_prompt: "Use $project-change-verification after code or resource edits to run moon info, verify public API and README.mbt.md consistency, and delegate Maple CLI runtime checks when needed."

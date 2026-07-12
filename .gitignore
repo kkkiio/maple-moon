@@ -23,6 +23,7 @@ CLAUDE.md
 .env.dev
 .env.test
 *.log
+logs/
 
 # temporary local work
 moon.work

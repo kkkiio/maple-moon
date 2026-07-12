@@ -12,7 +12,11 @@
 		"moon:build": "npm run moon:build:web",
 		"moon:build:web": "moon build --target js --release src/apps/game_web",
 		"moon:build:native": "moon build --target native --release src/apps/game_native",
-		"dev": "vite",
+		"predev": "moon run --target js --build-only src/cmd/maple && moon run --target js --build-only src/cmd/mapled && node --enable-source-maps _build/js/debug/build/KKKIIO/maple-moon/cmd/maple/maple.js close",
+		"dev": "concurrently --raw --kill-others \"npm:dev:vite\" \"npm:dev:mapled\" \"npm:dev:browser\"",
+		"dev:vite": "vite",
+		"dev:mapled": "node --enable-source-maps _build/js/debug/build/KKKIIO/maple-moon/cmd/mapled/mapled.js",
+		"dev:browser": "node --enable-source-maps _build/js/debug/build/KKKIIO/maple-moon/cmd/maple/maple.js status --wait && node --enable-source-maps _build/js/debug/build/KKKIIO/maple-moon/cmd/maple/maple.js logs --clear && node --enable-source-maps _build/js/debug/build/KKKIIO/maple-moon/cmd/maple/maple.js open --wait && node --enable-source-maps _build/js/debug/build/KKKIIO/maple-moon/cmd/maple/maple.js logs --follow --out logs/browser.log",
 		"build": "npm run moon:build:web && vite build"
 	},
 	"repository": {
@@ -51,6 +55,7 @@
 		"@vitejs/plugin-react": "^5.1.1",
 		"autoprefixer": "^10.4.22",
 		"baseline-browser-mapping": "^2.9.19",
+		"concurrently": "^9.2.4",
 		"postcss": "^8.5.6",
 		"vite": "^6.1.0"
 	}

@@ -1,4 +1,0 @@
-interface:
-  display_name: "Maple CLI"
-  short_description: "Drive Maple Moon browser with atomic maple/mapled commands."
-  default_prompt: "Use $maple-cli for atomic browser operations: start/status/close, cmd for console commands, logs/network for error collection, screenshot for captures. Each command does one thing. Compose commands for workflows; do not create composite black-box commands."

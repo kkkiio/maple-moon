@@ -1,14 +1,10 @@
-# ADR 0007: Playtest Bot — JS 场景脚本驱动的游戏行为测试
+# Playtest Bot — JS 场景脚本驱动的游戏行为测试
 
 Date: 2026-06-17
 
-## Status
-
-Accepted
-
 ## Context
 
-项目有三种测试手段（ADR 0008）：快照测试覆盖视觉/数据回归，maple-cli 覆盖
+项目有三种测试手段（`0008-testing-strategy-boundaries.md`）：快照测试覆盖视觉/数据回归，maple-cli 覆盖
 浏览器环境（crash/404/console error），两者都不覆盖游戏逻辑行为（传送、攀爬、
 战斗、掉落等）。
 
@@ -179,7 +175,7 @@ moon run --target js src/cmd/maple bot run playtests/henesys_traversal.js
 
 ### 遥测与判定
 
-mapled 收集 console/network/telemetry 后，做固定指标判定（ADR 0008 原则一）：
+mapled 收集 console/network/telemetry 后，做固定指标判定（`0008-testing-strategy-boundaries.md` 原则一）：
 
 - Bot 脚本 Promise reject → 失败
 - console error / network failure → 失败
@@ -207,7 +203,7 @@ mapled 收集 console/network/telemetry 后，做固定指标判定（ADR 0008 �
 
 ### Non-goals (for now)
 
-- 视觉验证。由快照测试（ADR 0002）负责。
+- 视觉验证。由快照测试（`0002-use-native-raylib-for-graphics-snapshots.md`）负责。
 - MoonBit 编写 bot 脚本。v0 用纯 JS，action 语义稳定后再考虑。
 - 多人/多角色 bot 同时运行。
 - CI 集成。

@@ -1,10 +1,6 @@
-# ADR 0002: Use Native Raylib For Graphics Snapshots
+# Use Native Raylib For Graphics Snapshots
 
 Date: 2026-06-23
-
-## Status
-
-Accepted
 
 ## Context
 
@@ -25,7 +21,7 @@ update switches.
 
 Graphics snapshot tests run on the native raylib backend.
 
-Test packages under `src/tests/*_test` use:
+`src/graphics_test/` package uses:
 
 - `supported_targets = "native"`;
 - `Milky2018/selene_raylib/*` platform overrides;
@@ -47,7 +43,7 @@ Each graphics test must run data snapshots before pixel snapshots:
 ```moonbit
 @debug.debug_inspect({ "entity_count": @entity.iter_entities().to_array().length() })
 let capture = @capture_app.capture_after_frames(app, 60, width=800, height=600)
-@capture_app.snapshot("src/tests/foo_test/__snapshot__/scene.png", capture.png)
+@capture_app.snapshot("src/graphics_test/__snapshot__/feature/scene.png", capture.png)
 ```
 
 Tests that load raylib textures before `capture_after_frames` must call
@@ -93,19 +89,19 @@ Tests that load raylib textures before `capture_after_frames` must call
 Run one package:
 
 ```bash
-MOONBIT_NEW_NATIVE=1 moon test --target native --deny-warn --diagnostic-limit 200 src/tests/map_background_test
+MOONBIT_NEW_NATIVE=1 moon test --target native --deny-warn --diagnostic-limit 200 src/graphics_test
 ```
 
 Update PNG baselines:
 
 ```bash
-MOONBIT_NEW_NATIVE=1 UPDATE_GRAPHICS_SNAPS=true moon test --target native --deny-warn --diagnostic-limit 200 src/tests/map_background_test
+MOONBIT_NEW_NATIVE=1 UPDATE_GRAPHICS_SNAPS=true moon test --target native --deny-warn --diagnostic-limit 200 src/graphics_test
 ```
 
 Update inspect baselines:
 
 ```bash
-MOONBIT_NEW_NATIVE=1 moon test --target native --update --deny-warn --diagnostic-limit 200 src/tests/map_background_test
+MOONBIT_NEW_NATIVE=1 moon test --target native --update --deny-warn --diagnostic-limit 200 src/graphics_test
 ```
 
 Run all snapshot packages:

@@ -1,10 +1,6 @@
-# ADR 0004: Scoped Runtime Resource Commits
+# Scoped Runtime Resource Commits
 
 Date: 2026-06-12
-
-## Status
-
-Accepted
 
 ## Context
 

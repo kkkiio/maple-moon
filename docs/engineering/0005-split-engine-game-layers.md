@@ -1,8 +1,6 @@
-# ADR 0005: Split Engine and Game Layers
+# Split Engine and Game Layers
 
 Date: 2026-06-12
-
-Status: Accepted, implemented
 
 ## Context
 
@@ -29,7 +27,7 @@ src/
     combat_system/ monster/ character/ skill/
     inventory/ quest/ map/ physics/
     ...  (~50 个子包)
-  tests/                    ← 不变
+  graphics_test/            ← 图形快照测试（一个 package）
 ```
 
 分层规则：

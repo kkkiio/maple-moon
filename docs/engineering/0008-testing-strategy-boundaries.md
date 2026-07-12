@@ -1,10 +1,6 @@
-# ADR 0008: Testing Strategy & Boundaries
+# Testing Strategy & Boundaries
 
 Date: 2026-06-20
-
-## Status
-
-Proposed
 
 ## Context
 
@@ -84,8 +80,10 @@ AI 的输出是建议，不是判决。判决权在固定指标。
 `maple` CLI 是原子命令的集合，每个命令做一件事：
 
 ```
-maple start          — 连接浏览器
+maple start          — 启动或复用 daemon
+maple open           — 打开或重新连接浏览器
 maple status         — 查看 daemon/client 状态
+maple status --wait  — 等待 daemon socket 就绪
 maple cmd <...>      — 执行单个 console 命令
 maple logs           — 读取 console 日志
 maple network        — 读取网络请求
@@ -101,6 +99,7 @@ maple close          — 关闭
 例如，加载地图并检查错误的流程：
 ```bash
 maple start
+maple open --wait
 maple cmd new_character
 maple cmd select_char 0
 maple cmd temp_set_field_enter 100000000 0
@@ -123,7 +122,7 @@ maple logs --level error
 ```moonbit
 @debug.debug_inspect({ "sprite_count": sprites.size(), "stance": stance })
 let capture = @capture_app.capture_after_frames(app, 1, width=200, height=200)
-@capture_app.snapshot("src/tests/foo_test/__snapshot__/scene.png", capture.png)
+@capture_app.snapshot("src/graphics_test/__snapshot__/foo/scene.png", capture.png)
 ```
 
 失败时 agent 先看 inspect diff 判断是状态层还是渲染层问题，再决定排查方向。

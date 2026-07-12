@@ -1,10 +1,6 @@
-# ADR 0003: Use Target-Specific Game Entrypoints
+# Use Target-Specific Game Entrypoints
 
 Date: 2026-06-12
-
-## Status
-
-Accepted
 
 ## Context
 

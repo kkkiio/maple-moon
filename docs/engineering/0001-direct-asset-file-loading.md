@@ -1,4 +1,4 @@
-# ADR 0001: Direct Asset File Loading
+# Direct Asset File Loading
 
 Date: 2026-05-30
 

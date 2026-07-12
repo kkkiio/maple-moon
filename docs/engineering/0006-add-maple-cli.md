@@ -1,10 +1,6 @@
-# ADR 0006: Add maple CLI for Interactive Debugging and Verification
+# Add maple CLI for Interactive Debugging and Verification
 
 Date: 2026-06-15
-
-## Status
-
-Accepted, amended by [ADR 0008](0008-testing-strategy-boundaries.md)
 
 ## Context
 
@@ -47,7 +43,7 @@ command execution and event collection.
 
 ### Directory structure
 
-Only two main packages under `src/cmd/`:
+Two main packages and one pure protocol package under `src/cmd/`:
 
 ```
 src/cmd/
@@ -55,9 +51,15 @@ src/cmd/
 │   ├── moon.pkg
 │   └── main.mbt
 │
-└── mapled/               # Daemon (js target, main)
+├── mapled/               # Daemon (js target, main)
+│   ├── moon.pkg
+│   ├── main.mbt          # Argument parsing and entry point
+│   ├── daemon.mbt        # Daemon state machine and command handling
+│   └── node_ffi.mbt      # Thin Node/CDP bindings
+│
+└── mapled_protocol/      # Pure CDP normalization and target selection
     ├── moon.pkg
-    └── main.mbt
+    └── protocol.mbt
 ```
 
 Debug commands continue to be registered in existing game modules through
@@ -69,11 +71,11 @@ and `temp_set_field_enter`. Commands such as `jump`, `attack`, `spawn_mob`, and
 ### Architecture
 
 ```
-Terminal 1: npm run dev
+Terminal 1: just dev → concurrently(Vite, mapled, browser/log client)
 Terminal 2: moon build --watch --target js --release src/apps/game_web
-       │
-       ▼
-  localhost:8080
+                            │
+                            ▼
+                       localhost:8080
        ▲
        │
 ┌──────────┐  Unix Socket   ┌──────────┐  CDP WebSocket   ┌─────────────┐
@@ -82,23 +84,28 @@ Terminal 2: moon build --watch --target js --release src/apps/game_web
 └──────────┘                └──────────┘                  └─────────────┘
 ```
 
-Vite and the MoonBit watch build are **not** managed by `mapled`. The developer
-starts them explicitly, keeping the normal browser workflow and avoiding hidden
-build state. `maple start` checks `http://localhost:8080`, starts `mapled` if
-needed, and asks the daemon to open Chrome at that URL.
+Vite and the MoonBit watch build are **not** managed by `mapled`. `just dev`
+uses `concurrently` to own foreground Vite, `mapled`, and browser/log client
+processes. The client waits with `maple status --wait`, clears the daemon log
+buffer, opens Chrome with `maple open --wait`, and follows logs. The MoonBit
+build remains explicit.
 
-- **`maple`** is a short-lived process: parse args with
+- **`maple`** normally runs as a short-lived process: parse args with
   `moonbitlang/core/argparse`, send a JSON request to `mapled` over a Unix
-  socket, print the response, exit.
+  socket, print the response, exit. `maple logs --follow` remains attached to
+  the daemon and streams log events until interrupted.
 - **`mapled`** is a long-lived daemon. It:
-  1. Spawns Chrome with `--remote-debugging-port`, navigating to
-     `http://localhost:8080`.
-  2. Opens a CDP WebSocket connection to Chrome.
-  3. Listens on a Unix socket for CLI requests.
-  4. Collects console logs and network events into in-memory ring buffers.
-  5. Writes small state/PID files in the temp directory so `maple start` and
+  1. Starts independently of Vite and listens for CLI requests.
+  2. On `maple open`, spawns Chrome with `--remote-debugging-port` and opens a
+     CDP WebSocket connection.
+  3. Collects console logs and network events into in-memory ring buffers and
+     broadcasts new log entries to `maple logs --follow` subscribers.
+  4. Writes small state/PID files in the temp directory so `maple start` and
      `maple close` can distinguish a live daemon from stale socket files.
-  6. Exits when Chrome disconnects or when `maple close` requests shutdown.
+  5. Keeps serving CLI requests when Chrome disconnects. Reconnection requires
+     an explicit `maple open`; `mapled` never relaunches Chrome automatically.
+  6. Exits when `maple close` requests shutdown or its foreground development
+     session receives an interrupt signal.
 
 ### Key CDP capabilities used
 
@@ -120,12 +127,17 @@ packages. They define the command shape with `moonbitlang/core/argparse`, use
 
 ```bash
 moon run --target js src/cmd/maple start
+moon run --target js src/cmd/maple open --wait
 moon run --target js src/cmd/maple cmd warp 100000000 0
 moon run --target js src/cmd/maple logs --level error
+moon run --target js src/cmd/maple logs --follow --out logs/browser.log
 ```
 
-Node/CDP/socket interop is expressed as inline `extern "js"` FFI inside the
-MoonBit source files. There are no separate runtime scripts.
+Node/CDP/socket interop is expressed as focused `extern "js"` FFI bindings in
+`mapled/node_ffi.mbt`. Daemon state, request routing, CDP event normalization,
+target selection, log/network buffers, and lifecycle policy are MoonBit code.
+The WebSocket adapter retains only the JavaScript-specific correlation between
+CDP request IDs and pending promises. There are no separate runtime scripts.
 
 Node.js APIs used by the MoonBit JS FFI:
 
@@ -141,7 +153,9 @@ Node.js APIs used by the MoonBit JS FFI:
 
 ```bash
 moon run --target js src/cmd/maple start
+moon run --target js src/cmd/maple open --wait
 moon run --target js src/cmd/maple status
+moon run --target js src/cmd/maple status --wait
 moon run --target js src/cmd/maple wait-ready
 moon run --target js src/cmd/maple cmd warp 100000000 0
 moon run --target js src/cmd/maple cmd meso 1000000
@@ -150,6 +164,8 @@ moon run --target js src/cmd/maple cmd new_character
 moon run --target js src/cmd/maple cmd select_char 0
 moon run --target js src/cmd/maple logs
 moon run --target js src/cmd/maple logs --level error
+moon run --target js src/cmd/maple logs --clear
+moon run --target js src/cmd/maple logs --follow --out logs/browser.log
 moon run --target js src/cmd/maple network
 moon run --target js src/cmd/maple network --failed
 moon run --target js src/cmd/maple screenshot --out screenshot.png
@@ -162,7 +178,7 @@ moon run --target js src/cmd/maple close
 All commands are **atomic operations** — each does exactly one thing.
 Verification workflows are composed by the caller (human or agent) from
 individual commands. The CLI itself does not provide composite verification
-routines (see ADR 0008). `maple bot run` is the ADR 0007 exception: it is a
+routines (see `0008-testing-strategy-boundaries.md`). `maple bot run` is the `0007-playtest-bot.md` exception: it is a
 single playtest execution primitive that loads `game_debug.html`, injects one JS
 script, and returns a fixed pass/fail report.
 
@@ -171,8 +187,8 @@ script, and returns a fixed pass/fail report.
 ### Positive
 
 - **Terminal-driven verify loop**: start Vite and MoonBit watch build once,
-  then use `maple start` → `maple cmd ...` → inspect logs/network → fix code →
-  reload/retry. No manual DevTools interaction needed.
+  then use `maple start` → `maple open --wait` → `maple cmd ...` → inspect
+  logs/network → fix code → reload/retry. No manual DevTools interaction needed.
 - **Console and network visibility in terminal**: errors and failed requests are
   immediately visible in the same terminal where commands are sent.
 - **Single language stack**: both game and tooling are MoonBit, sharing types
@@ -184,11 +200,11 @@ script, and returns a fixed pass/fail report.
 
 - **MoonBit JS async and Node interop maturity**: long-lived socket and CDP event
   handling are less exercised than browser gameplay code.
-  - *Mitigation*: keep the MoonBit surface thin, implement Node/CDP plumbing in
-    explicit JS FFI blocks, and validate the daemon with real browser sessions.
+  - *Mitigation*: keep host bindings thin, snapshot-test the pure MoonBit CDP
+    normalization package, and validate the daemon with real browser sessions.
 - **CDP connection fragility**: Chrome may disconnect on page crash or navigation.
-  - *Mitigation*: v1 reports disconnection clearly and exits on `close`; automatic
-    recovery can be added later if repeated sessions need it.
+  - *Mitigation*: `mapled` reports the disconnected state and waits for an
+    explicit `maple open`. It does not automatically relaunch Chrome.
 - **Chrome remote debugging port conflict**: the default 9222 may be in use.
   - *Mitigation*: pick a non-default port with a `--cdp-port` flag.
 
@@ -198,8 +214,9 @@ script, and returns a fixed pass/fail report.
   sufficient for local debugging.
 - Native binary distribution of `maple`/`mapled`. JS target via Node.js is
   adequate for a dev tool.
-- Managing Vite or `moon build --watch`. Those remain explicit developer
-  terminals.
+- Managing Vite or `moon build --watch` inside `maple`/`mapled`. `just dev`
+  uses `concurrently` to compose foreground processes with the atomic CLI
+  commands; MoonBit watch remains explicit.
 - A TUI interface. Plain CLI output is enough for the verification loop.
 - Lower Node.js versions without native `WebSocket`.
 

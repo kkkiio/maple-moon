@@ -190,7 +190,7 @@ assets/
 
 ## 六、版本控制策略
 
-详见 `docs/adr/0004-iterative-runtime-resource-commits.md`。
+详见 `docs/engineering/0004-iterative-runtime-resource-commits.md`。
 
 **核心原则**：`assets/` 下的现代可使用资源可以进入版本控制，但每次提交只纳入当前范围内能运行、能测试、可复用的资源闭包。闭包包含数据 JSON、Tiled `.tmj/.tsj`、图片、音频、动画 JSON/PNG 和对应 `.aseprite` 源文件。
 

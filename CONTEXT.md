@@ -44,7 +44,7 @@
 ## 项目约定
 
 - **Spec**：功能规格文档，描述一个系统/技能的核心体验、规则和边界情况。存放于 `docs/specs/`。
-- **ADR (Architecture Decision Record)**：架构决策记录，记录"为什么这样实现"及其替代方案。存放于 `docs/adr/`。
+- **ADR (Architecture Decision Record)**：架构决策记录，记录"为什么这样实现"及其替代方案。存放于 `docs/engineering/`。
 - **Narrative**：世界观、角色设定和任务脚本。存放于 `docs/narrative/`。
 - **Tuning**：可调的数值参数和公式。存放于 `docs/tuning/`。
 - **快照测试 (Snapshot Test)**：通过渲染画面截图对比来验证视觉输出的回归测试。

@@ -1,0 +1,12 @@
+import {
+  "Milky2018/selene/app",
+  "Milky2018/selene/ecs",
+  "KKKIIO/maple-moon/game/server_proto",
+  "Milky2018/selene/runtime_debug",
+  "moonbitlang/core/env",
+  "moonbitlang/core/json",
+  "moonbitlang/x/fs",
+  "tonyfettes/raylib",
+}
+
+supported_targets = "native"

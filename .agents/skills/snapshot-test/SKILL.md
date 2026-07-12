@@ -28,7 +28,7 @@ description: 编写/使用快照测试。快照包括 `@debug.debug_inspect` / `
   "stance": look.current_stance,
 })
 let capture = @capture_app.capture_after_frames(app, 1, width=200, height=200)
-@capture_app.snapshot("src/tests/foo_test/__snapshot__/scene.png", capture.png)
+@capture_app.snapshot("src/graphics_test/__snapshot__/feature_name/scene.png", capture.png)
 ```
 
 失败时先看 inspect diff 判断是状态层还是渲染层问题，再决定排查方向。
@@ -57,28 +57,30 @@ json_inspect(@npc_talk_ui.describe_npc_talk_ui())
 
 ### 1. 写图形快照测试
 
-- 在 `src/tests/<feature>_test/` 下新建或更新 blackbox test 包。
-- 测试包 `moon.pkg` 使用 native target 和 `Milky2018/selene_raylib/*` platform overrides。
+- 在 `src/graphics_test/` 下编写图形快照测试（所有图形测试共享一个 package）。
+- 该 package 使用 native target 和 `Milky2018/selene_raylib/*` platform overrides。
 - 用 `@capture_app.capture_after_frames` 初始化测试 App，挂上 `@plugins.default_plugin` 和被测系统。
 - 如果测试在 `capture_after_frames` 之前会加载 raylib texture，先调用 `@capture_app.ensure_native_context(width=..., height=...)`。
 - 测试里直接读取本地 `assets/...json` 并传给游戏模块解析。
 - 不为测试改正式资源加载链路。
 - 固定画布尺寸、UI 位置、输入和帧推进次数，保证快照稳定可复现。
-- 测试文件路径和测试函数名应清晰表达图片内容（如 `char_look_test/__snapshot__/climb.png` + 测试名 `"character climbing ladder"`）。
+- 测试文件路径和测试函数名应清晰表达图片内容（如 `__snapshot__/char_look/climb.png` + 测试名 `"character climbing ladder"`）。
 - 在 pixel snapshot 之前写 `@debug.debug_inspect`。
 
-### 2. 执行测试生成快照
+### 2. 首次生成快照（仅新测试）
+
+**仅在新增测试、尚未有 baseline PNG 时**使用 `UPDATE_GRAPHICS_SNAPS=true` 写入初始快照。严禁用该变量消除已有测试的 pixel mismatch 失败——mismatch 必须先诊断 `.wrong.png` 差异，确认是预期视觉变化后再更新。
 
 在仓库根目录执行：
 
 ```bash
-MOONBIT_NEW_NATIVE=1 UPDATE_GRAPHICS_SNAPS=true moon test --target native --deny-warn --diagnostic-limit 200 src/tests/<feature>_test
+MOONBIT_NEW_NATIVE=1 UPDATE_GRAPHICS_SNAPS=true moon test --target native --deny-warn --diagnostic-limit 200 src/graphics_test
 ```
 
 如果同一次改动还新增或改变了 `debug_inspect` / `json_inspect` baseline，另跑 inspect 更新：
 
 ```bash
-MOONBIT_NEW_NATIVE=1 moon test --target native --update --deny-warn --diagnostic-limit 200 src/tests/<feature>_test
+MOONBIT_NEW_NATIVE=1 moon test --target native --update --deny-warn --diagnostic-limit 200 src/graphics_test
 ```
 
 ### 3. agent 检查快照图片
@@ -93,10 +95,14 @@ MOONBIT_NEW_NATIVE=1 moon test --target native --update --deny-warn --diagnostic
 2. 再看 pixel diff（baseline vs .wrong.png），确认渲染差异
 3. 定位业务代码：渲染顺序、姿态映射、字段解析、动画帧选择、坐标/翻转逻辑
 
+**严禁在未诊断 `.wrong.png` 的情况下直接 `UPDATE_GRAPHICS_SNAPS=true` 覆盖 baseline。** 覆盖 baseline 仅在确认改动是预期视觉变化（如改坐标系、换渲染层）且手工人眼确认 `.wrong.png` 正确后才允许。
+
 ### 5. 退出条件
 
 - 无更新复跑通过：
 
 ```bash
-MOONBIT_NEW_NATIVE=1 moon test --target native --deny-warn --diagnostic-limit 200 src/tests/<feature>_test
+MOONBIT_NEW_NATIVE=1 moon test --target native --deny-warn --diagnostic-limit 200 src/graphics_test
 ```
+
+> **注意**：纯逻辑测试（如 `mapled_protocol`）直接在源码包内写 blackbox test（`*_test.mbt`），不放入 `graphics_test`。

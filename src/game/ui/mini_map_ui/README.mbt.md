@@ -45,10 +45,10 @@ app.add_system(@mini_map_ui.mini_map_ui_system, system_name="mini_map_ui_system"
 
 ## 渲染测试
 
-- 黑盒渲染测试位于：`src/tests/mini_map_ui_test/mini_map_ui_render_test.mbt`
-- 快照输出目录：`src/tests/mini_map_ui_test/__snapshot__/`
+- 黑盒渲染测试位于：`src/graphics_test/mini_map_ui_render_test.mbt`
+- 快照输出目录：`src/graphics_test/__snapshot__/mini_map_ui/`
 - 更新 PNG 快照：
 
 ```bash
-MOONBIT_NEW_NATIVE=1 UPDATE_GRAPHICS_SNAPS=true moon test --target native --deny-warn --diagnostic-limit 200 src/tests/mini_map_ui_test
+MOONBIT_NEW_NATIVE=1 UPDATE_GRAPHICS_SNAPS=true moon test --target native --deny-warn --diagnostic-limit 200 src/graphics_test
 ```

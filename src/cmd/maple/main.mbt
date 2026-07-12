@@ -91,6 +91,52 @@ extern "js" fn run_maple_cli(
   #|       reject(error);
   #|     });
   #|   });
+  #|   if (action === "logs-follow") {
+  #|     const logFile = path.resolve(String(out || "logs/browser.log"));
+  #|     fs.mkdirSync(path.dirname(logFile), { recursive: true });
+  #|     const logFd = fs.openSync(logFile, "w");
+  #|     return await new Promise((resolve, reject) => {
+  #|       const socket = net.createConnection(socketPath);
+  #|       let buffer = "";
+  #|       let settled = false;
+  #|       const finish = (error) => {
+  #|         if (settled) return;
+  #|         settled = true;
+  #|         process.removeListener("SIGINT", onSigint);
+  #|         process.removeListener("SIGTERM", onSigterm);
+  #|         try { fs.closeSync(logFd); } catch (_) {}
+  #|         if (error) reject(error);
+  #|         else resolve("browser log stream closed");
+  #|       };
+  #|       const stop = () => socket.end();
+  #|       const onSigint = () => stop();
+  #|       const onSigterm = () => stop();
+  #|       process.on("SIGINT", onSigint);
+  #|       process.on("SIGTERM", onSigterm);
+  #|       socket.setEncoding("utf8");
+  #|       socket.on("connect", () => socket.write(`${JSON.stringify({ action: "logs-follow" })}\n`));
+  #|       socket.on("data", (chunk) => {
+  #|         buffer += chunk;
+  #|         while (buffer.includes("\n")) {
+  #|           const newline = buffer.indexOf("\n");
+  #|           const line = buffer.slice(0, newline);
+  #|           buffer = buffer.slice(newline + 1);
+  #|           if (line === "") continue;
+  #|           const message = JSON.parse(line);
+  #|           if (message.event !== "log") continue;
+  #|           const entry = message.entry;
+  #|           const time = new Date(entry.time).toISOString();
+  #|           const location = entry.url ? ` ${entry.url}${entry.line == null ? "" : `:${entry.line + 1}`}` : "";
+  #|           const formatted = `[${time}] ${entry.level} ${entry.source}: ${entry.text}${location}\n`;
+  #|           process.stdout.write(`[browser] ${formatted}`);
+  #|           fs.writeSync(logFd, formatted);
+  #|         }
+  #|       });
+  #|       socket.on("end", () => finish(null));
+  #|       socket.on("close", () => finish(null));
+  #|       socket.on("error", finish);
+  #|     });
+  #|   }
   #|   const format = (response) => {
   #|     if (action === "logs") {
   #|       const logs = response.logs || [];
@@ -114,6 +160,18 @@ extern "js" fn run_maple_cli(
   #|     return JSON.stringify(response, null, 2);
   #|   };
   #|   const payload = { action, cdpPort, gameUrl, command, args, expression, level, failed, out, frames };
+  #|   if (action === "status-wait") {
+  #|     let lastError = new Error("mapled did not become ready");
+  #|     for (let i = 0; i < 120; i += 1) {
+  #|       try {
+  #|         return format(await request({ action: "status" }, 1500));
+  #|       } catch (error) {
+  #|         lastError = error;
+  #|       }
+  #|       await sleep(250);
+  #|     }
+  #|     throw lastError;
+  #|   }
   #|   if (action === "bot-run") {
   #|     const debugUrl = String(gameUrl || "http://localhost:8080/game_debug.html");
   #|     const port = String(cdpPort || "9333");
@@ -136,7 +194,7 @@ extern "js" fn run_maple_cli(
   #|     }
   #|     try {
   #|       const existing = await request({ action: "status" }, 1500);
-  #|       if (String(existing.cdpPort) !== port || String(existing.url) !== debugUrl) {
+  #|       if (String(existing.cdpPort) !== port || (existing.browserConnected && String(existing.url) !== debugUrl)) {
   #|         throw new Error("mapled is already running with different config; run `maple close` first");
   #|       }
   #|     } catch (error) {
@@ -169,6 +227,7 @@ extern "js" fn run_maple_cli(
   #|         }
   #|       }
   #|     }
+  #|     await request({ action: "open-wait", gameUrl: debugUrl }, 35000);
   #|     const script = fs.readFileSync(scriptPath, "utf8");
   #|     const response = await request({
   #|       action: "bot-run",
@@ -184,7 +243,7 @@ extern "js" fn run_maple_cli(
   #|   if (action === "start") {
   #|     try {
   #|       const existing = await request({ action: "status" }, 1500);
-  #|       if (String(existing.cdpPort) !== String(cdpPort || "9333") || String(existing.url) !== String(gameUrl || "http://localhost:8080")) {
+  #|       if (String(existing.cdpPort) !== String(cdpPort || "9333")) {
   #|         throw new Error("mapled is already running with different config; run `maple close` first");
   #|       }
   #|       return format({ ok: true, message: "mapled already running", status: existing });
@@ -226,6 +285,9 @@ extern "js" fn run_maple_cli(
   #|       response = await request(payload, 10000);
   #|     } catch (error) {
   #|       cleanStaleFiles();
+  #|       if (error.code === "ENOENT" || error.code === "ECONNREFUSED") {
+  #|         return format({ ok: true, message: "mapled is not running" });
+  #|       }
   #|       throw error;
   #|     }
   #|     const pid = Number.parseInt(String(state?.pid ?? response.pid ?? ""), 10);
@@ -236,7 +298,7 @@ extern "js" fn run_maple_cli(
   #|     cleanStaleFiles();
   #|     return format(response);
   #|   }
-  #|   const timeoutMs = 30000;
+  #|   const timeoutMs = action === "open-wait" ? 35000 : 30000;
   #|   return format(await request(payload, timeoutMs));
   #| })()
 
@@ -261,11 +323,16 @@ async fn main {
     subcommands=[
       @argparse.Command(
         "start",
-        about="Start mapled and open the game in Chrome",
-        options=[
-          @argparse.OptionArg("cdp-port", default_values=["9333"]),
-          @argparse.OptionArg("url", default_values=["http://localhost:8080"]),
-        ],
+        about="Start or reuse mapled",
+        options=[@argparse.OptionArg("cdp-port", default_values=["9333"])],
+      ),
+      @argparse.Command(
+        "open",
+        about="Open or reconnect the controlled Chrome",
+        options=[@argparse.OptionArg("url", default_values=[
+          "http://localhost:8080",
+        ])],
+        flags=[@argparse.FlagArg("wait")],
       ),
       @argparse.Command("cmd", about="Execute a registered $console command", positionals=[
         @argparse.PositionArg("name"),
@@ -274,9 +341,15 @@ async fn main {
       @argparse.Command("eval", about="Evaluate JavaScript in the game page", positionals=[
         @argparse.PositionArg("expression"),
       ]),
-      @argparse.Command("logs", about="Print collected browser logs", options=[
-        @argparse.OptionArg("level", default_values=[""]),
-      ]),
+      @argparse.Command(
+        "logs",
+        about="Read or follow collected browser logs",
+        options=[
+          @argparse.OptionArg("level", default_values=[""]),
+          @argparse.OptionArg("out", default_values=["logs/browser.log"]),
+        ],
+        flags=[@argparse.FlagArg("clear"), @argparse.FlagArg("follow")],
+      ),
       @argparse.Command("network", about="Print collected network requests", flags=[
         @argparse.FlagArg("failed"),
       ]),
@@ -307,7 +380,11 @@ async fn main {
         ],
       ),
       @argparse.Command("reload", about="Reload the game page"),
-      @argparse.Command("status", about="Show daemon status"),
+      @argparse.Command(
+        "status",
+        about="Show daemon status",
+        flags=[@argparse.FlagArg("wait")],
+      ),
       @argparse.Command("close", about="Close daemon and browser"),
     ],
   )
@@ -325,14 +402,10 @@ async fn main {
           Some(values) => values[0]
           None => "9333"
         }
-        let game_url = match child.values.get("url") {
-          Some(values) => values[0]
-          None => "http://localhost:8080"
-        }
         run_maple_cli(
           "start",
           cdp_port,
-          game_url,
+          "",
           "",
           [],
           "",
@@ -341,6 +414,18 @@ async fn main {
           "",
           "",
         ).wait()
+      }
+      Some(("open", child)) => {
+        let game_url = match child.values.get("url") {
+          Some(values) => values[0]
+          None => "http://localhost:8080"
+        }
+        let wait = match child.flags.get("wait") {
+          Some(value) => value
+          None => false
+        }
+        let action = if wait { "open-wait" } else { "open" }
+        run_maple_cli(action, "", game_url, "", [], "", "", false, "", "").wait()
       }
       Some(("cmd", child)) => {
         let name = match child.values.get("name") {
@@ -365,7 +450,20 @@ async fn main {
           Some(values) => values[0]
           None => ""
         }
-        run_maple_cli("logs", "", "", "", [], "", level, false, "", "").wait()
+        let out = match child.values.get("out") {
+          Some(values) => values[0]
+          None => "logs/browser.log"
+        }
+        let clear = match child.flags.get("clear") {
+          Some(value) => value
+          None => false
+        }
+        let follow = match child.flags.get("follow") {
+          Some(value) => value
+          None => false
+        }
+        let action = if clear { "logs-clear" } else if follow { "logs-follow" } else { "logs" }
+        run_maple_cli(action, "", "", "", [], "", level, false, out, "").wait()
       }
       Some(("network", child)) => {
         let failed = match child.flags.get("failed") {
@@ -422,8 +520,14 @@ async fn main {
         }
       Some(("reload", _)) =>
         run_maple_cli("reload", "", "", "", [], "", "", false, "", "").wait()
-      Some(("status", _)) =>
-        run_maple_cli("status", "", "", "", [], "", "", false, "", "").wait()
+      Some(("status", child)) => {
+        let wait = match child.flags.get("wait") {
+          Some(value) => value
+          None => false
+        }
+        let action = if wait { "status-wait" } else { "status" }
+        run_maple_cli(action, "", "", "", [], "", "", false, "", "").wait()
+      }
       Some(("close", _)) =>
         run_maple_cli("close", "", "", "", [], "", "", false, "", "").wait()
       _ => {

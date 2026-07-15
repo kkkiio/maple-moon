@@ -5,7 +5,7 @@ struct Rectangle[T] {
 } derive(Eq, Default, Debug, ToJson)
 
 ///|
-pub fn[T] Rectangle::new(lt : Point[T], rb : Point[T]) -> Rectangle[T] {
+pub fn[T] Rectangle::Rectangle(lt : Point[T], rb : Point[T]) -> Rectangle[T] {
   { lt, rb }
 }
 
@@ -66,18 +66,18 @@ pub fn[T : Add] Rectangle::shift(
 
 ///|
 pub fn Rectangle::overlaps(self : Rectangle[Int], ar : Rectangle[Int]) -> Bool {
-  self.get_horizontal().overlaps(Range::new(ar.left(), ar.right())) &&
-  self.get_vertical().overlaps(Range::new(ar.top(), ar.bottom()))
+  self.get_horizontal().overlaps(Range(ar.left(), ar.right())) &&
+  self.get_vertical().overlaps(Range(ar.top(), ar.bottom()))
 }
 
 ///|
 pub fn Rectangle::get_horizontal(self : Rectangle[Int]) -> Range[Int] {
-  Range::new(self.left(), self.right())
+  Range(self.left(), self.right())
 }
 
 ///|
 pub fn Rectangle::get_vertical(self : Rectangle[Int]) -> Range[Int] {
-  Range::new(self.top(), self.bottom())
+  Range(self.top(), self.bottom())
 }
 
 ///|
@@ -99,11 +99,11 @@ pub impl @json.FromJson for Rectangle[Int] with fn from_json(value, path) {
     { "lt"? : lt_value, "rb"? : rb_value, .. } => {
       let lt = match lt_value {
         None => { x: 0, y: 0 }
-        Some(v) => Point::from_json(v, path.add_key("lt"))
+        Some(v) => FromJson::from_json(v, path.add_key("lt"))
       }
       let rb = match rb_value {
         None => { x: 0, y: 0 }
-        Some(v) => Point::from_json(v, path.add_key("rb"))
+        Some(v) => FromJson::from_json(v, path.add_key("rb"))
       }
       { lt, rb }
     }

@@ -36,7 +36,7 @@ pub(all) enum Id {
 
 ///|
 pub impl ToJson for Id with fn to_json(self) -> Json {
-  self.to_repr().to_string().to_json()
+  Debug::to_repr(self).to_string().to_json()
 }
 
 ///|

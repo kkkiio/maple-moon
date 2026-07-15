@@ -11,7 +11,7 @@
 ## 使用示例
 
 ```moonbit nocheck
-let cache : @lru_cache.Cache[String, Int] = @lru_cache.Cache::new(2)
+let cache : @lru_cache.Cache[String, Int] = Cache(2)
 cache.set("a", 1)
 cache.set("b", 2)
 inspect(cache.get("a"), content="Some(1)")

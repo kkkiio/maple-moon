@@ -41,7 +41,7 @@ pub(all) struct Animation {
   clip : @resource.SeleneClip
   loop_ : Bool
 }
-pub fn Animation::new(Array[AnimationFrame], loop_? : Bool) -> Self
+pub fn Animation::Animation(Array[AnimationFrame], loop_? : Bool) -> Self
 pub fn Animation::single_frame(String, @math.Vec2, offset? : @math.Vec2, pivot? : @math.Vec2, duration? : Double) -> Self
 pub fn Animation::single_frame_from_image(@asset_types.ImageHandle, @math.Vec2, offset? : @math.Vec2, pivot? : @math.Vec2, duration? : Double) -> Self
 

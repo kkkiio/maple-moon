@@ -63,7 +63,7 @@ pub fn get_recommend_assign(mod : Module) -> Assign {
   let nowap = mod.player_char_stats.map_or(0, fn(stats) {
     stats.get_stat(@maple_stat.Id::AP)
   })
-  let assign = Assign::default()
+  let assign = Default::default()
   guard mod.player_char_stats is Some(char_stats) else { return assign }
   let job = char_stats.job
   let weapon_type = (char_stats.weapon_type_getter)()

@@ -58,7 +58,7 @@ struct MapQuestsResource {
 
 ///|
 /// Creates quest icon resources from caller-provided animations.
-pub fn MapQuestsResource::new(
+pub fn MapQuestsResource::MapQuestsResource(
   available_quest_icon : @resource.NxAnimation,
   inprogress_quest_icon : @resource.NxAnimation,
   completed_quest_icon : @resource.NxAnimation,
@@ -89,7 +89,7 @@ pub fn MapQuestsResource::load() -> MapQuestsResource {
 }
 
 ///|
-fn MapQuests::new(
+fn MapQuests::MapQuests(
   resource : MapQuestsResource,
   quests_resource : QuestResource,
   npc_quests_map : Map[Int, Array[Int]],
@@ -103,9 +103,9 @@ fn MapQuests::new(
     player_deps: None,
     open_npc_talk_ui,
     get_player_deps,
-    npc_to_icon_entity: {},
-    quest_to_npc_id: {},
-    npc_runtime: {},
+    npc_to_icon_entity: Map([]),
+    quest_to_npc_id: Map([]),
+    npc_runtime: Map([]),
   }
 }
 
@@ -184,7 +184,7 @@ fn MapQuests::query_npc_quest(self : MapQuests, npc_id : Int) -> NpcQuest? {
       ) {
       Ok(_) =>
         return Some(
-          NpcQuest::new(
+          NpcQuest(
             quest_id,
             Some((quest.phase, true)),
             npc_id,
@@ -198,7 +198,7 @@ fn MapQuests::query_npc_quest(self : MapQuests, npc_id : Int) -> NpcQuest? {
           "error": err,
         })
         return Some(
-          NpcQuest::new(
+          NpcQuest(
             quest_id,
             Some((quest.phase, false)),
             npc_id,
@@ -220,7 +220,7 @@ fn MapQuests::query_npc_quest(self : MapQuests, npc_id : Int) -> NpcQuest? {
     ).next()
     is Some((quest_id, _)) {
     return Some(
-      NpcQuest::new(
+      NpcQuest(
         quest_id,
         None,
         npc_id,
@@ -321,7 +321,7 @@ pub(all) struct NpcQuest {
 }
 
 ///|
-fn NpcQuest::new(
+fn NpcQuest::NpcQuest(
   quest_id : Int,
   in_progress_quest : (Int, Bool)?,
   npc_id : Int,
@@ -334,7 +334,7 @@ fn NpcQuest::new(
     npc_id,
     icon_state,
     icon,
-    icon_offset: @struct.Point::new(0, -96),
+    icon_offset: Point(0, -96),
     icon_size: nx_animation_dimensions(icon),
   }
 }

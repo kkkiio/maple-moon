@@ -36,7 +36,7 @@ pub struct MiniMapUI {
   mut region_name : String
   mut town_name : String
 }
-pub fn MiniMapUI::new(MiniMapUIResource, @ui.UIModel) -> Self
+pub fn MiniMapUI::MiniMapUI(MiniMapUIResource, @ui.UIModel) -> Self
 pub fn MiniMapUI::set_map(Self, Int, String, String, @map.MiniMapRuntimeResource?) -> Unit
 
 pub struct MiniMapUIResource {
@@ -48,11 +48,9 @@ pub fn MiniMapUIResource::load() -> Self
 type NxMapHelperMiniMap
 pub impl @json.FromJson for NxMapHelperMiniMap
 
-type NxMiniMapFrames
-pub impl @json.FromJson for NxMiniMapFrames
+type NxMiniMapFrames derive(@json.FromJson)
 
-type NxMiniMapUI
-pub impl @json.FromJson for NxMiniMapUI
+type NxMiniMapUI derive(@json.FromJson)
 
 // Type aliases
 

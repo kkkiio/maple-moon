@@ -28,7 +28,7 @@ pub(all) struct Cursor {
   entity : @entity.Entity
   animation_data : CursorAnimationData
 }
-pub fn Cursor::new(CursorAnimationData) -> Self
+pub fn Cursor::Cursor(CursorAnimationData) -> Self
 pub fn Cursor::set_state(Self, @ui.CursorState) -> Unit
 
 pub(all) struct CursorAnimation {

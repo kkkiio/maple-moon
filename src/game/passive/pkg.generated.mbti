@@ -35,6 +35,7 @@ pub fn PassiveContext::trigger_extra_attack(Self, Int, Int, Array[Int]) -> Unit
 
 pub struct SwordFaFighterPassive {
 }
+pub fn SwordFaFighterPassive::SwordFaFighterPassive() -> Self
 pub impl PassiveSkill for SwordFaFighterPassive
 pub impl Default for SwordFaFighterPassive
 

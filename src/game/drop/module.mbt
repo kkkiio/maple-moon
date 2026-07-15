@@ -29,7 +29,7 @@ fn new_loading_future() -> @utils.Future[Result[MapDrops, Error]] {
 pub fn Module::load() -> Module {
   let src = @resource.require_json("assets/Item/Special/0900.img.json")
   {
-    map_drops: MapDrops::new(src) catch {
+    map_drops: MapDrops(src) catch {
       err => abort("failed to load drop module: \{err}")
     },
   }

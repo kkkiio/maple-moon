@@ -39,5 +39,5 @@ fn AppResources::install(self : AppResources) -> Unit {
     self.map_quests_resource,
     @npc.request_quest_talk,
   )
-  @cursor.init_cursor(@cursor.Cursor::new(self.cursor_animation_data))
+  @cursor.init_cursor(Cursor(self.cursor_animation_data))
 }

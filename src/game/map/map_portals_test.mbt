@@ -44,15 +44,14 @@ test "portal tile object uses resource anchor properties for logic position" {
   guard portals.get_portal_pos_by_id(0) is Some(spawn) else {
     fail("missing portal id 0")
   }
-  inspect(spawn.x, content="5907")
-  inspect(spawn.y, content="425")
   debug_inspect(
-    portals
-    .find_manual_warp_at(@struct.Point::new(5907, 455))
-    .map(fn(warp) { warp.name }),
-    content="Some(\"east00\")",
+    (
+      spawn,
+      portals.find_manual_warp_at(Point(5907, 455)).map(fn(warp) { warp.name }),
+    ),
+    content=(
+      #|({ x: 5907, y: 425 }, Some("east00"))
+    ),
   )
-  assert_true(
-    portals.find_manual_warp_at(@struct.Point::new(5863, 464)) is None,
-  )
+  assert_true(portals.find_manual_warp_at(Point(5863, 464)) is None)
 }

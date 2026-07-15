@@ -31,10 +31,10 @@ pub struct FileDB {
 ///
 /// # Example
 /// ```moonbit nocheck
-/// let db = FileDB::new(root_path=".local/maple-moon/local_server")
+/// let db = FileDB(root_path=".local/maple-moon/local_server")
 /// inspect(db.root_path_for_debug(), content=".local/maple-moon/local_server")
 /// ```
-pub fn FileDB::new(
+pub fn FileDB::FileDB(
   root_path? : String = ".local/maple-moon/local_server",
 ) -> FileDB {
   { root_path, }
@@ -135,8 +135,8 @@ pub struct MemoryDB {
 }
 
 ///|
-pub fn MemoryDB::new() -> MemoryDB {
-  { stores: Ref({}) }
+pub fn MemoryDB::MemoryDB() -> MemoryDB {
+  { stores: Ref(Map([])) }
 }
 
 ///|
@@ -179,7 +179,7 @@ pub impl DB for MemoryDB with fn load_json(self, store, key) {
 ///
 /// # Example
 /// ```moonbit nocheck
-/// let db = BrowserDB::new()
+/// let db = BrowserDB()
 /// db.save_json("store", "key", { "ok": true })
 /// ```
 #cfg(target="js")
@@ -192,10 +192,12 @@ pub struct BrowserDB {
 ///
 /// # Example
 /// ```moonbit nocheck
-/// let db = BrowserDB::new()
+/// let db = BrowserDB()
 /// ```
 #cfg(target="js")
-pub fn BrowserDB::new(name? : String = "MapleMoonLocalServerDB") -> BrowserDB {
+pub fn BrowserDB::BrowserDB(
+  name? : String = "MapleMoonLocalServerDB",
+) -> BrowserDB {
   { name, }
 }
 

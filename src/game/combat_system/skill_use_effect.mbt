@@ -34,7 +34,7 @@ fn load_skill_use_effect(
     _ => abort("missing mx_animation in skill use effect node")
   }
   let resolved = @resource.resolve_ref(base_path, ref_path)
-  let animation_loader = @resource.AnimationLoader::new()
+  let animation_loader = AnimationLoader()
   let loaded = animation_loader.load(resolved)
   let clip = loaded.clip(tag) catch {
     _ => abort("missing skill use effect animation tag '\{tag}': \{resolved}")
@@ -78,7 +78,7 @@ pub fn new_twohanded_use_effect(
   src : Json,
   base_path : String,
 ) -> (@character.Character) -> Unit {
-  let effects = @utils.BoolPair::new(
+  let effects = BoolPair(
     apply_skill_use_effect(
       load_skill_use_effect(
         use_effect_get_path(src, ["effect", "0"]),

@@ -115,7 +115,7 @@ pub fn MapNpcs::apply_spawn_npc_message(
   self.spawn({
     oid: msg.oid,
     id: msg.id,
-    position: @struct.Point::new(msg.x, msg.y),
+    position: Point(msg.x, msg.y),
     flip: msg.flip,
     fh: msg.fh,
   })
@@ -133,7 +133,7 @@ pub fn MapNpcs::apply_spawn_npc_controller_message(
     self.spawn({
       oid: msg.oid,
       id: msg.id,
-      position: @struct.Point::new(msg.x, msg.y),
+      position: Point(msg.x, msg.y),
       flip: msg.flip,
       fh: msg.fh,
     })
@@ -141,7 +141,7 @@ pub fn MapNpcs::apply_spawn_npc_controller_message(
 }
 
 ///|
-pub fn MapNpcs::new(
+pub fn MapNpcs::MapNpcs(
   open_npc_talk_ui : (TalkArgs) -> Unit,
   is_npc_talk_ui_open : () -> Bool,
 ) -> MapNpcs {
@@ -356,7 +356,7 @@ pub fn Npc::load(
   position : @struct.Point[Int],
 ) -> Npc raise {
   let entity = @entity.Entity()
-  let phobj = @physics.PhysicsObject::new(on_pos_change=fn(pos) {
+  let phobj = PhysicsObject(on_pos_change=fn(pos) {
     @transform2d.set_xy(entity, pos)
   })
   let strid = @utils.stoi_left_pad0(id, 7) + ".img"
@@ -371,12 +371,12 @@ pub fn Npc::load(
     src = @resource.require_json(mx_path)
     mx_npc = @json.from_json(src)
   }
-  let animation_loader = @resource.AnimationLoader::new()
+  let animation_loader = AnimationLoader()
   let loaded_aseprite = animation_loader.load(
     @resource.resolve_ref(mx_path, mx_npc.animations_path),
   )
   let scripted = mx_npc.info.scripted
-  let dialogue = {}
+  let dialogue = Map([])
   let mut i = 0
   while true {
     let key = "d\{i}"
@@ -394,7 +394,7 @@ pub fn Npc::load(
     dialogue.get_or_init(key, fn() { Array::new() }).push(str)
     i += 1
   }
-  let animations : Map[String, NpcAnimation] = {}
+  let animations : Map[String, NpcAnimation] = Map([])
   let states : Array[String] = []
   for state in loaded_aseprite.list_tags() {
     let clip = loaded_aseprite.clip(state)
@@ -463,8 +463,8 @@ pub fn Npc::load(
 //     None => ()
 //   }
 //   if !(self.hide_name) {
-//     self.name_label.draw(absp + @struct.Point::new(0, -4))
-//     self.func_label.draw(absp + @struct.Point::new(0, 18))
+//     self.name_label.draw(absp + Point(0, -4))
+//     self.func_label.draw(absp + Point(0, 18))
 //   }
 // }
 
@@ -664,3 +664,9 @@ pub fn Npc::get_npc_id(self : Npc) -> Int {
 }
 
 ///|
+
+///|
+using @physics {type PhysicsObject}
+
+///|
+using @resource {type AnimationLoader}

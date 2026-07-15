@@ -73,6 +73,7 @@ pub(all) struct Character {
   get_skilllevel : (Int) -> Int
   alerted : @utils.TimedBool
 }
+pub fn Character::Character(@entity.Entity, Int, @character_presentation.CharLook, String, get_skilllevel~ : (Int) -> Int, @char_stats.CharStats) -> Self
 pub fn Character::attack_by_action(Self, String) -> Unit
 pub fn Character::attack_by_stance(Self, @char_stance.StanceId) -> Unit
 pub fn Character::get_attackdelay(Self, Int) -> Int
@@ -94,7 +95,6 @@ pub fn Character::is_facing_right(Self) -> Bool
 pub fn Character::is_invincible(Self) -> Bool
 pub fn Character::is_sitting(Self) -> Bool
 pub fn Character::is_two_handed(Self) -> Bool
-pub fn Character::new(@entity.Entity, Int, @character_presentation.CharLook, String, get_skilllevel~ : (Int) -> Int, @char_stats.CharStats) -> Self
 pub fn Character::regular_attack(Self, Bool) -> Unit
 pub fn Character::set_alerted(Self, Int) -> Unit
 pub fn Character::set_facing_right(Self, Bool) -> Unit

@@ -14,10 +14,6 @@
 
 项目主要用快照测试验证逻辑和画面, 使用该 skill 编写和执行测试.
 
-#### `$maple-cli`
-
-使用该 skill 通过 Maple CLI 验证修改后的游戏运行时、地图加载和资源加载.
-
 ### Package README
 
 Main package 使用 `README.md`, 避免 MoonBit main package 把 `README.mbt.md` 当作 blackbox test 输入并产生 warning.
@@ -91,17 +87,19 @@ MoonBit 允许 `test` 直接传播错误, 用 `fail` 函数抛出错误.
 │   ├── specs/                 ← 功能规格
 │   ├── narrative/             ← 叙事素材
 │   ├── tuning/                ← 数值参数
-│   ├── adr/                   ← 架构决策记录
+│   ├── engineering/           ← 当前工程决策（living docs，不记录状态或迁移历史）
 │   └── pipeline.md            ← 资源管线
 ├── src/
 │   ├── apps/
 │   │   ├── game_web/          ← WebGPU/JS 入口, 日常开发
 │   │   ├── game_native/       ← raylib/native 入口, 玩家本地游玩
 │   │   └── game_debug/        ← WebGPU/JS 入口, bot 验证专用 (含 BotController)
-│   ├── engine/                ← 引擎/框架层
+│   ├── engine/                ← 引擎/框架层 (含测试基础设施)
 │   │   ├── game_app/          ← 共享运行时, 注册 systems
 │   │   ├── bot_controller/    ← Playtest Bot 运行时 (输入注入, action 管理, globalThis.__bot)
-│   │   ├── game_server/       ← 服务器通信
+│   │   ├── game_server/       ← 服务器通信 (正式实现)
+│   │   ├── mock_server/       ← game_server 的测试替身 (virtual package)
+│   │   ├── capture_app/       ← 快照断言与 mock server 状态管理
 │   │   ├── game_scene/        ← 场景管理
 │   │   ├── game_state/        ← 状态管理
 │   │   ├── graphics/          ← 图形工具 (z_index)
@@ -132,10 +130,10 @@ MoonBit 允许 `test` 直接传播错误, 用 `fail` 函数抛出错误.
 │   │   ├── animation/ bgm/ camera/ cursor/ logic_fps/
 │   │   ├── maple_stat/ markup_text/ server_proto/
 │   │   └── ui/                ← 游戏画面 (背包、商店、NPC 对话等)
-│   ├── tests/                 ← 集成/快照测试 (视觉回归 + 数据回归)
-│   └── cmd/                   ← 命令行工具 (MoonBit JS target)
-│       ├── maple/             ← CLI (maple start / cmd / logs / bot ...)
-│       └── mapled/            ← CDP daemon (Chrome 控制, 注入, 采集)
+│   ├── graphics_test/         ← 图形快照测试 (视觉回归, 一个 package)
+│   └── cmd/                   ← 命令行工具（MoonBit native target）
+│       ├── maple/             ← native CLI (maple start / cmd / logs / bot ...)
+│       └── mapled/            ← native CDP daemon (Chrome 控制, 注入, 采集)
 └── assets/                    ← 现代运行资源与数据表
     ├── Map/                   ← Tiled 地图、tileset、地图图片与地图动画
     ├── mob/ Npc/              ← 怪物/NPC mx.json 与 aseprite/json/png 动画闭包
@@ -208,16 +206,18 @@ just build
 `just test` 运行所有 native target 测试，包括普通逻辑测试、数据测试和 native raylib 图形快照测试:
 
 ```bash
-MOONBIT_NEW_NATIVE=1 moon test --target native --deny-warn --diagnostic-limit 200
+moon test --target native --deny-warn --warn-list=-28-79-82 --diagnostic-limit 200
 ```
 
 PNG 快照更新使用 `UPDATE_GRAPHICS_SNAPS=true`; MoonBit inspect 快照更新继续使用 `moon test --update`.
 
-`UPDATE_GRAPHICS_SNAPS=true` 只用于更新图形快照 PNG. Moon 的 path 参数不会递归父目录下的子 package；需要批量更新 PNG 时，枚举 `src/tests/*/moon.pkg` 对应的 package path.
+`UPDATE_GRAPHICS_SNAPS=true` 只用于更新图形快照 PNG. Moon 的 path 参数不会递归父目录下的子 package；所有图形快照测试都在 `src/graphics_test/` 一个 package 内（迁移完成后），更新命令见 `just update-graphics-snaps`。
+
+目录重构时，`__snapshot__/` 下的 27 张 PNG baseline 必须原样移动到新路径对应的子目录，不得用 `UPDATE_GRAPHICS_SNAPS=true` 重新生成。迁移完成后必须在无该变量的情况下复跑确认全部通过。
 
 不要在日常开发中直接执行裸 `moon test`, 因为它会同时考虑不必要的 target/backend. 使用 `just test` 跑 native 测试全集；图形快照测试需要单独调试时，显式指定 native target 和测试 package path.
 
-不要把全仓 `moon test --target js` 当作默认流程. 画面测试使用 native raylib backend; JS target 主要用于 Web 入口和命令行工具.
+不要把全仓 `moon test --target js` 当作默认流程. 画面测试使用 native raylib backend; JS target 用于 Web 入口，`src/cmd/maple` 与 `src/cmd/mapled` 使用 native target.
 
 需要直接执行某个 JS target MoonBit 测试时, 显式指定 JS target 和测试路径：
 

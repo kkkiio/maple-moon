@@ -32,7 +32,7 @@ struct MobDropDatabase {
 /// - questid: 关联任务ID (0表示无任务限制)
 /// - chance: 掉落概率 (基数 1000000)
 pub fn MobDropDatabase::from_tsv(tsv_content : String) -> MobDropDatabase {
-  let drops : Map[Int, Array[MobDropEntry]] = {}
+  let drops : Map[Int, Array[MobDropEntry]] = Map([])
   let by_dropper = @drop_sheet.build_drop_row_map(tsv_content)
   for dropperid, rows in by_dropper {
     let entries : Array[MobDropEntry] = []
@@ -113,7 +113,7 @@ pub fn MobDropDatabase::roll_drops(
   self : MobDropDatabase,
   dropperid : Int,
   rand : @random.Rand,
-  active_quest_ids? : Map[Int, Unit] = {},
+  active_quest_ids? : Map[Int, Unit] = Map([]),
 ) -> Array[(Int, Int)] {
   // 返回 (itemid, quantity) 列表
   let result : Array[(Int, Int)] = []
@@ -153,7 +153,7 @@ pub fn calculate_mob_drops(
   drop_db : MobDropDatabase?,
   global_drop_db : MobDropDatabase?,
   rand : @random.Rand,
-  active_quest_ids? : Map[Int, Unit] = {},
+  active_quest_ids? : Map[Int, Unit] = Map([]),
 ) -> (Array[@server_proto.DropLootMessage], Int) {
   let messages : Array[@server_proto.DropLootMessage] = []
   let mut drop_index = 0

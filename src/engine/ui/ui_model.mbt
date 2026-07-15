@@ -11,7 +11,7 @@ pub(all) struct UIModel {
 }
 
 ///|
-pub fn UIModel::new(
+pub fn UIModel::UIModel(
   position : Point[Int],
   dimension : Point[Int],
   active? : Bool = true,

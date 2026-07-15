@@ -25,17 +25,17 @@ pub fn server_system(LocalServer) -> Unit
 pub struct FileDB {
   root_path : String
 }
-pub fn FileDB::new(root_path? : String) -> Self
+pub fn FileDB::FileDB(root_path? : String) -> Self
 pub fn FileDB::root_path_for_debug(Self) -> String
 pub impl DB for FileDB
 
 type LocalServer
+pub fn LocalServer::LocalServer(db~ : &DB, drop_rng? : @random.Rand) -> Self
 pub fn LocalServer::add_server_message_handler(Self, String, Int, (Json) -> Unit raise) -> Unit
 pub fn LocalServer::init_routes(Self) -> Unit
 pub fn LocalServer::load_character(Self, Int) -> Bool
 pub fn LocalServer::load_character_inventory_tab_data(Self, Json) -> Unit
 pub fn LocalServer::load_character_roster(Self) -> Bool
-pub fn LocalServer::new(db~ : &DB, drop_rng? : @random.Rand) -> Self
 pub fn LocalServer::save_character(Self, Int) -> Unit
 pub fn LocalServer::save_character_core(Self, Int) -> Unit
 pub fn LocalServer::save_character_inventory(Self, Int) -> Unit
@@ -48,8 +48,8 @@ pub fn[T : @server_proto.ClientMessage] LocalServer::send_client_message(Self, T
 pub struct MemoryDB {
   stores : @ref.Ref[Map[String, Map[String, Json]]]
 }
+pub fn MemoryDB::MemoryDB() -> Self
 pub fn MemoryDB::get_json(Self, String, String) -> Json?
-pub fn MemoryDB::new() -> Self
 pub impl DB for MemoryDB
 
 type MobDropDatabase

@@ -75,7 +75,7 @@ test "resolve item json file and node path" {
 
 ```moonbit nocheck
 let npc_loader = @resource.require_async_loader("npc")
-let animation_loader = @resource.AnimationLoader::new(npc_loader)
+let animation_loader = AnimationLoader(npc_loader)
 let loaded = animation_loader.load("Npc/Npc/0002007.img/animation.json")
 let stand = loaded.clip("stand")
 ignore(stand)

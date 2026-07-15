@@ -30,8 +30,8 @@ let current_bullet_system_ref : Ref[BulletSystem?] = Ref(None)
 
 ///|
 /// Create an empty bullet runtime state.
-pub fn BulletSystem::new() -> BulletSystem {
-  { pending: @utils.TimedQueue::new(), active: [] }
+pub fn BulletSystem::BulletSystem() -> BulletSystem {
+  { pending: TimedQueue(), active: [] }
 }
 
 ///|
@@ -63,12 +63,7 @@ pub fn BulletSystem::spawn(
 pub fn BulletSystem::update(self : BulletSystem, timestep~ : Int64) -> Unit {
   for spawn in self.pending.process(timestep~) {
     let entity = @entity.Entity()
-    let bullet = @combat_proto.Bullet::new(
-      entity,
-      spawn.animation,
-      spawn.origin,
-      spawn.toleft,
-    )
+    let bullet = Bullet(entity, spawn.animation, spawn.origin, spawn.toleft)
     let active_bullet : ActiveBullet = {
       entity,
       bullet,
@@ -102,7 +97,7 @@ pub fn BulletSystem::clear(self : BulletSystem) -> Unit {
     clear_entity(active_bullet.entity)
   }
   self.active.clear()
-  self.pending = @utils.TimedQueue::new()
+  self.pending = TimedQueue()
 }
 
 ///|
@@ -176,3 +171,9 @@ fn clear_entity(entity : @entity.Entity) -> Unit {
     entity.destroy()
   }
 }
+
+///|
+using @combat_proto {type Bullet}
+
+///|
+using @resource {type AnimationLoader}

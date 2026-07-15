@@ -20,13 +20,13 @@ struct CharEquips {
 }
 
 ///|
-pub fn CharEquips::new() -> CharEquips {
+pub fn CharEquips::CharEquips() -> CharEquips {
   { clothes: Map([]), weapon_data: None }
 }
 
 ///|
 pub fn CharEquips::default() -> CharEquips {
-  CharEquips::new()
+  CharEquips()
 }
 
 ///|

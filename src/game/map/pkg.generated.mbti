@@ -88,6 +88,7 @@ pub struct MapInfo {
   seats : Array[Seat]
   ladders : Array[Ladder]
 }
+pub fn MapInfo::MapInfo() -> Self
 pub fn MapInfo::find_ladder(Self, @res_types.Point[Int], Bool) -> Ladder?
 pub fn MapInfo::findseat(Self, @res_types.Point[Int]) -> Seat?
 pub fn MapInfo::from_resource(Json, @res_types.Range[Int], @res_types.Range[Int]) -> Self
@@ -97,7 +98,6 @@ pub fn MapInfo::get_borders(Self) -> @res_types.Range[Int]
 pub fn MapInfo::get_full_name(Self) -> String
 pub fn MapInfo::get_walls(Self) -> @res_types.Range[Int]
 pub fn MapInfo::is_underwater(Self) -> Bool
-pub fn MapInfo::new() -> Self
 
 type MapPortalAnimations
 pub fn MapPortalAnimations::load() -> Self
@@ -109,13 +109,13 @@ pub struct MapPortals {
   mut manual_cooldown : Int
   mut auto_cooldown : Int
 }
+pub fn MapPortals::MapPortals(Array[NxPortal], Int, MapPortalAnimations) -> Self
 pub fn MapPortals::find_auto_warp_at(Self, @res_types.Point[Int]) -> PortalWarpInfo?
 pub fn MapPortals::find_manual_warp_at(Self, @res_types.Point[Int]) -> PortalWarpInfo?
 pub fn MapPortals::find_warp_at(Self, @res_types.Point[Int]) -> PortalWarpInfo?
 pub fn MapPortals::from_tiled_map(@tiled.TiledMap, Int, MapPortalAnimations) -> Self raise
 pub fn MapPortals::get_portal_by_name(Self, String) -> @res_types.Point[Int]?
 pub fn MapPortals::get_portal_pos_by_id(Self, Int) -> @res_types.Point[Int]?
-pub fn MapPortals::new(Array[NxPortal], Int, MapPortalAnimations) -> Self
 
 pub(all) struct MapRawResources {
   id : Int
@@ -136,7 +136,7 @@ pub(all) struct MiniMapPortal {
   tm : Int
   pt : MiniMapPortalType
 }
-pub fn MiniMapPortal::new(Int, Int, Int, MiniMapPortalType) -> Self
+pub fn MiniMapPortal::MiniMapPortal(Int, Int, Int, MiniMapPortalType) -> Self
 
 pub enum MiniMapPortalType {
   SPAWN
@@ -221,12 +221,12 @@ type NxSeat
 pub impl @json.FromJson for NxSeat
 
 type Portal
+pub fn Portal::Portal(@animation.Animation?, PortalType, String, Bool, @res_types.Point[Int], Int, String) -> Self
 pub fn Portal::bounds(Self) -> @res_types.Rectangle[Int]
 pub fn Portal::get_name(Self) -> String
 pub fn Portal::get_position(Self) -> @res_types.Point[Int]
 pub fn Portal::get_type(Self) -> PortalType
 pub fn Portal::getwarpinfo(Self) -> PortalWarpInfo
-pub fn Portal::new(@animation.Animation?, PortalType, String, Bool, @res_types.Point[Int], Int, String) -> Self
 pub fn Portal::update_touched(Self, @entity.Entity, @res_types.Point[Int]?) -> Unit
 
 pub(all) enum PortalType {

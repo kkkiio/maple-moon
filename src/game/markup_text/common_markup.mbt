@@ -48,15 +48,13 @@ pub let common_tags : Map[Char, MarkupType] = color_map
   .concat(
     underline_tag_map.keys().map(fn(c : Char) { (c, MarkupType::SelfClosing) }),
   )
-  .concat(
-    [
-      (mob_tag.0, mob_tag.1),
-      (npc_tag.0, npc_tag.1),
-      (map_tag.0, map_tag.1),
-      (item_tag.0, item_tag.1),
-      (player_tag.0, player_tag.1),
-    ].iter(),
-  )
+  .concat([|
+    (mob_tag.0, mob_tag.1),
+    (npc_tag.0, npc_tag.1),
+    (map_tag.0, map_tag.1),
+    (item_tag.0, item_tag.1),
+    (player_tag.0, player_tag.1),
+  |])
   |> Map::from_iter
 
 ///|

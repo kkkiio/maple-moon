@@ -14,7 +14,7 @@ fn load_ball_animation(
     _ => abort("missing mx_animation in skill ball")
   }
   let resolved = @resource.resolve_ref(base_path, ref_path)
-  let animation_loader = @resource.AnimationLoader::new()
+  let animation_loader = AnimationLoader()
   let loaded = animation_loader.load(resolved)
   let clip = loaded.clip(tag) catch {
     _ => abort("missing skill ball animation tag '\{tag}': \{resolved}")
@@ -23,7 +23,7 @@ fn load_ball_animation(
 }
 
 ///|
-fn Ball::new(src : Json, tag : String, base_path : String) -> Ball {
+fn Ball::Ball(src : Json, tag : String, base_path : String) -> Ball {
   let animation = load_ball_animation(src, tag, base_path)
   Ball::{ animation, }
 }
@@ -32,7 +32,7 @@ fn Ball::new(src : Json, tag : String, base_path : String) -> Ball {
 priv struct SkillRegularBullet {}
 
 ///|
-fn SkillRegularBullet::new() -> SkillRegularBullet {
+fn SkillRegularBullet::SkillRegularBullet() -> SkillRegularBullet {
   SkillRegularBullet::{  }
 }
 
@@ -52,10 +52,9 @@ priv struct SingleBullet {
 }
 
 ///|
-fn SingleBullet::new(src : Json, base_path : String) -> SingleBullet {
+fn SingleBullet::SingleBullet(src : Json, base_path : String) -> SingleBullet {
   let ball = match src {
-    { "ball": ball, .. } =>
-      Ball::new(ball, skill_animation_tag(["ball"]), base_path)
+    { "ball": ball, .. } => Ball(ball, skill_animation_tag(["ball"]), base_path)
     _ => abort("missing skill ball")
   }
   { ball, }
@@ -77,7 +76,7 @@ priv struct BySkillLevelBullet {
 }
 
 ///|
-fn BySkillLevelBullet::new(
+fn BySkillLevelBullet::BySkillLevelBullet(
   src : Json,
   id : Int,
   base_path : String,
@@ -91,11 +90,7 @@ fn BySkillLevelBullet::new(
         }
         bullets.set(
           parsed_level,
-          Ball::new(
-            ball,
-            skill_animation_tag(["level", level, "ball"]),
-            base_path,
-          ),
+          Ball(ball, skill_animation_tag(["level", level, "ball"]), base_path),
         )
       }
     }

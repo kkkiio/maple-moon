@@ -120,7 +120,7 @@ pub(all) struct MiniMapPortal {
 }
 
 ///|
-pub fn MiniMapPortal::new(
+pub fn MiniMapPortal::MiniMapPortal(
   x : Int,
   y : Int,
   tm : Int,
@@ -192,12 +192,7 @@ pub fn MiniMapRuntimeResource::from_tiled(
     let pos = portal.get_position()
     let target = portal.getwarpinfo().map_id
     mini_map_portals.push(
-      MiniMapPortal::new(
-        pos.x,
-        pos.y,
-        target,
-        MiniMapPortalType::from_int(pt_id),
-      ),
+      MiniMapPortal(pos.x, pos.y, target, MiniMapPortalType::from_int(pt_id)),
     )
   }
   MiniMapRuntimeResource::load(resource, mini_map_portals)

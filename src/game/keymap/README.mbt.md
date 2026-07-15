@@ -19,14 +19,14 @@
 ```mbt check
 ///|
 test "set and get keymap" {
-  let mapping : @keymap.Keymap = {}
+  let mapping : @keymap.Keymap = Map([])
   @keymap.set_keymap(mapping)
   inspect(@keymap.get_keymap() is Some(_), content="true")
 }
 
 ///|
 test "collect actions with empty mapping" {
-  let mapping : @keymap.Keymap = {}
+  let mapping : @keymap.Keymap = Map([])
   debug_inspect(
     @keymap.get_action(mapping, @inputs.Code::ArrowUp),
     content="None",
@@ -35,7 +35,7 @@ test "collect actions with empty mapping" {
 
 ///|
 test "query mapped action" {
-  let mapping : @keymap.Keymap = Map::from_array([
+  let mapping : @keymap.Keymap = Map([
     (
       @inputs.Code::ArrowUp,
       @keymap.Action::BASIC(@keymap.BasicActionId::MOVE_UP),

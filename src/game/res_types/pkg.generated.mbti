@@ -99,8 +99,8 @@ pub(all) struct Point[T] {
   x : T
   y : T
 } derive(Default, Eq, @debug.Debug)
+pub fn[T] Point::Point(T, T) -> Self[T]
 pub fn Point::distance(Self[Int], Self[Int]) -> Int
-pub fn[T] Point::new(T, T) -> Self[T]
 pub fn[T : Add] Point::shift_x(Self[T], T) -> Self[T]
 pub fn[T : Add] Point::shift_y(Self[T], T) -> Self[T]
 pub fn[T : Eq] Point::straight(Self[T]) -> Bool
@@ -115,6 +115,7 @@ pub(all) struct Range[T] {
   a : T
   b : T
 } derive(Default, Eq, @debug.Debug)
+pub fn[T] Range::Range(T, T) -> Self[T]
 pub fn Range::center(Self[Int]) -> Int
 pub fn[T : Compare] Range::contains(Self[T], T) -> Bool
 pub fn[T : Compare] Range::contains_range(Self[T], Self[T]) -> Bool
@@ -123,7 +124,6 @@ pub fn[T : Eq] Range::empty(Self[T]) -> Bool
 pub fn[T] Range::first(Self[T]) -> T
 pub fn[T : Compare] Range::greater(Self[T]) -> T
 pub fn Range::length(Self[Int]) -> Int
-pub fn[T] Range::new(T, T) -> Self[T]
 pub fn[T : Compare] Range::overlaps(Self[T], Self[T]) -> Bool
 pub fn[T] Range::second(Self[T]) -> T
 pub fn[T : Compare] Range::smaller(Self[T]) -> T
@@ -133,6 +133,7 @@ pub impl[T : Neg] Neg for Range[T]
 pub impl[T : Sub] Sub for Range[T]
 
 type Rectangle[T] derive(Default, Eq, ToJson, @debug.Debug)
+pub fn[T] Rectangle::Rectangle(Point[T], Point[T]) -> Self[T]
 pub fn[T] Rectangle::bottom(Self[T]) -> T
 pub fn[T : Eq + Compare] Rectangle::contains(Self[T], Point[T]) -> Bool
 pub fn Rectangle::flip_x(Self[Int]) -> Self[Int]
@@ -141,7 +142,6 @@ pub fn Rectangle::get_horizontal(Self[Int]) -> Range[Int]
 pub fn Rectangle::get_vertical(Self[Int]) -> Range[Int]
 pub fn[T : Eq] Rectangle::is_empty(Self[T]) -> Bool
 pub fn[T] Rectangle::left(Self[T]) -> T
-pub fn[T] Rectangle::new(Point[T], Point[T]) -> Self[T]
 pub fn Rectangle::overlaps(Self[Int], Self[Int]) -> Bool
 pub fn[T] Rectangle::right(Self[T]) -> T
 pub fn[T : Add] Rectangle::shift(Self[T], Point[T]) -> Self[T]

@@ -57,7 +57,7 @@ pub struct MapMobs {
 }
 
 ///|
-pub fn MapMobs::new() -> MapMobs {
+pub fn MapMobs::MapMobs() -> MapMobs {
   {
     mobs: Map([]),
     spawns: @queue.Queue([]),
@@ -142,8 +142,8 @@ pub fn MapMobs::find_colliding(
   self : MapMobs,
   moveobj : @physics.MovingObject,
 ) -> Int? {
-  let horizontal = @struct.Range::new(moveobj.get_last_x(), moveobj.get_x())
-  let vertical = @struct.Range::new(moveobj.get_last_y(), moveobj.get_y())
+  let horizontal = Range(moveobj.get_last_x(), moveobj.get_x())
+  let vertical = Range(moveobj.get_last_y(), moveobj.get_y())
   let player_rect = @struct.Rectangle::from4(
     horizontal.smaller(),
     horizontal.greater(),
@@ -261,9 +261,7 @@ pub fn MapMobs::get_mob_position(
   self : MapMobs,
   oid : Int,
 ) -> @struct.Point[Int] {
-  self
-  .get_mob(oid)
-  .map_or(@struct.Point::new(0, 0), fn(mob) { mob.get_position() })
+  self.get_mob(oid).map_or(Point(0, 0), fn(mob) { mob.get_position() })
 }
 
 ///|
@@ -271,9 +269,7 @@ pub fn MapMobs::get_mob_head_position(
   self : MapMobs,
   oid : Int,
 ) -> @struct.Point[Int] {
-  self
-  .get_mob(oid)
-  .map_or(@struct.Point::new(0, 0), fn(mob) { mob.get_head_position() })
+  self.get_mob(oid).map_or(Point(0, 0), fn(mob) { mob.get_head_position() })
 }
 
 ///|
@@ -406,7 +402,7 @@ pub fn setup_game_server_handlers() -> Unit {
         fh: msg.fh,
         new_spawn: true, // Assuming new spawn for map load
         team: msg.team,
-        position: @struct.Point::new(msg.x, msg.y),
+        position: Point(msg.x, msg.y),
       })
     },
   )
@@ -424,7 +420,7 @@ pub fn setup_game_server_handlers() -> Unit {
         fh: msg.fh,
         new_spawn: true,
         team: msg.team,
-        position: @struct.Point::new(msg.x, msg.y),
+        position: Point(msg.x, msg.y),
       })
     },
   )

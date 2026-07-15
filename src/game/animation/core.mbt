@@ -65,7 +65,7 @@ pub fn nx_texture_to_picture_spec(
 }
 
 ///|
-pub fn Animation::new(
+pub fn Animation::Animation(
   frames : Array[AnimationFrame],
   loop_? : Bool = true,
 ) -> Animation {
@@ -82,7 +82,7 @@ pub fn Animation::single_frame(
   pivot? : @math.Vec2 = @math.Vec2::zero(),
   duration? : Double = 1.0,
 ) -> Animation {
-  Animation::new([
+  Animation([
     { image: @resource.load_image(path), size, offset, pivot, duration },
   ])
 }
@@ -95,7 +95,7 @@ pub fn Animation::single_frame_from_image(
   pivot? : @math.Vec2 = @math.Vec2::zero(),
   duration? : Double = 1.0,
 ) -> Animation {
-  Animation::new([{ image, size, offset, pivot, duration }])
+  Animation([{ image, size, offset, pivot, duration }])
 }
 
 ///|
@@ -405,7 +405,7 @@ fn compile_frames_to_selene_clip(
     node: nodes[0],
     anchor: anchor_from_origin(clip_pivot, clip_size),
     duration_ms: (clip.duration * 1000.0).to_int(),
-    dimensions: @struct.Point::new(clip_size.0.to_int(), clip_size.1.to_int()),
+    dimensions: Point(clip_size.0.to_int(), clip_size.1.to_int()),
     frame_durations_ms,
     frame_alphas,
   }

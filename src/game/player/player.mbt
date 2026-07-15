@@ -103,7 +103,7 @@ pub fn Player::load(
     id=entry.stats.stats.0.get(@maple_stat.Id::JOB).unwrap_or(0),
   )
   // let skill_book = load_skill_book(job)
-  Player::new(
+  Player(
     entity,
     entry.id,
     entry.stats.name,
@@ -117,7 +117,7 @@ pub fn Player::load(
 
 ///|
 /// Construct a player object from the given character entry.
-pub fn Player::new(
+pub fn Player::Player(
   entity : @entity.Entity,
   id : Int,
   name : String,
@@ -128,7 +128,7 @@ pub fn Player::new(
   stats : CharStats,
 ) -> Player {
   let skill_book : &SkillBook = CachedMaxLevelSkillBook::{  }
-  let character = @character.Character::new(
+  let character = Character(
     entity,
     id,
     look,
@@ -412,7 +412,7 @@ pub fn Player::respawn(
 
 ///|
 pub fn Player::set_position(self : Player, x : Int, y : Int) -> Unit {
-  self.character.set_position(@struct.Point::new(x, y))
+  self.character.set_position(Point(x, y))
 }
 
 ///|
@@ -625,7 +625,7 @@ pub fn Player::damage(self : Player, attack : MobAttack) -> MobAttackResult {
     .set_vforce(self.character.get_phobj().vforce - 3.5)
   }
   let direction = if fromleft { 0 } else { 1 }
-  MobAttackResult::new(attack, damage, direction)
+  MobAttackResult(attack, damage, direction)
 }
 
 ///|
@@ -773,8 +773,11 @@ fn init {
     }
     let pos = match get_player() {
       Some(player) => player.character.get_position()
-      None => @struct.Point::new(0, 0)
+      None => Point(0, 0)
     }
     { "ok": true, "code": "OK", "map_id": map_id, "x": pos.x, "y": pos.y }
   })
 }
+
+///|
+using @character {type Character}

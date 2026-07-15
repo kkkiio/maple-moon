@@ -281,7 +281,7 @@ fn ItemData::get_item_prefix(id : Int) -> Int {
 }
 
 ///|
-let category_names : Array[String] = [
+let category_names : ReadOnlyArray[String] = [
   "Cap", "Accessory", "Accessory", "Accessory", "Coat", "Longcoat", "Pants", "Shoes",
   "Glove", "Shield", "Cape", "Ring", "Accessory", "Accessory", "Accessory",
 ]

@@ -15,6 +15,7 @@ import {
 
 // Types and methods
 type BodyDrawInfo
+pub fn BodyDrawInfo::BodyDrawInfo(Map[@char_stance.StanceId, Array[NxStanceBody]], Map[@char_stance.StanceId, Array[NxMultiPartFrame]]) -> Self
 pub fn BodyDrawInfo::default() -> Self
 pub fn BodyDrawInfo::get_action(Self, String, Int) -> NxStanceBodyAction?
 pub fn BodyDrawInfo::get_arm_position(Self, @char_stance.StanceId, Int) -> @res_types.Point[Int]
@@ -25,7 +26,6 @@ pub fn BodyDrawInfo::get_face_pos(Self, @char_stance.StanceId, Int) -> @res_type
 pub fn BodyDrawInfo::get_hair_pos(Self, @char_stance.StanceId, Int) -> @res_types.Point[Int]
 pub fn BodyDrawInfo::get_hand_position(Self, @char_stance.StanceId, Int) -> @res_types.Point[Int]
 pub fn BodyDrawInfo::get_head_position(Self, @char_stance.StanceId, Int) -> @res_types.Point[Int]
-pub fn BodyDrawInfo::new(Map[@char_stance.StanceId, Array[NxStanceBody]], Map[@char_stance.StanceId, Array[NxMultiPartFrame]]) -> Self
 pub fn BodyDrawInfo::next_action_frame(Self, String, Int) -> Int
 pub fn BodyDrawInfo::next_frame(Self, @char_stance.StanceId, Int) -> Int
 

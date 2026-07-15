@@ -14,7 +14,7 @@ fn load_animations(src : Json) -> Map[StanceType, MobAnimation] raise {
     animations[StanceType::MOVE] = move_
   } else {
     fail(
-      "missing fly,stand,move animation, animations=\{mob_animations.to_repr()}",
+      "missing fly,stand,move animation, animations=\{Debug::to_repr(mob_animations)}",
     )
   }
   if mob_animations.jump is Some(jump) {

@@ -11,7 +11,7 @@ it is burdensome to implement full client features, so this package provides an 
 
 ```moonbit nocheck
 ///|
-let server = @local_server.LocalServer::new(db=@local_server.FileDB::new())
+let server = LocalServer(db=FileDB())
 ```
 
 - Character snapshot data is persisted by local server through `save_character/load_character`.
@@ -22,7 +22,7 @@ let server = @local_server.LocalServer::new(db=@local_server.FileDB::new())
 ## Runtime Integration
 
 ```moonbit nocheck
-let server = @local_server.LocalServer::new(db=@local_server.FileDB::new())
+let server = LocalServer(db=FileDB())
 @local_server.init_server(server)
 
 @system.App::new()

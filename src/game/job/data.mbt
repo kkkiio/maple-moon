@@ -14,11 +14,11 @@ pub fn JobData::load(id : Int) -> JobData {
     { "bookName": String(name), .. } => name
     _ => ""
   }
-  JobData::new(src, name)
+  JobData(src, name)
 }
 
 ///|
-pub fn JobData::new(src : Json, name : String) -> JobData {
+pub fn JobData::JobData(src : Json, name : String) -> JobData {
   let icon : @resource.NxTexture = try! @json.from_json(
     match src {
       { "info": { "icon": icon, .. }, .. } => icon
@@ -30,7 +30,7 @@ pub fn JobData::new(src : Json, name : String) -> JobData {
   for
     subname, _ in (match src {
       { "skill": Object(skill), .. } => skill
-      _ => {}
+      _ => Map([])
     }) {
     let skill_id = @string.parse_int(subname) catch { _ => 0 }
     if skill_id == 0 {

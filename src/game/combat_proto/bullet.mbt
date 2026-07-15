@@ -4,7 +4,7 @@ struct Bullet {
 }
 
 ///|
-pub fn Bullet::new(
+pub fn Bullet::Bullet(
   entity : @entity.Entity,
   animation : @ms_animation.Animation,
   origin : @struct.Point[Int],
@@ -24,7 +24,7 @@ pub fn Bullet::new(
   @sprite.sprites().set(entity, sprite)
   @ms_animation.play_animation(entity, sprite_animation, loop_=true, transform~)
 
-  let move_obj = @physics.MovingObject::new(on_pos_change=fn(pos) {
+  let move_obj = MovingObject(on_pos_change=fn(pos) {
     @transform2d.set_xy(entity, pos)
   })
   move_obj.set_x(origin.x.to_double() + (if toleft { -30.0 } else { 30.0 }))
@@ -69,3 +69,6 @@ pub fn Bullet::set_target(self : Bullet, target : @struct.Point[Int]) -> Bool {
   )
   return false
 }
+
+///|
+using @physics {type MovingObject}

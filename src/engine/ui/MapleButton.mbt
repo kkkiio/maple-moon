@@ -9,30 +9,7 @@ pub(all) struct NxMapleButton {
   pressed : @resource.NxAnimation
   /// Visual for the disabled state.
   disabled : @resource.NxAnimation
-}
-
-///|
-pub impl @json.FromJson for NxMapleButton with fn from_json(
-  src : Json,
-  path : @json.JsonPath,
-) -> NxMapleButton {
-  guard src
-    is {
-      "normal": normal,
-      "mouseOver": mouse_over,
-      "pressed": pressed,
-      "disabled": disabled,
-      ..
-    } else {
-    raise @json.JsonDecodeError((path, "expect maple button resource object"))
-  }
-  {
-    normal: @json.from_json(normal, path=path.add_key("normal")),
-    mouse_over: @json.from_json(mouse_over, path=path.add_key("mouseOver")),
-    pressed: @json.from_json(pressed, path=path.add_key("pressed")),
-    disabled: @json.from_json(disabled, path=path.add_key("disabled")),
-  }
-}
+} derive(@json.FromJson(fields(mouse_over(rename="mouseOver"))))
 
 ///|
 /// Parsed MapleStory button visuals for selene-based UIs.
@@ -44,7 +21,7 @@ pub(all) struct MapleButtonResource {
 ///|
 /// Build a runtime button resource from parsed nx button data.
 pub fn MapleButtonResource::from_nx(src : NxMapleButton) -> MapleButtonResource {
-  let selene_animations : Map[ButtonState, @ms_animation.Animation] = {}
+  let selene_animations : Map[ButtonState, @ms_animation.Animation] = Map([])
   let states : Array[(ButtonState, @resource.NxAnimation)] = [
     (ButtonState::NORMAL, src.normal),
     (ButtonState::PRESSED, src.pressed),
@@ -97,9 +74,9 @@ fn MapleButton::update_visual_state(
 }
 
 ///|
-pub fn MapleButton::new(
+pub fn MapleButton::MapleButton(
   res : MapleButtonResource,
-  pos? : Point[Int] = @struct.Point::default(),
+  pos? : Point[Int] = Default::default(),
   on_click? : () -> Unit = fn() { () },
 ) -> MapleButton {
   {

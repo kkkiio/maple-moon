@@ -32,6 +32,7 @@ pub let swimgravforce : Double
 
 // Types and methods
 type Foothold derive(Default, @debug.Debug)
+pub fn Foothold::Foothold(NxFoothold, Int, Int) -> Self
 pub fn Foothold::b(Self) -> Int
 pub fn Foothold::ground_below(Self, Double) -> Double
 pub fn Foothold::hcontains(Self, Int) -> Bool
@@ -45,7 +46,6 @@ pub fn Foothold::is_right_edge(Self) -> Bool
 pub fn Foothold::is_wall(Self) -> Bool
 pub fn Foothold::l(Self) -> Int
 pub fn Foothold::layer(Self) -> Int
-pub fn Foothold::new(NxFoothold, Int, Int) -> Self
 pub fn Foothold::next(Self) -> Int
 pub fn Foothold::prev(Self) -> Int
 pub fn Foothold::r(Self) -> Int
@@ -82,11 +82,11 @@ pub struct Movement {
   newstate : Int
   duration : Int
 } derive(ToJson, @debug.Debug, @json.FromJson)
+pub fn Movement::Movement(MovementType, Int, Int, Int, Int, Int, Int, Int, Int) -> Self
 pub fn Movement::default() -> Self
 pub fn Movement::from_coords(Int, Int, Int, Int, Int, Int) -> Self
 pub fn Movement::from_physics_object(PhysicsObject, Int) -> Self
 pub fn Movement::hasmoved(Self, Self) -> Bool
-pub fn Movement::new(MovementType, Int, Int, Int, Int, Int, Int, Int, Int) -> Self
 
 type MovementType derive(Compare, Eq, ToJson, @debug.Debug, @json.FromJson)
 
@@ -97,6 +97,7 @@ pub struct MovingObject {
   mut vspeed : Double
   mut on_pos_change : (@math.Vec2) -> Unit
 }
+pub fn MovingObject::MovingObject(on_pos_change~ : (@math.Vec2) -> Unit) -> Self
 pub fn MovingObject::crnt_x(Self) -> Double
 pub fn MovingObject::crnt_y(Self) -> Double
 pub fn MovingObject::do_move(Self) -> Unit
@@ -114,7 +115,6 @@ pub fn MovingObject::limity(Self, Double) -> Unit
 pub fn MovingObject::mobile(Self) -> Bool
 pub fn MovingObject::movexuntil(Self, Double, Int) -> Unit
 pub fn MovingObject::moveyuntil(Self, Double, Int) -> Unit
-pub fn MovingObject::new(on_pos_change~ : (@math.Vec2) -> Unit) -> Self
 pub fn MovingObject::next_x(Self) -> Double
 pub fn MovingObject::next_y(Self) -> Double
 pub fn MovingObject::normalize(Self) -> Unit
@@ -161,6 +161,7 @@ pub struct PhysicsObject {
   mut hacc : Double
   mut vacc : Double
 }
+pub fn PhysicsObject::PhysicsObject(on_pos_change~ : (@math.Vec2) -> Unit) -> Self
 pub fn PhysicsObject::clear_flag(Self, PhysicsObjectFlag) -> Unit
 pub fn PhysicsObject::clear_flags(Self) -> Unit
 pub fn PhysicsObject::do_move(Self) -> Unit
@@ -179,7 +180,6 @@ pub fn PhysicsObject::is_flag_set(Self, PhysicsObjectFlag) -> Bool
 pub fn PhysicsObject::is_on_ground(Self) -> Bool
 pub fn PhysicsObject::limitx(Self, Double) -> Unit
 pub fn PhysicsObject::limity(Self, Double) -> Unit
-pub fn PhysicsObject::new(on_pos_change~ : (@math.Vec2) -> Unit) -> Self
 pub fn PhysicsObject::set_fhid(Self, Int) -> Unit
 pub fn PhysicsObject::set_fhlayer(Self, Int) -> Unit
 pub fn PhysicsObject::set_flag(Self, PhysicsObjectFlag) -> Unit

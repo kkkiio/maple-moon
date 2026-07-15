@@ -21,10 +21,10 @@ pub enum MapObjectEvent[T] {
 }
 
 ///|
-pub fn[T] MapObjects::new() -> MapObjects[T] {
+pub fn[T] MapObjects::MapObjects() -> MapObjects[T] {
   {
-    objects: {},
-    layers: @graphics.map_layers.map(fn(_id) { {} }),
+    objects: Map([]),
+    layers: @graphics.map_layers.map(fn(_id) { Map([]) }),
     event_listeners: Array::new(),
   }
 }

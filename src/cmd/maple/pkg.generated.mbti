@@ -1,0 +1,14 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/cmd/maple"
+
+// Values
+
+// Errors
+
+// Types and methods
+type DaemonConnection
+
+// Type aliases
+
+// Traits
+

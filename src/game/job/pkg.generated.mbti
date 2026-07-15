@@ -20,6 +20,7 @@ pub fn get_subjob_id(Int, Level, Level) -> Int
 
 // Types and methods
 type Job
+pub fn Job::Job(Int, Level, Map[Int, JobData]) -> Self
 pub fn Job::can_use(Self, Int) -> Bool
 pub fn Job::get_all_subjobs(Self) -> Iter[JobData]
 pub fn Job::get_data_by_id(Self, Int) -> JobData
@@ -31,15 +32,14 @@ pub fn Job::get_secondary(Self, @weapon.Type) -> @maple_stat.EquipStatId
 pub fn Job::get_subjob(Self, Level) -> Int
 pub fn Job::is_a(Self, Int) -> Bool
 pub fn Job::load(id? : Int) -> Self
-pub fn Job::new(Int, Level, Map[Int, JobData]) -> Self
 
 pub(all) struct JobData {
   icon : @resource.NxTexture
   skill_ids : Array[Int]
   name : String
 }
+pub fn JobData::JobData(Json, String) -> Self
 pub fn JobData::load(Int) -> Self
-pub fn JobData::new(Json, String) -> Self
 
 pub(all) enum JobId {
   BEGINNER

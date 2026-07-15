@@ -46,7 +46,7 @@ fn LocalServer::init_quest_runtime(self : LocalServer) -> Unit {
 
 ///|
 fn parse_quest_definitions(raw : Json) -> Map[Int, QuestDefinition] {
-  let defs : Map[Int, QuestDefinition] = {}
+  let defs : Map[Int, QuestDefinition] = Map([])
   guard raw
     is { "Check.img": Object(check_img), "Act.img": Object(act_img), .. } else {
     return defs
@@ -70,7 +70,7 @@ fn parse_quest_definition(
 ) -> QuestDefinition {
   let mut phase0_npc : Int? = None
   let mut phase0_lvmin : Int? = None
-  let phase0_required_quests : Map[Int, Int] = {}
+  let phase0_required_quests : Map[Int, Int] = Map([])
   let phase0_items : Array[QuestItemRequirement] = []
   let mut phase1_npc : Int? = None
   let phase1_items : Array[QuestItemRequirement] = []
@@ -89,7 +89,7 @@ fn parse_quest_definition(
         phase1_json,
         fn(npc) { phase1_npc = Some(npc) },
         fn(_lvmin) {  },
-        {},
+        Map([]),
         phase1_items,
       )
     }

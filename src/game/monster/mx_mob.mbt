@@ -97,7 +97,7 @@ fn parse_rect_json(
 ) -> @struct.Rectangle[Int] raise @json.JsonDecodeError {
   match json {
     { "lt": lt, "rb": rb, .. } =>
-      @struct.Rectangle::new(
+      Rectangle(
         parse_point_json(lt, path.add_key("lt")),
         parse_point_json(rb, path.add_key("rb")),
       )
@@ -215,7 +215,7 @@ pub impl @json.FromJson for MxMobAttackInfo with fn from_json(json, path) {
   let range = match (root.get("lt"), root.get("rb")) {
     (Some(lt), Some(rb)) =>
       Some(
-        @struct.Rectangle::new(
+        Rectangle(
           parse_point_json(lt, path.add_key("lt")),
           parse_point_json(rb, path.add_key("rb")),
         ),
@@ -232,7 +232,7 @@ pub impl @json.FromJson for MxMobAttackNode with fn from_json(json, path) {
   }
   let id = parse_int_like(json, path, "id")
   let info : MxMobAttackInfo = @json.from_json(
-    root.get("info").unwrap_or(Json::object({})),
+    root.get("info").unwrap_or(Json::empty_object()),
     path=path.add_key("info"),
   )
   let animation_path_key = match root.get("animation_path_key") {
@@ -286,7 +286,7 @@ fn parse_string_map(
   path : @json.JsonPath,
   key_name : String,
 ) -> Map[String, String] raise @json.JsonDecodeError {
-  let out : Map[String, String] = {}
+  let out : Map[String, String] = Map([])
   match json {
     Object(obj) =>
       for key, value in obj {
@@ -315,7 +315,7 @@ pub impl @json.FromJson for MxMob with fn from_json(json, path) {
     path=path.add_key("info"),
   )
 
-  let stance_nodes : Map[String, MxMobAnimNode] = {}
+  let stance_nodes : Map[String, MxMobAnimNode] = Map([])
   match root.get("stance_nodes") {
     Some(Object(obj)) =>
       for key, value in obj {
@@ -331,7 +331,7 @@ pub impl @json.FromJson for MxMob with fn from_json(json, path) {
     None => ()
   }
 
-  let attack_nodes : Map[Int, MxMobAttackNode] = {}
+  let attack_nodes : Map[Int, MxMobAttackNode] = Map([])
   match root.get("attack_nodes") {
     Some(Object(obj)) =>
       for key, value in obj {
@@ -356,7 +356,7 @@ pub impl @json.FromJson for MxMob with fn from_json(json, path) {
     None => ()
   }
 
-  let skill_nodes : Map[Int, MxMobSkillNode] = {}
+  let skill_nodes : Map[Int, MxMobSkillNode] = Map([])
   match root.get("skill_nodes") {
     Some(Object(obj)) =>
       for key, value in obj {
@@ -379,7 +379,7 @@ pub impl @json.FromJson for MxMob with fn from_json(json, path) {
   }
 
   let mx_animations = parse_string_map(
-    root.get("mx_animations").unwrap_or(Json::object({})),
+    root.get("mx_animations").unwrap_or(Json::empty_object()),
     path,
     "mx_animations",
   )

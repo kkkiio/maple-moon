@@ -135,7 +135,7 @@ pub fn SkillNxResource::simplify(self : SkillNxResource) -> SkillResource {
     icon_disabled: self.icon_disabled,
     icon_mouseover: self.icon_mouseover,
     elem_attr: self.elem_attr,
-    req_skills: self.req_skills.0.map_or({}, fn(it) { it.0 }),
+    req_skills: self.req_skills.0.map_or(Map([]), fn(it) { it.0 }),
     invisible: self.invisible,
     level_stats: self.level_stats.0,
     req_weapon: self.req_weapon.0,
@@ -170,7 +170,7 @@ pub impl @json.FromJson for SkillTextResource with fn from_json(json, path) -> S
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expect object"))
   }
-  let levels = {}
+  let levels = Map([])
   for level = 1; ; level = level + 1 {
     match obj.get("h" + Show::to_string(level)) {
       Some(String(sub)) => levels.set(level, sub)
@@ -184,7 +184,7 @@ pub impl @json.FromJson for SkillTextResource with fn from_json(json, path) -> S
 ///|
 /// Create SkillData from resources (internal use, use load_skill for public API).
 /// Note: src is used for legacy effect construction and will be removed.
-pub fn SkillData::new(
+pub fn SkillData::SkillData(
   id : Int,
   skill_src : Json,
   skill_res : SkillResource,
@@ -254,7 +254,7 @@ fn flags_of(id : Int) -> (Bool, Bool) {
 
 ///|
 /// Skill flags, unfortunately these just have to be hard-coded
-let skill_flags : Map[SkillId, (Bool, Bool)] = Map::from_array([
+let skill_flags : @hashmap.HashMap[SkillId, (Bool, Bool)] = @hashmap.HashMap([
   // Beginner
   (SkillId::THREE_SNAILS, flag_attack),
   // Warrior
@@ -322,7 +322,7 @@ priv struct NxLevelStats(Map[Int, Stats])
 
 ///|
 impl @json.FromJson for NxLevelStats with fn from_json(json, path) -> NxLevelStats raise @json.JsonDecodeError {
-  let stats = {}
+  let stats = Map([])
   guard json is Object(levels) else {
     raise @json.JsonDecodeError((path, "expect object"))
   }
@@ -348,10 +348,7 @@ impl @json.FromJson for NxLevelStats with fn from_json(json, path) -> NxLevelSta
           critical: 0,
           ignoredef: 0,
           hrange: 0,
-          range: @struct.Rectangle::new(
-            @struct.Point::new(0, 0),
-            @struct.Point::new(0, 0),
-          ),
+          range: Rectangle(Point(0, 0), Point(0, 0)),
         }
       Object(sub) => {
         let damage_base = if sub is { "damage": Number(d, ..), .. } {

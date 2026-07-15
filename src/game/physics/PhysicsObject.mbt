@@ -13,12 +13,12 @@ pub struct MovingObject {
 
 ///|
 /// Create a moving object with zeroed position/speed.
-pub fn MovingObject::new(
+pub fn MovingObject::MovingObject(
   on_pos_change~ : (@selene_math.Vec2) -> Unit,
 ) -> MovingObject {
   {
-    x: @utils.Linear::default(),
-    y: @utils.Linear::default(),
+    x: Default::default(),
+    y: Default::default(),
     hspeed: 0.0,
     vspeed: 0.0,
     on_pos_change,
@@ -304,11 +304,11 @@ pub struct PhysicsObject {
 
 ///|
 /// Create a physics object with default NORMAL state.
-pub fn PhysicsObject::new(
+pub fn PhysicsObject::PhysicsObject(
   on_pos_change~ : (@selene_math.Vec2) -> Unit,
 ) -> PhysicsObject {
   {
-    moving_object: MovingObject::new(on_pos_change~),
+    moving_object: MovingObject(on_pos_change~),
     t: PhysicsObjectType::NORMAL,
     flags: 0,
     fh_id: 0,

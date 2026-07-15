@@ -48,7 +48,7 @@ struct Linear {
 } derive(Default, Debug, ToJson)
 
 ///|
-pub fn Linear::new(init : Double) -> Linear {
+pub fn Linear::Linear(init : Double) -> Linear {
   { now: init, before: init }
 }
 

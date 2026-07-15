@@ -26,11 +26,11 @@ pub fn Module::load() -> Module {
     }
     bullet_data.set(int_id, data)
   }
-  Module::new(bullet_data)
+  Module(bullet_data)
 }
 
 ///|
-pub fn Module::new(bullet_data : Map[Int, BulletData]) -> Module {
+pub fn Module::Module(bullet_data : Map[Int, BulletData]) -> Module {
   { bullet_data, }
 }
 

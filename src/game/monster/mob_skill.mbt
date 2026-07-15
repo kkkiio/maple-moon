@@ -20,14 +20,14 @@ pub fn MobSkill::load(id : Int, level : Int) -> MobSkill {
   let src = @resource.json_navigate("assets/Skill/MobSkill.img.json", [
     id.to_string(),
   ])
-  MobSkill::new(id, level, src) catch {
+  MobSkill(id, level, src) catch {
     err => abort("failed to load mob skill: \{id}/\{level}, error=\{err}")
   }
 }
 
 ///|
-pub fn MobSkill::new(id : Int, level : Int, src : Json) -> MobSkill raise {
-  // let use_effect = MobSingleUseEffect::new(get_path(src, ["level", level.to_string()]))
+pub fn MobSkill::MobSkill(id : Int, level : Int, src : Json) -> MobSkill raise {
+  // let use_effect = MobSingleUseEffect(get_path(src, ["level", level.to_string()]))
   let level_json = get_path(src, ["level", level.to_string()])
   let mob_json = get_path(level_json, ["mob"])
   let is_buff = match mob_json {
@@ -98,7 +98,7 @@ struct Effect {
 }
 
 ///|
-pub fn Effect::new(src : Json) -> Effect {
+pub fn Effect::Effect(src : Json) -> Effect {
   { path_key: "", z: json_int(get_path(src, ["z"])) }
 }
 
@@ -144,8 +144,8 @@ pub(all) struct MobSingleUseEffect {
 }
 
 ///|
-pub fn MobSingleUseEffect::new(src : Json) -> MobSingleUseEffect {
-  { effect: Effect::new(src) }
+pub fn MobSingleUseEffect::MobSingleUseEffect(src : Json) -> MobSingleUseEffect {
+  { effect: Effect(src) }
 }
 
 ///|
@@ -165,27 +165,30 @@ pub(all) struct MobMultiUseEffect {
 }
 
 ///|
-pub fn MobMultiUseEffect::new(
+pub fn MobMultiUseEffect::MobMultiUseEffect(
   src : Json,
   area_warning : Bool,
 ) -> MobMultiUseEffect {
-  let effects = Array::new()
-  if area_warning {
-    let area_warning_json = get_path(src, ["areaWarning"])
-    if area_warning_json != Json::null() {
-      effects.push(Effect::new(area_warning_json))
-    }
+  let area_warning_json = if area_warning {
+    get_path(src, ["areaWarning"])
+  } else {
+    Json::null()
   }
   let effect0 = get_path(src, ["effect"])
-  if effect0 != Json::null() {
-    effects.push(Effect::new(effect0))
-  }
+  let effects = [
+    ..if area_warning_json != Json::null() {
+      [Effect(area_warning_json)]
+    },
+    ..if effect0 != Json::null() {
+      [Effect(effect0)]
+    },
+  ]
   for no in 0..<999 {
     let sub = get_path(src, ["effect" + no.to_string()])
     if sub == Json::null() {
       break
     }
-    effects.push(Effect::new(sub))
+    effects.push(Effect(sub))
   }
   { effects, }
 }

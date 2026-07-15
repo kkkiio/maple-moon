@@ -54,7 +54,7 @@ struct Timer {
 }
 
 ///|
-pub fn Timer::new(get_now : () -> TimePoint) -> Timer {
+pub fn Timer::Timer(get_now : () -> TimePoint) -> Timer {
   { get_now, current_time: 0L }
 }
 

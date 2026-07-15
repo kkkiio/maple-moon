@@ -48,6 +48,7 @@ pub(all) struct CharacterListEntry {
 pub(all) struct CharacterListMessage {
   characters : Array[CharacterListEntry]
 } derive(ToJson, @debug.Debug, @json.FromJson)
+pub fn CharacterListMessage::type_code() -> Int
 pub impl ServerMessage for CharacterListMessage
 
 pub(all) struct CharacterListRequestMessage(Unit) derive(Default, ToJson, @debug.Debug, @json.FromJson)
@@ -133,6 +134,7 @@ pub(all) struct CreateCharacterResultMessage {
   character : CharacterListEntry?
   error : String?
 } derive(ToJson, @debug.Debug, @json.FromJson)
+pub fn CreateCharacterResultMessage::type_code() -> Int
 pub impl ServerMessage for CreateCharacterResultMessage
 
 pub(all) struct DropLootMessage {

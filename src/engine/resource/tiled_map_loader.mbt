@@ -76,7 +76,7 @@ fn resolve_external_tilesets_in_tmj_json(
         guard tileset_ref.get("firstgid") is Some(first_gid) else {
           abort("tileset source missing `firstgid`, source=\{source}")
         }
-        let merged : Map[String, Json] = {}
+        let merged : Map[String, Json] = Map([])
         for key, value in tsj_obj {
           merged[key] = value
         }
@@ -87,7 +87,7 @@ fn resolve_external_tilesets_in_tmj_json(
       _ => resolved_tilesets.push(tileset_json)
     }
   }
-  let resolved_root : Map[String, Json] = {}
+  let resolved_root : Map[String, Json] = Map([])
   for key, value in root_obj {
     resolved_root[key] = value
   }

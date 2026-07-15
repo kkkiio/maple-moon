@@ -13,13 +13,13 @@ struct Combat {
 
 ///|
 /// Create a combat runtime bound to the provided map mob collection.
-pub fn Combat::new(mobs : @monster.MapMobs) -> Combat {
+pub fn Combat::Combat(mobs : @monster.MapMobs) -> Combat {
   {
     mobs,
     regular_attack: new_regular_attack(),
-    damage_effects: @utils.TimedQueue::new(),
+    damage_effects: TimedQueue(),
     // damage_numbers: Array::new(),
-    cooldowns: {},
+    cooldowns: Map([]),
   }
 }
 
@@ -129,7 +129,7 @@ fn Combat::execute_attack_pipeline(
     None => self.resolve_attack_targets(character, act, attack)
   }
   let result : AttackResult = {
-    ..AttackResult::new(attack),
+    ..AttackResult(attack),
     attacker: character.get_oid(),
   }
   self.apply_attack_to_mobs(
@@ -364,13 +364,9 @@ fn Combat::resolve_attack_targets(
         center,
         attack.max_target_count,
       )
-      let targets = [primary_oid]
-      for oid in splash {
-        if !targets.contains(oid) {
-          targets.push(oid)
-        }
-      }
-      targets.iter().take(attack.max_target_count).collect()
+      [|primary_oid, ..splash.iter().filter(fn(oid) { oid != primary_oid })|]
+      .take(attack.max_target_count)
+      .collect()
     }
   }
 }
@@ -597,10 +593,10 @@ fn miss_bullet_target_position(
       1.0,
     )
     let x = if toleft { cast_range.left() } else { cast_range.right() }
-    return @struct.Point::new(x, origin.y - 26)
+    return Point(x, origin.y - 26)
   }
   let xshift = if result.toleft { -400 } else { 400 }
-  user.get_position() + @struct.Point::new(xshift, -26)
+  user.get_position() + Point(xshift, -26)
 }
 
 ///|

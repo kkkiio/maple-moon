@@ -179,7 +179,7 @@ pub(all) struct SelectableCharacter {
 }
 
 ///|
-pub fn SelectCharUI::new(
+pub fn SelectCharUI::SelectCharUI(
   resources : SelectCharUIResource,
   characters : Array[SelectableCharacter],
   resource : CharacterPresentationResource,
@@ -191,7 +191,7 @@ pub fn SelectCharUI::new(
     @selene_math.Vec2(800, 600),
     //   "origin": [392, 297]
   )
-  let ani17 = @ms_animation.Animation::new([
+  let ani17 = Animation([
     @ms_animation.AnimationFrame::{
       image: @resource.load_image("assets/UI/Login.img/char_select/light17.png"),
       size: @selene_math.Vec2(505, 242),
@@ -215,7 +215,7 @@ pub fn SelectCharUI::new(
       //     "delay": 3000,
     },
   ])
-  let ani19 : @ms_animation.Animation = @ms_animation.Animation::new([
+  let ani19 : @ms_animation.Animation = Animation([
     @ms_animation.AnimationFrame::{
       image: @resource.load_image("assets/UI/Login.img/char_select/light19.png"),
       size: @selene_math.Vec2(355, 312),
@@ -299,11 +299,7 @@ pub fn SelectCharUI::new(
     let entity = @entity.Entity()
     entities.push(entity)
     @transform2d.set_xy(entity, @selene_math.Vec2(x.to_double(), y.to_double()))
-    let button = @ui.MapleButton::new(
-      res,
-      pos=@struct.Point::new(x, y),
-      on_click~,
-    )
+    let button = MapleButton(res, pos=Point(x, y), on_click~)
     @sprite.sprites().set(
       entity,
       @ms_animation.sprite_from_animation(button.current_selene_animation(), 10),
@@ -449,7 +445,7 @@ fn get_character_slot_pos(
 ) -> @struct.Point[Int] {
   let x = 125 * (index % 4)
   let y = 200 * (index > 3).to_int()
-  return @struct.Point::new(x + x_adj, y + y_adj)
+  return Point(x + x_adj, y + y_adj)
 }
 
 ///|
@@ -570,7 +566,7 @@ fn add_select_char_ui(
   resource : CharacterPresentationResource,
   slots : Array[SelectableCharacter],
 ) -> SelectCharUI {
-  SelectCharUI::new(
+  SelectCharUI(
     SelectCharUIResource::load(),
     slots,
     on_select_character=fn(slot) {
@@ -686,7 +682,7 @@ pub fn select_char_ui_system(_world : @ecs.World) -> Unit {
   guard character_list_ref.val is Some(characters) else {
     if !character_list_requested_ref.val {
       character_list_requested_ref.val = true
-      @game_server.send(CharacterListRequestMessage::default())
+      @game_server.send(CharacterListRequestMessage(()))
     }
     return
   }
@@ -783,3 +779,9 @@ pub fn setup_game_server_handlers() -> Unit {
     },
   )
 }
+
+///|
+using @ms_animation {type Animation}
+
+///|
+using @ui {type MapleButton}

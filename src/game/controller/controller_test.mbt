@@ -35,27 +35,16 @@ fn make_test_look() -> @char_look.CharLook raise {
   let stance_heads_map : @char_look.NxStanceLooks[@types.NxMultiPartFrame] = @json.from_json(
     headnode,
   )
-  let draw_info = @types.BodyDrawInfo::new(
-    stance_bodys_map.0,
-    stance_heads_map.0,
-  )
+  let draw_info = @cb.BodyDrawInfo(stance_bodys_map.0, stance_heads_map.0)
   let hair_node : @char_look.NxStanceLooks[@types.NxMultiPartFrame] = @json.from_json(
     parse_json_file("assets/Character/Hair/00030000.img.json"),
   )
-  @char_look.CharLook::new(
+  @cp.CharLook(
     entity,
-    {},
-    @char_look.FullBody::new(
-      0,
-      draw_info,
-      stance_bodys_map.0,
-      stance_heads_map.0,
-    ),
+    Map([]),
+    @cp.FullBody(0, draw_info, stance_bodys_map.0, stance_heads_map.0),
     @char_look.Hair::parse(0, hair_node, draw_info),
-    @char_look.Face::new(
-      20000,
-      parse_json_file("assets/Character/Face/00020000.img.json"),
-    ),
+    @cp.Face(20000, parse_json_file("assets/Character/Face/00020000.img.json")),
     draw_info,
   )
 }
@@ -63,19 +52,19 @@ fn make_test_look() -> @char_look.CharLook raise {
 ///|
 fn make_test_player(oid : Int) -> @player.Player raise {
   let look = make_test_look()
-  let stats : @char_stats.CharStats = @char_stats.CharStats::new(
-    @server_proto.StatsEntry::default(),
+  let stats : @char_stats.CharStats = CharStats(
+    Default::default(),
     fn() { @weapon.Type::NONE },
-    @job.Job::new(0, @job.Level::BEGINNER, Map([])),
+    Job(0, @job.Level::BEGINNER, Map([])),
     Map([]),
     Map([]),
     Map([]),
   )
-  @player.Player::new(
+  Player(
     look.get_root_entity(),
     oid,
     "ControllerRopeTester",
-    @legacy_types.MockInventory::default(),
+    @legacy_types.MockInventory::{  },
     look,
     stats,
   )
@@ -177,7 +166,7 @@ fn advance_controller_frames(
 
 ///|
 fn find_rope_or_fail(map_info : @map.MapInfo, x : Int, y : Int) -> @map.Ladder {
-  guard map_info.find_ladder(@struct.Point::new(x, y), true) is Some(rope) else {
+  guard map_info.find_ladder(Point(x, y), true) is Some(rope) else {
     abort("unexpected input state in controller test")
   }
   rope
@@ -189,13 +178,14 @@ test "105040000 rope 10 should hold at top when climbing into empty air" {
   let (player, map_info) = setup_controller_env(
     rope_hold_map_id, rope_hold_empty_air_x, start_y,
   )
+  let character = @combat_system.CombatCharacter::get_character(player)
   let rope = find_rope_or_fail(map_info, rope_hold_empty_air_x, start_y)
 
   advance_controller_frames(280, [@inputs.Code::ArrowUp], just_pressed=[
     @inputs.Code::ArrowUp,
   ])
-  let state = player.get_character().get_state()
-  let y = player.get_character().get_phobj().get_y()
+  let state = character.get_state()
+  let y = character.get_phobj().get_y()
   debug_inspect(
     state,
     content=(
@@ -210,12 +200,12 @@ test "105040000 rope 10 should hold at top when climbing into empty air" {
 
   advance_controller_frames(5, [@inputs.Code::ArrowUp])
   debug_inspect(
-    player.get_character().get_state(),
+    character.get_state(),
     content=(
       #|ROPE
     ),
   )
-  assert_eq(player.get_character().get_phobj().get_y(), rope.get_top())
+  assert_eq(character.get_phobj().get_y(), rope.get_top())
   teardown_controller_env()
 }
 
@@ -225,17 +215,16 @@ test "105040000 rope 11 should exit rope onto platform" {
   let (player, _map_info) = setup_controller_env(
     rope_hold_map_id, rope_exit_platform_x, start_y,
   )
+  let character = @combat_system.CombatCharacter::get_character(player)
 
   advance_controller_frames(280, [@inputs.Code::ArrowUp], just_pressed=[
     @inputs.Code::ArrowUp,
   ])
 
-  assert_true(player.get_character().get_state() != @character.CharState::ROPE)
-  assert_true(player.get_character().get_state() != @character.CharState::FALL)
-  assert_true(player.get_character().get_phobj().is_on_ground())
-  assert_true(
-    player.get_character().get_phobj().get_y() <= rope_exit_platform_top,
-  )
+  assert_true(character.get_state() != @character.CharState::ROPE)
+  assert_true(character.get_state() != @character.CharState::FALL)
+  assert_true(character.get_phobj().is_on_ground())
+  assert_true(character.get_phobj().get_y() <= rope_exit_platform_top)
   teardown_controller_env()
 }
 
@@ -245,6 +234,7 @@ test "rope bottom exit still falls" {
   let (player, _map_info) = setup_controller_env(
     rope_hold_map_id, rope_hold_empty_air_x, start_y,
   )
+  let character = @combat_system.CombatCharacter::get_character(player)
 
   advance_controller_frames(120, [@inputs.Code::ArrowDown], just_pressed=[
     @inputs.Code::ArrowDown,
@@ -254,13 +244,9 @@ test "rope bottom exit still falls" {
     Some(_) => fail("expected to leave rope from the bottom")
     None => ()
   }
-  assert_true(player.get_character().get_state() != @character.CharState::ROPE)
-  assert_true(
-    player.get_character().get_state() != @character.CharState::LADDER,
-  )
-  assert_true(
-    player.get_character().get_phobj().get_y() > rope_hold_empty_air_bottom,
-  )
+  assert_true(character.get_state() != @character.CharState::ROPE)
+  assert_true(character.get_state() != @character.CharState::LADDER)
+  assert_true(character.get_phobj().get_y() > rope_hold_empty_air_bottom)
   teardown_controller_env()
 }
 
@@ -270,12 +256,13 @@ test "held at empty-air top can still jump off" {
   let (player, _map_info) = setup_controller_env(
     rope_hold_map_id, rope_hold_empty_air_x, start_y,
   )
+  let character = @combat_system.CombatCharacter::get_character(player)
 
   advance_controller_frames(280, [@inputs.Code::ArrowUp], just_pressed=[
     @inputs.Code::ArrowUp,
   ])
   debug_inspect(
-    player.get_character().get_state(),
+    character.get_state(),
     content=(
       #|ROPE
     ),
@@ -289,8 +276,8 @@ test "held at empty-air top can still jump off" {
     Some(_) => fail("expected jump to leave rope")
     None => ()
   }
-  assert_true(player.get_character().get_state() != @character.CharState::ROPE)
-  assert_true(player.get_character().get_phobj().get_hspeed() < 0.0)
-  assert_true(player.get_character().get_phobj().get_vspeed() < 0.0)
+  assert_true(character.get_state() != @character.CharState::ROPE)
+  assert_true(character.get_phobj().get_hspeed() < 0.0)
+  assert_true(character.get_phobj().get_vspeed() < 0.0)
   teardown_controller_env()
 }

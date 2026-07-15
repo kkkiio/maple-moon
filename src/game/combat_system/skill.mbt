@@ -22,7 +22,7 @@ pub fn Skill::load(skill_id : Int) -> Skill {
   let strid = @utils.stoi_left_pad0(skill_id, 7)
   let jobid = strid.view(end_offset=3)
   let skill_base_path = "assets/Skill/\{jobid}.img.json"
-  Skill::new(
+  Skill(
     skill_id,
     data.src,
     skill_base_path,
@@ -30,12 +30,12 @@ pub fn Skill::load(skill_id : Int) -> Skill {
     data.master_level,
     data.stats,
     data.req_weapon,
-    SkillSound::new(skill_id),
+    SkillSound(skill_id),
   )
 }
 
 ///|
-pub fn Skill::new(
+pub fn Skill::Skill(
   skill_id : Int,
   src : Json,
   skill_base_path : String,
@@ -65,40 +65,40 @@ pub fn Skill::new(
     })
     as &SkillAction
   } else if has_action0 && has_action1 {
-    TwoHandedAction::new(src) as &SkillAction
+    TwoHandedAction(src) as &SkillAction
   } else if has_action0 {
-    SingleAction::new(src) as &SkillAction
+    SingleAction(src) as &SkillAction
   } else if is_attack {
     let by_level = json_get_string(
         skill_get_path(src, ["level", "1", "action"]),
       )
       is Some(_)
     if by_level {
-      ByLevelAction::new(src, skill_id) as &SkillAction
+      ByLevelAction(src, skill_id) as &SkillAction
     } else {
       over_regular = true
-      RegularAction::default() as &SkillAction
+      RegularAction() as &SkillAction
     }
   } else {
-    NoAction::new() as &SkillAction
+    NoAction() as &SkillAction
   }
   let has_ball = json_has_children(skill_get_path(src, ["ball"]))
   let by_level_ball = json_has_children(
     skill_get_path(src, ["level", "1", "ball"]),
   )
   let bullet = if by_level_ball {
-    let bullet = BySkillLevelBullet::new(src, skill_id, skill_base_path)
+    let bullet = BySkillLevelBullet(src, skill_id, skill_base_path)
     fn(user : @character.Character, bulletid : Int) {
       bullet.get(user, bulletid)
     }
   } else if has_ball {
-    let bullet = SingleBullet::new(src, skill_base_path)
+    let bullet = SingleBullet(src, skill_base_path)
     fn(user : @character.Character, bulletid : Int) {
       bullet.get(user, bulletid)
     }
   } else {
     projectile = false
-    let bullet = SkillRegularBullet::new()
+    let bullet = SkillRegularBullet()
     fn(user : @character.Character, bulletid : Int) {
       bullet.get(user, bulletid)
     }
@@ -168,7 +168,7 @@ pub fn Skill::apply_actions(
   user : @character.Character,
   attack_type : @combat_proto.AttackType,
 ) -> Unit {
-  self.action.apply(user, attack_type)
+  SkillAction::apply(self.action, user, attack_type)
 }
 
 ///|

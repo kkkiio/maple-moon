@@ -16,7 +16,7 @@ pub(all) struct NxFootholdTree(Map[Int, Map[Int, Map[Int, NxFoothold]]]) // laye
 ///|
 /// Decode foothold tree from JSON object.
 pub impl @json.FromJson for NxFootholdTree with fn from_json(json, path) -> NxFootholdTree raise @json.JsonDecodeError {
-  let wrapper : @resource.IntMap[@resource.IntMap[@resource.IntMap[NxFoothold]]] = @resource.IntMap::from_json(
+  let wrapper : @resource.IntMap[@resource.IntMap[@resource.IntMap[NxFoothold]]] = FromJson::from_json(
     json, path,
   )
   return NxFootholdTree(
@@ -30,11 +30,11 @@ pub impl @json.FromJson for NxFootholdTree with fn from_json(json, path) -> NxFo
 /// Build runtime foothold tree and acceleration structure from resource.
 pub fn FootholdTree::from_resource(src : NxFootholdTree) -> FootholdTree raise {
   let footholds = Map([])
-  let null_fh = Foothold::default()
+  let null_fh = Default::default()
   for layer, basef in src.0 {
     for _, midf in basef {
       for id, lastf in midf {
-        let foothold = Foothold::new(lastf, id, layer)
+        let foothold = Foothold(lastf, id, layer)
         footholds.set(id, foothold)
       }
     }
@@ -48,10 +48,10 @@ pub fn FootholdTree::from_resource(src : NxFootholdTree) -> FootholdTree raise {
     .map(fn(f) { f.r() })
     .maximum()
     .unwrap_or(-30000)
-  let walls = @struct.Range::new(leftw + 25, rightw - 25)
+  let walls = Range(leftw + 25, rightw - 25)
   let topb = footholds.values().map(fn(f) { f.t() }).minimum().unwrap_or(30000)
   let botb = footholds.values().map(fn(f) { f.b() }).maximum().unwrap_or(-30000)
-  let borders = @struct.Range::new(topb - 300, botb + 100)
+  let borders = Range(topb - 300, botb + 100)
   let seg_tree = SegTree::build(footholds)
   { footholds, seg_tree, null_fh, walls, borders }
 }
@@ -95,7 +95,7 @@ pub fn FootholdTree::limit_movement(
   if phobj.moving_object.vmobile() {
     let crnt_y = phobj.moving_object.crnt_y()
     let next_y = phobj.moving_object.next_y()
-    let ground = @struct.Range::new(
+    let ground = Range(
       self.get_fh(phobj.fh_id).ground_below(phobj.moving_object.crnt_x()),
       self.get_fh(phobj.fh_id).ground_below(phobj.moving_object.next_x()),
     )
@@ -197,7 +197,7 @@ pub fn FootholdTree::get_wall(
   fy : Double,
 ) -> Double {
   let shorty = fy.to_int()
-  let vertical = @struct.Range::new(shorty - 50, shorty - 1)
+  let vertical = Range(shorty - 50, shorty - 1)
   let cur = self.get_fh(curid)
   if left {
     let prev = self.get_fh(cur.prev())

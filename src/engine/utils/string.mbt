@@ -8,7 +8,7 @@ pub fn ellipsis(s : String, max_len : Int, ellipsis? : String = "..") -> String 
 }
 
 ///|
-let hex_digits : Array[String] = [
+let hex_digits : ReadOnlyArray[String] = [
   "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F",
 ]
 

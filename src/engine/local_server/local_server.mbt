@@ -89,15 +89,15 @@ priv struct PendingMobSpawn {
 }
 
 ///|
-pub fn LocalServer::new(
+pub fn LocalServer::LocalServer(
   db~ : &DB,
   drop_rng? : @random.Rand = @random.Rand::chacha8(seed=default_rand_seed.val),
 ) -> LocalServer {
   {
     client_message_queue: @queue.Queue([]),
     server_message_queue: @queue.Queue([]),
-    client_message_handler_map: {},
-    server_message_handlers_map: {},
+    client_message_handler_map: Map([]),
+    server_message_handlers_map: Map([]),
     last_map_id: 100000000,
     last_portal_id: 0,
     last_object_id: 100000,
@@ -138,8 +138,8 @@ pub fn LocalServer::new(
     drop_db: None,
     global_drop_db: None,
     drop_rng,
-    quest_defs: {},
-    started_quests: {},
+    quest_defs: Map([]),
+    started_quests: Map([]),
     completed_quests: make_default_completed_quests(),
   }
 }
@@ -343,13 +343,13 @@ fn LocalServer::on_create_char(self : LocalServer, json : Json) -> Unit raise {
           skin: request.skin,
           faceid: request.face,
           hairid: normalized_hair_id,
-          equips: Map::from_array([
+          equips: Map([
             (@slot.Id::TOP.int_value(), request.top),
             (@slot.Id::BOTTOM.int_value(), request.bot),
             (@slot.Id::SHOES.int_value(), request.shoes),
             (@slot.Id::WEAPON.int_value(), request.weapon),
           ]),
-          maskedequips: {},
+          maskedequips: Map([]),
           petids: [],
         },
       }
@@ -377,7 +377,7 @@ pub fn[T : ClientMessage] LocalServer::send_client_message(
   loc~ : SourceLoc,
 ) -> Unit {
   let type_code = T::type_code()
-  let json = message.to_json()
+  let json = ToJson::to_json(message)
   @log.log(
     log_level,
     "send_client_message",
@@ -418,7 +418,7 @@ fn LocalServer::spawn_drops_for_mob(
   self : LocalServer,
   mob : ServerMob,
 ) -> Unit {
-  let active_quest_ids : Map[Int, Unit] = {}
+  let active_quest_ids : Map[Int, Unit] = Map([])
   for quest_id, _ in self.started_quests {
     active_quest_ids.set(quest_id, ())
   }
@@ -940,13 +940,12 @@ fn LocalServer::spawn_mobs_for_map(self : LocalServer, map_id : Int) -> Unit {
             { "info": { "maxHP": Number(max_hp, ..), .. }, .. } =>
               max_hp.to_int()
             { "info": { "maxHP": String(raw), .. }, .. } =>
-              @string.parse_int(raw) catch { _ => continue }
+              @string.parse_int(raw) catch {
+                _ => continue
+              }
             _ => continue
           }
-          self.pending_mob_spawns.push({
-            msg: spawn_msg,
-            max_hp,
-          })
+          self.pending_mob_spawns.push({ msg: spawn_msg, max_hp })
         }
         "n" => {
           let npc_id = tiled_object_int_like_required(entity, "id")
@@ -1009,7 +1008,7 @@ fn[T : ServerMessage] LocalServer::send_server_message(
   loc~ : SourceLoc,
 ) -> Unit {
   let type_code = T::type_code()
-  let json = message.to_json()
+  let json = ToJson::to_json(message)
   @log.log(
     log_level,
     "send_server_message",
@@ -1072,12 +1071,12 @@ fn LocalServer::load_drop_databases(self : LocalServer) -> Unit {
   @io_service.execute_background(fn() {
     let text = @resource.load_text("assets/data/mob_drops.tsv")
     self.drop_db = Some(MobDropDatabase::from_tsv(text))
-    @log.info("Loaded mob_drops.tsv", data={})
+    @log.info("Loaded mob_drops.tsv", data=Map([]))
   })
   // 加载全局掉落
   @io_service.execute_background(fn() {
     let text = @resource.load_text("assets/data/drop_data_global.tsv")
     self.global_drop_db = Some(MobDropDatabase::from_tsv(text))
-    @log.info("Loaded drop_data_global.tsv", data={})
+    @log.info("Loaded drop_data_global.tsv", data=Map([]))
   })
 }

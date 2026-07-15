@@ -7,8 +7,8 @@ trait SkillAction {
 struct NoAction {} derive(Default)
 
 ///|
-fn NoAction::new() -> NoAction {
-  NoAction::default()
+fn NoAction::NoAction() -> NoAction {
+  Default::default()
 }
 
 ///|
@@ -26,7 +26,7 @@ struct SingleAction {
 }
 
 ///|
-fn SingleAction::new(src : Json) -> SingleAction {
+fn SingleAction::SingleAction(src : Json) -> SingleAction {
   let action = match src {
     { "action": { "0": String(action), .. }, .. } => action
     _ => ""
@@ -49,13 +49,13 @@ struct TwoHandedAction {
 }
 
 ///|
-fn TwoHandedAction::new(src : Json) -> TwoHandedAction {
+fn TwoHandedAction::TwoHandedAction(src : Json) -> TwoHandedAction {
   let (action0, action1) = match src {
     { "action": { "0": String(action0), "1": String(action1), .. }, .. } =>
       (action0, action1)
     _ => ("", "")
   }
-  { actions: @utils.BoolPair::new(action0, action1) }
+  { actions: BoolPair(action0, action1) }
 }
 
 ///|
@@ -72,7 +72,7 @@ struct ByLevelAction {
 }
 
 ///|
-fn ByLevelAction::new(src : Json, id : Int) -> ByLevelAction {
+fn ByLevelAction::ByLevelAction(src : Json, id : Int) -> ByLevelAction {
   let actions = Map([])
   if src is { "level": Object(levels), .. } {
     for level, sub in levels {

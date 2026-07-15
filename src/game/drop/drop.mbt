@@ -30,7 +30,7 @@ priv enum DropState {
 } derive(Eq)
 
 ///|
-fn DropBase::new(
+fn DropBase::DropBase(
   id : Int,
   _owner : Int,
   start : @struct.Point[Int],
@@ -40,7 +40,7 @@ fn DropBase::new(
   _player_drop : Bool,
 ) -> DropBase {
   let entity = @entity.Entity()
-  let phobj = @physics.PhysicsObject::new(on_pos_change=fn(pos) {
+  let phobj = PhysicsObject(on_pos_change=fn(pos) {
     @transform2d.set_xy(entity, pos)
   })
   phobj.set_position(
@@ -63,8 +63,8 @@ fn DropBase::new(
     entity,
     oid: id,
     phobj,
-    angle: @utils.Linear::new(0.0),
-    opacity: @utils.Linear::new(1.0),
+    angle: Linear(0.0),
+    opacity: Linear(1.0),
     looter: None,
     state,
     dest,
@@ -125,8 +125,8 @@ fn DropBase::update(self : DropBase, physics : @physics.Physics) -> Int {
 ///|
 fn DropBase::bounds(self : DropBase) -> @struct.Rectangle[Int] {
   let lt = self.phobj.get_position()
-  let rb = lt + @struct.Point::new(32, 32)
-  @struct.Rectangle::new(lt, rb)
+  let rb = lt + Point(32, 32)
+  Rectangle(lt, rb)
 }
 
 ///|
@@ -156,7 +156,7 @@ struct MesoDrop {
 }
 
 ///|
-pub fn MesoDrop::new(
+pub fn MesoDrop::MesoDrop(
   oid : Int,
   owner : Int,
   start : @struct.Point[Int],
@@ -166,7 +166,7 @@ pub fn MesoDrop::new(
   player_drop : Bool,
   icon : @resource.NxAnimation,
 ) -> MesoDrop {
-  let base = DropBase::new(oid, owner, start, dest, t, mode, player_drop)
+  let base = DropBase(oid, owner, start, dest, t, mode, player_drop)
   let selene_anim = @ms_animation.from_nx_animation(icon, loop_=true)
   { base, icon: selene_anim }
 }
@@ -268,7 +268,7 @@ struct ItemDrop {
 }
 
 ///|
-pub fn ItemDrop::new(
+pub fn ItemDrop::ItemDrop(
   oid : Int,
   owner : Int,
   start : @struct.Point[Int],
@@ -279,7 +279,7 @@ pub fn ItemDrop::new(
   player_drop : Bool,
   icon : @resource.NxTexture,
 ) -> ItemDrop {
-  let base = DropBase::new(oid, owner, start, dest, t, mode, player_drop)
+  let base = DropBase(oid, owner, start, dest, t, mode, player_drop)
   let selene_picture = @ms_animation.from_nx_texture(icon)
   { base, icon: selene_picture }
 }
@@ -369,3 +369,6 @@ pub impl Drop for ItemDrop with fn expire(
 ) -> Unit {
   self.base.expire(t, lt)
 }
+
+///|
+using @physics {type PhysicsObject}

@@ -7,7 +7,7 @@ fn parse_json_file(path : String) -> Json raise {
 fn make_test_equips(weapon_item_id : Int?) -> @equip.CharEquips raise {
   let res = @character_presentation.CharacterPresentationResource::load()
   let draw_info = res.draw_info
-  let equips = @equip.CharEquips::new()
+  let equips = CharEquips()
   match weapon_item_id {
     Some(item_id) => {
       let weapon_path = "assets/Character/Weapon/\{@utils.stoi_left_pad0(item_id, 8)}.img.json"
@@ -80,7 +80,7 @@ fn make_hit_event(source : @combat_system.HitSource) -> @combat_system.HitEvent 
 test "sword_fa_fighter_triggers_with_sword_1h" {
   let equips = make_test_equips(Some(1302000))
   let trigger_count = Ref(0)
-  let passive = SwordFaFighterPassive::default()
+  let passive : SwordFaFighterPassive = SwordFaFighterPassive()
   let skill_id = @skill.SkillId::SWORD_FA_FIGHTER.int_value()
   let skill_data = Some(@skill.SkillData::load(skill_id))
   let ctx = make_final_attack_test_ctx(
@@ -91,7 +91,11 @@ test "sword_fa_fighter_triggers_with_sword_1h" {
     skill_data,
   )
   for _ in 0..<2000 {
-    passive.on_hit(ctx, make_hit_event(@combat_system.HitSource::UserInput))
+    PassiveSkill::on_hit(
+      passive,
+      ctx,
+      make_hit_event(@combat_system.HitSource::UserInput),
+    )
   }
   assert_true(trigger_count.val > 0)
 }
@@ -100,7 +104,7 @@ test "sword_fa_fighter_triggers_with_sword_1h" {
 test "sword_fa_fighter_does_not_trigger_with_axe_1h" {
   let equips = make_test_equips(Some(1312001))
   let trigger_count = Ref(0)
-  let passive = SwordFaFighterPassive::default()
+  let passive : SwordFaFighterPassive = SwordFaFighterPassive()
   let ctx = make_final_attack_test_ctx(
     equips,
     trigger_count,
@@ -109,7 +113,11 @@ test "sword_fa_fighter_does_not_trigger_with_axe_1h" {
     None,
   )
   for _ in 0..<2000 {
-    passive.on_hit(ctx, make_hit_event(@combat_system.HitSource::UserInput))
+    PassiveSkill::on_hit(
+      passive,
+      ctx,
+      make_hit_event(@combat_system.HitSource::UserInput),
+    )
   }
   assert_eq(trigger_count.val, 0)
 }
@@ -118,7 +126,7 @@ test "sword_fa_fighter_does_not_trigger_with_axe_1h" {
 test "sword_fa_fighter_does_not_trigger_with_sword_2h" {
   let equips = make_test_equips(Some(1402000))
   let trigger_count = Ref(0)
-  let passive = SwordFaFighterPassive::default()
+  let passive : SwordFaFighterPassive = SwordFaFighterPassive()
   let ctx = make_final_attack_test_ctx(
     equips,
     trigger_count,
@@ -127,7 +135,11 @@ test "sword_fa_fighter_does_not_trigger_with_sword_2h" {
     None,
   )
   for _ in 0..<2000 {
-    passive.on_hit(ctx, make_hit_event(@combat_system.HitSource::UserInput))
+    PassiveSkill::on_hit(
+      passive,
+      ctx,
+      make_hit_event(@combat_system.HitSource::UserInput),
+    )
   }
   assert_eq(trigger_count.val, 0)
 }
@@ -135,7 +147,7 @@ test "sword_fa_fighter_does_not_trigger_with_sword_2h" {
 ///|
 test "sword_fa_fighter_does_not_trigger_when_attacker_missing" {
   let trigger_count = Ref(0)
-  let passive = SwordFaFighterPassive::default()
+  let passive : SwordFaFighterPassive = SwordFaFighterPassive()
   let ctx = make_final_attack_test_ctx(
     @equip.CharEquips::default(),
     trigger_count,
@@ -143,7 +155,11 @@ test "sword_fa_fighter_does_not_trigger_when_attacker_missing" {
     1,
     None,
   )
-  passive.on_hit(ctx, make_hit_event(@combat_system.HitSource::UserInput))
+  PassiveSkill::on_hit(
+    passive,
+    ctx,
+    make_hit_event(@combat_system.HitSource::UserInput),
+  )
   assert_eq(trigger_count.val, 0)
 }
 
@@ -151,7 +167,7 @@ test "sword_fa_fighter_does_not_trigger_when_attacker_missing" {
 test "sword_fa_fighter_does_not_trigger_for_passive_source" {
   let equips = make_test_equips(Some(1302000))
   let trigger_count = Ref(0)
-  let passive = SwordFaFighterPassive::default()
+  let passive : SwordFaFighterPassive = SwordFaFighterPassive()
   let ctx = make_final_attack_test_ctx(
     equips,
     trigger_count,
@@ -159,6 +175,13 @@ test "sword_fa_fighter_does_not_trigger_for_passive_source" {
     1,
     None,
   )
-  passive.on_hit(ctx, make_hit_event(@combat_system.HitSource::Passive(99999)))
+  PassiveSkill::on_hit(
+    passive,
+    ctx,
+    make_hit_event(@combat_system.HitSource::Passive(99999)),
+  )
   assert_eq(trigger_count.val, 0)
 }
+
+///|
+using @equip {type CharEquips}

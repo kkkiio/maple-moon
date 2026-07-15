@@ -19,7 +19,7 @@ fn LocalServer::send_temp_set_field(
       name: "__temp_console__",
       female: false,
       stats: default_player_stats(),
-      i64stats: @resource.EnumMap::default(),
+      i64stats: Default::default(),
       map_id,
       portal_id,
     },
@@ -29,7 +29,7 @@ fn LocalServer::send_temp_set_field(
       items: current_items,
     },
     skills=[],
-    cooldowns=@resource.EnumMap::default(),
+    cooldowns=Default::default(),
     quests=self.build_player_quest_log_info(),
   )
   self.last_map_id = map_id

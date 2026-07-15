@@ -19,11 +19,24 @@ Requires [Node.js](https://nodejs.org/) and [MoonBit](https://www.moonbitlang.co
 ### Play in browser
 
 ```bash
-npm run dev
-moon build --watch
+just build
+just dev
 ```
 
-Open http://localhost:8080.
+`just dev` starts Vite and opens a controlled Chrome at
+http://localhost:8080. Browser Console output is streamed to the terminal and
+written to `logs/browser.log`. The command owns a foreground `mapled` session;
+an older daemon is closed before the session starts.
+
+Closing the controlled Chrome pauses log collection while Vite and `mapled`
+keep running. Run the following command from another terminal to explicitly
+open Chrome again:
+
+```bash
+moon run --target native src/cmd/maple open
+```
+
+Press `Ctrl+C` in the `just dev` terminal to stop the development session.
 
 ### Build native executable
 
@@ -32,4 +45,3 @@ just build-native
 ```
 
 Produces an executable with the `assets/` directory alongside it. Place both in the same folder and run the executable.
-

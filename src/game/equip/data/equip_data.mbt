@@ -118,7 +118,7 @@ pub fn EquipData::get_gender(self : EquipData) -> Int {
 }
 
 ///|
-let req_stats_keys : Array[(String, @maple_stat.Id)] = [
+let req_stats_keys : ReadOnlyArray[(String, @maple_stat.Id)] = [
   ("reqLevel", @maple_stat.Id::LEVEL),
   ("reqJob", @maple_stat.Id::JOB),
   ("reqSTR", @maple_stat.Id::STR),
@@ -128,7 +128,7 @@ let req_stats_keys : Array[(String, @maple_stat.Id)] = [
 ]
 
 ///|
-let def_stats_keys : Array[(String, @maple_stat.EquipStatId)] = [
+let def_stats_keys : ReadOnlyArray[(String, @maple_stat.EquipStatId)] = [
   ("incSTR", @maple_stat.EquipStatId::STR),
   ("incDEX", @maple_stat.EquipStatId::DEX),
   ("incINT", @maple_stat.EquipStatId::INT),

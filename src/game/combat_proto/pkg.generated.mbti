@@ -56,8 +56,8 @@ pub(all) struct AttackResult {
   mut first_oid : Int
   mut last_oid : Int
 } derive(ToJson, @debug.Debug)
+pub fn AttackResult::AttackResult(Attack) -> Self
 pub fn AttackResult::default() -> Self
-pub fn AttackResult::new(Attack) -> Self
 
 pub(all) enum AttackType {
   CLOSE
@@ -73,7 +73,7 @@ pub(all) struct AttackUser {
 }
 
 type Bullet
-pub fn Bullet::new(@entity.Entity, @animation.Animation, @res_types.Point[Int], Bool) -> Self
+pub fn Bullet::Bullet(@entity.Entity, @animation.Animation, @res_types.Point[Int], Bool) -> Self
 pub fn Bullet::set_target(Self, @res_types.Point[Int]) -> Bool
 pub fn Bullet::update(Self, @res_types.Point[Int]) -> Bool
 
@@ -86,8 +86,8 @@ pub struct MobAttack {
   origin : @res_types.Point[Int]
   valid : Bool
 }
+pub fn MobAttack::MobAttack(Int, @res_types.Point[Int], Int, Int) -> Self
 pub fn MobAttack::default() -> Self
-pub fn MobAttack::new(Int, @res_types.Point[Int], Int, Int) -> Self
 
 pub struct MobAttackResult {
   damage : Int
@@ -95,7 +95,7 @@ pub struct MobAttackResult {
   oid : Int
   direction : Int
 }
-pub fn MobAttackResult::new(MobAttack, Int, Int) -> Self
+pub fn MobAttackResult::MobAttackResult(MobAttack, Int, Int) -> Self
 
 // Type aliases
 

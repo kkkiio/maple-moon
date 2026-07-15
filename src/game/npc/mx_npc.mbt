@@ -5,7 +5,7 @@ pub struct MxNpc {
   info : MxNpcInfo
   /// Path to aseprite animation json (relative to assets root by default).
   animations_path : String
-}
+} derive(@json.FromJson)
 
 ///|
 /// Normalized metadata extracted from NPC `info`.
@@ -47,24 +47,4 @@ pub impl @json.FromJson for MxNpcInfo with fn from_json(json, path) -> MxNpcInfo
     None => []
   }
   { link, scripted: has_script || is_shop, speak_keys }
-}
-
-///|
-pub impl @json.FromJson for MxNpc with fn from_json(json, path) -> MxNpc raise @json.JsonDecodeError {
-  guard json is Object(root) else {
-    raise @json.JsonDecodeError((path, "MxNpc must be an object"))
-  }
-  let info_json = match root.get("info") {
-    Some(info_json) => info_json
-    None => raise @json.JsonDecodeError((path.add_key("info"), "missing info"))
-  }
-  let animations_path = match root.get("animations_path") {
-    Some(String(v)) => v
-    _ =>
-      raise @json.JsonDecodeError(
-        (path.add_key("animations_path"), "missing animations_path"),
-      )
-  }
-  let info : MxNpcInfo = @json.from_json(info_json, path=path.add_key("info"))
-  { info, animations_path }
 }

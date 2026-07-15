@@ -124,7 +124,7 @@ pub fn Number::set_x(self : Number, headx : Int) -> Unit {
 
 ///|
 fn get_advance(t : NumberType, c : Char, first : Bool) -> Int {
-  let advances = [24, 20, 22, 22, 24, 23, 24, 22, 24, 24]
+  let advances : ReadOnlyArray[Int] = [24, 20, 22, 22, 24, 23, 24, 22, 24, 24]
   let index = c.to_int() - 48
   if index < advances.length() {
     let mut advance = advances[index]
@@ -238,7 +238,7 @@ pub fn NumberSet::show_number(
   @transform2d.set_xy(parent_entity, Vec2::zero())
 
   // Spawn Children
-  let start_offset = @struct.Point::new(0, -shift)
+  let start_offset = Point(0, -shift)
   let mut current_offset = start_offset
   fn spawn_sprite(skin : DamageSkin, c : Char, offset : @struct.Point[Int]) {
     match skin.sprites.get(c) {
@@ -268,7 +268,7 @@ pub fn NumberSet::show_number(
       current_offset = current_offset.shift_x(first_advance)
       for i in 0..<rest_num.length() {
         let c = rest_num[i]
-        let yshift = @struct.Point::new(0, if i % 2 == 0 { -2 } else { 2 })
+        let yshift = Point(0, if i % 2 == 0 { -2 } else { 2 })
         spawn_sprite(skins.small, rest_num[i], current_offset + yshift)
         let advance = if i < rest_num.length() - 1 {
           let n = rest_num[i + 1]
@@ -282,12 +282,18 @@ pub fn NumberSet::show_number(
       }
     }
   }
-  let move_obj = @physics.MovingObject::new(on_pos_change=fn(_) {
+  let move_obj = MovingObject(on_pos_change=fn(_) {
     // TODO
   })
   move_obj.set_x(x.to_double())
   move_obj.set_y(starty.to_double())
-  let opacity = @utils.Linear::new(1.5)
+  let opacity = Linear(1.5)
   let number = { parent_entity, move_obj, opacity }
   active_numbers.push(number)
 }
+
+///|
+using @physics {type MovingObject}
+
+///|
+using @utils {type Linear}

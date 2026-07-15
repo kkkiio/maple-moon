@@ -64,9 +64,9 @@ pub(all) struct MapleButton {
   mut enabled : Bool
   mut pressed : Bool
 }
+pub fn MapleButton::MapleButton(MapleButtonResource, pos? : @res_types.Point[Int], on_click? : () -> Unit) -> Self
 pub fn MapleButton::contains(Self, Int, Int) -> Bool
 pub fn MapleButton::current_selene_animation(Self) -> @animation.Animation
-pub fn MapleButton::new(MapleButtonResource, pos? : @res_types.Point[Int], on_click? : () -> Unit) -> Self
 pub fn MapleButton::set_enabled(Self, Bool) -> Unit
 pub fn MapleButton::update_pointer(Self, Int, Int, Bool, Bool, Bool) -> Unit
 
@@ -102,8 +102,7 @@ pub(all) struct NxMapleButton {
   mouse_over : @resource.NxAnimation
   pressed : @resource.NxAnimation
   disabled : @resource.NxAnimation
-}
-pub impl @json.FromJson for NxMapleButton
+} derive(@json.FromJson)
 
 pub(all) struct Skins {
   big : DamageSkin
@@ -121,10 +120,10 @@ pub(all) struct UIModel {
   mut dimension : @res_types.Point[Int]
   mut active : Bool
 }
+pub fn UIModel::UIModel(@res_types.Point[Int], @res_types.Point[Int], active? : Bool) -> Self
 pub fn UIModel::deactivate(Self) -> Unit
 pub fn UIModel::is_active(Self) -> Bool
 pub fn UIModel::makeactive(Self) -> Unit
-pub fn UIModel::new(@res_types.Point[Int], @res_types.Point[Int], active? : Bool) -> Self
 pub fn UIModel::toggle_active(Self) -> Unit
 
 pub(all) enum UiSliceKind {

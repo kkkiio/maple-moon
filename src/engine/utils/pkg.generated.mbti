@@ -30,19 +30,21 @@ pub fn to_hex_string(UInt) -> String
 
 // Types and methods
 type BiMap[K, V]
+pub fn[K : Eq + Hash, V : Eq + Hash] BiMap::BiMap() -> Self[K, V]
 pub fn[K : Eq + Hash, V : Eq + Hash] BiMap::from_array(Array[(K, V)]) -> Self[K, V]
 pub fn[K, V : Eq + Hash] BiMap::get_backward(Self[K, V], V) -> K?
 pub fn[K : Eq + Hash, V] BiMap::get_forward(Self[K, V], K) -> V?
-pub fn[K : Eq + Hash, V : Eq + Hash] BiMap::new() -> Self[K, V]
 pub fn[K : Eq + Hash, V : Eq + Hash] BiMap::set(Self[K, V], K, V) -> Unit
 
 type BoolPair[T]
-pub fn[T] BoolPair::new(T, T) -> Self[T]
+pub fn[T] BoolPair::BoolPair(T, T) -> Self[T]
 pub fn[T] BoolPair::op_get(Self[T], Bool) -> T
 pub impl[T : Default] Default for BoolPair[T]
 
-pub(all) struct Counter[K, V](Map[K, V])
-pub fn[K : Eq + Hash, V] Counter::new() -> Self[K, V]
+pub(all) struct Counter[K, V] {
+  values : Map[K, V]
+}
+pub fn[K : Eq + Hash, V] Counter::Counter() -> Self[K, V]
 pub fn[K : Hash + Eq, V : Default] Counter::op_get(Self[K, V], K) -> V
 pub fn[K : Hash + Eq, V] Counter::op_set(Self[K, V], K, V) -> Unit
 
@@ -50,7 +52,7 @@ pub(all) struct DefaultMap[K, V] {
   map : Map[K, V]
   default_fn : () -> V
 }
-pub fn[K : Eq + Hash, V] DefaultMap::new(() -> V) -> Self[K, V]
+pub fn[K : Eq + Hash, V] DefaultMap::DefaultMap(() -> V) -> Self[K, V]
 pub fn[K : Eq + Hash, V] DefaultMap::op_get(Self[K, V], K) -> V
 
 pub(all) struct Duration(Int) derive(Compare, Eq, @debug.Debug)
@@ -61,6 +63,7 @@ pub fn Duration::to_milliseconds(Self) -> Int
 pub fn Duration::to_seconds(Self) -> Int
 
 type Future[T]
+pub fn[T] Future::Future(() -> T?) -> Self[T]
 pub fn[T] Future::all_of(Array[Self[T]]) -> Self[Array[T]]
 pub fn[T, U] Future::bind(Self[T], (T) -> Self[U]) -> Self[U]
 pub fn[T, U] Future::combine(Self[T], Self[U]) -> Self[(T, U)]
@@ -70,15 +73,14 @@ pub fn[T] Future::from_value(T) -> Self[T]
 pub fn[T, U] Future::map(Self[T], (T) -> U) -> Self[U]
 pub fn[T, U, E : Error] Future::map_exn(Self[T], (T) -> U raise E) -> Self[Result[U, E]]
 pub fn[T] Future::never() -> Self[T]
-pub fn[T] Future::new(() -> T?) -> Self[T]
 pub fn[T] Future::poll(Self[T]) -> T?
 pub fn[T] Future::tap(Self[T], (T) -> Unit) -> Self[T]
 
 type Linear derive(Default, ToJson, @debug.Debug)
+pub fn Linear::Linear(Double) -> Self
 pub fn Linear::add(Self, Double) -> Unit
 pub fn Linear::get(Self, alpha? : Double) -> Double
 pub fn Linear::last(Self) -> Double
-pub fn Linear::new(Double) -> Self
 pub fn Linear::normalize(Self) -> Unit
 pub fn Linear::normalized(Self) -> Bool
 pub fn Linear::plus(Self, Double) -> Double
@@ -93,8 +95,8 @@ pub fn[T : Eq] Nominal::normalized(Self[T]) -> Bool
 pub fn[T] Nominal::set(Self[T], T) -> Unit
 
 type Singleton[T]
+pub fn[T] Singleton::Singleton() -> Self[T]
 pub fn[T] Singleton::must_get(Self[T]) -> T
-pub fn[T] Singleton::new() -> Self[T]
 pub fn[T] Singleton::set(Self[T], T) -> Unit
 
 pub(all) struct TimePoint(Int64) derive(Compare, Default, Eq)
@@ -115,12 +117,12 @@ pub fn TimedBool::set_for(Self, Int) -> Unit
 pub fn TimedBool::update(Self, timestep~ : Int) -> Unit
 
 type TimedQueue[T]
-pub fn[T] TimedQueue::new() -> Self[T]
+pub fn[T] TimedQueue::TimedQueue() -> Self[T]
 pub fn[T] TimedQueue::process(Self[T], timestep~ : Int64) -> Iter[T]
 pub fn[T] TimedQueue::push(Self[T], Int64, T) -> Unit
 
 type Timer
-pub fn Timer::new(() -> TimePoint) -> Self
+pub fn Timer::Timer(() -> TimePoint) -> Self
 pub fn Timer::now(Self) -> TimePoint
 pub fn Timer::reset(Self) -> Unit
 pub fn Timer::since(Self, TimePoint) -> Duration

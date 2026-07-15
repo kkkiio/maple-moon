@@ -78,8 +78,8 @@ pub fn MapQuests::set_player(Self, @player.Player) -> Unit
 pub fn MapQuests::update_quest(Self, Int) -> Unit
 
 type MapQuestsResource
+pub fn MapQuestsResource::MapQuestsResource(@resource.NxAnimation, @resource.NxAnimation, @resource.NxAnimation) -> Self
 pub fn MapQuestsResource::load() -> Self
-pub fn MapQuestsResource::new(@resource.NxAnimation, @resource.NxAnimation, @resource.NxAnimation) -> Self
 
 type Module
 pub fn Module::query_npc_icon(Self, Int) -> QuestIconQueryResult?

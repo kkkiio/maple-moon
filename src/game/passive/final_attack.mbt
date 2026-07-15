@@ -15,13 +15,20 @@ fn get_trigger_prob(ctx : PassiveContext, attacker_oid : Int) -> Double {
 }
 
 ///|
-fn SwordFaFighterPassive::new() -> SwordFaFighterPassive {
+/// Create the passive handler for the fighter final-attack skill.
+///
+/// # Example
+/// ```moonbit nocheck
+/// let passive = SwordFaFighterPassive()
+/// ignore(passive)
+/// ```
+pub fn SwordFaFighterPassive::SwordFaFighterPassive() -> SwordFaFighterPassive {
   SwordFaFighterPassive::{  }
 }
 
 ///|
 pub impl Default for SwordFaFighterPassive with fn default() {
-  SwordFaFighterPassive::new()
+  SwordFaFighterPassive()
 }
 
 ///|

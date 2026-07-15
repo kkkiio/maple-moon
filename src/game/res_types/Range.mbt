@@ -5,7 +5,7 @@ pub(all) struct Range[T] {
 } derive(Eq, Debug, Default)
 
 ///|
-pub fn[T] Range::new(first : T, second : T) -> Range[T] {
+pub fn[T] Range::Range(first : T, second : T) -> Range[T] {
   { a: first, b: second }
 }
 

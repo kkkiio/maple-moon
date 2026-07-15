@@ -1,12 +1,33 @@
 import {
   "moonbitlang/async",
-  "moonbitlang/async/js_async",
+  "moonbitlang/async/fs",
+  "moonbitlang/async/http",
+  "moonbitlang/async/io",
+  "moonbitlang/async/process",
+  "moonbitlang/async/signal",
+  "moonbitlang/async/socket",
+  "moonbitlang/async/stdio",
+  "moonbitlang/async/websocket",
   "moonbitlang/core/argparse",
+  "moonbitlang/core/encoding/base64",
+  "moonbitlang/core/encoding/utf8",
+  "moonbitlang/core/env",
+  "moonbitlang/core/json",
+  "moonbitlang/core/string",
+  "moonbitlang/x/path",
+  "moonbitlang/x/sys",
+  "KKKIIO/maple-moon/cmd/mapled_protocol",
 }
 
-supported_targets = "js"
+supported_targets = "native"
+
+pkgtype(kind: "executable")
 
 options(
-  "is-main": true,
-  targets: { "main.mbt": [ "js" ] },
+  "native-stub": [ "native_runtime.c" ],
+  targets: {
+    "daemon.mbt": [ "native" ],
+    "main.mbt": [ "native" ],
+    "native_runtime.mbt": [ "native" ],
+  },
 )

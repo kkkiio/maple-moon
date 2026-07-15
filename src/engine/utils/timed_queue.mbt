@@ -5,7 +5,7 @@ struct TimedQueue[T] {
 }
 
 ///|
-pub fn[T] TimedQueue::new() -> TimedQueue[T] {
+pub fn[T] TimedQueue::TimedQueue() -> TimedQueue[T] {
   { queue: @priority_queue.PriorityQueue([]), time: 0 }
 }
 

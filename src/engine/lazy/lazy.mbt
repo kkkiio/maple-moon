@@ -6,7 +6,7 @@ struct Lazy[T] {
 }
 
 ///|
-pub fn[T] Lazy::new(init_f : () -> T) -> Lazy[T] {
+pub fn[T] Lazy::Lazy(init_f : () -> T) -> Lazy[T] {
   { val: None, init_f }
 }
 

@@ -25,7 +25,9 @@ test "parse null phase says" {
   assert_true(hints.item.length() == 1)
   inspect(
     hints.item[0],
-    content="I told you to have all #r7 #t2010007##k that I gave you. Open the item window and click#bconsumption tab#k. You can find #t2010007# and consume them by double click.",
+    content=(
+      #|I told you to have all #r7 #t2010007##k that I gave you. Open the item window and click#bconsumption tab#k. You can find #t2010007# and consume them by double click.
+    ),
   )
 }
 
@@ -62,7 +64,9 @@ test "parse null hint" {
   assert_true(stop1.item.length() == 1)
   inspect(
     stop1.item[0],
-    content="Who are you? You look like someone who's exploring Maple World. Our kingdom is in serious danger, and we need someone dependable that can save us. If you can't help us, then I suggest you move on.",
+    content=(
+      #|Who are you? You look like someone who's exploring Maple World. Our kingdom is in serious danger, and we need someone dependable that can save us. If you can't help us, then I suggest you move on.
+    ),
   )
 }
 
@@ -186,7 +190,9 @@ test "quest 2091 should use stop item text when quest is unmet" {
   guard talk is Some(talk) else { fail("expect talk") }
   inspect(
     talk.content,
-    content="You don't have all of them? Please help me ... I am bored out of my mind here.",
+    content=(
+      #|You don't have all of them? Please help me ... I am bored out of my mind here.
+    ),
   )
   guard talk.expect_response is OK(fun) else { fail("expect OK") }
   assert_true(fun() is None)
@@ -207,7 +213,9 @@ test "quest 2091 should keep complete flow when quest is met" {
   guard talk is Some(talk) else { fail("expect talk") }
   inspect(
     talk.content,
-    content="Wow, you brought all of them!! Thank you so much! Thanks to you, I won't be so bored up in here afterwards. How should I thank you for your hard work? Hmmm ... here, take this!",
+    content=(
+      #|Wow, you brought all of them!! Thank you so much! Thanks to you, I won't be so bored up in here afterwards. How should I thank you for your hard work? Hmmm ... here, take this!
+    ),
   )
   guard talk.expect_response is YES_NO(fun) else { fail("expect YES_NO") }
   let (next_talk, action) = fun(true)
@@ -215,5 +223,10 @@ test "quest 2091 should keep complete flow when quest is met" {
     fail("expect complete quest action")
   }
   guard next_talk is Some(next_talk) else { fail("expect follow-up talk") }
-  inspect(next_talk.content, content="Again, thanks a lot! Later!!")
+  inspect(
+    next_talk.content,
+    content=(
+      #|Again, thanks a lot! Later!!
+    ),
+  )
 }

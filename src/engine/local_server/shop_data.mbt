@@ -34,6 +34,6 @@ fn LocalServer::load_npc_shop_database(self : LocalServer) -> Unit {
   @io_service.execute_background(fn() {
     let by_npc_id = @shop_sheet.load_npc_shop_map()
     self.npc_shop_db = Some(NpcShopDatabase::from_map(by_npc_id))
-    @log.info("Loaded shops.tsv and shopitems.tsv", data={})
+    @log.info("Loaded shops.tsv and shopitems.tsv", data=Map([]))
   })
 }

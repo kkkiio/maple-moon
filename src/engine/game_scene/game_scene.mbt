@@ -1,5 +1,9 @@
 ///|
-using @server_proto {type SetFieldMessage, type StatsEntry}
+using @server_proto {
+  type PlayerMapTransferMessage,
+  type SetFieldMessage,
+  type StatsEntry,
+}
 
 ///|
 pub(all) struct Stage {
@@ -21,7 +25,7 @@ pub(all) struct Stage {
 }
 
 ///|
-pub fn Stage::new(
+pub fn Stage::Stage(
   map_portals_animations : @map.MapPortalAnimations,
   npcs : @npc.MapNpcs,
   mobs : @monster.MapMobs,
@@ -116,7 +120,7 @@ fn normalize_camera_limits(
 
 ///|
 fn default_keymap() -> @keymap.Keymap {
-  Map::from_array([
+  Map([
     (
       @inputs.Code::ArrowUp,
       @keymap.Action::BASIC(@keymap.BasicActionId::MOVE_UP),
@@ -326,12 +330,10 @@ pub fn scene_transition_system(world : @ecs.World) -> Unit {
         let stance_bodys_map = char_presentation_resource.stance_bodys_map.0
         let stance_heads_map = char_presentation_resource.stance_heads_map.0
         let entity = @entity.Entity()
-        let look = @char_look.CharLook::new(
+        let look = @cp.CharLook(
           entity,
-          {},
-          @char_look.FullBody::new(
-            0, draw_info, stance_bodys_map, stance_heads_map,
-          ),
+          Map([]),
+          @cp.FullBody(0, draw_info, stance_bodys_map, stance_heads_map),
           hair,
           face,
           draw_info,
@@ -384,7 +386,10 @@ pub fn scene_transition_system(world : @ecs.World) -> Unit {
       }
       match @player.get_player() {
         Some(player) =>
-          global_inv.recalc_stats(player.character.get_weapontype())
+          @legacy_types.Inventory::recalc_stats(
+            global_inv,
+            player.character.get_weapontype(),
+          )
         None => ()
       }
       @inventory_ui.bind_inventory(global_inv)
@@ -429,10 +434,10 @@ pub fn scene_transition_system(world : @ecs.World) -> Unit {
       @npc.set_npcs({ map_npcs: stage.npcs, physics: sence_map.physics })
       @monster.set_mobs({ map_mobs: stage.mobs, physics: sence_map.physics })
       @drop.set_map_physics(sence_map.physics)
-      @game_server.send(@server_proto.PlayerMapTransferMessage::default())
+      @game_server.send(PlayerMapTransferMessage(()))
       let player = @player.get_player().unwrap()
-      let bullet_system = @bullet.BulletSystem::new()
-      let combat = @combat_system.Combat::new(stage.mobs)
+      let bullet_system = BulletSystem()
+      let combat = Combat(stage.mobs)
       @combat_system.set_combat(Some(combat))
       @bullet.set_current_bullet_system(Some(bullet_system))
       @combat_system.set_player(Some(player))
@@ -475,7 +480,7 @@ fn new_stage(
   stats_entry : StatsEntry,
 ) -> Stage {
   let map_module = @map.Module::load()
-  let stats : @char_stats.CharStats = @char_stats.CharStats::new(
+  let stats : @char_stats.CharStats = CharStats(
     stats_entry,
     fn() {
       char_look
@@ -492,18 +497,20 @@ fn new_stage(
   let entity = char_look.get_root_entity()
   let global_inv = @inventory.inventory.val
   entity.respawn()
-  let player : @player.Player = @player.Player::new(
+  let player : @player.Player = Player(
     entity, 1, "kkkiio", global_inv, char_look, stats,
   )
   @player.set_player(player)
-  @character.register_character(player.get_character())
+  @character.register_character(
+    @combat_system.CombatCharacter::get_character(player),
+  )
   // TODO: reset cooldowns
   // self.combat.set_cooldowns(cooldowns)
-  let map_npcs = @npc.MapNpcs::new(
+  let map_npcs = MapNpcs(
     @npc_talk_ui.open_npc_talk_ui, @npc_talk_ui.is_npc_talk_ui_open,
   )
-  let monster_module = @monster.Module::new()
-  let stage = Stage::new(
+  let monster_module = Module()
+  let stage = Stage(
     map_module.get_portals_animations(),
     map_npcs,
     monster_module.get_map_mobs(),
@@ -533,3 +540,15 @@ pub fn setup_game_server_handlers() -> Unit {
     },
   )
 }
+
+///|
+using @bullet {type BulletSystem}
+
+///|
+using @combat_system {type Combat}
+
+///|
+using @monster {type Module}
+
+///|
+using @npc {type MapNpcs}

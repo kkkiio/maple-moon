@@ -86,8 +86,8 @@ pub struct ItemDataSystem {
   pending_item_loads : @ref.Ref[Map[Int, @utils.Future[Result[ItemData, Error]]]]
   item_load_errors : @ref.Ref[Map[Int, String]]
 }
+pub fn ItemDataSystem::ItemDataSystem() -> Self
 pub fn ItemDataSystem::all_requested_ready_or_fail(Self, Array[Int]) -> Bool
-pub fn ItemDataSystem::new() -> Self
 pub fn ItemDataSystem::request(Self, Int) -> Unit
 pub fn ItemDataSystem::request_many(Self, Array[Int]) -> Unit
 pub fn ItemDataSystem::run(Self, Double) -> Unit

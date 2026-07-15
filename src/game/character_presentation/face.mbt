@@ -104,7 +104,7 @@ pub fn FaceFrame::from_resource(src : Json) -> FaceFrame raise {
   // let shift : Point[Int] = face["map"]["brow"].as_point?().unwrap()
   let shift = match face {
     { "map": { "brow": brow, .. }, .. } => @json.from_json(brow)
-    _ => @struct.Point::default()
+    _ => Default::default()
   }
   // texture.shift(-shift)
   let texture = { ..texture, origin: texture.origin + shift }
@@ -121,13 +121,13 @@ pub fn Face::load(faceid : Int) -> Face {
   let facenode = @resource.require_json(
     "assets/Character/Face/" + strid + ".img.json",
   )
-  Face::new(faceid, facenode) catch {
+  Face(faceid, facenode) catch {
     err => abort("failed to load face: \{faceid}, error=\{err}")
   }
 }
 
 ///|
-pub fn Face::new(faceid : Int, facenode : Json) -> Face raise {
+pub fn Face::Face(faceid : Int, facenode : Json) -> Face raise {
   guard facenode is Json::Object(facenode)
   let expressions = Map([])
   for exp, _ in expression_names {

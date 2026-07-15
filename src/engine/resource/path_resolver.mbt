@@ -127,40 +127,41 @@ pub fn resolve_ref_from_dir(base_dir : String, ref_path : String) -> String {
 }
 
 ///|
-let source_root_map : Map[String, String] = {
-  "mapx": "assets/map",
-  "map_latest": "assets",
-  "map_world_map": "assets/Map/WorldMap",
-  "background_set_loader": "assets/Map/back",
-  "object_loader": "assets/Map/obj",
-  "tile": "assets/Map/tile",
-  "mob": "assets/mob",
-  "skill": "assets/Skill",
-  "character": "assets/Character",
-  "afterimage": "assets/Character/Afterimage",
-  "body": "assets/Character/Body",
-  "effect": "assets/Effect",
-  "face": "assets/Character/Face",
-  "hair": "assets/Character/Hair",
-  "item_special": "assets/Item/Special",
-  "item": "assets/Item",
-  "ui_window_2": "assets/UI/UIWindow2.img",
-  "ui_window_4": "assets/UI/UIWindow4.img",
-  "ui_slice": "assets",
-  "npc": "assets",
-  "string": "assets/String",
-  "quest": "assets/Quest",
-  "Etc": "assets/Etc",
-  "map001": "assets/map001",
-  "Login": "assets/UI",
-}
+let source_root_map : @hashmap.HashMap[String, String] = @hashmap.HashMap([
+  ("mapx", "assets/map"),
+  ("map_latest", "assets"),
+  ("map_world_map", "assets/Map/WorldMap"),
+  ("background_set_loader", "assets/Map/back"),
+  ("object_loader", "assets/Map/obj"),
+  ("tile", "assets/Map/tile"),
+  ("mob", "assets/mob"),
+  ("skill", "assets/Skill"),
+  ("character", "assets/Character"),
+  ("afterimage", "assets/Character/Afterimage"),
+  ("body", "assets/Character/Body"),
+  ("effect", "assets/Effect"),
+  ("face", "assets/Character/Face"),
+  ("hair", "assets/Character/Hair"),
+  ("item_special", "assets/Item/Special"),
+  ("item", "assets/Item"),
+  ("ui_window_2", "assets/UI/UIWindow2.img"),
+  ("ui_window_4", "assets/UI/UIWindow4.img"),
+  ("ui_slice", "assets"),
+  ("npc", "assets"),
+  ("string", "assets/String"),
+  ("quest", "assets/Quest"),
+  ("Etc", "assets/Etc"),
+  ("map001", "assets/map001"),
+  ("Login", "assets/UI"),
+])
 
 ///|
-let json_file_segment_count_map : Map[String, Int] = {
-  "item": 2,
-  "character": 2,
-  "effect": 2,
-}
+let json_file_segment_count_map : @hashmap.HashMap[String, Int] = @hashmap.HashMap([
+    ("item", 2),
+    ("character", 2),
+    ("effect", 2),
+  ],
+)
 
 ///|
 fn source_root(source : String, path : String) -> String {

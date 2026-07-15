@@ -19,7 +19,7 @@
 
 ```moonbit nocheck
 let data = try! CursorAnimationData::load("assets/UI/Basic.img/Cursor/cursor_animation.json")
-init_cursor(Cursor::new(data))
+init_cursor(Cursor(data))
 ```
 
 `CursorAnimationData::load` 会把 JSON 路径错误、JSON 结构错误、缺少动画帧等问题向上抛，

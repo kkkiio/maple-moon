@@ -4,8 +4,8 @@ struct Module {
 }
 
 ///|
-pub fn Module::new() -> Module {
-  let mobs = MapMobs::new()
+pub fn Module::Module() -> Module {
+  let mobs = MapMobs()
   { map_mobs: mobs }
 }
 

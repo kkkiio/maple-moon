@@ -24,6 +24,7 @@ pub(all) enum CapType {
 }
 
 type CharEquips
+pub fn CharEquips::CharEquips() -> Self
 pub fn CharEquips::add_equip(Self, @item.ItemData, @slot.Id, @character_body.BodyDrawInfo) -> Unit raise
 pub fn CharEquips::adjust_stance(Self, @char_stance.StanceId) -> @char_stance.StanceId
 pub fn CharEquips::default() -> Self
@@ -35,7 +36,6 @@ pub fn CharEquips::has_overall(Self) -> Bool
 pub fn CharEquips::has_weapon(Self) -> Bool
 pub fn CharEquips::is_two_handed(Self) -> Bool
 pub fn CharEquips::iter(Self) -> Iter[(@slot.Id, @clothing.Clothing)]
-pub fn CharEquips::new() -> Self
 pub fn CharEquips::remove_equip(Self, @slot.Id) -> Unit
 
 // Type aliases

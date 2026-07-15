@@ -71,7 +71,7 @@ priv struct TabHitbox {
 }
 
 ///|
-let tabs : Array[InventoryType] = [
+let tabs : ReadOnlyArray[InventoryType] = [
   InventoryType::EQUIP,
   InventoryType::USE,
   InventoryType::ETC,
@@ -219,7 +219,7 @@ fn make_text_sprite(
 fn nx_texture_to_inventory_icon_animation(
   texture : @resource.NxTexture,
 ) -> @ms_animation.Animation {
-  @ms_animation.Animation::new(
+  Animation(
     [
       @ms_animation.AnimationFrame::{
         image: @resource.load_image(texture.i),
@@ -272,7 +272,18 @@ priv struct NxShop {
   bt_sell : NxShopButton
   bt_exit : NxShopButton
   check_box : NxShopCheckBox
-}
+} derive (
+  @json.FromJson(
+    fields(
+      tab_buy(rename="TabBuy"),
+      tab_sell(rename="TabSell"),
+      bt_buy(rename="BtBuy"),
+      bt_sell(rename="BtSell"),
+      bt_exit(rename="BtExit"),
+      check_box(rename="checkBox"),
+    ),
+  ),
+)
 
 ///|
 priv struct NxShopTabGroup {
@@ -372,97 +383,6 @@ impl @json.FromJson for NxShopCheckBox with fn from_json(json, path) {
 }
 
 ///|
-impl @json.FromJson for NxShop with fn from_json(json, path) {
-  match json {
-    {
-      "backgrnd": backgrnd_json,
-      "backgrnd2": backgrnd2_json,
-      "backgrnd3": backgrnd3_json,
-      "backgrnd4": backgrnd4_json,
-      "select": select_json,
-      "select2": select2_json,
-      "meso": meso_json,
-      "TabBuy": tab_buy_json,
-      "TabSell": tab_sell_json,
-      "BtBuy": bt_buy_json,
-      "BtSell": bt_sell_json,
-      "BtExit": bt_exit_json,
-      "checkBox": check_box_json,
-      ..
-    } => {
-      let backgrnd : @resource.NxTexture = @json.from_json(
-        backgrnd_json,
-        path=path.add_key("backgrnd"),
-      )
-      let backgrnd2 : @resource.NxTexture = @json.from_json(
-        backgrnd2_json,
-        path=path.add_key("backgrnd2"),
-      )
-      let backgrnd3 : @resource.NxTexture = @json.from_json(
-        backgrnd3_json,
-        path=path.add_key("backgrnd3"),
-      )
-      let backgrnd4 : @resource.NxTexture = @json.from_json(
-        backgrnd4_json,
-        path=path.add_key("backgrnd4"),
-      )
-      let select : @resource.NxTexture = @json.from_json(
-        select_json,
-        path=path.add_key("select"),
-      )
-      let select2 : @resource.NxTexture = @json.from_json(
-        select2_json,
-        path=path.add_key("select2"),
-      )
-      let meso : @resource.NxTexture = @json.from_json(
-        meso_json,
-        path=path.add_key("meso"),
-      )
-      let tab_buy : NxShopTabGroup = @json.from_json(
-        tab_buy_json,
-        path=path.add_key("TabBuy"),
-      )
-      let tab_sell : NxShopTabGroup = @json.from_json(
-        tab_sell_json,
-        path=path.add_key("TabSell"),
-      )
-      let bt_buy : NxShopButton = @json.from_json(
-        bt_buy_json,
-        path=path.add_key("BtBuy"),
-      )
-      let bt_sell : NxShopButton = @json.from_json(
-        bt_sell_json,
-        path=path.add_key("BtSell"),
-      )
-      let bt_exit : NxShopButton = @json.from_json(
-        bt_exit_json,
-        path=path.add_key("BtExit"),
-      )
-      let check_box : NxShopCheckBox = @json.from_json(
-        check_box_json,
-        path=path.add_key("checkBox"),
-      )
-      {
-        backgrnd,
-        backgrnd2,
-        backgrnd3,
-        backgrnd4,
-        select,
-        select2,
-        meso,
-        tab_buy,
-        tab_sell,
-        bt_buy,
-        bt_sell,
-        bt_exit,
-        check_box,
-      }
-    }
-    _ => raise @json.JsonDecodeError((path, "invalid UIWindow2 Shop2.json"))
-  }
-}
-
-///|
 fn load_ui_resources() -> UiResources {
   let shop2 = @resource.require_json("assets/UI/UIWindow2.img/Shop2.json")
   parse_ui_resources_from_shop2_json(shop2) catch {
@@ -551,7 +471,7 @@ fn ensure_item_visual_loaded(state : State, item_id : Int) -> Unit {
 
 ///|
 fn collect_unique_shop_item_ids(shop : OpenNpcShopMessage) -> Array[Int] {
-  let unique : Map[Int, Bool] = {}
+  let unique : Map[Int, Bool] = Map([])
   let ids : Array[Int] = []
   for item in shop.items {
     if unique.contains(item.id) {

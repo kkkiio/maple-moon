@@ -9,7 +9,7 @@ package "KKKIIO/maple-moon/game/pet"
 pub(all) struct Pet {
   pet_name : String
 }
-pub fn Pet::new(String) -> Self
+pub fn Pet::Pet(String) -> Self
 
 // Type aliases
 

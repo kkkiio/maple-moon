@@ -2,6 +2,9 @@
 using @char_stance {type StanceId}
 
 ///|
+using @equip {type CharEquips}
+
+///|
 using @types {type BodyDrawInfo}
 
 ///|
@@ -332,11 +335,11 @@ pub fn CharLook::load(
   for slot_id, itemid in entry.equips {
     equips.set(slot_id, @item.ItemData::load_item_data(itemid))
   }
-  CharLook::new(entity, equips, body, hair, face, draw_info)
+  CharLook(entity, equips, body, hair, face, draw_info)
 }
 
 ///|
-pub fn CharLook::new(
+pub fn CharLook::CharLook(
   entity : @entity.Entity,
   slot_equips : Map[Int, @item.ItemData],
   body : FullBody,
@@ -345,7 +348,7 @@ pub fn CharLook::new(
   draw_info : @types.BodyDrawInfo,
 ) -> CharLook {
   let root_entity = entity
-  let equips = @equip.CharEquips::new()
+  let equips = CharEquips()
   for slot_id, itemdata in slot_equips {
     equips.add_equip(itemdata, @slot.Id::from_int(slot_id), draw_info) catch {
       e => abort(e.to_string()) // TODO: handle error
@@ -353,10 +356,10 @@ pub fn CharLook::new(
   }
   {
     root_entity,
-    stance: @utils.Nominal::default(),
+    stance: Default::default(),
     // st_frame: @utils.Nominal::default(),
     // st_elapsed: 0,
-    expression: @utils.Nominal::default(),
+    expression: Default::default(),
     // exp_elapsed: 0,
     flip: false,
     action: None,
@@ -962,8 +965,27 @@ let attack_stances : FixedArray[FixedArray[StanceId]] = [
 ]
 
 ///|
-pub impl ToJson for CharLook with fn to_json(_) -> Json {
-  {} // TODO
+/// Serialize the gameplay-visible character look state.
+///
+/// ECS entities, animation caches, draw metadata, and randomizer state are
+/// intentionally excluded because they are runtime implementation details.
+pub impl ToJson for CharLook with fn to_json(self) -> Json {
+  let equips : Map[String, Json] = Map([])
+  for item in self.equips.iter() {
+    let (slot, clothing) = item
+    equips[slot.int_value().to_string()] = ToJson::to_json(clothing.get_id())
+  }
+  {
+    "stance": ToJson::to_json(self.stance.get()),
+    "frame": ToJson::to_json(self.get_frame()),
+    "expression": ToJson::to_json(self.expression.get()),
+    "facing_right": ToJson::to_json(self.flip),
+    "action": ToJson::to_json(self.actionstr),
+    "body": ToJson::to_json(self.full_body),
+    "hair": ToJson::to_json(self.hair),
+    "face": ToJson::to_json(self.face),
+    "equips": Json::object(equips),
+  }
 }
 
 ///|
@@ -1053,7 +1075,7 @@ fn attach_face(
             w: source_frame.texture.w,
             h: source_frame.texture.h,
             offset: source_frame.texture.offset,
-            origin: @struct.Point::new(
+            origin: Point(
               source_frame.texture.origin.x - face_pos.x,
               source_frame.texture.origin.y - face_pos.y,
             ),
@@ -1069,7 +1091,7 @@ fn attach_face(
           w: source_frame.texture.w,
           h: source_frame.texture.h,
           offset: source_frame.texture.offset,
-          origin: @struct.Point::new(
+          origin: Point(
             source_frame.texture.origin.x - face_pos.x,
             source_frame.texture.origin.y - face_pos.y,
           ),

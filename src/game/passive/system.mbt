@@ -1,6 +1,6 @@
 ///|
 /// Global SWORD_FA_FIGHTER passive instance (needs to be registered by game_scene)
-pub let sword_fa_fighter_passive : SwordFaFighterPassive = SwordFaFighterPassive::new()
+pub let sword_fa_fighter_passive : SwordFaFighterPassive = SwordFaFighterPassive()
 
 ///|
 /// Shared randomizer for passive skill probability checks.
@@ -40,8 +40,12 @@ fn default_trigger_extra_attack(
 ///|
 fn default_get_skill_level(attacker_oid : Int, skill_id : Int) -> Int {
   guard @player.get_player() is Some(player) else { return 0 }
-  guard player.get_character().get_oid() == attacker_oid else { return 0 }
-  player.get_skill_book().get_level(skill_id)
+  let character = @combat_system.CombatCharacter::get_character(player)
+  guard character.get_oid() == attacker_oid else { return 0 }
+  @legacy_types.SkillBook::get_level(
+    @combat_system.CombatCharacter::get_skill_book(player),
+    skill_id,
+  )
 }
 
 ///|

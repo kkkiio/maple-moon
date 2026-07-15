@@ -4,7 +4,7 @@ struct Singleton[T] {
 }
 
 ///|
-pub fn[T] Singleton::new() -> Singleton[T] {
+pub fn[T] Singleton::Singleton() -> Singleton[T] {
   { instance: None }
 }
 

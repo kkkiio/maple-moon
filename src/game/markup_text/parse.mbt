@@ -5,35 +5,88 @@ pub fn parse_markup(
   tag_map : Map[Char, MarkupType],
 ) -> Array[Node] raise ParseError {
   let nodes = []
-  let mut rest_text = text[:]
-  while !rest_text.is_empty() {
-    guard rest_text.find("#") is Some(markup_start) else {
-      nodes.push(to_text(rest_text))
-      break
-    }
-    if markup_start > 0 {
-      nodes.push(to_text(rest_text.view(end_offset=markup_start)))
-    }
-    let tag = rest_text.get_char(markup_start + 1).unwrap()
-    guard tag_map.get(tag) is Some(tag_type) else { raise UnknownTag(tag) }
-    match tag_type {
-      MarkupType::SelfClosing => {
-        nodes.push(Node::Tag(tag, ""))
-        rest_text = rest_text.view(start_offset=markup_start + 2)
-      }
-      MarkupType::Pair => {
-        rest_text = rest_text.view(start_offset=markup_start + 2)
-        guard rest_text.find("#") is Some(markup_end) else {
-          // TODO: allow # in text?
-          raise MissingMarkupClose
-        }
-        let payload = rest_text.view(end_offset=markup_end)
-        nodes.push(Node::Tag(tag, payload))
-        rest_text = rest_text.view(start_offset=markup_end + 1)
-      }
+  for token in scan_markup(text, tag_map) {
+    match token {
+      MarkupToken::Text(text) => nodes.push(to_text(text))
+      MarkupToken::Tag(tag, payload) => nodes.push(Node::Tag(tag, payload))
+      MarkupToken::Unknown(tag, _) => raise UnknownTag(tag)
+      MarkupToken::Incomplete(_) => raise MissingMarkupClose
     }
   }
   nodes
+}
+
+///|
+/// Scan Maple markup while retaining unknown or incomplete source text.
+///
+/// Known tags are classified through `tag_map`. Unknown and incomplete tokens
+/// keep their original view so tolerant renderers can display them verbatim.
+///
+/// # Example
+/// ```moonbit nocheck
+/// let tags = Map([('b', @markup_text.MarkupType::SelfClosing)])
+/// inspect(@markup_text.scan_markup("#btext", tags).length(), content="2")
+/// ```
+pub fn scan_markup(
+  text : String,
+  tag_map : Map[Char, MarkupType],
+) -> Array[MarkupToken] {
+  let tokens = []
+  let mut rest = text[:]
+  while !rest.is_empty() {
+    lexscan rest with longest {
+      (re"^[^#]+" as plain_text, after=tail) => {
+        tokens.push(MarkupToken::Text(plain_text))
+        rest = tail
+      }
+      (re"^#." as marker, after=tail) => {
+        let tag = marker.get_char(1).unwrap()
+        match tag_map.get(tag) {
+          Some(MarkupType::SelfClosing) => {
+            tokens.push(MarkupToken::Tag(tag, ""))
+            rest = tail
+          }
+          Some(MarkupType::Pair) =>
+            lexscan tail with longest {
+              (re"^[^#]*#" as encoded_payload, after=remaining) => {
+                let payload = encoded_payload.view(
+                  end_offset=encoded_payload.length() - 1,
+                )
+                tokens.push(MarkupToken::Tag(tag, payload))
+                rest = remaining
+              }
+              _ => {
+                tokens.push(MarkupToken::Incomplete(rest))
+                rest = ""[:]
+              }
+            }
+          None =>
+            lexscan tail with longest {
+              (re"^[^#]*#" as encoded_payload, after=remaining) => {
+                tokens.push(
+                  MarkupToken::Unknown(
+                    tag,
+                    rest.view(
+                      end_offset=marker.length() + encoded_payload.length(),
+                    ),
+                  ),
+                )
+                rest = remaining
+              }
+              _ => {
+                tokens.push(MarkupToken::Unknown(tag, rest))
+                rest = ""[:]
+              }
+            }
+        }
+      }
+      _ => {
+        tokens.push(MarkupToken::Incomplete(rest))
+        rest = ""[:]
+      }
+    }
+  }
+  tokens
 }
 
 ///|
@@ -53,6 +106,19 @@ pub(all) enum MarkupType {
 pub enum Node {
   Text(StringView)
   Tag(Char, StringView)
+}
+
+///|
+/// A lossless token emitted by `scan_markup`.
+pub enum MarkupToken {
+  /// Plain text outside markup markers.
+  Text(StringView)
+  /// A known self-closing or paired tag and its payload.
+  Tag(Char, StringView)
+  /// An unknown tag together with its original source text.
+  Unknown(Char, StringView)
+  /// A trailing marker or known paired tag without a closing marker.
+  Incomplete(StringView)
 }
 
 ///|

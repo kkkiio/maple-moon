@@ -8,11 +8,11 @@ struct Module {
 
 ///|
 pub fn Module::load() -> Module {
-  Module::new()
+  Module()
 }
 
 ///|
-fn Module::new() -> Module {
+fn Module::Module() -> Module {
   {
     stat_listeners: Map([]),
     i64stat_listeners: Map([]),
@@ -28,7 +28,7 @@ pub fn Module::new_char_stats(
   weapon_type_getter : () -> @weapon.Type,
   job : @job.Job,
 ) -> CharStats {
-  let stats = CharStats::new(
+  let stats = CharStats(
     s,
     weapon_type_getter,
     job,

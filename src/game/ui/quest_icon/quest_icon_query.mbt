@@ -108,7 +108,7 @@ pub fn setup(
   open_npc_talk_ui : (@npc.TalkArgs) -> Unit,
 ) -> Unit {
   // 构建 npc_quests_map: npc_id -> quest_ids[]
-  let npc_quests_map : Map[Int, Array[Int]] = {}
+  let npc_quests_map : Map[Int, Array[Int]] = Map([])
   for quest_id, phase_checks in quests_resource.quest_checks_map {
     // 从 phase 0 获取 npc
     match phase_checks.get(0) {
@@ -134,7 +134,7 @@ pub fn setup(
       player_quest_log: @quest_log.current_player_quest_log(),
     }
   }
-  let map_quests = MapQuests::new(
+  let map_quests = MapQuests(
     map_quests_resource, quests_resource, npc_quests_map, open_npc_talk_ui, get_player_deps,
   )
   let mod = { quests_resource, quest_checks_raw, map_quests }
@@ -147,7 +147,7 @@ fn Module::select_demo_quest_by_npcs(
   self : Module,
   npc_ids : Array[Int],
 ) -> DemoQuestSelection? {
-  let seen : Map[Int, Unit] = {}
+  let seen : Map[Int, Unit] = Map([])
   let mut candidate_count = 0
   for npc_id in npc_ids {
     if seen.contains(npc_id) {
@@ -320,8 +320,11 @@ fn is_low_restriction_phase0_from_checks(
 fn list_quests_by_npc(
   npc_quests_map : Map[Int, Array[Int]],
   npc_id : Int,
-) -> Array[Int] {
-  npc_quests_map.get(npc_id).map_or([], fn(quest_ids) { quest_ids })
+) -> Iter[Int] {
+  match npc_quests_map.get(npc_id) {
+    Some(quest_ids) => [|..quest_ids|]
+    None => [||]
+  }
 }
 
 ///|

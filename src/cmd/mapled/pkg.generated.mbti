@@ -1,0 +1,26 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/cmd/mapled"
+
+// Values
+
+// Errors
+
+// Types and methods
+type CdpReply
+
+type Daemon
+
+type LogEntry derive(ToJson)
+
+type LogSubscriber
+
+type NativeCdp
+
+type NetworkEntry derive(ToJson)
+
+type NetworkUpdate
+
+// Type aliases
+
+// Traits
+

@@ -137,7 +137,7 @@ pub fn Mob::load(
     err => abort("failed to decode mob mx: \{mid}, error=\{err}")
   }
   let runtime = load_mx_runtime(mx_mob, mx_path)
-  Mob::new(
+  Mob(
     mx_mob,
     runtime,
     object_id=oi,
@@ -161,8 +161,8 @@ priv struct MxMobRuntime {
 
 ///|
 fn load_mx_runtime(mx_mob : MxMob, base_path : String) -> MxMobRuntime {
-  let animation_loader = @resource.AnimationLoader::new()
-  let effect_animations : Map[String, MobAnimation] = {}
+  let animation_loader = AnimationLoader()
+  let effect_animations : Map[String, MobAnimation] = Map([])
   for path_key, animation_path in mx_mob.mx_animations {
     let clip = load_mx_clip(
       animation_loader, animation_path, path_key, base_path,
@@ -196,7 +196,7 @@ fn load_mx_runtime(mx_mob : MxMob, base_path : String) -> MxMobRuntime {
     }
   }
 
-  let animations : Map[StanceType, MobAnimation] = {}
+  let animations : Map[StanceType, MobAnimation] = Map([])
   for key, node in mx_mob.stance_nodes {
     match effect_animations.get(node.path_key) {
       Some(anim) =>
@@ -217,7 +217,7 @@ fn load_mx_runtime(mx_mob : MxMob, base_path : String) -> MxMobRuntime {
     }
   }
 
-  let attack_stands : Map[Int, MobAnimation] = {}
+  let attack_stands : Map[Int, MobAnimation] = Map([])
   for attack_id, attack_node in mx_mob.attack_nodes {
     match effect_animations.get(attack_node.animation_path_key) {
       Some(anim) => attack_stands[attack_id] = anim
@@ -227,7 +227,7 @@ fn load_mx_runtime(mx_mob : MxMob, base_path : String) -> MxMobRuntime {
         )
     }
   }
-  let skill_stands : Map[Int, MobAnimation] = {}
+  let skill_stands : Map[Int, MobAnimation] = Map([])
   for skill_id, skill_node in mx_mob.skill_nodes {
     match effect_animations.get(skill_node.animation_path_key) {
       Some(anim) => skill_stands[skill_id] = anim
@@ -367,7 +367,7 @@ pub impl @json.FromJson for MobInfo with fn from_json(json, path) {
 }
 
 ///|
-fn Mob::new(
+fn Mob::Mob(
   mx_mob : MxMob,
   runtime : MxMobRuntime,
   mode : Int,
@@ -380,7 +380,7 @@ fn Mob::new(
   randomizer? : @random.Rand = @random.Rand::new(),
 ) -> Mob {
   let entity = @entity.Entity()
-  let phobj = @physics.PhysicsObject::new(on_pos_change=fn(pos) {
+  let phobj = PhysicsObject(on_pos_change=fn(pos) {
     @transform2d.set_xy(entity, pos)
   })
 
@@ -483,7 +483,7 @@ fn Mob::new(
     fly_direction,
     fading: false,
     fade_in: newspawn,
-    opacity: @utils.Linear::new(if newspawn { 0.0 } else { 1.0 }),
+    opacity: Linear(if newspawn { 0.0 } else { 1.0 }),
     src: mx_mob,
   }
 }
@@ -711,9 +711,7 @@ pub fn Mob::is_in_range(self : Mob, range : @struct.Rectangle[Int]) -> Bool {
   }
   match self.animations.get(self.stance.t) {
     Some(anim) => {
-      let raw_bounds = anim.meta.first_bounds.unwrap_or(
-        @struct.Rectangle::default(),
-      )
+      let raw_bounds = anim.meta.first_bounds.unwrap_or(Default::default())
       let bounds = if self.stance.face_right && !self.no_flip {
         raw_bounds.flip_x()
       } else {
@@ -732,9 +730,7 @@ pub fn Mob::get_live_range(self : Mob) -> @struct.Rectangle[Int]? {
   }
   match self.animations.get(self.stance.t) {
     Some(anim) => {
-      let raw_bounds = anim.meta.first_bounds.unwrap_or(
-        @struct.Rectangle::default(),
-      )
+      let raw_bounds = anim.meta.first_bounds.unwrap_or(Default::default())
       let bounds = if self.stance.face_right && !self.no_flip {
         raw_bounds.flip_x()
       } else {
@@ -754,7 +750,7 @@ pub fn Mob::create_touch_attack(self : Mob) -> @combat.MobAttack {
   let minattack = (self.watk.to_double() * 0.8).to_int()
   let maxattack = self.watk
   let attack = @randx.next_int(self.randomizer, from=minattack, maxattack)
-  return @combat.MobAttack::new(attack, self.get_position(), self.id, self.oid)
+  return MobAttack(attack, self.get_position(), self.id, self.oid)
 }
 
 ///|
@@ -836,8 +832,8 @@ pub fn Mob::get_head_position(
   position? : @struct.Point[Int],
 ) -> @struct.Point[Int] {
   let head = match self.animations.get(self.stance.t) {
-    Some(anim) => anim.meta.first_head.unwrap_or(@struct.Point::default())
-    None => @struct.Point::default()
+    Some(anim) => anim.meta.first_head.unwrap_or(Default::default())
+    None => Default::default()
   }
   position
   .unwrap_or(self.get_position())
@@ -889,7 +885,7 @@ pub fn Mob::get_move_attack(self : Mob, move_id : Int) -> MobSpecialAttack {
     None =>
       match self.src.attack_nodes.get(move_id) {
         Some(entry) => {
-          let new_attack = MobSpecialAttack::new(entry)
+          let new_attack = MobSpecialAttack(entry)
           self.attacks.set(move_id, new_attack)
           new_attack
         }
@@ -916,7 +912,9 @@ pub fn MobSpecialAttack::get_id(self : MobSpecialAttack) -> Int {
 }
 
 ///|
-pub fn MobSpecialAttack::new(node : MxMobAttackNode) -> MobSpecialAttack {
+pub fn MobSpecialAttack::MobSpecialAttack(
+  node : MxMobAttackNode,
+) -> MobSpecialAttack {
   let effects_arr = node.effects.map(fn(e) {
     Effect::{ path_key: e.path_key, z: e.z }
   })
@@ -953,8 +951,8 @@ pub fn Mob::show_effect(
     return
   }
   let shift = match pos {
-    0 => self.get_head_position(position=@struct.Point::default())
-    _ => @struct.Point::default()
+    0 => self.get_head_position(position=Default::default())
+    _ => Default::default()
   }
   @graphics.add_effect(
     self.entity,
@@ -1153,3 +1151,12 @@ pub fn Mob::apply_damage(self : Mob, damage : Int, toleft : Bool) -> Unit {
     self.update_movement()
   }
 }
+
+///|
+using @physics {type PhysicsObject}
+
+///|
+using @resource {type AnimationLoader}
+
+///|
+using @struct {type Range, type Rectangle}

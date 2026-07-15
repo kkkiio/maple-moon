@@ -45,6 +45,7 @@ pub fn set_module(CharacterPresentationResource) -> Unit
 
 // Types and methods
 type CharLook
+pub fn CharLook::CharLook(@entity.Entity, Map[Int, @item.ItemData], FullBody, Hair, Face, @character_body.BodyDrawInfo) -> Self
 pub fn CharLook::add_equip(Self, @item.ItemData, @slot.Id) -> Unit raise
 pub fn CharLook::attack(Self, Bool) -> Unit
 pub fn CharLook::attack_by_stance(Self, @char_stance.StanceId) -> Unit
@@ -61,7 +62,6 @@ pub fn CharLook::getnextframe(Self, @char_stance.StanceId, Int) -> Int
 pub fn CharLook::is_animation_finished(Self) -> Bool
 pub fn CharLook::is_twohanded(Self, @char_stance.StanceId) -> Bool
 pub fn CharLook::load(@entity.Entity, @server_proto.LookEntry, FullBody, Hair, Face, @character_body.BodyDrawInfo) -> Self
-pub fn CharLook::new(@entity.Entity, Map[Int, @item.ItemData], FullBody, Hair, Face, @character_body.BodyDrawInfo) -> Self
 pub fn CharLook::play_animations(Self) -> Unit
 pub fn CharLook::remove_equip(Self, @slot.Id) -> Unit
 pub fn CharLook::set_action(Self, String) -> Unit
@@ -79,11 +79,11 @@ pub struct CharacterPresentationResource {
   face_types : Map[Int, Face]
   body_cache : Map[Int, FullBody]
 }
+pub fn CharacterPresentationResource::CharacterPresentationResource(@character_body.NxStanceLooks[@character_body.NxStanceBody], @character_body.NxStanceLooks[@character_body.NxMultiPartFrame], @character_body.BodyDrawInfo) -> Self
 pub fn CharacterPresentationResource::load() -> Self
 pub fn CharacterPresentationResource::load_body_by_skin_id(Self, Int) -> FullBody
 pub fn CharacterPresentationResource::load_face_by_id(Self, Int) -> Face
 pub fn CharacterPresentationResource::load_hair_by_id(Self, Int) -> Hair
-pub fn CharacterPresentationResource::new(@character_body.NxStanceLooks[@character_body.NxStanceBody], @character_body.NxStanceLooks[@character_body.NxMultiPartFrame], @character_body.BodyDrawInfo) -> Self
 
 pub(all) enum ExpressionId {
   DEFAULT
@@ -115,10 +115,10 @@ pub impl Default for ExpressionId
 pub impl ToJson for ExpressionId
 
 type Face derive(Default)
+pub fn Face::Face(Int, Json) -> Self raise
 pub fn Face::get_delay(Self, ExpressionId, Int) -> Int
 pub fn Face::get_name(Self) -> String
 pub fn Face::load(Int) -> Self
-pub fn Face::new(Int, Json) -> Self raise
 pub fn Face::nextframe(Self, ExpressionId, Int) -> Int
 pub impl ToJson for Face
 
@@ -129,8 +129,8 @@ pub(all) struct FullBody {
   stances : Map[@char_stance.StanceId, Map[String, (Array[@resource.NxFrame], Array[@character_body.BodyLayer])]]
   name : String
 }
+pub fn FullBody::FullBody(Int, @character_body.BodyDrawInfo, Map[@char_stance.StanceId, Array[@character_body.NxStanceBody]], Map[@char_stance.StanceId, Array[@character_body.NxMultiPartFrame]]) -> Self
 pub fn FullBody::get_name(Self) -> String
-pub fn FullBody::new(Int, @character_body.BodyDrawInfo, Map[@char_stance.StanceId, Array[@character_body.NxStanceBody]], Map[@char_stance.StanceId, Array[@character_body.NxMultiPartFrame]]) -> Self
 pub impl ToJson for FullBody
 
 type Hair

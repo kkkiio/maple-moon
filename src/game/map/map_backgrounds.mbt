@@ -44,7 +44,7 @@ pub fn NxBackgroundType::from_int(id : Int) -> NxBackgroundType? {
 let tiled_background_motion_states_worlds : Map[
   UInt,
   Map[@entity.Entity, TiledBackgroundMotionState],
-] = {}
+] = Map([])
 
 ///|
 priv struct TiledBackgroundMotionState {
@@ -603,7 +603,7 @@ fn collect_background_animation_clips(
   root : @entity.Entity,
   background_animations : Map[String, @resource.SeleneClip],
 ) -> Map[@entity.Entity, @resource.SeleneClip] raise {
-  let clips_by_entity : Map[@entity.Entity, @resource.SeleneClip] = {}
+  let clips_by_entity : Map[@entity.Entity, @resource.SeleneClip] = Map([])
   for event in image_layer_events {
     if event.map_entity == root {
       if background_animations.get(event.layer.name) is Some(clip) {

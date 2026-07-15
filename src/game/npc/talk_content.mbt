@@ -176,12 +176,10 @@ pub fn parse_talk_content(
 ///|
 let tag_map : Map[Char, @markup_text.MarkupType] = @markup_text.common_tags
   .iter()
-  .concat(
-    [
-      ('L', @markup_text.MarkupType::Pair), // #L[number]# Selection open.
-      ('l', @markup_text.MarkupType::SelfClosing), // #l - Selection close.
-    ].iter(),
-  )
+  .concat([|
+    ('L', @markup_text.MarkupType::Pair), // #L[number]# Selection open.
+    ('l', @markup_text.MarkupType::SelfClosing), // #l - Selection close.
+  |])
   |> Map::from_iter
 
 ///|

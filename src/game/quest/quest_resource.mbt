@@ -66,7 +66,7 @@ pub impl @json.FromJson for NxQuestInfo with fn from_json(json, path) {
         ..
       } as obj
     ) => {
-      let description_map : Map[Int, String] = {}
+      let description_map : Map[Int, String] = Map([])
       for key, value in obj {
         let i = @string.parse_int(key) catch { _ => continue }
         if i < 0 || i > 10 { // assume there are at most 10 phases
@@ -304,7 +304,7 @@ struct MonHuntCheck {
 ///|
 impl @json.FromJson for NxQuestPhaseChecks with fn from_json(json, path) {
   let obj = match json {
-    Null => return NxQuestPhaseChecks::default()
+    Null => return Default::default()
     Object(obj) => obj
     _ => raise @json.JsonDecodeError((path, "expect object or null"))
   }
@@ -682,7 +682,7 @@ pub(all) struct NxLost {
 ///|
 pub impl @json.FromJson for NxQuestPhaseSays with fn from_json(json, path) {
   let obj = match json {
-    Null => return NxQuestPhaseSays::default() // TODO: figure out the meaning of this
+    Null => return Default::default() // TODO: figure out the meaning of this
     Object(obj) => obj
     _ => raise @json.JsonDecodeError((path, "expect object or null"))
   }
@@ -742,7 +742,7 @@ impl @json.FromJson for NxHints with fn from_json(json, path) {
 ///|
 impl @json.FromJson for NxHint with fn from_json(json, path) {
   let obj = match json {
-    Null => return NxHint::default() // TODO: figure out the meaning of this
+    Null => return Default::default() // TODO: figure out the meaning of this
     Object(obj) => obj
     _ => raise @json.JsonDecodeError((path, "expect object or null"))
   }
@@ -785,7 +785,7 @@ priv struct ActItem {
 ///|
 pub impl @json.FromJson for NxQuestPhaseAct with fn from_json(json, path) {
   let obj = match json {
-    Null => return NxQuestPhaseAct::default()
+    Null => return Default::default()
     Object(obj) => obj
     _ => raise @json.JsonDecodeError((path, "expect object or null"))
   }

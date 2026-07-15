@@ -111,7 +111,7 @@ pub fn InventoryType::by_value(value : Int) -> InventoryType? {
 
 ///|
 pub impl Show for InventoryType with fn output(self, logger) {
-  logger.write_string(self.to_repr().to_string())
+  logger.write_string(Debug::to_repr(self).to_string())
 }
 
 ///|

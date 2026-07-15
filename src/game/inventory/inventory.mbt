@@ -127,17 +127,17 @@ pub fn Inventory::clear(self : Inventory) -> Unit {
 }
 
 ///|
-pub fn Inventory::new() -> Inventory {
+pub fn Inventory::Inventory() -> Inventory {
   {
-    inventories: @utils.DefaultMap::new(fn() { Map([]) }),
+    inventories: DefaultMap(fn() { Map([]) }),
     items: Map([]),
     equips: Map([]),
     pets: Map([]),
     running_uid: 0,
     meso: 0,
     bullet_slot: 0,
-    total_stats: @utils.DefaultMap::new(fn() { 0 }),
-    type_slot_count_map: Map::from_array([
+    total_stats: DefaultMap(fn() { 0 }),
+    type_slot_count_map: Map([
       (TypeId::EQUIP, 96),
       (TypeId::USE, 96),
       (TypeId::SETUP, 96),
@@ -309,7 +309,11 @@ pub fn Inventory::apply_local_modify_inventory_message(
     "equipped_11": self.get_item_id(TypeId::EQUIPPED, 11),
   })
   match @player.get_player() {
-    Some(player) => self.recalc_stats(player.character.get_weapontype())
+    Some(player) =>
+      @legacy_types.Inventory::recalc_stats(
+        self,
+        player.character.get_weapontype(),
+      )
     None => ()
   }
 }
@@ -710,7 +714,7 @@ pub fn Inventory::use_item(self : Inventory, itemid : Int) -> Unit {
 }
 
 ///|
-pub let inventory : Ref[Inventory] = Ref(Inventory::new())
+pub let inventory : Ref[Inventory] = Ref(Inventory())
 
 ///|
 pub fn use_item_at_slot(type_id : TypeId, slot_no : Int) -> String? {

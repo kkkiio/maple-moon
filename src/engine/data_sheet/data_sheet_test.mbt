@@ -2,18 +2,31 @@
 test "parse_tsv_sheet reads header and rows" {
   let text = "shopid\tnpcid\n1011000\t9010000\n"
   let sheet = @data_sheet.parse_tsv_sheet(text, "shops.tsv")
-  inspect(sheet.row_count(), content="1")
+  inspect(
+    sheet.row_count(),
+    content=(
+      #|1
+    ),
+  )
   let rows = sheet.rows().collect()
-  inspect(rows.length(), content="1")
-  inspect(rows[0].get_int("shopid"), content="1011000")
-  inspect(rows[0].get_int("npcid"), content="9010000")
+  debug_inspect(
+    (rows.length(), rows[0].get_int("shopid"), rows[0].get_int("npcid")),
+    content=(
+      #|(1, 1011000, 9010000)
+    ),
+  )
 }
 
 ///|
 test "parse_tsv_sheet allows only trailing empty line" {
   let text = "shopid\tnpcid\n1\t2\n3\t4\n"
   let sheet = @data_sheet.parse_tsv_sheet(text, "shops.tsv")
-  inspect(sheet.row_count(), content="2")
+  inspect(
+    sheet.row_count(),
+    content=(
+      #|2
+    ),
+  )
 }
 
 ///|
@@ -51,5 +64,10 @@ test "row get_int_or_default returns default on invalid value" {
   let text = "shopid\tnpcid\nabc\t2\n"
   let sheet = @data_sheet.parse_tsv_sheet(text, "shops.tsv")
   let row = sheet.rows().collect()[0]
-  inspect(row.get_int_or_default("shopid", 7), content="7")
+  inspect(
+    row.get_int_or_default("shopid", 7),
+    content=(
+      #|7
+    ),
+  )
 }

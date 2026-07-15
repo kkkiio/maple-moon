@@ -11,7 +11,7 @@ fn load_map_physics_from_assets(map_id : Int) -> @physics.Physics raise {
 
 ///|
 fn make_physics_object(x : Int, y : Int, fh_id : Int) -> @physics.PhysicsObject {
-  let phobj = @physics.PhysicsObject::new(on_pos_change=fn(_) {  })
+  let phobj = PhysicsObject(on_pos_change=fn(_) {  })
   phobj.set_x(x.to_double())
   phobj.set_y(y.to_double())
   phobj.set_fhid(fh_id)
@@ -70,3 +70,6 @@ test "teleport on map 102030000 should stay on slope destination platform after 
   let y_diff = (phobj.get_y().to_double() - expected_ground).abs()
   assert_true(y_diff <= 1.0)
 }
+
+///|
+using @physics {type PhysicsObject}

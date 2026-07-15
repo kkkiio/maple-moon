@@ -33,7 +33,7 @@ pub impl @json.FromJson for NxTexture with fn from_json(json, path) -> NxTexture
     is { "__i": String(i), "__w": Number(w, ..), "__h": Number(h, ..), .. } else {
     raise @json.JsonDecodeError((path, "invalid nx texture=\{to_repr(json)}"))
   }
-  if i.contains("#") {
+  if i.contains_code_unit(('#' : UInt16)) {
     raise @json.JsonDecodeError(
       (path, "invalid '#'-framed syntax: \{i}, set offset if using spritesheet"),
     )
@@ -41,15 +41,15 @@ pub impl @json.FromJson for NxTexture with fn from_json(json, path) -> NxTexture
   let w = w.to_int()
   let h = h.to_int()
   let offset = if json is { "__off": [Number(offx, ..), Number(offy, ..)], .. } {
-    Point::new(offx.to_int(), offy.to_int())
+    Point(offx.to_int(), offy.to_int())
   } else {
-    Point::default()
+    Default::default()
   }
   let origin = if json
     is { "origin": [Number(originx, ..), Number(originy, ..)], .. } {
-    Point::new(originx.to_int(), originy.to_int())
+    Point(originx.to_int(), originy.to_int())
   } else {
-    Point::default()
+    Default::default()
   }
   { i, w, h, offset, origin }
 }

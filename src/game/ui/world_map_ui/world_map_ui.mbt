@@ -82,19 +82,7 @@ priv struct WorldMapPageResource {
 priv struct NxWorldMapSearch {
   background : @resource.NxTexture
   notice : @resource.NxTexture
-}
-
-///|
-impl @json.FromJson for NxWorldMapSearch with fn from_json(json, path) -> NxWorldMapSearch raise @json.JsonDecodeError {
-  match json {
-    { "backgrnd": background, "notice": notice, .. } =>
-      {
-        background: @json.from_json(background, path=path.add_key("backgrnd")),
-        notice: @json.from_json(notice, path=path.add_key("notice")),
-      }
-    _ => raise @json.JsonDecodeError((path, "invalid world map search"))
-  }
-}
+} derive(@json.FromJson(fields(background(rename="backgrnd"))))
 
 ///|
 priv struct NxWorldMapUI {
@@ -105,39 +93,18 @@ priv struct NxWorldMapUI {
   bt_navi_register : @ui.NxMapleButton
   search : NxWorldMapSearch
   title : @resource.NxTexture
-}
-
-///|
-impl @json.FromJson for NxWorldMapUI with fn from_json(json, path) -> NxWorldMapUI raise @json.JsonDecodeError {
-  match json {
-    {
-      "Border": border,
-      "BtSearch": bt_search,
-      "BtAll": bt_all,
-      "BtAutoFly_1": bt_auto_fly,
-      "BtNaviRegister": bt_navi_register,
-      "WorldMapSearch": search,
-      "title": title,
-      ..
-    } =>
-      {
-        border: @json.from_json(border, path=path.add_key("Border")),
-        bt_search: @json.from_json(bt_search, path=path.add_key("BtSearch")),
-        bt_all: @json.from_json(bt_all, path=path.add_key("BtAll")),
-        bt_auto_fly: @json.from_json(
-          bt_auto_fly,
-          path=path.add_key("BtAutoFly_1"),
-        ),
-        bt_navi_register: @json.from_json(
-          bt_navi_register,
-          path=path.add_key("BtNaviRegister"),
-        ),
-        search: @json.from_json(search, path=path.add_key("WorldMapSearch")),
-        title: @json.from_json(title, path=path.add_key("title")),
-      }
-    _ => raise @json.JsonDecodeError((path, "invalid UIWindow2 WorldMap json"))
-  }
-}
+} derive (
+  @json.FromJson(
+    fields(
+      border(rename="Border"),
+      bt_search(rename="BtSearch"),
+      bt_all(rename="BtAll"),
+      bt_auto_fly(rename="BtAutoFly_1"),
+      bt_navi_register(rename="BtNaviRegister"),
+      search(rename="WorldMapSearch"),
+    ),
+  ),
+)
 
 ///|
 priv struct NxWorldMapMarker {
@@ -225,19 +192,9 @@ impl @json.FromJson for NxWorldMapToolTip with fn from_json(json, path) -> NxWor
 priv struct NxWorldMapLinkInner {
   link_img : @resource.NxTexture
   link_map : String
-}
-
-///|
-impl @json.FromJson for NxWorldMapLinkInner with fn from_json(json, path) -> NxWorldMapLinkInner raise @json.JsonDecodeError {
-  match json {
-    { "linkImg": link_img, "linkMap": String(link_map), .. } =>
-      {
-        link_img: @json.from_json(link_img, path=path.add_key("linkImg")),
-        link_map,
-      }
-    _ => raise @json.JsonDecodeError((path, "invalid world map link inner"))
-  }
-}
+} derive (
+  @json.FromJson(fields(link_img(rename="linkImg"), link_map(rename="linkMap"))),
+)
 
 ///|
 priv struct NxWorldMapLink {
@@ -316,15 +273,7 @@ impl @json.FromJson for NxWorldMapSpot with fn from_json(json, path) -> NxWorldM
 ///|
 priv struct NxWorldMapInfo {
   parent_map : String
-}
-
-///|
-impl @json.FromJson for NxWorldMapInfo with fn from_json(json, path) -> NxWorldMapInfo raise @json.JsonDecodeError {
-  match json {
-    { "parentMap": String(parent_map), .. } => { parent_map, }
-    _ => raise @json.JsonDecodeError((path, "missing field parentMap"))
-  }
-}
+} derive(@json.FromJson(fields(parent_map(rename="parentMap"))))
 
 ///|
 priv struct NxWorldMapPage {
@@ -410,7 +359,7 @@ let state_ref : Ref[State] = Ref({
   ui_loading: None,
   current_page: None,
   page_loading: None,
-  page_cache: {},
+  page_cache: Map([]),
   render_entities: [],
   dirty: false,
 })
@@ -425,7 +374,7 @@ let tooltip_json_for_test_ref : Ref[Json?] = Ref(None)
 let map_helper_json_for_test_ref : Ref[Json?] = Ref(None)
 
 ///|
-let world_map_pages_for_test_ref : Ref[Map[String, Json]] = Ref({})
+let world_map_pages_for_test_ref : Ref[Map[String, Json]] = Ref(Map([]))
 
 ///|
 let cleanup_registered_ref : Ref[Bool] = Ref(false)
@@ -535,7 +484,7 @@ fn parse_world_map_ui_resource(json : Json) -> WorldMapUIResource raise {
     width: 16,
     height: 16,
   }
-  let button_resources : Map[ButtonId, ButtonStateResource] = {}
+  let button_resources : Map[ButtonId, ButtonStateResource] = Map([])
   button_resources[ButtonId::SEARCH] = make_button_state_resource(src.bt_search)
   button_resources[ButtonId::SEARCH_CLOSE] = make_button_state_resource(
     src.bt_search,
@@ -728,7 +677,7 @@ fn load_world_map_page(
 
 ///|
 fn page_base_position(state : State, ui : WorldMapUIResource) -> Point[Int] {
-  Point::new(
+  Point(
     state.panel_x + ui.border_texture.w / 2,
     state.panel_y + ui.border_texture.h / 2 + BASE_POSITION_Y_OFFSET,
   )

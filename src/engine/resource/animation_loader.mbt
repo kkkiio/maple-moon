@@ -52,8 +52,8 @@ pub(all) struct AnimationLoader {} derive(Default)
 
 ///|
 /// Create an animation loader from an existing resource async loader.
-pub fn AnimationLoader::new() -> AnimationLoader {
-  AnimationLoader::default()
+pub fn AnimationLoader::AnimationLoader() -> AnimationLoader {
+  Default::default()
 }
 
 ///|
@@ -252,7 +252,7 @@ fn parse_meta_size(meta_obj : Map[String, Json]) -> @struct.Point[Int] raise {
       guard wi > 0 && hi > 0 else {
         fail("invalid aseprite meta.size: \{wi}x\{hi}")
       }
-      @struct.Point::new(wi, hi)
+      Point(wi, hi)
     }
     _ => fail("invalid aseprite animation json: missing meta.size")
   }
@@ -305,8 +305,8 @@ fn parse_frames(
 fn parse_frame_sprite_source_position(frame : Json) -> @struct.Point[Int] {
   match frame {
     { "spriteSourceSize": { "x": Number(x, ..), "y": Number(y, ..), .. }, .. } =>
-      @struct.Point::new(x.to_int(), y.to_int())
-    _ => @struct.Point::new(0, 0)
+      Point(x.to_int(), y.to_int())
+    _ => Point(0, 0)
   }
 }
 
@@ -434,8 +434,8 @@ fn parse_anchor_info_by_tag(
       .map(fn(v) { v.to_owned() })
       .unwrap_or(name)
     anchors[tag] = {
-      bounds_position: @struct.Point::new(x.to_int(), y.to_int()),
-      dimensions: @struct.Point::new(wi, hi),
+      bounds_position: Point(x.to_int(), y.to_int()),
+      dimensions: Point(wi, hi),
       pivot: @math.Vec2(px, py),
     }
   }
@@ -479,10 +479,7 @@ fn frame_anchor(frame : FrameItem, info : AnchorInfo) -> @sprite.Anchor raise {
   let source_y = frame.sprite_source_position.y - info.bounds_position.y
   let pivot_x = info.pivot.0 - source_x.to_double()
   let pivot_y = info.pivot.1 - source_y.to_double()
-  anchor_from_pivot(
-    @math.Vec2(pivot_x, pivot_y),
-    @struct.Point::new(rect_w, rect_h),
-  )
+  anchor_from_pivot(@math.Vec2(pivot_x, pivot_y), Point(rect_w, rect_h))
 }
 
 ///|
@@ -541,7 +538,7 @@ fn anchor_from_pivot(
 test "anchor_from_pivot supports aseprite pixel pivot" {
   let @sprite.Anchor(v) = anchor_from_pivot(
     @math.Vec2(30.0, 79.0),
-    @struct.Point::new(57, 79),
+    Point(57, 79),
   )
   inspect(v.0, content="0.02631578947368418")
   inspect(v.1, content="-0.5")
@@ -551,7 +548,7 @@ test "anchor_from_pivot supports aseprite pixel pivot" {
 test "anchor_from_pivot preserves legacy normalized-equivalent center" {
   let @sprite.Anchor(v) = anchor_from_pivot(
     @math.Vec2(29.0, 50.0),
-    @struct.Point::new(58, 100),
+    Point(58, 100),
   )
   inspect(v.0, content="0")
   inspect(v.1, content="0")

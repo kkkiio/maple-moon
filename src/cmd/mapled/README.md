@@ -1,28 +1,31 @@
 # cmd/mapled
 
-Maple Moon CDP daemon used by `src/cmd/maple`.
+`mapled` is the native background daemon used by `src/cmd/maple`. It owns the
+controlled Chrome process and CDP WebSocket, executes browser commands, and
+keeps bounded console-log and network-request buffers for later CLI queries.
 
-This daemon is implemented in MoonBit. Command dispatch, daemon state, CDP
-event normalization, log/network buffers, and browser lifecycle decisions stay
-in MoonBit. `node_ffi.mbt` exposes thin bindings for Node.js process, socket,
-filesystem, timer, and WebSocket primitives; its small CDP adapter only owns
-request IDs and pending JavaScript promises.
-
-Pure CDP protocol normalization and target selection live in the sibling
-`src/cmd/mapled_protocol` package so they can be covered by JS-target blackbox
-snapshot tests without importing a main package.
-
-The daemon can be started in the background through the CLI:
+Start or reuse it through `maple`:
 
 ```bash
-moon run --target js src/cmd/maple start
+moon run --target native src/cmd/maple start
 ```
 
-Starting the daemon does not open Chrome or require Vite. The daemon keeps
-serving CLI requests after the controlled Chrome disconnects;
-`moon run --target js src/cmd/maple open --wait` explicitly waits for the game
-URL, opens Chrome, and reconnects it. Live log consumers subscribe through
-`maple logs --follow`.
+Starting the daemon does not open Chrome and does not require Vite. Open the
+browser explicitly after the Web server is ready:
 
-`just dev` runs `mapled` in the foreground under `concurrently`, so terminating
-the development command also terminates the daemon and its controlled Chrome.
+```bash
+moon run --target native src/cmd/maple open --wait
+```
+
+The daemon keeps accepting commands after Chrome disconnects. Run `maple open`
+again to reconnect. It exits on `maple close`, SIGINT, SIGTERM, or SIGHUP and
+terminates the Chrome child process it owns. Vite and the MoonBit watch build
+remain owned by `npm run dev`.
+
+For foreground diagnosis, run the daemon directly:
+
+```bash
+moon build --target native src/cmd/mapled
+_build/native/debug/build/KKKIIO/maple-moon/cmd/mapled/mapled.exe \
+  --cdp-port 9333 --url http://localhost:8080
+```

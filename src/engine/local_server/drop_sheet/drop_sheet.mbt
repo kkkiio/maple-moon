@@ -48,7 +48,7 @@ pub fn parse_drop_rows(tsv_content : String) -> Array[NxMobDropRow] {
 pub fn build_drop_row_map(
   tsv_content : String,
 ) -> Map[Int, Array[NxMobDropRow]] {
-  let grouped : Map[Int, Array[NxMobDropRow]] = {}
+  let grouped : Map[Int, Array[NxMobDropRow]] = Map([])
   for row in parse_drop_rows(tsv_content) {
     match grouped.get(row.dropperid) {
       Some(list) => list.push(row)

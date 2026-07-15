@@ -45,7 +45,12 @@ test "stabO1 frame layering stays synchronized with animation frame" {
     app.run_frames(1, raw_delta=0.016)
     ticks = ticks + 1
   }
-  inspect(look.get_frame(), content="1")
+  inspect(
+    look.get_frame(),
+    content=(
+      #|1
+    ),
+  )
   let mut changed_layer_count = 0
   for child in @entity.Entity::get_children(host) {
     if @sprite.sprites().get(child) is Some(_) {

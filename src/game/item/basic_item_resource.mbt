@@ -1,7 +1,5 @@
 ///|
-let consume_bundle_files : Array[String] = [
-  "0200.img",
-]
+let consume_bundle_files : ReadOnlyArray[String] = ["0200.img"]
 
 ///|
 /// Basic item resources preloaded during app setup.

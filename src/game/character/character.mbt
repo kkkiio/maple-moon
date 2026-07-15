@@ -124,7 +124,7 @@ pub fn Character::set_position(
 }
 
 ///|
-pub fn Character::new(
+pub fn Character::Character(
   entity : @entity.Entity,
   oid : Int,
   look : @char_look.CharLook,
@@ -134,7 +134,7 @@ pub fn Character::new(
 ) -> Character {
   let char_base = {
     entity,
-    base: MapObjectBase::new(oid, on_pos_change=fn(pos) {
+    base: MapObjectBase(oid, on_pos_change=fn(pos) {
       @transform2d.set_xy(entity, pos)
     }),
     look,

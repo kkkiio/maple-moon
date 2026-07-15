@@ -45,7 +45,7 @@ pub impl Show for StanceId with fn output(self, logger) {
 
 ///|
 pub impl ToJson for StanceId with fn to_json(self) {
-  self.to_string().to_json()
+  Show::to_string(self).to_json()
 }
 
 ///|
@@ -67,7 +67,7 @@ pub fn StanceId::by_state(state : Int) -> StanceId {
   if index < 0 || index > 10 {
     return StanceId::WALK1
   }
-  let state_values = [
+  let state_values : ReadOnlyArray[StanceId] = [
     StanceId::WALK1,
     StanceId::STAND1,
     StanceId::JUMP,

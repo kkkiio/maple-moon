@@ -92,7 +92,7 @@ impl QuestCheck for QuestsStatusCheck with fn check(self, context) {
     }
     if quest_status != expected_status {
       return Err(
-        "Expected quest \{quest_id} status \{expected_status.to_repr()}, got \{quest_status.to_repr()}",
+        "Expected quest \{quest_id} status \{Debug::to_repr(expected_status)}, got \{Debug::to_repr(quest_status)}",
       )
     }
   }
@@ -155,7 +155,7 @@ impl QuestCheck for MonsterHuntCheck with fn check(self, context) {
 ///|
 /// progress data is a 3-digit string that contains kill counts for each monster
 fn check_mob_progress_data(progress_data : StringView) -> Unit raise {
-  guard progress_data.iter().all(v => Char::is_ascii_digit(v)) &&
+  guard progress_data.all(Char::is_ascii_digit) &&
     progress_data.length() % 3 == 0 else {
     fail("Invalid progress data: \{progress_data}")
   }

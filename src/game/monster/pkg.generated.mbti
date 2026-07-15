@@ -50,8 +50,8 @@ pub fn setup_mob_hpbar_game_server_handlers() -> Unit
 
 // Types and methods
 type Effect
+pub fn Effect::Effect(Json) -> Self
 pub fn Effect::apply(Self, (String, Int, Int, Bool) -> Unit) -> Unit
-pub fn Effect::new(Json) -> Self
 
 pub enum FlyDirection {
   STRAIGHT
@@ -65,6 +65,7 @@ pub struct MapMobs {
   spawns : @queue.Queue[MobSpawn]
   randomizer : @random.Rand
 }
+pub fn MapMobs::MapMobs() -> Self
 pub fn MapMobs::add_mob(Self, Mob) -> Unit
 pub fn MapMobs::clear(Self) -> Unit
 pub fn MapMobs::contains(Self, Int, include_dying? : Bool) -> Bool
@@ -74,7 +75,6 @@ pub fn MapMobs::for_each_mob(Self, (Int, Mob) -> Unit) -> Unit
 pub fn MapMobs::get_mob(Self, Int, include_dying? : Bool) -> Mob?
 pub fn MapMobs::get_mob_head_position(Self, Int) -> @res_types.Point[Int]
 pub fn MapMobs::get_mob_position(Self, Int) -> @res_types.Point[Int]
-pub fn MapMobs::new() -> Self
 pub fn MapMobs::remove(Self, Int, Int) -> Unit
 pub fn MapMobs::send_attack(Self, @combat_proto.AttackResult, @combat_proto.Attack, Array[Int]) -> Unit
 pub fn MapMobs::send_movement(Self, Int, @res_types.Point[Int], Array[@physics.Movement]) -> Unit
@@ -185,7 +185,7 @@ pub(all) struct MobBuff {
 }
 
 type MobCombat
-pub fn MobCombat::new(MapMobs) -> Self
+pub fn MobCombat::MobCombat(MapMobs) -> Self
 pub fn MobCombat::use_move(Self, Int, Int, Int, Int) -> Unit raise
 
 pub struct MobInfo {
@@ -216,13 +216,13 @@ pub impl @json.FromJson for MobInfo
 pub(all) struct MobMultiUseEffect {
   effects : Array[Effect]
 }
-pub fn MobMultiUseEffect::new(Json, Bool) -> Self
+pub fn MobMultiUseEffect::MobMultiUseEffect(Json, Bool) -> Self
 pub impl MobSkillUseEffect for MobMultiUseEffect
 
 pub(all) struct MobSingleUseEffect {
   effect : Effect
 }
-pub fn MobSingleUseEffect::new(Json) -> Self
+pub fn MobSingleUseEffect::MobSingleUseEffect(Json) -> Self
 pub impl MobSkillUseEffect for MobSingleUseEffect
 
 pub(all) struct MobSkill {
@@ -230,6 +230,7 @@ pub(all) struct MobSkill {
   level : Int
   buff : MobBuff
 }
+pub fn MobSkill::MobSkill(Int, Int, Json) -> Self raise
 pub fn MobSkill::apply_hit_effects(Self, Mob) -> Unit
 pub fn MobSkill::apply_useeffects(Self, Mob) -> Unit
 pub fn MobSkill::get_buff(Self) -> MobBuff
@@ -239,7 +240,6 @@ pub fn MobSkill::is_attack(Self) -> Bool
 pub fn MobSkill::is_buff(Self) -> Bool
 pub fn MobSkill::is_skill(Self) -> Bool
 pub fn MobSkill::load(Int, Int) -> Self
-pub fn MobSkill::new(Int, Int, Json) -> Self raise
 
 pub(all) struct MobSpawn {
   oid : Int
@@ -254,13 +254,13 @@ pub(all) struct MobSpawn {
 pub fn MobSpawn::instantiate(Self, @random.Rand) -> Mob
 
 type MobSpecialAttack
+pub fn MobSpecialAttack::MobSpecialAttack(MxMobAttackNode) -> Self
 pub fn MobSpecialAttack::apply_useeffects(Self, Mob) -> Unit
 pub fn MobSpecialAttack::get_id(Self) -> Int
-pub fn MobSpecialAttack::new(MxMobAttackNode) -> Self
 
 type Module
+pub fn Module::Module() -> Self
 pub fn Module::get_map_mobs(Self) -> MapMobs
-pub fn Module::new() -> Self
 
 pub struct MxMob {
   info : MobInfo

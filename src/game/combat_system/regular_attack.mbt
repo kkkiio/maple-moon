@@ -9,7 +9,7 @@ pub fn RegularAttack::apply_actions(
   user : @character.Character,
   t : @combat_proto.AttackType,
 ) -> Unit {
-  self.action.apply(user, t)
+  SkillAction::apply(self.action, user, t)
 }
 
 ///|
@@ -82,6 +82,18 @@ pub fn get_regular_attack_bullet(bulletid : Int) -> @ms_animation.Animation {
 struct RegularAction {} derive(Default)
 
 ///|
+/// Create the regular-attack action used by combat and skill-cast registries.
+///
+/// # Example
+/// ```moonbit nocheck
+/// let action = RegularAction()
+/// ignore(action)
+/// ```
+pub fn RegularAction::RegularAction() -> RegularAction {
+  RegularAction::{  }
+}
+
+///|
 pub impl SkillAction for RegularAction with fn apply(
   _ : RegularAction,
   target : @character.Character,
@@ -114,7 +126,7 @@ fn can_use_regular_attack_internal(
 
 ///|
 fn new_regular_attack() -> CombatAction {
-  let ra = RegularAttack::{ action: RegularAction::default() }
+  let ra = RegularAttack::{ action: RegularAction() }
   {
     id: 0,
     attack: true,

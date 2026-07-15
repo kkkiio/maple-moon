@@ -25,7 +25,7 @@ pub fn to_selectable_character_ui(@entity.Entity, Int, SelectableCharacter, @cha
 
 // Types and methods
 type SelectCharUI
-pub fn SelectCharUI::new(SelectCharUIResource, Array[SelectableCharacter], @character_presentation.CharacterPresentationResource, on_select_character? : (Int) -> Unit, on_new_character? : () -> Unit) -> Self
+pub fn SelectCharUI::SelectCharUI(SelectCharUIResource, Array[SelectableCharacter], @character_presentation.CharacterPresentationResource, on_select_character? : (Int) -> Unit, on_new_character? : () -> Unit) -> Self
 
 pub(all) struct SelectCharUIResource {
   ani18 : @animation.Animation

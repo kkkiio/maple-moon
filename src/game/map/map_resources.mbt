@@ -29,7 +29,7 @@ pub fn load_map_resources_by_id(map_id : Int) -> MapRawResources {
   let mx_path = ["Map\{prefix}", "\{strid}.img.mx.json"]
   @log.info("loading map mx resource", data={ "path": mx_path })
   let (tiled_path, tiled_map) = @resource.load_tiled_map_from_mx(mx_path)
-  let animation_loader = @resource.AnimationLoader::new()
+  let animation_loader = AnimationLoader()
   let background_animations = load_tiled_background_animations(
     tiled_path, tiled_map, animation_loader,
   )
@@ -50,7 +50,7 @@ fn load_tiled_background_animations(
   tiled_map : @tiled.TiledMap,
   animation_loader : @resource.AnimationLoader,
 ) -> Map[String, @resource.SeleneClip] {
-  let loaded : Map[String, @resource.SeleneClip] = {}
+  let loaded : Map[String, @resource.SeleneClip] = Map([])
   for layer in tiled_map.layers {
     guard layer.kind is ImageLayer(image_layer) else { continue }
     guard image_layer.image is Some(image_path) else { continue }
@@ -170,3 +170,6 @@ test "parse misssing" {
     ),
   )
 }
+
+///|
+using @resource {type AnimationLoader}

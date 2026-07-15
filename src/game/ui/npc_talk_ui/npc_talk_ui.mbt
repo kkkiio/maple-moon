@@ -375,13 +375,13 @@ fn poll_npc_talk_open_request() -> Unit {
     }
   }
   npc_talk_pending_args_ref.val = None
-  let ui = UINpcTalk::new(resource, args, content)
+  let ui = UINpcTalk(resource, args, content)
   ui.rebuild_scene()
   npc_talk_ui_ref.val = Some(ui)
 }
 
 ///|
-fn UINpcTalk::new(
+fn UINpcTalk::UINpcTalk(
   resource : NpcTalkResource,
   args : TalkArgs,
   content : NPCTalkContent,
@@ -394,7 +394,7 @@ fn UINpcTalk::new(
     buttons: [],
     selection_buttons: [],
     click_reader: @event.EventReader(),
-    window_pos: Point::default(),
+    window_pos: Default::default(),
     body_height: FIXED_BODY_HEIGHT,
   }
 }
@@ -413,7 +413,7 @@ fn UINpcTalk::destroy(self : UINpcTalk) -> Unit {
 fn UINpcTalk::rebuild_scene(self : UINpcTalk) -> Unit {
   self.destroy()
   self.body_height = self.measure_body_height()
-  self.window_pos = Point::new(
+  self.window_pos = Point(
     400 - self.resource.window_slice.width / 2,
     240 - self.body_height / 2,
   )
@@ -471,7 +471,7 @@ fn UINpcTalk::spawn_nameplate(self : UINpcTalk) -> Unit {
     self.body_height +
     self.resource.window_slice.bottom
   let speaker_y = window_bottom - self.resource.bar.h - 7
-  let speaker_pos = Point::new(self.window_pos.x + 100, speaker_y)
+  let speaker_pos = Point(self.window_pos.x + 100, speaker_y)
   ignore(
     self.spawn_image_node(
       self.resource.bar,
@@ -1113,12 +1113,10 @@ fn trim_trailing_blank_lines(
 ///|
 let tag_map : Map[Char, @markup_text.MarkupType] = @markup_text.common_tags
   .iter()
-  .concat(
-    [
-      ('L', @markup_text.MarkupType::Pair),
-      ('l', @markup_text.MarkupType::SelfClosing),
-    ].iter(),
-  )
+  .concat([|
+    ('L', @markup_text.MarkupType::Pair),
+    ('l', @markup_text.MarkupType::SelfClosing),
+  |])
   |> Map::from_iter
 
 ///|

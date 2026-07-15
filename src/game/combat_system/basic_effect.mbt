@@ -27,7 +27,7 @@ pub fn load_teleport_use_effect() -> (@character.Character) -> Unit {
   let resolved = @resource.resolve_ref(
     "assets/Effect/BasicEff.img/Teleport.json", ref_path,
   )
-  let animation_loader = @resource.AnimationLoader::new()
+  let animation_loader = AnimationLoader()
   let loaded = animation_loader.load(resolved)
   let clip = loaded.clip("main") catch {
     _ => abort("missing animation tag 'main': \{resolved}")
@@ -41,3 +41,9 @@ pub fn load_teleport_use_effect() -> (@character.Character) -> Unit {
     character.show_attack_effect(effect, z)
   }
 }
+
+///|
+using @resource {type AnimationLoader}
+
+///|
+using @utils {type BoolPair}

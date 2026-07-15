@@ -71,8 +71,19 @@ pub(all) struct CharacterListMessage {
 } derive(Debug, ToJson, FromJson)
 
 ///|
-pub impl ServerMessage for CharacterListMessage with fn type_code() {
+/// Return the local character-list response opcode.
+///
+/// # Example
+/// ```moonbit nocheck
+/// inspect(CharacterListMessage::type_code(), content="20480")
+/// ```
+pub fn CharacterListMessage::type_code() -> Int {
   LOCAL_OPCODE_CHARACTER_LIST
+}
+
+///|
+pub impl ServerMessage for CharacterListMessage with fn type_code() {
+  CharacterListMessage::type_code()
 }
 
 ///|
@@ -87,8 +98,19 @@ pub(all) struct CreateCharacterResultMessage {
 } derive(Debug, ToJson, FromJson)
 
 ///|
-pub impl ServerMessage for CreateCharacterResultMessage with fn type_code() {
+/// Return the local character-creation result opcode.
+///
+/// # Example
+/// ```moonbit nocheck
+/// inspect(CreateCharacterResultMessage::type_code(), content="20481")
+/// ```
+pub fn CreateCharacterResultMessage::type_code() -> Int {
   LOCAL_OPCODE_CREATE_CHARACTER_RESULT
+}
+
+///|
+pub impl ServerMessage for CreateCharacterResultMessage with fn type_code() {
+  CreateCharacterResultMessage::type_code()
 }
 
 ///|

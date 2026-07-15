@@ -25,12 +25,12 @@ pub struct Movement {
 ///|
 /// Build an empty movement segment.
 pub fn Movement::default() -> Movement {
-  Movement::new(MovementType::NONE, 0, 0, 0, 0, 0, 0, 0, 0)
+  Movement(MovementType::NONE, 0, 0, 0, 0, 0, 0, 0, 0)
 }
 
 ///|
 /// Construct a movement segment with all raw fields.
-pub fn Movement::new(
+pub fn Movement::Movement(
   t : MovementType,
   c : Int,
   x : Int,
@@ -64,7 +64,7 @@ pub fn Movement::from_coords(
   s : Int,
   d : Int,
 ) -> Movement {
-  Movement::new(MovementType::ABSOLUTE, 0, x, y, lx, ly, 0, s, d)
+  Movement(MovementType::ABSOLUTE, 0, x, y, lx, ly, 0, s, d)
 }
 
 ///|
@@ -73,7 +73,7 @@ pub fn Movement::from_physics_object(
   phobj : PhysicsObject,
   s : Int,
 ) -> Movement {
-  Movement::new(
+  Movement(
     MovementType::ABSOLUTE,
     0,
     phobj.get_x(),

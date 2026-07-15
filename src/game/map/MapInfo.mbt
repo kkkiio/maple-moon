@@ -70,7 +70,7 @@ struct Seat {
 
 ///|
 pub fn Seat::from_resource(src : NxSeat) -> Seat {
-  { pos: Point::new(src.x, src.y) }
+  { pos: Point(src.x, src.y) }
 }
 
 ///|
@@ -111,7 +111,7 @@ pub fn Ladder::inrange(
   upwards : Bool,
 ) -> Bool {
   let hor = Range::symmetric(position.x, 10)
-  let ver = Range::new(self.y1, self.y2)
+  let ver = Range(self.y1, self.y2)
   let y = if upwards { position.y - 5 } else { position.y + 5 }
   hor.contains(self.x) && ver.contains(y)
 }
@@ -185,8 +185,8 @@ pub fn MapInfo::from_resource(
       ..
     } =>
       (
-        Range::new(vrLeft.to_int(), vrRight.to_int()),
-        Range::new(vrTop.to_int(), vrBottom.to_int()),
+        Range(vrLeft.to_int(), vrRight.to_int()),
+        Range(vrTop.to_int(), vrBottom.to_int()),
       )
     _ => (walls, borders)
   }
@@ -243,12 +243,12 @@ pub fn MapInfo::from_tiled_map(
 ) -> MapInfo raise {
   let map_walls = match
     (tiled_map_int(map, "VRLeft"), tiled_map_int(map, "VRRight")) {
-    (Some(left), Some(right)) => Range::new(left, right)
+    (Some(left), Some(right)) => Range(left, right)
     _ => walls
   }
   let map_borders = match
     (tiled_map_int(map, "VRTop"), tiled_map_int(map, "VRBottom")) {
-    (Some(top), Some(bottom)) => Range::new(top, bottom)
+    (Some(top), Some(bottom)) => Range(top, bottom)
     _ => borders
   }
   let bgm = normalize_bgm_path(tiled_map_string_or_default(map, "bgm", ""))
@@ -289,7 +289,7 @@ fn from_tiled_seats(map : @tiled.TiledMap) -> Array[Seat] raise {
     guard obj.point else {
       fail("seat object must be point, object_id=\{obj.id}")
     }
-    seats.push({ pos: Point::new(obj.x.to_int(), obj.y.to_int()) })
+    seats.push({ pos: Point(obj.x.to_int(), obj.y.to_int()) })
   }
   seats
 }
@@ -431,7 +431,7 @@ fn json_get_string(obj : Map[String, Json], key : String) -> String {
 }
 
 ///|
-pub fn MapInfo::new() -> MapInfo {
+pub fn MapInfo::MapInfo() -> MapInfo {
   {
     field_limit: 0,
     cloud: false,
@@ -443,8 +443,8 @@ pub fn MapInfo::new() -> MapInfo {
     swim: false,
     town: false,
     hide_minimap: false,
-    map_walls: Range::default(),
-    map_borders: Range::default(),
+    map_walls: Default::default(),
+    map_borders: Default::default(),
     seats: Array::new(),
     ladders: Array::new(),
   }
@@ -548,13 +548,9 @@ test "map info from resource tolerates missing optional fields" {
     },
     "ladderRope": { "0": { "x": 10, "y1": 0, "y2": 100, "l": 1 } },
   }
-  let info = MapInfo::from_resource(
-    src,
-    Range::new(-10, 10),
-    Range::new(-20, 20),
-  )
+  let info = MapInfo::from_resource(src, Range(-10, 10), Range(-20, 20))
   inspect(info.get_full_name(), content=" : ")
-  inspect(info.find_ladder(Point::new(10, 50), true) is Some(_), content="true")
+  inspect(info.find_ladder(Point(10, 50), true) is Some(_), content="true")
 }
 
 ///|
@@ -571,10 +567,6 @@ test "map info seat supports [x, y] nx format" {
     },
     "seat": { "0": [1350, -62] },
   }
-  let info = MapInfo::from_resource(
-    src,
-    Range::new(-10, 10),
-    Range::new(-20, 20),
-  )
-  inspect(info.findseat(Point::new(1350, -62)) is Some(_), content="true")
+  let info = MapInfo::from_resource(src, Range(-10, 10), Range(-20, 20))
+  inspect(info.findseat(Point(1350, -62)) is Some(_), content="true")
 }

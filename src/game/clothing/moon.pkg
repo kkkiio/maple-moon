@@ -1,5 +1,6 @@
 import {
   "moonbitlang/core/json",
+  "moonbitlang/core/immut/hashmap",
   "moonbitlang/core/strconv",
   "KKKIIO/maple-moon/game/equip/slot",
   "KKKIIO/maple-moon/game/item",
@@ -16,4 +17,5 @@ import {
 import {
   "moonbitlang/x/fs",
   "KKKIIO/maple-moon/game/char_look",
+  "KKKIIO/maple-moon/game/character_body" @cb,
 } for "test"

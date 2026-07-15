@@ -85,12 +85,38 @@ test "inventory ui renders equip tab with icon count and meso" {
     height=540,
     raw_delta=0.016,
   )
-  debug_inspect(
-    @entity.iter_entities().to_array().length(),
-    content=(
-      #|34
-    ),
-  )
+  json_inspect(make_inventory_entry(), content={
+    "meso": 654321,
+    "slot_maxs": { "EQUIP": 24, "USE": 24, "SETUP": 24, "ETC": 24 },
+    "items": [
+      [
+        "Item",
+        {
+          "invtype": "EQUIP",
+          "slot": 1,
+          "id": 1060002,
+          "cash": false,
+          "expire": "0",
+          "count": 25,
+          "owner": "",
+          "flag": 0,
+        },
+      ],
+      [
+        "Item",
+        {
+          "invtype": "USE",
+          "slot": 1,
+          "id": 2000000,
+          "cash": false,
+          "expire": "0",
+          "count": 25,
+          "owner": "",
+          "flag": 0,
+        },
+      ],
+    ],
+  })
   @capture_app.snapshot(
     "src/graphics_test/__snapshot__/inventory_ui/inventory_ui_default.png",
     capture.png,
@@ -111,12 +137,38 @@ test "inventory ui renders use tab with icon count and meso" {
     height=540,
     raw_delta=0.016,
   )
-  debug_inspect(
-    @entity.iter_entities().to_array().length(),
-    content=(
-      #|34
-    ),
-  )
+  json_inspect(make_inventory_entry(), content={
+    "meso": 654321,
+    "slot_maxs": { "EQUIP": 24, "USE": 24, "SETUP": 24, "ETC": 24 },
+    "items": [
+      [
+        "Item",
+        {
+          "invtype": "EQUIP",
+          "slot": 1,
+          "id": 1060002,
+          "cash": false,
+          "expire": "0",
+          "count": 25,
+          "owner": "",
+          "flag": 0,
+        },
+      ],
+      [
+        "Item",
+        {
+          "invtype": "USE",
+          "slot": 1,
+          "id": 2000000,
+          "cash": false,
+          "expire": "0",
+          "count": 25,
+          "owner": "",
+          "flag": 0,
+        },
+      ],
+    ],
+  })
   @capture_app.snapshot(
     "src/graphics_test/__snapshot__/inventory_ui/inventory_ui_use_tab.png",
     capture.png,

@@ -22,7 +22,7 @@ pub fn[T] Future::poll(self : Future[T]) -> T? {
 
 ///|
 /// Create a new future from a poll function.
-pub fn[T] Future::new(poll_fn : () -> T?) -> Future[T] {
+pub fn[T] Future::Future(poll_fn : () -> T?) -> Future[T] {
   { poll_fn, resolved: None }
 }
 
@@ -36,12 +36,12 @@ pub fn[T] Future::from_value(v : T) -> Future[T] {
 /// Create a future that never resolves.
 /// Useful for representing a uninitialized value.
 pub fn[T] Future::never() -> Future[T] {
-  Future::new(fn() { None })
+  Future(fn() { None })
 }
 
 ///|
 pub fn[T, U] Future::map(self : Future[T], f : (T) -> U) -> Future[U] {
-  Future::new(fn() {
+  Future(fn() {
     match self.poll() {
       Some(t) => Some(f(t))
       None => None
@@ -56,7 +56,7 @@ pub fn[T, U] Future::bind(self : Future[T], f : (T) -> Future[U]) -> Future[U] {
 
 ///|
 pub fn[T] Future::flatten(self : Future[Future[T]]) -> Future[T] {
-  Future::new(fn() {
+  Future(fn() {
     match self.poll() {
       Some(f) => f.poll()
       None => None
@@ -101,7 +101,7 @@ pub fn[T, U, V] Future::combine3(
 pub fn[T] Future::all_of(futures : Array[Future[T]]) -> Future[Array[T]] {
   let resolved = Array::new()
   let mut i = 0
-  Future::new(fn() {
+  Future(fn() {
     while i < futures.length() {
       match futures[i].poll() {
         Some(t) => resolved.push(t)

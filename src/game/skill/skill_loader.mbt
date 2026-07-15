@@ -6,11 +6,11 @@
 
 ///|
 /// Bundle-level cache: jobid.img -> raw JSON
-let bundle_cache : Map[String, Json] = {}
+let bundle_cache : Map[String, Json] = Map([])
 
 ///|
 /// Skill-level cache: skill_id -> parsed SkillData
-let skill_cache : Map[Int, SkillData] = {}
+let skill_cache : Map[Int, SkillData] = Map([])
 
 ///|
 // pub impl Show for SkillLoadError with output(self, buf : StringBuilder) -> Unit {
@@ -77,7 +77,7 @@ pub fn get_cached_skill(id : Int) -> SkillData? {
 /// Groups by bundle to minimize network requests.
 pub fn preload_skills(skill_ids : Array[Int]) -> Unit {
   // Group by bundle
-  let by_bundle : Map[String, Array[Int]] = {}
+  let by_bundle : Map[String, Array[Int]] = Map([])
   for id in skill_ids {
     let strid = @utils.stoi_left_pad0(id, 7)
     let jobid = strid.view(end_offset=3)
@@ -147,7 +147,7 @@ fn SkillData::from_resources(
   skill_res : SkillResource,
   text_res : SkillTextResource,
 ) -> SkillData {
-  SkillData::new(id, skill_json, skill_res, text_res)
+  SkillData(id, skill_json, skill_res, text_res)
 }
 
 ///|

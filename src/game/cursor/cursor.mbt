@@ -26,9 +26,9 @@ pub const HIDE_SECONDS : Int = 12
 ///   "assets/UI/Basic.img/Cursor/cursor_animation.json",
 /// )
 ///
-/// let cursor = Cursor::new(data)
+/// let cursor = Cursor(data)
 /// ```
-pub fn Cursor::new(data : CursorAnimationData) -> Cursor {
+pub fn Cursor::Cursor(data : CursorAnimationData) -> Cursor {
   let entity = @entity.Entity()
   {
     state: CursorState::IDLE,
@@ -149,7 +149,7 @@ let cursor : Ref[Cursor?] = Ref(None)
 /// # Example
 /// ```moonbit nocheck
 /// let data = try! CursorAnimationData::load("assets/UI/Basic.img/Cursor/cursor_animation.json")
-/// init_cursor(Cursor::new(data))
+/// init_cursor(Cursor(data))
 /// ```
 pub fn init_cursor(c : Cursor) -> Unit {
   cursor.val = Some(c)

@@ -374,7 +374,7 @@ fn state_text() -> String {
         "oid": character.get_oid(),
         "x": position.x,
         "y": position.y,
-        "state": character.get_state().to_repr().to_string(),
+        "state": Debug::to_repr(character.get_state()).to_string(),
         "facingRight": character.is_facing_right(),
         "climbing": character.is_climbing(),
         "onGround": phobj.is_on_ground(),

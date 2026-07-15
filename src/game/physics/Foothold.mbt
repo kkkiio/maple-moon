@@ -1,4 +1,7 @@
 ///|
+using @struct {type Range}
+
+///|
 /// Represents a platform part on a maple map
 struct Foothold {
   id : Int
@@ -22,13 +25,13 @@ pub(all) struct NxFoothold {
 
 ///|
 /// Build a runtime foothold from raw map data.
-pub fn Foothold::new(
+pub fn Foothold::Foothold(
   nx_foothold : NxFoothold,
   id : Int,
   layer : Int,
 ) -> Foothold {
-  let horizontal = @struct.Range::new(nx_foothold.x1, nx_foothold.x2)
-  let vertical = @struct.Range::new(nx_foothold.y1, nx_foothold.y2)
+  let horizontal = Range(nx_foothold.x1, nx_foothold.x2)
+  let vertical = Range(nx_foothold.y1, nx_foothold.y2)
   {
     id,
     prev: nx_foothold.prev,

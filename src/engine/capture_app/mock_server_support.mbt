@@ -5,7 +5,10 @@ priv struct MockServerState {
 }
 
 ///|
-let mock_server_state : MockServerState = { sent_messages: [], handlers: {} }
+let mock_server_state : MockServerState = {
+  sent_messages: [],
+  handlers: Map([]),
+}
 
 ///|
 pub fn reset_mock_server_state() -> Unit {

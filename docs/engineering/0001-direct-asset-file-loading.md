@@ -1,7 +1,5 @@
 # Direct Asset File Loading
 
-Date: 2026-05-30
-
 ## Context
 
 Maple Moon 使用三种资源格式：

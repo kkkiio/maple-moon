@@ -17,7 +17,7 @@ fn load_draw_info() -> @types.BodyDrawInfo raise {
   let stance_heads_map : @char_look.NxStanceLooks[@types.NxMultiPartFrame] = @json.from_json(
     headnode,
   )
-  @types.BodyDrawInfo::new(stance_bodys_map.0, stance_heads_map.0)
+  @cb.BodyDrawInfo(stance_bodys_map.0, stance_heads_map.0)
 }
 
 ///|
@@ -39,12 +39,17 @@ test "NxWeapon parses shoot2 anchor origin and z" {
   guard nx_weapon.get_part("shoot2", 0, "weapon") is Some(part) else {
     fail("missing shoot2/0/weapon part")
   }
-  inspect(part.anchor.parent_key, content="navel")
-  inspect(part.anchor.parent_pos.x, content="20")
-  inspect(part.anchor.parent_pos.y, content="11")
-  inspect(part.texture.origin.x, content="13")
-  inspect(part.texture.origin.y, content="5")
-  inspect(part.z, content="weapon")
+  debug_inspect(
+    (
+      part.anchor.parent_key,
+      part.anchor.parent_pos,
+      part.texture.origin,
+      part.z,
+    ),
+    content=(
+      #|("navel", { x: 20, y: 11 }, { x: 13, y: 5 }, "weapon")
+    ),
+  )
 }
 
 ///|
@@ -62,7 +67,7 @@ test "NxWeapon skips empty frame placeholders" {
         },
       },
       "1": { "weapon": null },
-      "2": { "weapon": {} },
+      "2": { "weapon": Json::empty_object() },
     },
   }
   let nx_weapon : NxWeapon = @json.from_json(src)
@@ -105,7 +110,7 @@ test "NxWeaponPart decode should fail when required fields are missing" {
 ///|
 test "resolve_anchor_shift should match previous weapon navel rule" {
   let draw_info = load_draw_info()
-  let parent_pos = @struct.Point::new(20, 11)
+  let parent_pos = Point(20, 11)
   let shift = resolve_anchor_shift(
     draw_info,
     StanceId::SHOOT2,
@@ -114,6 +119,9 @@ test "resolve_anchor_shift should match previous weapon navel rule" {
     parent_pos,
   )
   let expected = draw_info.get_body_position(StanceId::SHOOT2, 0) - parent_pos
-  inspect(shift.x, content=expected.x.to_string())
-  inspect(shift.y, content=expected.y.to_string())
+  assert_eq(shift.x, expected.x)
+  assert_eq(shift.y, expected.y)
 }
+
+///|
+using @struct {type Point}

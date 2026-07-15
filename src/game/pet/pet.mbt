@@ -4,6 +4,6 @@ pub(all) struct Pet {
 }
 
 ///|
-pub fn Pet::new(petname : String) -> Pet {
+pub fn Pet::Pet(petname : String) -> Pet {
   { pet_name: petname }
 }

@@ -30,10 +30,10 @@ let quest_icon_loading : Ref[@utils.Future[Result[QuestIconResources, Error]]?] 
 )
 
 ///|
-let runtime_by_oid : Ref[Map[Int, QuestIconRuntime]] = Ref({})
+let runtime_by_oid : Ref[Map[Int, QuestIconRuntime]] = Ref(Map([]))
 
 ///|
-let npc_icon_cache : Ref[Map[Int, CachedNpcIconQuery]] = Ref({})
+let npc_icon_cache : Ref[Map[Int, CachedNpcIconQuery]] = Ref(Map([]))
 
 ///|
 priv struct CachedNpcIconQuery {
@@ -49,7 +49,7 @@ const QUEST_ICON_ZINDEX_OFFSET = 5000
 
 ///|
 fn default_icon_offset() -> @struct.Point[Int] {
-  @struct.Point::new(0, -96)
+  Point(0, -96)
 }
 
 ///|
@@ -187,7 +187,7 @@ fn sync_runtimes(
   context : QuestIconContext,
   resources : QuestIconResources,
 ) -> Unit {
-  let seen_oids : Map[Int, Unit] = {}
+  let seen_oids : Map[Int, Unit] = Map([])
   for anchor in anchors {
     seen_oids.set(anchor.oid, ())
     upsert_runtime(anchor, context, resources)
@@ -360,7 +360,7 @@ fn nx_animation_dimensions(
     width = @cmp.maximum(width, frame.texture.w)
     height = @cmp.maximum(height, frame.texture.h)
   }
-  @struct.Point::new(width, height)
+  Point(width, height)
 }
 
 ///|
@@ -369,7 +369,7 @@ using @lazy {type Lazy}
 ///|
 let inventory_changed_reader_ref : Lazy[
   @event.EventReader[@inventory.InventoryChangedEvent],
-] = Lazy::new(fn() { @event.EventReader() })
+] = Lazy(fn() { @event.EventReader() })
 
 ///|
 fn get_inventory_changed_reader() -> @event.EventReader[
@@ -388,10 +388,10 @@ fn get_char_stats_changed_reader() -> @event.EventReader[
 ///|
 let char_stats_changed_reader_ref : Lazy[
   @event.EventReader[@char_stats.CharStatsChangedEvent],
-] = Lazy::new(fn() { @event.EventReader() })
+] = Lazy(fn() { @event.EventReader() })
 
 ///|
-let pointer_event_reader_ref : Lazy[@event.EventReader[@physics2d.PointerEvent]] = Lazy::new(fn() {
+let pointer_event_reader_ref : Lazy[@event.EventReader[@physics2d.PointerEvent]] = Lazy(fn() {
     @event.EventReader()
   },
 )

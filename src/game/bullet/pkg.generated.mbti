@@ -42,15 +42,15 @@ pub(all) struct BulletData {
 pub fn BulletData::load(String) -> Self
 
 type BulletSystem
+pub fn BulletSystem::BulletSystem() -> Self
 pub fn BulletSystem::clear(Self) -> Unit
-pub fn BulletSystem::new() -> Self
 pub fn BulletSystem::spawn(Self, Int64, @animation.Animation, @res_types.Point[Int], Bool, @res_types.Point[Int], () -> Unit, (@res_types.Point[Int]) -> @res_types.Point[Int]) -> Unit
 pub fn BulletSystem::update(Self, timestep~ : Int64) -> Unit
 
 type Module
+pub fn Module::Module(Map[Int, BulletData]) -> Self
 pub fn Module::get_bullet_data(Self, Int) -> BulletData?
 pub fn Module::load() -> Self
-pub fn Module::new(Map[Int, BulletData]) -> Self
 
 // Type aliases
 

@@ -24,27 +24,19 @@ test "character climbing ladder" {
   let stance_heads_map : @char_look.NxStanceLooks[@types.NxMultiPartFrame] = @json.from_json(
     headnode,
   )
-  let draw_info = @types.BodyDrawInfo::new(
-    stance_bodys_map.0,
-    stance_heads_map.0,
-  )
+  let draw_info = @cb.BodyDrawInfo(stance_bodys_map.0, stance_heads_map.0)
   let hair_node : @char_look.NxStanceLooks[@types.NxMultiPartFrame] = @fs.read_file_to_string(
       "assets/Character/Hair/00030000.img.json",
     )
     |> @json.parse
     |> @json.from_json
   let entity = @entity.Entity()
-  let look = @char_look.CharLook::new(
+  let look = @cp.CharLook(
     entity,
-    {},
-    @char_look.FullBody::new(
-      0,
-      draw_info,
-      stance_bodys_map.0,
-      stance_heads_map.0,
-    ),
+    Map([]),
+    @cp.FullBody(0, draw_info, stance_bodys_map.0, stance_heads_map.0),
     @char_look.Hair::parse(0, hair_node, draw_info),
-    @char_look.Face::new(
+    @cp.Face(
       20000,
       @fs.read_file_to_string("assets/Character/Face/00020000.img.json")
       |> @json.parse,
@@ -190,9 +182,93 @@ test "character climbing ladder" {
     raw_delta=0.016,
   )
   debug_inspect(
-    @entity.iter_entities().to_array().length(),
+    character_render_state(look),
     content=(
-      #|8
+      #|{
+      #|  stance: LADDER,
+      #|  frame: 0,
+      #|  weapon_id: 1302000,
+      #|  top_id: 1040002,
+      #|  bottom_id: 1060002,
+      #|  shoes_id: 1072001,
+      #|}
+    ),
+  )
+  debug_inspect(
+    render_sprite_state(capture),
+    content=(
+      #|[
+      #|  {
+      #|    image_path: Some("assets/Character/Body/00002000.img_ladder_body.png"),
+      #|    source_rect: Some({ x: 0, y: 0, width: 24, height: 45 }),
+      #|    destination_size: Some({ x: 24, y: 45 }),
+      #|    anchor: { x: -0.041666666666666685, y: -0.4555555555555556 },
+      #|    flip_x: false,
+      #|    flip_y: false,
+      #|    local_translation: Some({ x: 0, y: 0, z: 70005 }),
+      #|    world_translation: Some({ x: 100, y: 100, z: 70005 }),
+      #|  },
+      #|  {
+      #|    image_path: Some("assets/Character/Hair/00030000.img.png"),
+      #|    source_rect: Some({ x: 106, y: 0, width: 38, height: 33 }),
+      #|    destination_size: Some({ x: 38, y: 33 }),
+      #|    anchor: { x: 0, y: -1.4090909090909092 },
+      #|    flip_x: false,
+      #|    flip_y: false,
+      #|    local_translation: Some({ x: 0, y: 0, z: 70024 }),
+      #|    world_translation: Some({ x: 100, y: 100, z: 70024 }),
+      #|  },
+      #|  {
+      #|    image_path: Some("assets/Character/Hair/00030000.img.png"),
+      #|    source_rect: Some({ x: 144, y: 0, width: 35, height: 32 }),
+      #|    destination_size: Some({ x: 35, y: 32 }),
+      #|    anchor: { x: 0.014285714285714235, y: -1.4375 },
+      #|    flip_x: false,
+      #|    flip_y: false,
+      #|    local_translation: Some({ x: 0, y: 0, z: 70006 }),
+      #|    world_translation: Some({ x: 100, y: 100, z: 70006 }),
+      #|  },
+      #|  {
+      #|    image_path: Some("assets/Character/Body/00012000.img_ladder_head.png"),
+      #|    source_rect: Some({ x: 0, y: 0, width: 41, height: 35 }),
+      #|    destination_size: Some({ x: 41, y: 35 }),
+      #|    anchor: { x: 0.012195121951219523, y: -1.2714285714285714 },
+      #|    flip_x: false,
+      #|    flip_y: false,
+      #|    local_translation: Some({ x: 0, y: 0, z: 70019 }),
+      #|    world_translation: Some({ x: 100, y: 100, z: 70019 }),
+      #|  },
+      #|  {
+      #|    image_path: Some("assets/Character/Coat/01040002.img.png"),
+      #|    source_rect: Some({ x: 200, y: 0, width: 18, height: 13 }),
+      #|    destination_size: Some({ x: 18, y: 13 }),
+      #|    anchor: { x: 0.05555555555555558, y: -1.8076923076923075 },
+      #|    flip_x: false,
+      #|    flip_y: false,
+      #|    local_translation: Some({ x: 0, y: 0, z: 70014 }),
+      #|    world_translation: Some({ x: 100, y: 100, z: 70014 }),
+      #|  },
+      #|  {
+      #|    image_path: Some("assets/Character/Pants/01060002.img.png"),
+      #|    source_rect: Some({ x: 187, y: 0, width: 16, height: 12 }),
+      #|    destination_size: Some({ x: 16, y: 12 }),
+      #|    anchor: { x: 0, y: -1.1666666666666667 },
+      #|    flip_x: false,
+      #|    flip_y: false,
+      #|    local_translation: Some({ x: 0, y: 0, z: 70012 }),
+      #|    world_translation: Some({ x: 100, y: 100, z: 70012 }),
+      #|  },
+      #|  {
+      #|    image_path: Some("assets/Character/Shoes/01072001.img.png"),
+      #|    source_rect: Some({ x: 231, y: 0, width: 16, height: 12 }),
+      #|    destination_size: Some({ x: 16, y: 12 }),
+      #|    anchor: { x: 0, y: -0.5 },
+      #|    flip_x: false,
+      #|    flip_y: false,
+      #|    local_translation: Some({ x: 0, y: 0, z: 70008 }),
+      #|    world_translation: Some({ x: 100, y: 100, z: 70008 }),
+      #|  },
+      #|]
     ),
   )
   @capture_app.snapshot(

@@ -7,8 +7,8 @@ package "KKKIIO/maple-moon/engine/lazy"
 
 // Types and methods
 type Lazy[T]
+pub fn[T] Lazy::Lazy(() -> T) -> Self[T]
 pub fn[T] Lazy::get(Self[T]) -> T
-pub fn[T] Lazy::new(() -> T) -> Self[T]
 
 // Type aliases
 

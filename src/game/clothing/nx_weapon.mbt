@@ -48,10 +48,7 @@ pub impl @json.FromJson for NxMapAnchor with fn from_json(json, path) -> NxMapAn
   for key, value in map_obj {
     match value {
       Array([Number(x, ..), Number(y, ..)]) =>
-        return {
-          parent_key: key,
-          parent_pos: @struct.Point::new(x.to_int(), y.to_int()),
-        }
+        return { parent_key: key, parent_pos: Point(x.to_int(), y.to_int()) }
       _ => ()
     }
   }

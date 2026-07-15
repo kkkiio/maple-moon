@@ -55,9 +55,9 @@ pub(all) struct Stage {
   mobs : @monster.MapMobs
   map_change_listeners : Array[(@map.SceneMap) -> Bool]
 }
+pub fn Stage::Stage(@map.MapPortalAnimations, @npc.MapNpcs, @monster.MapMobs) -> Self
 pub fn Stage::get_mobs(Self) -> @monster.MapMobs
 pub fn Stage::listen_map_change(Self, (@map.SceneMap) -> Bool) -> Unit
-pub fn Stage::new(@map.MapPortalAnimations, @npc.MapNpcs, @monster.MapMobs) -> Self
 
 // Type aliases
 

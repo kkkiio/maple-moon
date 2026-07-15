@@ -43,6 +43,7 @@ pub(all) struct Player {
   randomizer : @random.Rand
   mut skill_book : &@legacy_types.SkillBook
 }
+pub fn Player::Player(@entity.Entity, Int, String, &@legacy_types.Inventory, @character_presentation.CharLook, @char_stats.CharStats) -> Self
 pub fn Player::attack_by_action(Self, String) -> Unit
 pub fn Player::attack_by_stance(Self, @char_stance.StanceId) -> Unit
 pub fn Player::can_attack(Self) -> Bool
@@ -62,7 +63,6 @@ pub fn Player::is_attacking(Self) -> Bool
 pub fn Player::is_invincible(Self) -> Bool
 pub fn Player::is_underwater(Self) -> Bool
 pub fn Player::load(@entity.Entity, @character.CharEntry, &@legacy_types.Inventory, @character_presentation.CharLook, (@job.Job) -> @char_stats.CharStats) -> Self
-pub fn Player::new(@entity.Entity, Int, String, &@legacy_types.Inventory, @character_presentation.CharLook, @char_stats.CharStats) -> Self
 pub fn Player::recalc_stats(Self, Bool) -> Unit
 pub fn Player::respawn(Self, @res_types.Point[Int], Bool) -> Unit
 pub fn Player::rush(Self, Double) -> Unit

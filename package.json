@@ -12,11 +12,12 @@
 		"moon:build": "npm run moon:build:web",
 		"moon:build:web": "moon build --target js --release src/apps/game_web",
 		"moon:build:native": "moon build --target native --release src/apps/game_native",
-		"predev": "moon run --target js --build-only src/cmd/maple && moon run --target js --build-only src/cmd/mapled && node --enable-source-maps _build/js/debug/build/KKKIIO/maple-moon/cmd/maple/maple.js close",
-		"dev": "concurrently --raw --kill-others \"npm:dev:vite\" \"npm:dev:mapled\" \"npm:dev:browser\"",
+		"predev": "moon run --target native --build-only src/cmd/maple && moon run --target native --build-only src/cmd/mapled && moon run --target native src/cmd/maple close",
+		"dev": "concurrently --raw --kill-others \"npm:dev:moon\" \"npm:dev:vite\" \"npm:dev:mapled\" \"npm:dev:browser\"",
+		"dev:moon": "moon build --watch --target js --release src/apps/game_web",
 		"dev:vite": "vite",
-		"dev:mapled": "node --enable-source-maps _build/js/debug/build/KKKIIO/maple-moon/cmd/mapled/mapled.js",
-		"dev:browser": "node --enable-source-maps _build/js/debug/build/KKKIIO/maple-moon/cmd/maple/maple.js status --wait && node --enable-source-maps _build/js/debug/build/KKKIIO/maple-moon/cmd/maple/maple.js logs --clear && node --enable-source-maps _build/js/debug/build/KKKIIO/maple-moon/cmd/maple/maple.js open --wait && node --enable-source-maps _build/js/debug/build/KKKIIO/maple-moon/cmd/maple/maple.js logs --follow --out logs/browser.log",
+		"dev:mapled": "_build/native/debug/build/KKKIIO/maple-moon/cmd/mapled/mapled.exe --cdp-port 9333 --url http://localhost:8080",
+		"dev:browser": "moon run --target native src/cmd/maple status --wait && moon run --target native src/cmd/maple logs --clear && moon run --target native src/cmd/maple open --wait && moon run --target native src/cmd/maple logs --follow --out logs/browser.log",
 		"build": "npm run moon:build:web && vite build"
 	},
 	"repository": {

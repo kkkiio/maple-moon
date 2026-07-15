@@ -16,10 +16,10 @@ pub struct MapObjectBase {
   phobj : @physics.PhysicsObject
   oid : Int
 }
+pub fn MapObjectBase::MapObjectBase(Int, position? : @res_types.Point[Int], on_pos_change~ : (@math.Vec2) -> Unit) -> Self
 pub fn MapObjectBase::get_layer(Self) -> Int
 pub fn MapObjectBase::get_oid(Self) -> Int
 pub fn MapObjectBase::get_position(Self) -> @res_types.Point[Int]
-pub fn MapObjectBase::new(Int, position? : @res_types.Point[Int], on_pos_change~ : (@math.Vec2) -> Unit) -> Self
 pub fn MapObjectBase::set_position(Self, @res_types.Point[Int]) -> Unit
 pub fn MapObjectBase::set_positionxy(Self, Int, Int) -> Unit
 pub fn MapObjectBase::update(Self, @physics.Physics) -> Int
@@ -31,13 +31,13 @@ pub enum MapObjectEvent[T] {
 }
 
 type MapObjects[T]
+pub fn[T] MapObjects::MapObjects() -> Self[T]
 pub fn[T : MapObject] MapObjects::add(Self[T], T) -> Unit
 pub fn[T : MapObject] MapObjects::clear(Self[T]) -> Unit
 pub fn[T] MapObjects::contains(Self[T], Int) -> Bool
 pub fn[T] MapObjects::get(Self[T], Int) -> T?
 pub fn[T] MapObjects::iter2(Self[T]) -> Iter2[Int, T]
 pub fn[T] MapObjects::listen_object_changes(Self[T], (MapObjectEvent[T]) -> Bool) -> Unit
-pub fn[T] MapObjects::new() -> Self[T]
 pub fn[T : MapObject] MapObjects::remove(Self[T], Int) -> Unit
 pub fn[T] MapObjects::size(Self[T]) -> Int
 pub fn[T : MapObject] MapObjects::update(Self[T], @physics.Physics) -> Unit

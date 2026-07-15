@@ -69,7 +69,7 @@ pub impl[T : @json.FromJson] @json.FromJson for IntMap[T] with fn from_json(
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expect object"))
   }
-  let map = {}
+  let map = Map([])
   for key, value in obj {
     let k = @string.parse_int(key) catch {
       _ => raise @json.JsonDecodeError((path, "expect numberic string key"))
@@ -117,7 +117,7 @@ pub fn[K : Eq + Hash + @json.FromJson, V : @json.FromJson] parse_enum_map(
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expect object"))
   }
-  let map = {}
+  let map = Map([])
   for key, value in obj {
     let k : K = @json.from_json(Json::string(key), path=path.add_key(key))
     let value : V = @json.from_json(value, path=path.add_key(key))

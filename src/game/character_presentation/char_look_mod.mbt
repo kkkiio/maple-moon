@@ -15,17 +15,12 @@ pub struct CharacterPresentationResource {
 pub fn CharacterPresentationResource::load() -> CharacterPresentationResource {
   let stance_bodys_map = load_stance_bodys_map()
   let stance_heads_map = load_stance_heads_map()
-  let draw_info = @types.BodyDrawInfo::new(
-    stance_bodys_map.0,
-    stance_heads_map.0,
-  )
-  CharacterPresentationResource::new(
-    stance_bodys_map, stance_heads_map, draw_info,
-  )
+  let draw_info = BodyDrawInfo(stance_bodys_map.0, stance_heads_map.0)
+  CharacterPresentationResource(stance_bodys_map, stance_heads_map, draw_info)
 }
 
 ///|
-pub fn CharacterPresentationResource::new(
+pub fn CharacterPresentationResource::CharacterPresentationResource(
   stance_bodys_map : NxStanceLooks[@types.NxStanceBody],
   stance_heads_map : NxStanceLooks[@types.NxMultiPartFrame],
   draw_info : @types.BodyDrawInfo,
@@ -77,7 +72,7 @@ pub fn CharacterPresentationResource::load_body_by_skin_id(
   self : CharacterPresentationResource,
   skin_id : Int,
 ) -> FullBody {
-  let body = FullBody::new(
+  let body = FullBody(
     skin_id,
     self.draw_info,
     self.stance_bodys_map.0,

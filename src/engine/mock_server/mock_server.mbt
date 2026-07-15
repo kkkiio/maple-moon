@@ -14,7 +14,7 @@ pub fn[T : @server_proto.ClientMessage] send(
   ignore(loc)
   @capture_app.record_mock_server_sent_message(
     T::type_code(),
-    message.to_json(),
+    ToJson::to_json(message),
   )
 }
 

@@ -5,7 +5,7 @@ pub(all) struct Point[T] {
 } derive(Eq, Debug, Default)
 
 ///|
-pub fn[T] Point::new(x : T, y : T) -> Point[T] {
+pub fn[T] Point::Point(x : T, y : T) -> Point[T] {
   { x, y }
 }
 
@@ -54,9 +54,8 @@ pub fn[T : Eq] Point::straight(self : Point[T]) -> Bool {
 ///|
 pub impl @json.FromJson for Point[Int] with fn from_json(value, path) {
   match value {
-    [Json::Number(x, ..), Json::Number(y, ..)] =>
-      Point::new(x.to_int(), y.to_int())
-    Null => Point::default()
+    [Json::Number(x, ..), Json::Number(y, ..)] => Point(x.to_int(), y.to_int())
+    Null => Default::default()
     _ =>
       raise @json.JsonDecodeError(
         (path, "Point::from_json: expected array of 2 numbers"),

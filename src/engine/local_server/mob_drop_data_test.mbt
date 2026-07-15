@@ -5,8 +5,12 @@ test "MobDropDatabase::has_drops" {
     #|1	100100	4000019	1	1	0	200000
 
   let db = MobDropDatabase::from_tsv(tsv)
-  inspect(db.has_drops(100100), content="true")
-  inspect(db.has_drops(999999), content="false")
+  debug_inspect(
+    db.get_mob_ids().collect(),
+    content=(
+      #|[100100]
+    ),
+  )
 }
 
 ///|
@@ -37,7 +41,12 @@ test "MobDropEntry::roll_quantity" {
     chance: 100000,
   }
   let rand = @random.Rand::new()
-  inspect(entry_fixed.roll_quantity(rand), content="5")
+  inspect(
+    entry_fixed.roll_quantity(rand),
+    content=(
+      #|5
+    ),
+  )
 }
 
 ///|
@@ -89,7 +98,12 @@ test "MobDropDatabase::roll_drops" {
   // 100%概率，应该所有都掉落
   let rand = @random.Rand::new()
   let drops = db.roll_drops(100100, rand)
-  inspect(drops.length(), content="3")
+  debug_inspect(
+    drops,
+    content=(
+      #|[(4000019, 1), (2000000, 1), (0, 10)]
+    ),
+  )
 
   // 验证掉落内容
   let itemids = drops.map(fn(x) { x.0 })
@@ -108,9 +122,17 @@ test "MobDropDatabase::roll_drops gates quest drops by started quest ids" {
   let db = MobDropDatabase::from_tsv(tsv)
 
   let no_quest_rand = @random.Rand::new()
-  let drops_without_quest = db.roll_drops(100100, no_quest_rand, active_quest_ids={})
-  inspect(drops_without_quest.length(), content="1")
-  inspect(drops_without_quest[0].0, content="4000019")
+  let drops_without_quest = db.roll_drops(
+    100100,
+    no_quest_rand,
+    active_quest_ids=Map([]),
+  )
+  debug_inspect(
+    drops_without_quest,
+    content=(
+      #|[(4000019, 1)]
+    ),
+  )
 
   let active_quests : Map[Int, Unit] = { 2084: () }
   let started_quest_rand = @random.Rand::new()
@@ -119,7 +141,12 @@ test "MobDropDatabase::roll_drops gates quest drops by started quest ids" {
     started_quest_rand,
     active_quest_ids=active_quests,
   )
-  inspect(drops_with_quest.length(), content="2")
+  debug_inspect(
+    drops_with_quest,
+    content=(
+      #|[(4000019, 1), (4031164, 1)]
+    ),
+  )
   let dropped_item_ids = drops_with_quest.map(fn(it) { it.0 })
   assert_true(dropped_item_ids.contains(4000019))
   assert_true(dropped_item_ids.contains(4031164))
@@ -139,9 +166,12 @@ test "calculate_mob_drops for pig with real config" {
 
   // 验证数据库中猪猪的掉落配置有 28 个可能的物品
   let pig_drops = drop_db.get_drops(1210100)
-  inspect(pig_drops.length(), content=(
-    #|5
-  ))
+  inspect(
+    pig_drops.length(),
+    content=(
+      #|5
+    ),
+  )
 
   // 使用固定种子创建 Rand，让测试结果可预测
   let rand = @random.Rand::chacha8(seed=b"12345678901234567890123456789012")
@@ -158,6 +188,23 @@ test "calculate_mob_drops for pig with real config" {
   )
 
   // 输出掉落结果，用于验证
-  json_inspect(messages, content=([{"mode":0,"oid":100001,"meso":true,"item_id":14,"owner":0,"pickuptype":0,"dropto":[520,300],"dropfrom":[520,270],"player_drop":false}]))
-  json_inspect(next_oid, content=(100001))
+  json_inspect(messages, content=[
+    {
+      "mode": 0,
+      "oid": 100001,
+      "meso": true,
+      "item_id": 14,
+      "owner": 0,
+      "pickuptype": 0,
+      "dropto": [520, 300],
+      "dropfrom": [520, 270],
+      "player_drop": false,
+    },
+  ])
+  inspect(
+    next_oid,
+    content=(
+      #|100001
+    ),
+  )
 }

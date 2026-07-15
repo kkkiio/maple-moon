@@ -2,6 +2,9 @@
 using @struct {type Point}
 
 ///|
+using @ui {type UIModel}
+
+///|
 /// Resources needed for the MiniMap UI (display only, normal mode).
 /// Contains parsed graphical assets for markers and the background canvas.
 pub struct MiniMapUIResource {
@@ -60,52 +63,12 @@ struct NxMiniMapFrames {
   s : @resource.NxTexture
   sw : @resource.NxTexture
   se : @resource.NxTexture
-}
-
-///|
-pub impl @json.FromJson for NxMiniMapFrames with fn from_json(json, path) -> NxMiniMapFrames raise @json.JsonDecodeError {
-  match json {
-    {
-      "w": w,
-      "e": e,
-      "n": n,
-      "nw": nw,
-      "ne": ne,
-      "s": s,
-      "sw": sw,
-      "se": se,
-      ..
-    } =>
-      {
-        w: @json.from_json(w, path=path.add_key("w")),
-        e: @json.from_json(e, path=path.add_key("e")),
-        n: @json.from_json(n, path=path.add_key("n")),
-        nw: @json.from_json(nw, path=path.add_key("nw")),
-        ne: @json.from_json(ne, path=path.add_key("ne")),
-        s: @json.from_json(s, path=path.add_key("s")),
-        sw: @json.from_json(sw, path=path.add_key("sw")),
-        se: @json.from_json(se, path=path.add_key("se")),
-      }
-    _ =>
-      raise @json.JsonDecodeError(
-        (path, "invalid nx mini map frames: missing one of w/e/n/nw/ne/s/sw/se"),
-      )
-  }
-}
+} derive(@json.FromJson)
 
 ///|
 struct NxMiniMapUI {
   min_map : NxMiniMapFrames
-}
-
-///|
-pub impl @json.FromJson for NxMiniMapUI with fn from_json(json, path) -> NxMiniMapUI raise @json.JsonDecodeError {
-  match json {
-    { "MinMap": min_map_json, .. } =>
-      { min_map: @json.from_json(min_map_json, path=path.add_key("MinMap")) }
-    _ => raise @json.JsonDecodeError((path, "missing field MinMap"))
-  }
-}
+} derive(@json.FromJson(fields(min_map(rename="MinMap"))))
 
 ///|
 struct NxMapHelperMiniMap {
@@ -143,12 +106,12 @@ pub struct MiniMapUI {
 }
 
 ///|
-pub fn MiniMapUI::new(
+pub fn MiniMapUI::MiniMapUI(
   resource : MiniMapUIResource,
   ui_model : @ui.UIModel,
 ) -> MiniMapUI {
-  ui_model.position = @struct.Point::new(0, 0)
-  ui_model.dimension = @struct.Point::new(0, 0)
+  ui_model.position = Point(0, 0)
+  ui_model.dimension = Point(0, 0)
   {
     resource,
     type_: MiniMapType::NORMAL, // NORMAL by default
@@ -172,8 +135,10 @@ pub fn MiniMapUI::set_map(
   clear_entities(self)
   match self.type_ {
     NORMAL => {
-      let map_dimensions = mini_map_resources.map_or(Point::default(), fn(it) {
-        @struct.Point::new(it.canvas.width, it.canvas.height)
+      let map_dimensions = mini_map_resources.map_or(Default::default(), fn(
+        it,
+      ) {
+        Point(it.canvas.width, it.canvas.height)
       })
       // 48 (offset for text) + longer text's width + 10 (space for right side
       // border)
@@ -202,7 +167,24 @@ pub fn MiniMapUI::set_map(
         let down_y_offset = 17 + m_stretch
         (20, m_stretch, down_y_offset)
       }
-      let frames : Array[MiniMapFrameDraw] = []
+      let frames : Array[MiniMapFrameDraw] = [
+        ..if mini_map_resources is Some(res) {
+          [
+            {
+              texture: {
+                i: res.canvas.path,
+                w: res.canvas.width,
+                h: res.canvas.height,
+                offset: Default::default(),
+                origin: Default::default(),
+              },
+              x: map_draw_origin_x_,
+              y: map_draw_origin_y_,
+              z: @graphics.MINI_MAP_ZINDEX_,
+            },
+          ]
+        },
+      ]
       let ur_x_offset = CENTER_START_X_ + c_stretch
       let middle_right_x_ = ur_x_offset + 55
       spawn_minimap_frame_entities(
@@ -215,20 +197,6 @@ pub fn MiniMapUI::set_map(
         ur_x_offset,
         middle_right_x_,
       )
-      if mini_map_resources is Some(res) {
-        frames.push({
-          texture: {
-            i: res.canvas.path,
-            w: res.canvas.width,
-            h: res.canvas.height,
-            offset: @struct.Point::default(),
-            origin: @struct.Point::default(),
-          },
-          x: map_draw_origin_x_,
-          y: map_draw_origin_y_,
-          z: @graphics.MINI_MAP_ZINDEX_,
-        })
-      }
       for frame in frames {
         spawn_minimap_texture_entity(
           self.entities,
@@ -239,7 +207,7 @@ pub fn MiniMapUI::set_map(
           frame.z,
         )
       }
-      let _normal_dimensions = Point::new(ur_x_offset + 64, down_y_offset + 27)
+      let _normal_dimensions = Point(ur_x_offset + 64, down_y_offset + 27)
       self.ui_model.dimension = _normal_dimensions
       if mini_map_resources is Some(res) {
         let portals = res.portals
@@ -600,8 +568,8 @@ fn poll_or_start_ui_loading(state : MiniMapUIState) -> Unit {
       match future.poll() {
         Some(Ok(resource)) => {
           state.loading = None
-          let ui_model = @ui.UIModel::new(Point::new(0, 20), Point::new(0, 0))
-          state.ui = Some(MiniMapUI::new(resource, ui_model))
+          let ui_model = UIModel(Point(0, 20), Point(0, 0))
+          state.ui = Some(MiniMapUI(resource, ui_model))
         }
         Some(Err(err)) =>
           @log.fatal("failed to load mini map ui resources", data={

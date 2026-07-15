@@ -10,7 +10,7 @@ struct MobCombat {
 }
 
 ///|
-pub fn MobCombat::new(mobs : MapMobs) -> MobCombat {
+pub fn MobCombat::MobCombat(mobs : MapMobs) -> MobCombat {
   { mobs, }
 }
 

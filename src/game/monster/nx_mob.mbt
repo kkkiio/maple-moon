@@ -115,7 +115,7 @@ fn parse_rect(json : Json) -> @struct.Rectangle[Int]? {
         (Some(lt_json), Some(rb_json)) => {
           let lt = parse_point(lt_json)
           let rb = parse_point(rb_json)
-          Some(@struct.Rectangle::new(lt, rb))
+          Some(Rectangle(lt, rb))
         }
         _ => None
       }

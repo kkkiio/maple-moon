@@ -89,9 +89,9 @@ pub fn empty_physics() -> Physics {
     fh_tree: {
       footholds: Map([]),
       seg_tree: { xs: [], nodes: [], root: -1 },
-      null_fh: Foothold::default(),
-      walls: @struct.Range::new(-100000, 100000),
-      borders: @struct.Range::new(-100000, 100000),
+      null_fh: Default::default(),
+      walls: Range(-100000, 100000),
+      borders: Range(-100000, 100000),
     },
   }
 }

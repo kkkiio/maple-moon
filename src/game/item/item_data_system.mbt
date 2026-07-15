@@ -6,7 +6,7 @@ pub struct ItemDataSystem {
 
 ///|
 /// Creates an item-data system.
-pub fn ItemDataSystem::new() -> ItemDataSystem {
+pub fn ItemDataSystem::ItemDataSystem() -> ItemDataSystem {
   { pending_item_loads: Ref(Map([])), item_load_errors: Ref(Map([])) }
 }
 
@@ -25,7 +25,7 @@ pub fn get_item_data_system() -> ItemDataSystem {
   if item_data_system_ref.val is Some(system) {
     return system
   }
-  let system = ItemDataSystem::new()
+  let system = ItemDataSystem()
   item_data_system_ref.val = Some(system)
   system
 }

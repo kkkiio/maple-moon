@@ -7,7 +7,7 @@ fn mob_hpbars_load_test_mob() -> @monster.Mob {
     0,
     0,
     false,
-    @struct.Point::new(100, 95),
+    @struct.Point(100, 95),
     @random.Rand::new(),
   )
 }
@@ -51,8 +51,9 @@ test "mob hpbar render snapshot" {
   @ms_camera.setup_camera_entity(camera_anchor, center=camera_center)
   @ms_camera.set_follow_target(camera_anchor)
 
-  let map_mobs = @monster.MapMobs::new()
-  map_mobs.add_mob(mob_hpbars_load_test_mob())
+  let map_mobs = @monster.MapMobs()
+  let mob = mob_hpbars_load_test_mob()
+  map_mobs.add_mob(mob)
   @monster.set_mobs({ map_mobs, physics: @physics.empty_physics() })
   map_mobs.for_each_mob(fn(_, mob) {
     mob.update(@physics.empty_physics()) |> ignore
@@ -71,9 +72,82 @@ test "mob hpbar render snapshot" {
   )
 
   debug_inspect(
-    @entity.iter_entities().to_array().length(),
+    (
+      mob.get_oid(),
+      @transform2d.get_xy(mob.get_entity()),
+      render_draw_state(capture),
+    ),
     content=(
-      #|10
+      #|(
+      #|  1001,
+      #|  Some(Vec2(80, 86)),
+      #|  [
+      #|    {
+      #|      layer: "world",
+      #|      kind: "Image",
+      #|      texture_path: Some("assets/mob/0100101.img/animations/stand.png"),
+      #|      source_rect: Some({ x: 0, y: 0, width: 35, height: 34 }),
+      #|      destination_rect: Some({ x: 80, y: 84, width: 35, height: 34 }),
+      #|      color: Some({ r: 255, g: 255, b: 255, a: 1 }),
+      #|    },
+      #|    {
+      #|      layer: "world",
+      #|      kind: "Rect",
+      #|      texture_path: None,
+      #|      source_rect: None,
+      #|      destination_rect: Some({ x: 59, y: 20, width: 50, height: 10 }),
+      #|      color: Some({ r: 0, g: 0, b: 0, a: 1 }),
+      #|    },
+      #|    {
+      #|      layer: "world",
+      #|      kind: "Rect",
+      #|      texture_path: None,
+      #|      source_rect: None,
+      #|      destination_rect: Some({ x: 60, y: 21, width: 48, height: 1 }),
+      #|      color: Some({ r: 255, g: 255, b: 255, a: 1 }),
+      #|    },
+      #|    {
+      #|      layer: "world",
+      #|      kind: "Rect",
+      #|      texture_path: None,
+      #|      source_rect: None,
+      #|      destination_rect: Some({ x: 60, y: 28, width: 48, height: 1 }),
+      #|      color: Some({ r: 255, g: 255, b: 255, a: 1 }),
+      #|    },
+      #|    {
+      #|      layer: "world",
+      #|      kind: "Rect",
+      #|      texture_path: None,
+      #|      source_rect: None,
+      #|      destination_rect: Some({ x: 60, y: 22, width: 1, height: 6 }),
+      #|      color: Some({ r: 255, g: 255, b: 255, a: 1 }),
+      #|    },
+      #|    {
+      #|      layer: "world",
+      #|      kind: "Rect",
+      #|      texture_path: None,
+      #|      source_rect: None,
+      #|      destination_rect: Some({ x: 107, y: 22, width: 1, height: 6 }),
+      #|      color: Some({ r: 255, g: 255, b: 255, a: 1 }),
+      #|    },
+      #|    {
+      #|      layer: "world",
+      #|      kind: "Rect",
+      #|      texture_path: None,
+      #|      source_rect: None,
+      #|      destination_rect: Some({ x: 62, y: 23, width: 33, height: 3 }),
+      #|      color: Some({ r: 0, g: 255, b: 0, a: 1 }),
+      #|    },
+      #|    {
+      #|      layer: "world",
+      #|      kind: "Rect",
+      #|      texture_path: None,
+      #|      source_rect: None,
+      #|      destination_rect: Some({ x: 62, y: 26, width: 33, height: 1 }),
+      #|      color: Some({ r: 0, g: 128, b: 0, a: 1 }),
+      #|    },
+      #|  ],
+      #|)
     ),
   )
   @capture_app.snapshot(

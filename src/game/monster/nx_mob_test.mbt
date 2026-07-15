@@ -3,11 +3,14 @@ test "parse_mx_mob" {
   let content = @fs.read_file_to_string("assets/mob/1210102.img/mx.json")
   let json = @json.parse(content)
   let mx_mob : @monster.MxMob = @json.from_json(json)
-  inspect(mx_mob.stance_nodes.contains("stand"), content="true")
-  inspect(mx_mob.stance_nodes.contains("move"), content="true")
-  inspect(mx_mob.stance_nodes.contains("jump"), content="true")
-  inspect(mx_mob.stance_nodes.contains("hit1"), content="true")
-  inspect(mx_mob.stance_nodes.contains("die1"), content="true")
+  let stance_names = mx_mob.stance_nodes.keys().collect()
+  stance_names.sort()
+  debug_inspect(
+    stance_names,
+    content=(
+      #|["die1", "hit1", "jump", "move", "stand"]
+    ),
+  )
   json_inspect(mx_mob.info, content={
     "magic_damage": 0,
     "md_damage": 10,

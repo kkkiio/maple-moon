@@ -19,7 +19,7 @@ pub fn reset_mock_server() -> Unit {
 pub fn[T : @server_proto.ServerMessage] emit_mock_server_message(
   message : T,
 ) -> Unit raise {
-  emit_mock_server_state(T::type_code(), message.to_json())
+  emit_mock_server_state(T::type_code(), ToJson::to_json(message))
 }
 
 ///|

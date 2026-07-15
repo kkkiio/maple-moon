@@ -4,6 +4,6 @@ pub struct Module {
 }
 
 ///|
-pub fn Module::new(inventory : Inventory) -> Module {
+pub fn Module::Module(inventory : Inventory) -> Module {
   { inventory, }
 }

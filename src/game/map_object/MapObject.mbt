@@ -14,12 +14,12 @@ pub struct MapObjectBase {
 }
 
 ///|
-pub fn MapObjectBase::new(
+pub fn MapObjectBase::MapObjectBase(
   oid : Int,
   position? : @struct.Point[Int] = { x: 0, y: 0 },
   on_pos_change~ : (@selene_math.Vec2) -> Unit,
 ) -> MapObjectBase {
-  let obj = { phobj: @physics.PhysicsObject::new(on_pos_change~), oid }
+  let obj = { phobj: PhysicsObject(on_pos_change~), oid }
   obj.set_position(position)
   obj
 }

@@ -75,7 +75,7 @@ fn npc_talk_setup_scene() -> @app.App raise {
   let cursor_data = @cursor.CursorAnimationData::load(
     "assets/UI/Basic.img/Cursor/cursor_animation.json",
   )
-  @cursor.init_cursor(@cursor.Cursor::new(cursor_data))
+  @cursor.init_cursor(Cursor(cursor_data))
   let camera_anchor = @entity.Entity()
   @ms_camera.setup_camera_entity(camera_anchor, center=@math.Vec2(0.0, 0.0))
   @ms_camera.set_follow_target(camera_anchor)
@@ -174,12 +174,6 @@ test "npc_talk_ui quest 2090 keeps cursor above ui and grows with content" {
   assert_true(has_window_material)
   assert_true(has_cursor_node)
 
-  debug_inspect(
-    @entity.iter_entities().to_array().length(),
-    content=(
-      #|11
-    ),
-  )
   @capture_app.snapshot(
     "src/graphics_test/__snapshot__/npc_talk_ui/npc_talk_ui_quest_2090.png",
     capture.png,

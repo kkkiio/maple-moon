@@ -45,11 +45,11 @@ pub(all) struct SkillData {
   icons : (@resource.NxTexture, @resource.NxTexture, @resource.NxTexture)
   src : Json
 }
+pub fn SkillData::SkillData(Int, Json, SkillResource, SkillTextResource) -> Self
 pub fn SkillData::get_cached(Int) -> Self?
 pub fn SkillData::get_stats(Self, Int) -> Stats?
 pub fn SkillData::is_attack(Self) -> Bool
 pub fn SkillData::load(Int) -> Self
-pub fn SkillData::new(Int, Json, SkillResource, SkillTextResource) -> Self
 
 pub(all) enum SkillId {
   FOLLOW_THE_LEAD

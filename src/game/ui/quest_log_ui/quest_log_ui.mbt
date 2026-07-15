@@ -601,6 +601,13 @@ fn push_run(
 }
 
 ///|
+let quest_markup_tags : Map[Char, @markup_text.MarkupType] = {
+  let tags = @markup_text.common_tags.copy()
+  tags.set('c', @markup_text.MarkupType::Pair)
+  tags
+}
+
+///|
 fn parse_rich_text_runs_core(
   raw : String,
   pair_replacer : (Char, StringView) -> String?,
@@ -611,39 +618,22 @@ fn parse_rich_text_runs_core(
     bold: false,
     underline: false,
   }
-  let mut rest : StringView = raw[:]
-  while true {
-    guard rest.find("#") is Some(mark_pos) else {
-      push_run(runs, rest.to_owned(), style)
-      break
+  for token in @markup_text.scan_markup(raw, quest_markup_tags) {
+    match token {
+      @markup_text.MarkupToken::Text(text) =>
+        push_run(runs, text.to_owned(), style)
+      @markup_text.MarkupToken::Tag(tag, payload) =>
+        if apply_style_tag(style, tag) is Some(next_style) {
+          style = next_style
+        } else if pair_replacer(tag, payload) is Some(replaced) {
+          push_run(runs, replaced, style)
+        } else {
+          push_run(runs, "#\{tag}\{payload.to_owned()}#", style)
+        }
+      @markup_text.MarkupToken::Unknown(_, source)
+      | @markup_text.MarkupToken::Incomplete(source) =>
+        push_run(runs, source.to_owned(), style)
     }
-    if mark_pos > 0 {
-      push_run(runs, rest.view(end_offset=mark_pos).to_owned(), style)
-    }
-    if mark_pos + 1 >= rest.length() {
-      push_run(runs, "#", style)
-      break
-    }
-    let tag = rest.get_char(mark_pos + 1).unwrap_or('#')
-    if apply_style_tag(style, tag) is Some(next_style) {
-      style = next_style
-      rest = rest.view(start_offset=mark_pos + 2)
-      continue
-    }
-    let payload_part = rest.view(start_offset=mark_pos + 2)
-    if payload_part.find("#") is Some(end_pos) {
-      let payload = payload_part.view(end_offset=end_pos)
-      if pair_replacer(tag, payload) is Some(replaced) {
-        push_run(runs, replaced, style)
-      } else {
-        push_run(runs, "#\{tag}\{payload.to_owned()}#", style)
-      }
-      rest = payload_part.view(start_offset=end_pos + 1)
-      continue
-    }
-    // Keep unknown or incomplete tags as raw text.
-    push_run(runs, rest.view(start_offset=mark_pos).to_owned(), style)
-    break
   }
   runs
 }

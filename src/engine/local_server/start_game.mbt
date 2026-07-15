@@ -1,7 +1,7 @@
 ///|
 fn default_player_stats() -> @resource.EnumMap[@maple_stat.Id, Int] {
   @resource.EnumMap(
-    Map::from_array([
+    Map([
       (@maple_stat.Id::LEVEL, 50),
       (@maple_stat.Id::JOB, 0),
       (@maple_stat.Id::STR, 12),
@@ -50,7 +50,7 @@ fn LocalServer::on_select_char(self : LocalServer, json : Json) -> Unit raise {
         name: entry.name,
         female: entry.look.female,
         stats: default_player_stats(),
-        i64stats: @resource.EnumMap::default(),
+        i64stats: Default::default(),
         map_id: default_server.last_map_id,
         portal_id: default_server.last_portal_id,
       },
@@ -60,10 +60,10 @@ fn LocalServer::on_select_char(self : LocalServer, json : Json) -> Unit raise {
         items: current_items,
       },
       skills=[],
-      cooldowns=@resource.EnumMap::default(),
+      cooldowns=Default::default(),
       quests=default_server.build_player_quest_log_info(),
     )
-    let set_field_json = set_field_message.to_json()
+    let set_field_json = ToJson::to_json(set_field_message)
     default_server.server_message_queue.push(
       (@server_proto.Opcode::SET_FIELD.int_value(), set_field_json),
     )

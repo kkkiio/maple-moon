@@ -16,7 +16,7 @@ struct MapPortalAnimations {
 }
 
 ///|
-pub fn MapPortals::new(
+pub fn MapPortals::MapPortals(
   src : Array[NxPortal],
   mapid : Int,
   map_portals_animations : MapPortalAnimations,
@@ -28,12 +28,12 @@ pub fn MapPortals::new(
     let name = res.pn
     let target_name = res.tn
     let target_id = res.tm
-    let position = Point::new(res.x, res.y)
+    let position = Point(res.x, res.y)
     let animation = map_portals_animations.animations.get(portal_type)
     let intramap = target_id == mapid
     portals_by_id.set(
       portal_id,
-      Portal::new(
+      Portal(
         animation, portal_type, name, intramap, position, target_id, target_name,
       ),
     )
@@ -61,7 +61,7 @@ pub fn MapPortals::from_tiled_map(
   for obj in portal_layer.objects {
     src.push(nx_portal_from_tiled_object(obj))
   }
-  MapPortals::new(src, mapid, map_portals_animations)
+  MapPortals(src, mapid, map_portals_animations)
 }
 
 ///|
@@ -113,7 +113,7 @@ pub fn MapPortals::get_portal_pos_by_id(
 ) -> Point[Int]? {
   self.id_portal_map
   .get(portal_id)
-  .map(fn(portal) { portal.get_position() - @struct.Point::new(0, 30) })
+  .map(fn(portal) { portal.get_position() - Point(0, 30) })
 }
 
 ///|
@@ -280,7 +280,7 @@ pub fn current_portals_json() -> Json {
         let entry : Json = {
           "id": id,
           "name": portal.get_name(),
-          "type": portal_type.to_json(),
+          "type": ToJson::to_json(portal_type),
           "x": position.x,
           "y": position.y,
           "targetMapId": warp.map_id,
@@ -412,7 +412,7 @@ test "parse portals" {
 
 ///|
 fn make_test_portals(src : Array[NxPortal]) -> MapPortals {
-  MapPortals::new(src, 101010103, { animations: Map([]) })
+  MapPortals(src, 101010103, { animations: Map([]) })
 }
 
 ///|
@@ -446,26 +446,24 @@ test "manual and auto portal queries are split by portal type" {
     },
   ])
   debug_inspect(
-    portals.find_auto_warp_at(Point::new(100, 2058)).map(fn(warp) { warp.name }),
+    portals.find_auto_warp_at(Point(100, 2058)).map(fn(warp) { warp.name }),
     content="Some(\"goSleepy0\")",
   )
   debug_inspect(
-    portals.find_manual_warp_at(Point::new(100, 2058)) is None,
+    portals.find_manual_warp_at(Point(100, 2058)) is None,
     content="true",
   )
   debug_inspect(
-    portals
-    .find_manual_warp_at(Point::new(200, 100))
-    .map(fn(warp) { warp.name }),
+    portals.find_manual_warp_at(Point(200, 100)).map(fn(warp) { warp.name }),
     content="Some(\"under00\")",
   )
   debug_inspect(
-    portals.find_auto_warp_at(Point::new(200, 100)) is None,
+    portals.find_auto_warp_at(Point(200, 100)) is None,
     content="true",
   )
   debug_inspect(
     invisible_portals
-    .find_manual_warp_at(Point::new(300, 100))
+    .find_manual_warp_at(Point(300, 100))
     .map(fn(warp) { warp.name }),
     content="Some(\"in00\")",
   )
@@ -492,21 +490,19 @@ test "manual and auto portal cooldowns are independent" {
     },
   ])
   debug_inspect(
-    portals
-    .find_manual_warp_at(Point::new(100, 2058))
-    .map(fn(warp) { warp.name }),
+    portals.find_manual_warp_at(Point(100, 2058)).map(fn(warp) { warp.name }),
     content="Some(\"under00\")",
   )
   debug_inspect(
-    portals.find_auto_warp_at(Point::new(100, 2058)).map(fn(warp) { warp.name }),
+    portals.find_auto_warp_at(Point(100, 2058)).map(fn(warp) { warp.name }),
     content="Some(\"goSleepy0\")",
   )
   debug_inspect(
-    portals.find_manual_warp_at(Point::new(100, 2058)) is None,
+    portals.find_manual_warp_at(Point(100, 2058)) is None,
     content="true",
   )
   debug_inspect(
-    portals.find_auto_warp_at(Point::new(100, 2058)) is None,
+    portals.find_auto_warp_at(Point(100, 2058)) is None,
     content="true",
   )
 }

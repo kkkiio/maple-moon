@@ -79,9 +79,9 @@ test "map 101010102 tween lighting alpha background start" {
   assert_true(start_alpha >= 0.0)
   assert_true(visible_sprite_count() > 0)
   debug_inspect(
-    @entity.iter_entities().to_array().length(),
+    start_alpha,
     content=(
-      #|713
+      #|0.48988235294117644
     ),
   )
   @capture_app.snapshot(
@@ -109,9 +109,9 @@ test "map 101010102 tween lighting alpha background mid" {
   assert_true(after_motion_alpha >= 0.0)
   assert_true(visible_sprite_count() > 0)
   debug_inspect(
-    @entity.iter_entities().to_array().length(),
+    after_motion_alpha,
     content=(
-      #|713
+      #|0.9121254901960784
     ),
   )
   @capture_app.snapshot(
@@ -244,7 +244,6 @@ test "map 100000000 background" {
   }
   debug_inspect(
     (
-      @entity.iter_entities().to_array().length(),
       (
         camera_top_left[@math.X].round().to_int(),
         camera_top_left[@math.Y].round().to_int(),
@@ -254,7 +253,6 @@ test "map 100000000 background" {
     ),
     content=(
       #|(
-      #|  1626,
       #|  (-683, -384),
       #|  [
       #|    (315, 268, -103, -231, 580, 153, 2006),

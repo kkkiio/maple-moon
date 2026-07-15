@@ -58,7 +58,7 @@ test "final attack hit effect with EFFECT_ZINDEX stays visible" {
   @ms_camera.set_follow_target(camera_anchor)
 
   let mob = final_attack_load_test_mob()
-  let map_mobs = @monster.MapMobs::new()
+  let map_mobs = @monster.MapMobs()
   map_mobs.add_mob(mob)
   @monster.set_mobs({ map_mobs, physics: @physics.empty_physics() })
 
@@ -72,10 +72,31 @@ test "final attack hit effect with EFFECT_ZINDEX stays visible" {
     raw_delta=0.016,
   )
 
+  let effect_children = @entity.Entity::get_children(mob.get_entity())
   debug_inspect(
-    @entity.iter_entities().to_array().length(),
+    (
+      mob.get_oid(),
+      mob.get_position(),
+      render_draw_state(
+        capture,
+        entity_ids=effect_children.map(fn(child) { child.id() }),
+      ),
+    ),
     content=(
-      #|3
+      #|(
+      #|  1001,
+      #|  { x: 110, y: 95 },
+      #|  [
+      #|    {
+      #|      layer: "world",
+      #|      kind: "Image",
+      #|      texture_path: Some("assets/Skill/110.img/animations/skill__1100002.png"),
+      #|      source_rect: Some({ x: 175, y: 0, width: 167, height: 92 }),
+      #|      destination_rect: Some({ x: 114, y: 61, width: 167, height: 92 }),
+      #|      color: Some({ r: 255, g: 255, b: 255, a: 1 }),
+      #|    },
+      #|  ],
+      #|)
     ),
   )
   @capture_app.snapshot(

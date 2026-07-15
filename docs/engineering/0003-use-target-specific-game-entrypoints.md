@@ -1,7 +1,5 @@
 # Use Target-Specific Game Entrypoints
 
-Date: 2026-06-12
-
 ## Context
 
 Maple Moon uses Selene with two practical backend needs:

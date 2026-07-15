@@ -1,7 +1,5 @@
 # Split Engine and Game Layers
 
-Date: 2026-06-12
-
 ## Context
 
 Before this decision, `src/lib/` contained two kinds of code:

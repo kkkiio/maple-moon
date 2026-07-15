@@ -42,10 +42,10 @@ pub(all) suberror ParseTalkError {
 
 // Types and methods
 type MapNpcs
+pub fn MapNpcs::MapNpcs((TalkArgs) -> Unit, () -> Bool) -> Self
 pub fn MapNpcs::apply_spawn_npc_controller_message(Self, @server_proto.NpcSpawnControllerMessage) -> Unit
 pub fn MapNpcs::apply_spawn_npc_message(Self, @server_proto.NpcSpawnMessage) -> Unit
 pub fn MapNpcs::clear(Self) -> Unit
-pub fn MapNpcs::new((TalkArgs) -> Unit, () -> Bool) -> Self
 pub fn MapNpcs::remove(Self, Int) -> Unit
 pub fn MapNpcs::spawn(Self, NpcSpawn) -> Unit
 pub fn MapNpcs::update(Self, @physics.Physics) -> Unit
@@ -58,8 +58,7 @@ pub(all) struct MapNpcsContext {
 pub struct MxNpc {
   info : MxNpcInfo
   animations_path : String
-}
-pub impl @json.FromJson for MxNpc
+} derive(@json.FromJson)
 
 pub struct MxNpcInfo {
   link : String?

@@ -6,26 +6,7 @@ struct LogEntry {
   text : String
   url : String?
   line : Int?
-}
-
-///|
-fn LogEntry::to_json(self : LogEntry) -> Json {
-  let fields : Map[String, Json] = {
-    "time": self.time,
-    "level": self.level,
-    "source": self.source,
-    "text": self.text,
-  }
-  match self.url {
-    Some(url) => fields["url"] = Json::string(url)
-    None => ()
-  }
-  match self.line {
-    Some(line) => fields["line"] = Json::number(line.to_double())
-    None => ()
-  }
-  Json::object(fields)
-}
+} derive(ToJson)
 
 ///|
 struct NetworkEntry {
@@ -43,36 +24,15 @@ struct NetworkEntry {
   mut failed : Bool?
   mut error : String?
   mut canceled : Bool?
-}
-
-///|
-fn NetworkEntry::to_json(self : NetworkEntry) -> Json {
-  let fields : Map[String, Json] = {
-    "requestId": self.request_id,
-    "start": self.start,
-  }
-  if self.url is Some(value) { fields["url"] = Json::string(value) }
-  if self.request_method is Some(value) {
-    fields["method"] = Json::string(value)
-  }
-  if self.type_ is Some(value) { fields["type"] = Json::string(value) }
-  if self.started_at is Some(value) { fields["started_at"] = Json::number(value) }
-  if self.status is Some(value) {
-    fields["status"] = Json::number(value.to_double())
-  }
-  if self.mime is Some(value) { fields["mime"] = Json::string(value) }
-  if self.finished_at is Some(value) { fields["finished_at"] = Json::number(value) }
-  if self.size is Some(value) { fields["size"] = Json::number(value) }
-  if self.duration_ms is Some(value) { fields["duration_ms"] = Json::number(value) }
-  if self.failed is Some(value) {
-    fields["failed"] = Json::boolean(value)
-  }
-  if self.error is Some(value) { fields["error"] = Json::string(value) }
-  if self.canceled is Some(value) {
-    fields["canceled"] = Json::boolean(value)
-  }
-  Json::object(fields)
-}
+} derive (
+  ToJson(
+    fields(
+      request_id(rename="requestId"),
+      request_method(rename="method"),
+      type_(rename="type"),
+    ),
+  ),
+)
 
 ///|
 enum NetworkUpdate {
@@ -80,61 +40,78 @@ enum NetworkUpdate {
     url~ : String,
     request_method~ : String,
     type_~ : String,
-    time~ : Double,
+    time~ : Double
   )
-  ResponseReceived(url~ : String, status~ : Int, mime~ : String, type_~ : String)
+  ResponseReceived(
+    url~ : String,
+    status~ : Int,
+    mime~ : String,
+    type_~ : String
+  )
   LoadingFinished(time~ : Double, size~ : Double)
   LoadingFailed(time~ : Double, error~ : String, canceled~ : Bool)
+}
+
+///|
+struct LogSubscriber {
+  id : Int
+  queue : @async.Queue[String]
 }
 
 ///|
 struct Daemon {
   cdp_port : Int
   mut game_url : String
-  socket_path : String
   state_path : String
-  pid_path : String
   user_data_dir : String
   logs : Array[LogEntry]
   requests : Map[String, NetworkEntry]
   request_order : Array[String]
-  mut cdp : JsCdp?
-  mut chrome : JsChrome?
-  mut server : JsServer?
+  subscribers : Array[LogSubscriber]
+  mut next_subscriber_id : Int
+  mut token : String
+  mut cdp : NativeCdp?
+  mut chrome : @process.Process?
+  mut chrome_connecting : Bool
+  mut chrome_connection_error : String?
+  mut server : @socket.TcpServer?
+  mut group : @async.TaskGroup[String]?
   mut finished : Bool
-  stop : JsStopSignal
+  stop : @async.Queue[String]
 }
 
 ///|
-fn Daemon::new(cdp_port : Int, game_url : String) -> Daemon {
+fn Daemon::Daemon(cdp_port : Int, game_url : String) -> Daemon {
   {
     cdp_port,
     game_url,
-    socket_path: temp_path("maple-moon-mapled.sock"),
     state_path: temp_path("maple-moon-mapled.state.json"),
-    pid_path: temp_path("maple-moon-mapled.pid"),
     user_data_dir: temp_path("maple-moon-chrome-profile"),
     logs: [],
-    requests: {},
+    requests: Map([]),
     request_order: [],
+    subscribers: [],
+    next_subscriber_id: 1,
+    token: "",
     cdp: None,
     chrome: None,
+    chrome_connecting: false,
+    chrome_connection_error: None,
     server: None,
+    group: None,
     finished: false,
-    stop: new_stop_signal(),
+    stop: @async.Queue(kind=Blocking(1)),
   }
 }
 
 ///|
-fn Daemon::write_state(self : Daemon, phase : String) -> Unit {
+async fn Daemon::write_state(self : Daemon, phase : String) -> Unit {
   let state : Json = {
     "phase": phase,
-    "pid": process_pid(),
     "updated_at": now_ms() / 1000.0,
-    "config": {
-      "cdpPort": self.cdp_port,
-      "gameUrl": self.game_url,
-    },
+    "endpoint": { "host": "127.0.0.1", "port": 39933 },
+    "token": self.token,
+    "config": { "cdpPort": self.cdp_port, "gameUrl": self.game_url },
   }
   write_state_file(self.state_path, state.stringify())
 }
@@ -153,12 +130,10 @@ fn Daemon::push_log(
   if self.logs.length() > 1000 {
     ignore(self.logs.drain(0, self.logs.length() - 1000))
   }
-  match self.server {
-    Some(server) => {
-      let event : Json = { "event": "log", "entry": entry.to_json() }
-      server_broadcast(server, event.stringify() + "\n")
-    }
-    None => ()
+  let event : Json = { "event": "log", "entry": ToJson::to_json(entry) }
+  let line = event.stringify() + "\n"
+  for subscriber in self.subscribers {
+    ignore(subscriber.queue.try_put(line) catch { _ => false })
   }
 }
 
@@ -221,7 +196,9 @@ fn Daemon::remember_network(
   }
   if self.request_order.length() > 500 {
     let expired = self.request_order.drain(0, self.request_order.length() - 500)
-    for id in expired { ignore(self.requests.remove(id)) }
+    for id in expired {
+      ignore(self.requests.remove(id))
+    }
   }
   entry
 }
@@ -289,7 +266,8 @@ fn Daemon::handle_cdp_event(self : Daemon, message : String) -> Unit {
       "size": Number(size, ..),
       "time": Number(time, ..),
       ..
-    } => ignore(self.remember_network(request_id, LoadingFinished(time~, size~)))
+    } =>
+      ignore(self.remember_network(request_id, LoadingFinished(time~, size~)))
     {
       "kind": "network-failed",
       "requestId": String(request_id),
@@ -317,11 +295,10 @@ async fn Daemon::send_cdp(
   params : Json,
 ) -> Json {
   let cdp = match self.cdp {
-    Some(cdp) if cdp_is_open(cdp) => cdp
+    Some(cdp) if cdp.open => cdp
     _ => fail("CDP WebSocket is not connected")
   }
-  let response = cdp_send(cdp, command_method, params.stringify()).wait()
-  @json.parse(response)
+  cdp.send(command_method, params)
 }
 
 ///|
@@ -360,8 +337,7 @@ async fn Daemon::ensure_game_active(self : Daemon) -> Json {
   let mut create_result = Json::null()
   for _ in 0..<90 {
     let state_value = self.evaluate(
-      "globalThis.$console.render_game_to_text()",
-      true,
+      "globalThis.$console.render_game_to_text()", true,
     )
     state = match state_value {
       String(text) => @json.parse(text)
@@ -379,8 +355,7 @@ async fn Daemon::ensure_game_active(self : Daemon) -> Json {
     if state is { "phase": "SelectCharacter", .. } &&
       select_result == Json::null() {
       let result = self.evaluate(
-        "globalThis.$console.cmd(\"select_char\", \"0\")",
-        true,
+        "globalThis.$console.cmd(\"select_char\", \"0\")", true,
       )
       if result is { "ok": True, .. } ||
         result is { "code": "SELECT_CHAR_ALREADY_REQUESTED", .. } {
@@ -388,10 +363,11 @@ async fn Daemon::ensure_game_active(self : Daemon) -> Json {
       } else if result is { "code": "INVALID_SLOT", .. } &&
         create_result == Json::null() {
         let created = self.evaluate(
-          "globalThis.$console.cmd(\"new_character\")",
-          true,
+          "globalThis.$console.cmd(\"new_character\")", true,
         )
-        if created is { "ok": True, .. } { create_result = created }
+        if created is { "ok": True, .. } {
+          create_result = created
+        }
       }
     }
     ignore(self.evaluate("globalThis.$console.step(10)", true))
@@ -414,7 +390,9 @@ async fn Daemon::run_bot(self : Daemon, request : Json) -> Json {
       String("object") => console_ready = true
       _ => ()
     }
-    if console_ready { break }
+    if console_ready {
+      break
+    }
     @async.sleep(250)
   }
   guard console_ready else {
@@ -422,7 +400,8 @@ async fn Daemon::run_bot(self : Daemon, request : Json) -> Json {
   }
   let entry = self.ensure_game_active()
   let timeout_ms = match request {
-    { "timeoutMs": Number(value, ..), .. } if value.to_int() > 0 => value.to_int()
+    { "timeoutMs": Number(value, ..), .. } if value.to_int() > 0 =>
+      value.to_int()
     _ => 120000
   }
   let script_path = match request {
@@ -442,76 +421,113 @@ async fn Daemon::run_bot(self : Daemon, request : Json) -> Json {
       String("object") => bot_ready = true
       _ => ()
     }
-    if bot_ready { break }
+    if bot_ready {
+      break
+    }
     ignore(self.evaluate("globalThis.$console.step(5)", true))
   }
-  guard bot_ready else { fail("globalThis.__bot was not installed before timeout") }
+  guard bot_ready else {
+    fail("globalThis.__bot was not installed before timeout")
+  }
   let before_logs = self.logs.length()
   let before_requests = self.request_order.length()
   let source_url = script_path.replace_all(old="\\", new="/")
   let wrapped = "(async () => {\n\{script}\n})()\n//# sourceURL=\{source_url}"
-  let promise = @js_async.Promise::from_async(() => {
-    self.evaluate(wrapped, true).stringify()
+  let group = match self.group {
+    Some(group) => group
+    None => fail("mapled task group is unavailable")
+  }
+  let observed = group.spawn(allow_failure=true, () => {
+    self.evaluate(wrapped, true)
   })
-  let observed = observe_promise(promise)
   let deadline = now_ms() + timeout_ms.to_double()
-  while !observed_settled(observed) && now_ms() < deadline {
-    ignore(self.evaluate("globalThis.$console.step(1)", true))
+  let mut observed_result : Json? = None
+  let mut observed_error : String? = None
+  while observed_result is None && observed_error is None && now_ms() < deadline {
+    try observed.try_wait() catch {
+      error => observed_error = Some(error.to_string())
+    } noraise {
+      Some(value) => observed_result = Some(value)
+      None => ignore(self.evaluate("globalThis.$console.step(1)", true))
+    }
   }
   let mut run_error : String? = None
   let mut result = Json::null()
-  if !observed_settled(observed) {
+  if observed_result is None && observed_error is None {
     let message = "bot script timed out after \{timeout_ms}ms"
     run_error = Some(message)
+    observed.cancel()
     let cancel_expression = "globalThis.__bot_cancel_pending?.(\{Json::string(message).stringify()})"
     try self.evaluate(cancel_expression, false) catch {
       _ => ()
     } noraise {
       _ => ()
     }
-    let settle_deadline = now_ms() + 1000.0
-    while !observed_settled(observed) && now_ms() < settle_deadline {
-      @async.sleep(20)
-    }
-  } else if observed_ok(observed) {
-    result = @json.parse(observed_value(observed))
-  } else {
-    run_error = Some(observed_error(observed))
+  } else if observed_result is Some(value) {
+    result = value
+  } else if observed_error is Some(error) {
+    run_error = Some(error)
   }
-  let state = try self.evaluate(
-      "globalThis.$console.render_game_to_text()",
-      true,
-    ) catch {
-      error => ({ "error": error.to_string() } : Json)
-    } noraise {
-      String(text) =>
-        @json.parse(text) catch { err => ({ "error": err.to_string() } : Json) }
-      value => value
-    }
+  let state = try
+    self.evaluate("globalThis.$console.render_game_to_text()", true)
+  catch {
+    error => ({ "error": error.to_string() } : Json)
+  } noraise {
+    String(text) =>
+      @json.parse(text) catch {
+        err => ({ "error": err.to_string() } : Json)
+      }
+    value => value
+  }
   let entries : Array[NetworkEntry] = []
   for id in self.request_order.view(start=before_requests) {
-    if self.requests.get(id) is Some(value) { entries.push(value) }
+    if self.requests.get(id) is Some(value) {
+      entries.push(value)
+    }
   }
-  let failures = entries.filter(entry =>
+  let failures = entries.filter(entry => {
     entry.failed == Some(true) || entry.status.unwrap_or(0) >= 400
-  )
-  let recent_errors = self.logs.view(start=before_logs).filter(entry =>
-    entry.level == "error"
-  )
-  let playtest_logs = self.logs.view(start=before_logs).filter(entry =>
-    entry.text.contains("[playtest]")
-  )
-  let failures = failures.view(start=if failures.length() > 80 { failures.length() - 80 } else { 0 }).map(entry => entry.to_json())
-  let recent_errors = recent_errors.view(start=if recent_errors.length() > 80 { recent_errors.length() - 80 } else { 0 }).map(entry => entry.to_json())
-  let playtest_logs = playtest_logs.view(start=if playtest_logs.length() > 120 { playtest_logs.length() - 120 } else { 0 }).map(entry => entry.to_json())
+  })
+  let recent_errors = self.logs
+    .view(start=before_logs)
+    .filter(entry => entry.level == "error")
+  let playtest_logs = self.logs
+    .view(start=before_logs)
+    .filter(entry => entry.text.contains("[playtest]"))
+  let failures = failures
+    .view(start=if failures.length() > 80 { failures.length() - 80 } else { 0 })
+    .map(entry => ToJson::to_json(entry))
+  let recent_errors = recent_errors
+    .view(
+      start=if recent_errors.length() > 80 {
+        recent_errors.length() - 80
+      } else {
+        0
+      },
+    )
+    .map(entry => ToJson::to_json(entry))
+  let playtest_logs = playtest_logs
+    .view(
+      start=if playtest_logs.length() > 120 {
+        playtest_logs.length() - 120
+      } else {
+        0
+      },
+    )
+    .map(entry => ToJson::to_json(entry))
   {
     "ok": true,
-    "passed": run_error is None && failures.is_empty() && recent_errors.is_empty(),
+    "passed": run_error is None &&
+    failures.is_empty() &&
+    recent_errors.is_empty(),
     "scriptPath": script_path,
     "timeoutMs": timeout_ms,
     "entry": entry,
     "result": result,
-    "error": match run_error { Some(value) => Json::string(value); None => Json::null() },
+    "error": match run_error {
+      Some(value) => Json::string(value)
+      None => Json::null()
+    },
     "failures": failures,
     "recentErrors": recent_errors,
     "playtestLogs": playtest_logs,
@@ -522,178 +538,235 @@ async fn Daemon::run_bot(self : Daemon, request : Json) -> Json {
 ///|
 async fn Daemon::connect_chrome(self : Daemon, wait_for_url : Bool) -> Unit {
   let chrome_path = find_chrome()
-  guard chrome_path != "" else { fail("Chrome executable not found; set CHROME_BIN") }
-  let attempts = if wait_for_url { 120 } else { 1 }
-  let mut url_ready = false
-  for attempt in 0..<attempts {
-    try fetch_http(self.game_url, "HEAD").wait() catch {
-      _ => ()
-    } noraise {
-      text =>
-        if @json.parse(text) is { "status": Number(status, ..), .. } &&
-          status < 400.0 {
-          url_ready = true
-        }
-    }
-    if url_ready { break }
-    if attempt + 1 < attempts { @async.sleep(250) }
+  guard chrome_path != "" else {
+    fail("Chrome executable not found; set CHROME_BIN")
   }
-  guard url_ready else { fail("URL did not become ready: \{self.game_url}") }
+  let group = match self.group {
+    Some(group) => group
+    None => fail("mapled task group is unavailable")
+  }
+  let deadline = now_ms() + (if wait_for_url { 30000.0 } else { 20000.0 })
+  let mut url_ready = false
+  let mut last_error = "URL is unavailable: \{self.game_url}"
+  for ;; {
+    try @async.with_timeout(1000, () => @http.get(self.game_url)) catch {
+      error => last_error = error.to_string()
+    } noraise {
+      (response, _) => if response.code < 400 { url_ready = true }
+    }
+    if url_ready {
+      break
+    }
+    if !wait_for_url || now_ms() >= deadline {
+      break
+    }
+    @async.sleep(250)
+  }
+  guard url_ready else {
+    fail(
+      "URL did not become ready: \{self.game_url}; last error: \{last_error}",
+    )
+  }
   let list_url = "http://127.0.0.1:\{self.cdp_port}/json/list"
   let mut target : String? = None
-  try fetch_http(list_url, "GET").wait() catch {
-    _ => ()
+  try @async.with_timeout(1000, () => @http.get(list_url)) catch {
+    error => last_error = error.to_string()
   } noraise {
-    text =>
-      if @json.parse(text) is { "body": String(body), .. } {
-        target = @mapled_protocol.select_cdp_target(
-          @json.parse(body),
-          self.game_url,
-        )
+    (_, body) =>
+      try body.json() catch {
+        error => last_error = error.to_string()
+      } noraise {
+        pages =>
+          target = @mapled_protocol.select_cdp_target(pages, self.game_url)
       }
   }
   if target is None {
     let new_url = "http://127.0.0.1:\{self.cdp_port}/json/new?\{encode_uri_component(self.game_url)}"
-    try fetch_http(new_url, "PUT").wait() catch {
-      _ => ()
+    try @async.with_timeout(1000, () => @http.put(new_url, b"")) catch {
+      error => last_error = error.to_string()
     } noraise {
-      text =>
-        if @json.parse(text) is { "body": String(body), .. } &&
-          @json.parse(body) is { "webSocketDebuggerUrl": String(url), .. } {
-          target = Some(url)
+      (_, body) =>
+        try body.json() catch {
+          error => last_error = error.to_string()
+        } noraise {
+          { "webSocketDebuggerUrl": String(url), .. } => target = Some(url)
+          _ => last_error = "CDP /json/new returned no WebSocket target"
         }
     }
   }
   if target is None {
-    let spawned = spawn_chrome(
+    if !@fs.exists(self.user_data_dir) {
+      @fs.mkdir(self.user_data_dir, permission=0o700, recursive=true)
+    }
+    if !@fs.exists("logs") {
+      @fs.mkdir("logs", permission=0o755, recursive=true)
+    }
+    let chrome_output = @process.redirect_to_file(
+      "logs/chrome.log",
+      append=true,
+      create_mode=OpenOrCreate,
+      permission=0o600,
+    )
+    let spawned = @process.spawn(
+      group,
       chrome_path,
-      self.cdp_port,
-      self.user_data_dir,
-      self.game_url,
-      (child, code, signal) => {
-        if self.chrome is Some(current) && same_chrome(current, child) {
-          self.chrome = None
-        }
-        if !self.finished {
-          self.push_log(
-            "warning",
-            "mapled",
-            "Chrome exited code=\{code} signal=\{signal}; run maple open to reconnect",
-          )
-        }
-      },
+      [
+        "--remote-debugging-port=\{self.cdp_port}",
+        "--user-data-dir=\{self.user_data_dir}",
+        "--disable-background-timer-throttling",
+        "--disable-renderer-backgrounding",
+        "--enable-unsafe-webgpu",
+        self.game_url,
+      ],
+      stdout=chrome_output,
+      stderr=chrome_output,
+      no_wait=true,
     )
     self.chrome = Some(spawned)
-  }
-  for _ in 0..<80 {
-    try fetch_http(list_url, "GET").wait() catch {
-      _ => ()
-    } noraise {
-      text =>
-        if @json.parse(text) is { "body": String(body), .. } {
-          target = @mapled_protocol.select_cdp_target(
-            @json.parse(body),
-            self.game_url,
-          )
-        }
-    }
-    if target is Some(_) { break }
-    @async.sleep(250)
-  }
-  let target = match target {
-    Some(target) => target
-    None => fail("No CDP page target found on port \{self.cdp_port}")
-  }
-  let socket = open_cdp(
-    target,
-    message => self.handle_cdp_event(message),
-    closed => {
-      if self.cdp is Some(current) && same_cdp(current, closed) {
-        self.cdp = None
-      }
+    group.spawn_bg(allow_failure=true, () => {
+      let code = spawned.wait()
+      self.chrome = None
       if !self.finished {
         self.push_log(
           "warning",
-          "cdp",
-          "browser disconnected; run maple open to reconnect",
+          "mapled",
+          "Chrome exited code=\{code}; run maple open to reconnect",
+        )
+      }
+    })
+  }
+  while target is None && now_ms() < deadline {
+    try @async.with_timeout(1000, () => @http.get(list_url)) catch {
+      error => last_error = error.to_string()
+    } noraise {
+      (_, body) =>
+        try body.json() catch {
+          error => last_error = error.to_string()
+        } noraise {
+          pages =>
+            target = @mapled_protocol.select_cdp_target(pages, self.game_url)
+        }
+    }
+    if target is None && now_ms() < deadline {
+      @async.sleep(250)
+    }
+  }
+  let target = match target {
+    Some(target) => target
+    None =>
+      fail(
+        "No CDP page target found on port \{self.cdp_port}; last error: \{last_error}",
+      )
+  }
+  let socket = open_cdp(
+    target,
+    group,
+    message => self.handle_cdp_event(message),
+    () => {
+      self.cdp = None
+      if !self.finished {
+        self.push_log(
+          "warning", "cdp", "browser disconnected; run maple open to reconnect",
         )
       }
     },
-  ).wait()
+  )
   self.cdp = Some(socket)
-  ignore(self.send_cdp("Runtime.enable", {}))
-  ignore(self.send_cdp("Log.enable", {}))
-  ignore(self.send_cdp("Network.enable", {}))
-  ignore(self.send_cdp("Page.enable", {}))
+  ignore(self.send_cdp("Runtime.enable", Json::empty_object()))
+  ignore(self.send_cdp("Log.enable", Json::empty_object()))
+  ignore(self.send_cdp("Network.enable", Json::empty_object()))
+  ignore(self.send_cdp("Page.enable", Json::empty_object()))
 }
 
 ///|
-async fn Daemon::handle(self : Daemon, socket : JsSocket, request : Json) -> Json? {
+async fn Daemon::handle(self : Daemon, request : Json) -> Json {
   guard request is { "action": String(action), .. } else {
     fail("request action is required")
   }
-  if action == "logs-follow" {
-    for entry in self.logs {
-      let event : Json = { "event": "log", "entry": entry.to_json() }
-      socket_write(socket, event.stringify() + "\n")
-    }
-    match self.server {
-      Some(server) => server_subscribe(server, socket)
-      None => fail("mapled server is not listening")
-    }
-    return None
-  }
   if action == "status" {
-    let console_ready = try self.evaluate(
-        "typeof globalThis.$console",
-        false,
-      ) catch {
-        _ => false
-      } noraise {
-        String("object") => true
-        _ => false
-      }
-    let connected = self.cdp is Some(cdp) && cdp_is_open(cdp)
-    return Some({
+    let console_ready = try
+      self.evaluate("typeof globalThis.$console", false)
+    catch {
+      _ => false
+    } noraise {
+      String("object") => true
+      _ => false
+    }
+    let connected = self.cdp is Some(cdp) && cdp.open
+    return {
       "ok": true,
-      "pid": process_pid(),
       "url": self.game_url,
       "cdpPort": self.cdp_port,
       "browserConnected": connected,
       "consoleReady": console_ready,
       "logCount": self.logs.length(),
       "networkCount": self.request_order.length(),
-    })
+    }
   }
   if action == "open" || action == "open-wait" {
-    if self.cdp is Some(cdp) && cdp_is_open(cdp) {
-      return Some({ "ok": true, "message": "browser already connected" })
+    if self.cdp is Some(cdp) && cdp.open {
+      return { "ok": true, "message": "browser already connected" }
     }
     if request is { "gameUrl": String(game_url), .. } && game_url != "" {
       self.game_url = game_url
     }
-    self.connect_chrome(action == "open-wait")
-    return Some({ "ok": true, "message": "browser opened" })
+    if action == "open" {
+      if self.chrome_connecting {
+        return { "ok": true, "message": "browser open already requested" }
+      }
+      let group = match self.group {
+        Some(group) => group
+        None => fail("mapled task group is unavailable")
+      }
+      self.chrome_connecting = true
+      self.chrome_connection_error = None
+      group.spawn_bg(allow_failure=true, () => {
+        self.connect_chrome(false) catch {
+          error => {
+            self.chrome_connection_error = Some(error.to_string())
+            self.push_log("error", "mapled", error.to_string())
+          }
+        }
+        self.chrome_connecting = false
+      })
+      return { "ok": true, "message": "browser open requested" }
+    }
+    if self.chrome_connecting {
+      let deadline = now_ms() + 30000.0
+      while self.chrome_connecting && now_ms() < deadline {
+        if self.cdp is Some(cdp) && cdp.open {
+          return { "ok": true, "message": "browser opened" }
+        }
+        @async.sleep(50)
+      }
+      if self.cdp is Some(cdp) && cdp.open {
+        return { "ok": true, "message": "browser opened" }
+      }
+      fail(
+        self.chrome_connection_error.unwrap_or(
+          "browser connection did not complete before timeout",
+        ),
+      )
+    }
+    self.chrome_connecting = true
+    self.chrome_connection_error = None
+    self.connect_chrome(true) catch {
+      error => {
+        self.chrome_connecting = false
+        self.chrome_connection_error = Some(error.to_string())
+        raise error
+      }
+    }
+    self.chrome_connecting = false
+    return { "ok": true, "message": "browser opened" }
   }
   if action == "logs-clear" {
     self.logs.clear()
-    return Some({ "ok": true, "message": "browser logs cleared" })
+    return { "ok": true, "message": "browser logs cleared" }
   }
   if action == "cmd" {
-    let mut console_ready = false
-    let deadline = now_ms() + 30000.0
-    while now_ms() < deadline {
-      try self.evaluate("typeof globalThis.$console", false) catch {
-        _ => ()
-      } noraise {
-        String("object") => console_ready = true
-        _ => ()
-      }
-      if console_ready { break }
-      @async.sleep(250)
-    }
-    guard console_ready else {
-      fail("globalThis.$console was not installed before timeout")
+    guard self.evaluate("typeof globalThis.$console", false) is String("object") else {
+      fail("globalThis.$console is not ready; run `maple wait-ready`")
     }
     let command = match request {
       { "command": String(value), .. } => value
@@ -704,14 +777,14 @@ async fn Daemon::handle(self : Daemon, socket : JsSocket, request : Json) -> Jso
       _ => Json::array([])
     }
     let expression = "globalThis.$console.cmd(\{Json::string(command).stringify()}, ...\{args.stringify()})"
-    return Some({ "ok": true, "result": self.evaluate(expression, true) })
+    return { "ok": true, "result": self.evaluate(expression, true) }
   }
   if action == "eval" {
     let expression = match request {
       { "expression": String(value), .. } => value
       _ => ""
     }
-    return Some({ "ok": true, "result": self.evaluate(expression, true) })
+    return { "ok": true, "result": self.evaluate(expression, true) }
   }
   if action == "logs" {
     let wanted = match request {
@@ -720,27 +793,29 @@ async fn Daemon::handle(self : Daemon, socket : JsSocket, request : Json) -> Jso
     }
     let logs = self.logs.filter(entry => wanted == "" || entry.level == wanted)
     let start = if logs.length() > 200 { logs.length() - 200 } else { 0 }
-    return Some({
+    return {
       "ok": true,
-      "logs": logs.view(start~).map(entry => entry.to_json()),
-    })
+      "logs": logs.view(start~).map(entry => ToJson::to_json(entry)),
+    }
   }
   if action == "network" {
     let failed_only = request is { "failed": True, .. }
     let entries : Array[NetworkEntry] = []
     for id in self.request_order {
       if self.requests.get(id) is Some(entry) &&
-        (!failed_only ||
-        entry.failed == Some(true) ||
-        entry.status.unwrap_or(0) >= 400) {
+        (
+          !failed_only ||
+          entry.failed == Some(true) ||
+          entry.status.unwrap_or(0) >= 400
+        ) {
         entries.push(entry)
       }
     }
     let start = if entries.length() > 200 { entries.length() - 200 } else { 0 }
-    return Some({
+    return {
       "ok": true,
-      "entries": entries.view(start~).map(entry => entry.to_json()),
-    })
+      "entries": entries.view(start~).map(entry => ToJson::to_json(entry)),
+    }
   }
   if action == "screenshot" {
     let response = self.send_cdp("Page.captureScreenshot", {
@@ -755,13 +830,15 @@ async fn Daemon::handle(self : Daemon, socket : JsSocket, request : Json) -> Jso
       _ => "screenshot.png"
     }
     write_base64_file(out, data)
-    return Some({ "ok": true, "out": out })
+    return { "ok": true, "out": out }
   }
   if action == "reload" {
     ignore(self.send_cdp("Page.reload", { "ignoreCache": true }))
-    return Some({ "ok": true, "message": "reload requested" })
+    return { "ok": true, "message": "reload requested" }
   }
-  if action == "bot-run" { return Some(self.run_bot(request)) }
+  if action == "bot-run" {
+    return self.run_bot(request)
+  }
   if action == "wait-ready" {
     let mut console_ready = false
     let console_deadline = now_ms() + 30000.0
@@ -772,7 +849,9 @@ async fn Daemon::handle(self : Daemon, socket : JsSocket, request : Json) -> Jso
         String("object") => console_ready = true
         _ => ()
       }
-      if console_ready { break }
+      if console_ready {
+        break
+      }
       @async.sleep(250)
     }
     guard console_ready else {
@@ -781,121 +860,144 @@ async fn Daemon::handle(self : Daemon, socket : JsSocket, request : Json) -> Jso
     let mut state = Json::null()
     for _ in 0..<90 {
       let value = self.evaluate(
-        "globalThis.$console.render_game_to_text()",
-        true,
+        "globalThis.$console.render_game_to_text()", true,
       )
-      state = match value { String(text) => @json.parse(text); value => value }
-      if state is { "phase": "GameActive", .. } { break }
+      state = match value {
+        String(text) => @json.parse(text)
+        value => value
+      }
+      if state is { "phase": "GameActive", .. } {
+        break
+      }
       ignore(self.evaluate("globalThis.$console.step(10)", true))
     }
     if state is { "phase": "GameActive", .. } {
-      let response : Map[String, Json] = {
-        "ok": true,
-        "phase": "GameActive",
+      let response : Map[String, Json] = { "ok": true, "phase": "GameActive" }
+      if state is { "map_id": map_id, .. } {
+        response["map_id"] = map_id
       }
-      if state is { "map_id": map_id, .. } { response["map_id"] = map_id }
-      return Some(Json::object(response))
+      return Json::object(response)
     }
     let phase = match state {
       { "phase": String(value), .. } => value
       _ => "unknown"
     }
-    return Some({
+    return {
       "ok": false,
       "error": "game not active after waiting; current phase=\{phase}",
-    })
+    }
   }
   if action == "close" {
-    schedule(50, () => self.shutdown("close requested"))
-    return Some({
-      "ok": true,
-      "pid": process_pid(),
-      "message": "close requested",
-    })
+    return { "ok": true, "message": "close requested" }
   }
-  Some({ "ok": false, "error": "unknown action: \{action}" })
+  { "ok": false, "error": "unknown action: \{action}" }
 }
 
 ///|
-async fn Daemon::handle_line(
-  self : Daemon,
-  socket : JsSocket,
-  line : String,
-) -> String {
+async fn Daemon::serve_connection(self : Daemon, socket : @socket.Tcp) -> Unit {
+  guard socket.read_until("\n") is Some(line) else { return }
   let request = @json.parse(line) catch {
     err => {
       self.push_log("error", "mapled", err.to_string())
       let response : Json = { "ok": false, "error": err.to_string() }
-      return response.stringify()
+      socket.write(response.stringify() + "\n")
+      return
     }
   }
-  try self.handle(socket, request) catch {
+  guard request is { "token": String(token), .. } && token == self.token else {
+    socket.write(
+      ({ "ok": false, "error": "invalid capability token" } : Json).stringify() +
+      "\n",
+    )
+    return
+  }
+  if request is { "action": "logs-follow", .. } {
+    for entry in self.logs {
+      let event : Json = { "event": "log", "entry": ToJson::to_json(entry) }
+      socket.write(event.stringify() + "\n")
+    }
+    let subscriber = LogSubscriber::{
+      id: self.next_subscriber_id,
+      queue: @async.Queue(kind=DiscardOldest(1024)),
+    }
+    self.next_subscriber_id += 1
+    self.subscribers.push(subscriber)
+    defer (for index, current in self.subscribers {
+      if current.id == subscriber.id {
+        ignore(self.subscribers.remove(index))
+        break
+      }
+    })
+    for ;; {
+      let line = subscriber.queue.get()
+      socket.write(line)
+    }
+    return
+  }
+  let response = self.handle(request) catch {
     error => {
       self.push_log("error", "mapled", error.to_string())
-      let response : Json = { "ok": false, "error": error.to_string() }
-      response.stringify()
+      ({ "ok": false, "error": error.to_string() } : Json)
     }
-  } noraise {
-    Some(response) => response.stringify()
-    None => ""
+  }
+  if request is { "action": "close", .. } {
+    self.shutdown()
+  }
+  socket.write(response.stringify() + "\n")
+  if request is { "action": "close", .. } {
+    self.stop.put("mapled stopped")
   }
 }
 
 ///|
-fn Daemon::shutdown(self : Daemon, reason : String) -> Unit {
+async fn Daemon::shutdown(self : Daemon) -> Unit {
   guard !self.finished else { return }
   self.finished = true
-  let expected = reason == "close requested" ||
-    reason == "SIGINT" ||
-    reason == "SIGTERM"
-  self.write_state(if expected { "stopped" } else { "failed" })
   if self.server is Some(server) {
-    close_server(server)
+    server.close()
     self.server = None
   }
-  remove_path(self.socket_path)
   if self.cdp is Some(cdp) {
-    close_cdp(cdp)
+    cdp.close()
     self.cdp = None
   }
   if self.chrome is Some(chrome) {
-    kill_chrome(chrome)
+    chrome.cancel()
     self.chrome = None
   }
-  remove_own_pid(self.pid_path, process_pid())
-  resolve_stop(
-    self.stop,
-    if expected { "mapled stopped" } else { "mapled stopped: \{reason}" },
-  )
+  self.subscribers.clear()
+  self.group = None
+  remove_path(self.state_path)
 }
 
 ///|
 async fn Daemon::run(self : Daemon) -> String {
-  try {
-    self.write_state("initializing")
-    self.write_state("starting")
-    remove_path(self.socket_path)
-    let server = start_server(
-      self.socket_path,
-      (socket, line) => @js_async.Promise::from_async(() => {
-        self.handle_line(socket, line)
-      }),
-      message => self.push_log("error", "mapled", message),
-    ).wait()
-    self.server = Some(server)
-    chmod_owner_only(self.socket_path)
-    write_text_file(self.pid_path, process_pid().to_string())
+  @signal.set_global_cancellation_signals([SIGINT, SIGTERM, SIGHUP])
+  let token_bytes = FixedArray::make(32, b'\x00')
+  fill_secure_random(token_bytes, token_bytes.length())
+  self.token = @base64.encode(
+      token_bytes.unsafe_reinterpret_as_bytes(),
+      padding=false,
+    )
+    .replace_all(old="+", new="-")
+    .replace_all(old="/", new="_")
+  let server = @socket.TcpServer::TcpServer(
+    @socket.Addr::parse("127.0.0.1:39933"),
+    reuse_addr=true,
+  )
+  self.server = Some(server)
+  @async.with_task_group(group => {
+    self.group = Some(group)
+    group.add_defer(() => {
+      @async.protect_from_cancel(resume_on_cancel=true, () => self.shutdown())
+    })
+    group.spawn_bg(() => {
+      server.run_forever((socket, _) => self.serve_connection(socket))
+    })
     self.write_state("ready")
-    install_signals(signal => self.shutdown(signal))
-    self.push_log("info", "mapled", "listening on \{self.socket_path}")
-    wait_stop(self.stop).wait()
-  } catch {
-    error => {
-      self.write_state("failed")
-      if self.server is Some(server) { close_server(server) }
-      remove_path(self.socket_path)
-      remove_own_pid(self.pid_path, process_pid())
-      raise error
-    }
-  }
+    self.push_log("info", "mapled", "listening on 127.0.0.1:39933")
+    let message = self.stop.get()
+    group.return_immediately(message)
+    message
+  })
 }

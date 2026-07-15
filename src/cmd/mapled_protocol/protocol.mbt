@@ -4,7 +4,7 @@
 /// messages become `{ "kind": "invalid", ... }` instead of raising.
 ///
 /// # Example
-/// ```moonbit
+/// ```moonbit nocheck
 /// let event = summarize_cdp_event(
 ///   #|{"method":"Network.loadingFinished","params":{"requestId":"1","encodedDataLength":42}}
 ///   ,
@@ -15,11 +15,7 @@
 pub fn summarize_cdp_event(message : String, time : Double) -> Json {
   let json = @json.parse(message) catch {
     err =>
-      return {
-        "kind": "invalid",
-        "error": err.to_string(),
-        "message": message,
-      }
+      return { "kind": "invalid", "error": err.to_string(), "message": message }
   }
   match json {
     {
@@ -50,7 +46,7 @@ pub fn summarize_cdp_event(message : String, time : Double) -> Json {
     { "method": "Runtime.exceptionThrown", "params": params, .. } => {
       let detail = match params {
         { "exceptionDetails": value, .. } => value
-        _ => Json::object({})
+        _ => Json::empty_object()
       }
       let text = match detail {
         { "exception": { "description": String(value), .. }, .. } => value
@@ -110,23 +106,20 @@ pub fn summarize_cdp_event(message : String, time : Double) -> Json {
       "method": "Network.requestWillBeSent",
       "params": {
         "requestId": String(request_id),
-        "request": {
-          "url": String(url),
-          "method": String(request_method),
-          ..
-        },
+        "request": { "url": String(url), "method": String(request_method), .. },
         "type": String(type_),
         ..
       },
       ..
-    } => {
-      "kind": "network-request",
-      "requestId": request_id,
-      "url": url,
-      "method": request_method,
-      "type": type_,
-      "time": time,
-    }
+    } =>
+      {
+        "kind": "network-request",
+        "requestId": request_id,
+        "url": url,
+        "method": request_method,
+        "type": type_,
+        "time": time,
+      }
     {
       "method": "Network.responseReceived",
       "params": {
@@ -141,15 +134,16 @@ pub fn summarize_cdp_event(message : String, time : Double) -> Json {
         ..
       },
       ..
-    } => {
-      "kind": "network-response",
-      "requestId": request_id,
-      "url": url,
-      "status": status,
-      "mime": mime,
-      "type": type_,
-      "time": time,
-    }
+    } =>
+      {
+        "kind": "network-response",
+        "requestId": request_id,
+        "url": url,
+        "status": status,
+        "mime": mime,
+        "type": type_,
+        "time": time,
+      }
     {
       "method": "Network.loadingFinished",
       "params": {
@@ -158,12 +152,13 @@ pub fn summarize_cdp_event(message : String, time : Double) -> Json {
         ..
       },
       ..
-    } => {
-      "kind": "network-finished",
-      "requestId": request_id,
-      "size": size,
-      "time": time,
-    }
+    } =>
+      {
+        "kind": "network-finished",
+        "requestId": request_id,
+        "size": size,
+        "time": time,
+      }
     {
       "method": "Network.loadingFailed",
       "params": {
@@ -196,7 +191,7 @@ pub fn summarize_cdp_event(message : String, time : Double) -> Json {
 /// `None`.
 ///
 /// # Example
-/// ```moonbit
+/// ```moonbit nocheck
 /// let targets : Json = [{
 ///   "type": "page",
 ///   "url": "http://localhost:8080/game_debug.html",

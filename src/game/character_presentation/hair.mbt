@@ -80,9 +80,7 @@ pub fn Hair::parse(
             continue
           }
         }
-        let brow = layernode.map.0
-          .get("brow")
-          .unwrap_or(@struct.Point::default())
+        let brow = layernode.map.0.get("brow").unwrap_or(Default::default())
         let shift = drawinfo.get_hair_pos(stance, frame) - brow
         let texture : @resource.NxTexture = layernode.texture.frames[0].texture
         let texture = { ..texture, origin: texture.origin - shift }
@@ -109,7 +107,7 @@ pub fn Hair::parse(
     )
   }
   let name = hair_names.get(hairid.to_string()).unwrap_or("")
-  let haircolors = [
+  let haircolors : ReadOnlyArray[String] = [
     "Black", "Red", "Orange", "Blonde", "Green", "Blue", "Violet", "Brown",
   ]
   let index = hairid % 10

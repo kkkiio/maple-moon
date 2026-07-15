@@ -71,7 +71,7 @@ pub fn StorageItemEntry::to_server_proto(
 ) -> @server_proto.InventoryItemEntry {
   match self {
     Equip(eq) => {
-      let stats : @resource.EnumMap[@maple_stat.EquipStatId, Int] = @resource.EnumMap::default()
+      let stats : @resource.EnumMap[@maple_stat.EquipStatId, Int] = Default::default()
       for k, v in eq.stats {
         if @maple_stat.EquipStatId::from_name(k) is Some(stat_id) {
           stats.0.set(stat_id, v)
@@ -165,7 +165,7 @@ pub fn LocalServer::save_character_inventory_data(
     let items_array : Array[Json] = []
     for _slot, item_entry in tab_items {
       let storage_entry = StorageItemEntry::from_server_proto(item_entry)
-      items_array.push(storage_entry.to_json())
+      items_array.push(ToJson::to_json(storage_entry))
     }
     self.db.save_json(
       character_inventory_store_name,

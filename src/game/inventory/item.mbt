@@ -7,7 +7,7 @@ pub struct Item {
 }
 
 ///|
-pub fn Item::new(
+pub fn Item::Item(
   item_id : Int,
   expiration : Int64,
   owner : String,

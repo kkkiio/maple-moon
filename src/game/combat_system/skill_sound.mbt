@@ -4,7 +4,7 @@ struct SkillSound {
 }
 
 ///|
-fn SkillSound::new(skill_id : Int) -> SkillSound {
+fn SkillSound::SkillSound(skill_id : Int) -> SkillSound {
   { skill_id, }
 }
 

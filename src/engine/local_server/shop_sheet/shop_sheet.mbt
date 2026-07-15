@@ -44,7 +44,7 @@ pub fn parse_shop_rows(tsv_text : String) -> Array[NxShopRow] raise {
 pub fn parse_shop_item_rows(
   tsv_text : String,
 ) -> Map[Int, Array[NxShopItemRow]] raise {
-  let rows : Map[Int, Array[NxShopItemRow]] = {}
+  let rows : Map[Int, Array[NxShopItemRow]] = Map([])
   let sheet = @data_sheet.parse_tsv_sheet(tsv_text, "shopitems.tsv")
   for row in sheet.rows() {
     let row : NxShopItemRow = {
@@ -73,7 +73,7 @@ pub fn build_npc_shop_map(
 ) -> Map[Int, @server_proto.OpenNpcShopMessage] raise {
   let shops = parse_shop_rows(shops_tsv)
   let items_by_shop = parse_shop_item_rows(shopitems_tsv)
-  let by_npc_id : Map[Int, @server_proto.OpenNpcShopMessage] = {}
+  let by_npc_id : Map[Int, @server_proto.OpenNpcShopMessage] = Map([])
   for shop in shops {
     if shop.shop_id <= 0 {
       fail("invalid shop_id: \{shop.shop_id}")

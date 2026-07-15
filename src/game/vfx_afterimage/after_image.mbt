@@ -1,4 +1,10 @@
 ///|
+using @resource {type AnimationLoader}
+
+///|
+using @struct {type Rectangle}
+
+///|
 /// 残影. 角色移动或攻击时，在身后留下的半透明或特效化的影子效果，用来表现速度感或技能的威力。
 pub struct AfterImage {
   animation : @ms_animation.Animation
@@ -34,7 +40,7 @@ pub impl @json.FromJson for NxAfterImage with fn from_json(json, path) -> NxAfte
       obj.get("rb").unwrap_or(Json::null()),
       path=path.add_key("rb"),
     )
-    @struct.Rectangle::new(left_top, right_bottom)
+    Rectangle(left_top, right_bottom)
   }
 
   // Find the first numeric key and parse animation from it
@@ -113,10 +119,10 @@ pub fn load_after_images(name : String) -> NxAfterImages {
     } else {
     abort("invalid afterimage mx resource: \{mx_path}")
   }
-  let loaded = @resource.AnimationLoader::new().load(
+  let loaded = AnimationLoader().load(
     @resource.resolve_ref(mx_path, animations_path),
   )
-  let level_map : Map[Int, Map[String, NxAfterImage]] = {}
+  let level_map : Map[Int, Map[String, NxAfterImage]] = Map([])
   for level_key, level_val in levels_obj {
     guard level_val is Object(stance_obj) else {
       abort("invalid afterimage level entry: \{mx_path}/levels/\{level_key}")
@@ -124,7 +130,7 @@ pub fn load_after_images(name : String) -> NxAfterImages {
     let level = @string.parse_int(level_key) catch {
       _ => abort("invalid afterimage level key: \{mx_path}/levels/\{level_key}")
     }
-    let stance_map : Map[String, NxAfterImage] = {}
+    let stance_map : Map[String, NxAfterImage] = Map([])
     for stance_key, stance_val in stance_obj {
       guard stance_val is Object(entry_obj) else {
         abort(
@@ -190,7 +196,10 @@ pub fn AfterImage::get_collection(
 }
 
 ///|
-fn AfterImage::new(resource : NxAfterImage, facing_right : Bool) -> AfterImage {
+fn AfterImage::AfterImage(
+  resource : NxAfterImage,
+  facing_right : Bool,
+) -> AfterImage {
   let range = resource.range
   let animation = resource.animation
   let first_frame = resource.first_frame
@@ -290,7 +299,7 @@ pub fn add_after_image(
   if after_images.get(entity) is Some(old) {
     old.after_image.dispose()
   }
-  let after_image = AfterImage::new(resource, facing_right)
+  let after_image = AfterImage(resource, facing_right)
   after_image.attach(entity)
   after_images.set(entity, { after_image, look })
 }

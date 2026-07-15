@@ -17,7 +17,7 @@ pub fn BulletData::load(strid : String) -> BulletData {
     _ => abort("Invalid bullet id: \{strid}")
   }
   let item_data = @item.ItemData::load(id)
-  BulletData::new(src, item_data, strid)
+  BulletData(src, item_data, strid)
 }
 
 ///|
@@ -39,7 +39,7 @@ fn load_bullet_native_animation(
     _ => abort("missing mx_animation in bullet node: \{strid}")
   }
   let resolved = @resource.resolve_ref(base_path, ref_path)
-  let animation_loader = @resource.AnimationLoader::new()
+  let animation_loader = AnimationLoader()
   let loaded = animation_loader.load(resolved)
   let clip = loaded.clip("main") catch {
     _ => abort("missing main clip in bullet animation: \{strid}")
@@ -48,7 +48,7 @@ fn load_bullet_native_animation(
 }
 
 ///|
-fn BulletData::new(
+fn BulletData::BulletData(
   src : Json,
   item_data : @item.ItemData,
   strid : String,

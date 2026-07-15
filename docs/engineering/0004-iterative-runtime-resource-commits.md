@@ -1,7 +1,5 @@
 # Scoped Runtime Resource Commits
 
-Date: 2026-06-12
-
 ## Context
 
 Maple Moon resources are generated from large upstream MapleStory data sets.

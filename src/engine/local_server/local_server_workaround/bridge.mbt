@@ -12,13 +12,13 @@ let state : BridgeState = { server: None }
 ///|
 #cfg(target="js")
 fn new_runtime_db() -> &@local_server.DB {
-  @local_server.BrowserDB::new()
+  @local_server.BrowserDB()
 }
 
 ///|
 #cfg(not(target="js"))
 fn new_runtime_db() -> &@local_server.DB {
-  @local_server.FileDB::new()
+  @local_server.FileDB()
 }
 
 ///|
@@ -32,7 +32,7 @@ fn new_runtime_db() -> &@local_server.DB {
 /// @game_server.init_server()
 /// ```
 pub fn init_server() -> Unit {
-  let server = @local_server.LocalServer::new(
+  let server = @local_server.LocalServer(
     db=new_runtime_db(),
     drop_rng=@random.Rand::chacha8(seed=@local_server.default_rand_seed.val),
   )

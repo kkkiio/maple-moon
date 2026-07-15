@@ -1,12 +1,25 @@
 import {
   "moonbitlang/async",
-  "moonbitlang/async/js_async",
+  "moonbitlang/async/fs",
+  "moonbitlang/async/io",
+  "moonbitlang/async/process",
+  "moonbitlang/async/signal",
+  "moonbitlang/async/socket",
+  "moonbitlang/async/stdio",
   "moonbitlang/core/argparse",
+  "moonbitlang/core/encoding/utf8",
+  "moonbitlang/core/env",
+  "moonbitlang/core/json",
+  "moonbitlang/core/string",
+  "moonbitlang/x/path",
+  "moonbitlang/x/sys",
 }
 
-supported_targets = "js"
+supported_targets = "native"
+
+pkgtype(kind: "executable")
 
 options(
-  "is-main": true,
-  targets: { "main.mbt": [ "js" ] },
+  "native-stub": [ "native_launcher.c" ],
+  targets: { "main.mbt": [ "native" ], "native_launcher.mbt": [ "native" ] },
 )

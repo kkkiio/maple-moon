@@ -50,7 +50,7 @@ pub struct MobAttack {
 
 ///|
 /// Create a mob attack for touch damage.
-pub fn MobAttack::new(
+pub fn MobAttack::MobAttack(
   watk : Int,
   origin : @struct.Point[Int],
   mobid : Int,
@@ -67,7 +67,7 @@ pub fn MobAttack::default() -> MobAttack {
     matk: 0,
     mobid: 0,
     oid: 0,
-    origin: @struct.Point::default(),
+    origin: Default::default(),
     valid: false,
   }
 }
@@ -82,7 +82,7 @@ pub struct MobAttackResult {
 }
 
 ///|
-pub fn MobAttackResult::new(
+pub fn MobAttackResult::MobAttackResult(
   attack : MobAttack,
   damage : Int,
   direction : Int,
@@ -126,14 +126,14 @@ pub fn AttackResult::default() -> AttackResult {
     stance: 0,
     speed: 0,
     toleft: false,
-    damage_lines: {},
+    damage_lines: Map([]),
     first_oid: 0,
     last_oid: 0,
   }
 }
 
 ///|
-pub fn AttackResult::new(attack : Attack) -> AttackResult {
+pub fn AttackResult::AttackResult(attack : Attack) -> AttackResult {
   {
     t: attack.t,
     attacker: 0,
@@ -145,7 +145,7 @@ pub fn AttackResult::new(attack : Attack) -> AttackResult {
     display: 0,
     stance: attack.stance,
     speed: attack.speed,
-    damage_lines: {},
+    damage_lines: Map([]),
     first_oid: 0,
     last_oid: 0,
     bullet: attack.bullet,

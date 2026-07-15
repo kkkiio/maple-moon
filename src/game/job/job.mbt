@@ -12,7 +12,7 @@ pub(all) enum Level {
 pub fn Level::int_value(self : Level) -> Int = "%identity"
 
 ///|
-let all_levels : Array[Level] = [BEGINNER, FIRST, SECOND, THIRD, FOURTH]
+let all_levels : ReadOnlyArray[Level] = [BEGINNER, FIRST, SECOND, THIRD, FOURTH]
 
 ///|
 pub fn get_levels(upto? : Level = FOURTH) -> Iter[Level] {
@@ -58,11 +58,11 @@ pub fn Job::load(id? : Int = 0) -> Job {
     let data = JobData::load(subid)
     sub_job_data_map[subid] = data
   }
-  Job::new(id, level, sub_job_data_map)
+  Job(id, level, sub_job_data_map)
 }
 
 ///|
-pub fn Job::new(
+pub fn Job::Job(
   id : Int,
   level : Level,
   sub_job_data_map : Map[Int, JobData],
@@ -364,7 +364,7 @@ pub impl @json.FromJson for JobId with fn from_json(json, path) {
 
 ///|
 pub fn JobId::get_name_by_id(jid : JobId) -> String {
-  jid.to_string()
+  Show::to_string(jid)
 }
 
 ///|

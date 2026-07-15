@@ -32,8 +32,8 @@ pub impl @json.FromJson for NxStanceBodyAction with fn from_json(value, path) {
       }
       let mov = match value {
         { "move": [Json::Number(x, ..), Json::Number(y, ..)], .. } =>
-          Point::new(x.to_int(), y.to_int())
-        _ => Point::default()
+          Point(x.to_int(), y.to_int())
+        _ => Default::default()
       }
       {
         stance: StanceId::from_name(ststr).unwrap(),
@@ -53,10 +53,10 @@ pub impl @json.FromJson for NxStanceBodyAction with fn from_json(value, path) {
 ///|
 pub fn NxStanceBodyAction::default() -> NxStanceBodyAction {
   {
-    stance: StanceId::default(),
+    stance: Default::default(),
     frame: 0,
     delay: 0,
-    mov: @struct.Point::default(),
+    mov: Default::default(),
     attack_frame: false,
   }
 }
@@ -100,7 +100,7 @@ struct BodyDrawInfo {
 }
 
 ///|
-pub fn BodyDrawInfo::new(
+pub fn BodyDrawInfo::BodyDrawInfo(
   bodynode : Map[StanceId, Array[NxStanceBody]],
   headnode : Map[StanceId, Array[NxMultiPartFrame]],
 ) -> BodyDrawInfo {
@@ -150,7 +150,7 @@ pub fn BodyDrawInfo::new(
             .bind(fn(it) { it.get(frame) })
             .bind(fn(it) { it.part_texture_map.get("head") })
             .map(fn(it) { it.map.0 })
-            .unwrap_or({})
+            .unwrap_or(Map([]))
           let bodyshiftmap : Map[BodyLayer, Map[String, Point[Int]]] = Map([])
           for _, part in parts {
             guard part.z is Some(z) else { continue }
@@ -161,7 +161,7 @@ pub fn BodyDrawInfo::new(
             bodyshiftmap
             .get(layer)
             .bind(fn(it) { it.get(key) })
-            .unwrap_or(Point::default())
+            .unwrap_or(Default::default())
           }
 
           body_positions[stance.int_value()].set(
@@ -243,7 +243,9 @@ pub fn BodyDrawInfo::get_body_position(
   stance : StanceId,
   frame : Int,
 ) -> Point[Int] {
-  self.body_positions[stance.int_value()].get(frame).unwrap_or(Point::default())
+  self.body_positions[stance.int_value()]
+  .get(frame)
+  .unwrap_or(Default::default())
 }
 
 ///|
@@ -252,7 +254,9 @@ pub fn BodyDrawInfo::get_arm_position(
   stance : StanceId,
   frame : Int,
 ) -> Point[Int] {
-  self.arm_positions[stance.int_value()].get(frame).unwrap_or(Point::default())
+  self.arm_positions[stance.int_value()]
+  .get(frame)
+  .unwrap_or(Default::default())
 }
 
 ///|
@@ -261,7 +265,9 @@ pub fn BodyDrawInfo::get_hand_position(
   stance : StanceId,
   frame : Int,
 ) -> Point[Int] {
-  self.hand_positions[stance.int_value()].get(frame).unwrap_or(Point::default())
+  self.hand_positions[stance.int_value()]
+  .get(frame)
+  .unwrap_or(Default::default())
 }
 
 ///|
@@ -270,7 +276,9 @@ pub fn BodyDrawInfo::get_head_position(
   stance : StanceId,
   frame : Int,
 ) -> Point[Int] {
-  self.head_positions[stance.int_value()].get(frame).unwrap_or(Point::default())
+  self.head_positions[stance.int_value()]
+  .get(frame)
+  .unwrap_or(Default::default())
 }
 
 ///|
@@ -279,7 +287,9 @@ pub fn BodyDrawInfo::get_hair_pos(
   stance : StanceId,
   frame : Int,
 ) -> Point[Int] {
-  self.hair_positions[stance.int_value()].get(frame).unwrap_or(Point::default())
+  self.hair_positions[stance.int_value()]
+  .get(frame)
+  .unwrap_or(Default::default())
 }
 
 ///|
@@ -288,7 +298,9 @@ pub fn BodyDrawInfo::get_face_pos(
   stance : StanceId,
   frame : Int,
 ) -> Point[Int] {
-  self.face_positions[stance.int_value()].get(frame).unwrap_or(Point::default())
+  self.face_positions[stance.int_value()]
+  .get(frame)
+  .unwrap_or(Default::default())
 }
 
 ///|
@@ -407,7 +419,7 @@ pub impl @json.FromJson for NxBodyLayerTexture with fn from_json(json, path) {
   let texture = @json.from_json(json, path~)
   let map = match json {
     { "map": map_json, .. } => @json.from_json(map_json, path~)
-    _ => {}
+    _ => Map([])
   }
   { z, texture, map }
 }

@@ -33,7 +33,7 @@ keep running. Run the following command from another terminal to explicitly
 open Chrome again:
 
 ```bash
-moon run --target js src/cmd/maple open
+moon run --target native src/cmd/maple open
 ```
 
 Press `Ctrl+C` in the `just dev` terminal to stop the development session.

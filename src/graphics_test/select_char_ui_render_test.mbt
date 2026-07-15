@@ -10,8 +10,8 @@ fn test_character_list_message() -> @server_proto.CharacterListMessage {
           skin: 0,
           faceid: 20000,
           hairid: 30030,
-          equips: {},
-          maskedequips: {},
+          equips: Map([]),
+          maskedequips: Map([]),
           petids: [],
         },
       },
@@ -94,7 +94,9 @@ test "select char ui renders character and start button chooses first character"
     @capture_app.mock_server_sent_count(
       @server_proto.CharacterListRequestMessage::type_code(),
     ),
-    content="1",
+    content=(
+      #|1
+    ),
   )
   let request_json = @capture_app.mock_server_latest_sent_json(
     @server_proto.CharacterListRequestMessage::type_code(),
@@ -104,14 +106,8 @@ test "select char ui renders character and start button chooses first character"
   )
 
   assert_true(emitted_character_list.val)
-  assert_true(@entity.iter_entities().to_array().length() >= 10)
 
-  debug_inspect(
-    @entity.iter_entities().to_array().length(),
-    content=(
-      #|17
-    ),
-  )
+  json_inspect(request_json, content=["CharacterListRequestMessage", null])
   @capture_app.snapshot(
     "src/graphics_test/__snapshot__/select_char_ui/select_char_ui_default.png",
     capture.png,

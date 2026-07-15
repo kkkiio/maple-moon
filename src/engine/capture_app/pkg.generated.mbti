@@ -4,6 +4,7 @@ package "KKKIIO/maple-moon/engine/capture_app"
 import {
   "KKKIIO/maple-moon/game/server_proto",
   "Milky2018/selene/app",
+  "Milky2018/selene/ecs",
   "Milky2018/selene/runtime_debug",
   "moonbitlang/core/json",
 }
@@ -26,6 +27,8 @@ pub fn mock_server_latest_sent_json_internal(Int) -> Json?
 pub fn mock_server_sent_count(Int) -> Int
 
 pub fn mock_server_sent_count_internal(Int) -> Int
+
+pub fn new_graphics_test_app() -> (@app.App, @ecs.World)
 
 pub fn record_mock_server_sent_message(Int, Json) -> Unit
 

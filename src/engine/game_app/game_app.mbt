@@ -56,7 +56,7 @@ pub fn game_systems() -> @app.Plugin {
       system_name="app_resource_setup_system",
     )
     .add_system(Startup, fn(_world) {
-      @item.set_item_data_system(@item.ItemDataSystem::new())
+      @item.set_item_data_system(ItemDataSystem())
       @passive.set_passive_randomizer(@random.Rand::new())
       @game_server.init_server()
       @select_char_ui.setup_game_server_handlers()

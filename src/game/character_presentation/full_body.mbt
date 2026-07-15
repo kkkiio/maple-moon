@@ -23,13 +23,13 @@ pub(all) struct FullBody {
 // }
 
 ///|
-pub fn FullBody::new(
+pub fn FullBody::FullBody(
   skin : Int,
   drawinfo : @types.BodyDrawInfo,
   bodynode : Map[StanceId, Array[NxStanceBody]],
   headnode : Map[StanceId, Array[NxMultiPartFrame]],
 ) -> FullBody {
-  let stances = {}
+  let stances = Map([])
   for stance, stance_body in bodynode {
     let stance_head = headnode.get(stance).unwrap_or([])
     stances.set(
@@ -86,15 +86,15 @@ fn parse_body_animations_by_stance(
       let shift = match layer {
         @types.BodyLayer::HAND_BELOW_WEAPON =>
           drawinfo.get_hand_position(stance, frame) -
-          partnode.map.0.get_or_default("handMove", @struct.Point::default())
+          partnode.map.0.get_or_default("handMove", Default::default())
         _ =>
           drawinfo.get_body_position(stance, frame) -
           (if stance is StanceId::DEAD {
-            @struct.Point::new(5, 4)
+            Point(5, 4)
           } else {
-            @struct.Point::default()
+            Default::default()
           }) -
-          partnode.map.0.get_or_default("navel", @struct.Point::default())
+          partnode.map.0.get_or_default("navel", Default::default())
       }
       let texture = partnode.texture.frames[0].texture
       let texture = { ..texture, origin: texture.origin - shift }
@@ -167,7 +167,7 @@ fn parse_body_animations_by_stance(
 }
 
 ///|
-let skintypes : Array[String] = [
+let skintypes : ReadOnlyArray[String] = [
   "Light", "Tan", "Dark", "Pale", "Blue", "Green", "", "", "", "Grey", "Pink", "Red",
 ]
 

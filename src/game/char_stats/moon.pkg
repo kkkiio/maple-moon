@@ -1,4 +1,5 @@
 import {
+  "moonbitlang/core/immut/hashmap",
   "KKKIIO/maple-moon/game/res_types" @struct,
   "KKKIIO/maple-moon/engine/resource",
   "KKKIIO/maple-moon/game/maple_stat",

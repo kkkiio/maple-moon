@@ -58,7 +58,7 @@ priv struct SlotButton {
 }
 
 ///|
-let tabs : Array[InventoryType] = [
+let tabs : ReadOnlyArray[InventoryType] = [
   InventoryType::EQUIP,
   InventoryType::USE,
   InventoryType::SETUP,

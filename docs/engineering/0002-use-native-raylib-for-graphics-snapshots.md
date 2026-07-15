@@ -1,7 +1,5 @@
 # Use Native Raylib For Graphics Snapshots
 
-Date: 2026-06-23
-
 ## Context
 
 Maple Moon has browser and native runtime entrypoints. Browser checks are useful

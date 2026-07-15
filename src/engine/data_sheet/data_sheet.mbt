@@ -23,7 +23,7 @@ pub struct Row {
 /// - first line is header
 /// - only the final trailing empty line is allowed
 pub fn parse_tsv_sheet(text : String, source_name : String) -> Sheet raise {
-  let header : Map[String, Int] = {}
+  let header : Map[String, Int] = Map([])
   let rows : Array[Row] = []
   let lines = text.split("\n").collect()
   if lines.length() == 0 {

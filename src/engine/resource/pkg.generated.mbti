@@ -47,8 +47,8 @@ pub(all) suberror ResourceLoadError {
 // Types and methods
 pub(all) struct AnimationLoader {
 } derive(Default)
+pub fn AnimationLoader::AnimationLoader() -> Self
 pub fn AnimationLoader::load(Self, String) -> LoadedAnimations
-pub fn AnimationLoader::new() -> Self
 
 pub(all) struct EnumMap[K, V](Map[K, V]) derive(@debug.Debug)
 pub impl[K : Eq + Hash, V] Default for EnumMap[K, V]

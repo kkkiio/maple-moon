@@ -170,5 +170,5 @@ pub fn make_job_from_stats(stats_entry : @server_proto.StatsEntry) -> @job.Job {
   } else {
     @job.Level::FOURTH
   }
-  @job.Job::new(job_id, level, Map([]))
+  Job(job_id, level, Map([]))
 }

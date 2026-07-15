@@ -1,7 +1,5 @@
 # Testing Strategy & Boundaries
 
-Date: 2026-06-20
-
 ## Context
 
 项目测试偏重视觉回归，缺乏游戏逻辑行为的自动化验证。同时，历史上出现过

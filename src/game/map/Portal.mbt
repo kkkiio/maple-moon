@@ -135,7 +135,7 @@ pub(all) struct PortalWarpInfo {
 } derive(Debug)
 
 ///|
-fn PortalWarpInfo::new(
+fn PortalWarpInfo::PortalWarpInfo(
   m : Int,
   i : Bool,
   tn : String,
@@ -155,7 +155,7 @@ struct Portal {
 }
 
 ///|
-pub fn Portal::new(
+pub fn Portal::Portal(
   animation : @ms_animation.Animation?,
   t : PortalType,
   name : String,
@@ -169,7 +169,7 @@ pub fn Portal::new(
     t,
     name,
     position,
-    warp_info: PortalWarpInfo::new(tomap, intramap, toname, name),
+    warp_info: PortalWarpInfo(tomap, intramap, toname, name),
     touched: false,
   }
 }
@@ -211,9 +211,9 @@ pub fn Portal::get_position(self : Portal) -> Point[Int] {
 
 ///|
 pub fn Portal::bounds(self : Portal) -> @struct.Rectangle[Int] {
-  let lt = self.position + @struct.Point::new(-25, -100)
-  let rb = self.position + @struct.Point::new(25, 25)
-  @struct.Rectangle::new(lt, rb)
+  let lt = self.position + Point(-25, -100)
+  let rb = self.position + Point(25, 25)
+  Rectangle(lt, rb)
 }
 
 ///|

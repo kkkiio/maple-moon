@@ -2,7 +2,6 @@
 using @combat_system {
   type CombatAction,
   type RegularAttack,
-  type RegularAction,
   make_regular_attack,
   get_regular_attack_bullet,
 }
@@ -76,7 +75,7 @@ pub fn use_move(cc : &@combat_system.CombatCharacter, move_id : Int) -> Unit {
 
 ///|
 pub fn new_regular_attack(weapon_type : @weapon.Type) -> CombatAction {
-  let ra = RegularAttack::{ action: RegularAction::default() }
+  let ra = RegularAttack::{ action: RegularAction() }
   {
     id: 0,
     attack: true,

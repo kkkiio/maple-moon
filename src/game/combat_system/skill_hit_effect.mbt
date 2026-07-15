@@ -54,7 +54,7 @@ fn load_hit_effect(
   base_path : String,
 ) -> LoadedHitEffect {
   let resolved = @resource.resolve_ref(base_path, src.mx_animation)
-  let animation_loader = @resource.AnimationLoader::new()
+  let animation_loader = AnimationLoader()
   let loaded = animation_loader.load(resolved)
   let clip = loaded.clip(tag) catch {
     _ => abort("missing animation tag '\{tag}': \{resolved}")
@@ -169,7 +169,7 @@ pub fn new_twohanded_hit_effect(
   hit1 : NxHitEffect,
   base_path : String,
 ) -> (@combat_proto.AttackUser, @monster.Mob) -> Unit {
-  let effects = @utils.BoolPair::new(
+  let effects = BoolPair(
     new_hit_effect(hit0, skill_animation_tag(["hit", "0"]), base_path),
     new_hit_effect(hit1, skill_animation_tag(["hit", "1"]), base_path),
   )
@@ -240,7 +240,7 @@ pub fn new_by_level_twohanded_hit_effect(
         effects.push(
           (
             level,
-            @utils.BoolPair::new(
+            BoolPair(
               new_hit_effect(
                 pair.main,
                 skill_animation_tag(["CharLevel", level.to_string(), "hit", "0"]),

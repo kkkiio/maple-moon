@@ -6,7 +6,7 @@ struct MapDrops {
 }
 
 ///|
-fn MapDrops::new(src : Json) -> MapDrops raise @json.JsonDecodeError {
+fn MapDrops::MapDrops(src : Json) -> MapDrops raise @json.JsonDecodeError {
   let meso_icons : Map[MesoIcon, @resource.NxAnimation] = Map([])
   meso_icons[MesoIcon::BRONZE] = nx_node_to_animation(
     get_icon_raw(src, "09000000"),
@@ -153,7 +153,7 @@ fn DropSpawn::instantiate_meso(
   self : DropSpawn,
   icon : @resource.NxAnimation,
 ) -> &Drop {
-  MesoDrop::new(
+  MesoDrop(
     self.oid,
     self.owner,
     self.start,
@@ -170,7 +170,7 @@ fn DropSpawn::instantiate_item(
   self : DropSpawn,
   icon : @resource.NxTexture,
 ) -> &Drop {
-  ItemDrop::new(
+  ItemDrop(
     self.oid,
     self.owner,
     self.start,

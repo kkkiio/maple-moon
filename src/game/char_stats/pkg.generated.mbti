@@ -37,6 +37,7 @@ pub struct Assign {
 } derive(Default)
 
 type CharStats
+pub fn CharStats::CharStats(@server_proto.StatsEntry, () -> @weapon.Type, @job.Job, Map[@maple_stat.Id, Array[(Int, Int) -> Bool]], Map[@maple_stat.Id, Array[(Int64, Int64) -> Bool]], Map[@maple_stat.EquipStatId, Array[(Int, Int) -> Bool]]) -> Self
 pub fn CharStats::add_value(Self, @maple_stat.EquipStatId, Int) -> Unit
 pub fn CharStats::calculate_damage(Self, Int) -> Int
 pub fn CharStats::change_job(Self, @job.Job) -> Unit
@@ -62,7 +63,6 @@ pub fn CharStats::get_total(Self, @maple_stat.EquipStatId) -> Int
 pub fn CharStats::get_weapon_type(Self) -> @weapon.Type
 pub fn CharStats::init_totalstats(Self) -> Unit
 pub fn CharStats::is_damage_buffed(Self) -> Bool
-pub fn CharStats::new(@server_proto.StatsEntry, () -> @weapon.Type, @job.Job, Map[@maple_stat.Id, Array[(Int, Int) -> Bool]], Map[@maple_stat.Id, Array[(Int64, Int64) -> Bool]], Map[@maple_stat.EquipStatId, Array[(Int, Int) -> Bool]]) -> Self
 pub fn CharStats::set_exp(Self, Int64) -> Unit
 pub fn CharStats::set_i64stat(Self, @maple_stat.Id, Int64) -> Unit
 pub fn CharStats::set_map_id(Self, Int) -> Unit

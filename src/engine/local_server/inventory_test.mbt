@@ -16,7 +16,7 @@ test "storage_item_entry_json" {
     },
   )
 
-  let json = equip_data.to_json()
+  let json = ToJson::to_json(equip_data)
   json_inspect(json, content=[
     "Equip",
     {
@@ -38,7 +38,7 @@ test "storage_item_entry_json" {
     },
   )
 
-  let item_json = item_data.to_json()
+  let item_json = ToJson::to_json(item_data)
   json_inspect(item_json, content=[
     "Item",
     { "item_id": 2000000, "slot": 1, "count": 100 },

@@ -1,7 +1,5 @@
 # Playtest Bot — JS 场景脚本驱动的游戏行为测试
 
-Date: 2026-06-17
-
 ## Context
 
 项目有三种测试手段（`0008-testing-strategy-boundaries.md`）：快照测试覆盖视觉/数据回归，maple-cli 覆盖
@@ -157,7 +155,7 @@ globalThis.__bot = {
 mapled 新增 `maple bot` 子命令：
 
 ```bash
-moon run --target js src/cmd/maple bot run playtests/henesys_traversal.js
+moon run --target native src/cmd/maple bot run playtests/henesys_traversal.js
 
 # 流程：
 # 1. 构建 src/apps/game_debug

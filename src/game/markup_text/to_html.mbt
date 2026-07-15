@@ -85,12 +85,16 @@ pub(all) struct Style {
 
 ///|
 pub fn Style::to_css_style(self : Style) -> String {
-  let declarations : Array[String] = ["color: \{self.color}"]
-  if self.bold {
-    declarations.push("font-weight: bold")
-  }
-  if self.underline {
-    declarations.push("text-decoration: underline")
-  }
+  let declarations = ReadOnlyArray::from_array(
+    [
+      "color: \{self.color}",
+      ..if self.bold {
+        ["font-weight: bold"]
+      },
+      ..if self.underline {
+        ["text-decoration: underline"]
+      },
+    ],
+  )
   declarations.join("; ").to_string() + ";"
 }

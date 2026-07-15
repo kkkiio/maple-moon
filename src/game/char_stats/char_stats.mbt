@@ -60,7 +60,7 @@ fn init {
 using @server_proto {type StatsEntry}
 
 ///|
-pub fn CharStats::new(
+pub fn CharStats::CharStats(
   s : StatsEntry,
   weapon_type_getter : () -> @weapon.Type,
   job : @job.Job,
@@ -76,8 +76,8 @@ pub fn CharStats::new(
     portal: s.portal_id,
     base_stats: s.stats.0,
     base_i64stats: s.i64stats.0,
-    total_stats: @utils.Counter::new(),
-    buff_deltas: @utils.Counter::new(),
+    total_stats: Counter(),
+    buff_deltas: Counter(),
     percentages: Map([]),
     attack_speed: 0,
     projectile_range: 400,
@@ -100,35 +100,35 @@ pub fn CharStats::new(
 
 ///|
 pub fn CharStats::init_totalstats(self : CharStats) -> Unit {
-  self.total_stats.0.clear()
-  self.buff_deltas.0.clear()
+  self.total_stats.values.clear()
+  self.buff_deltas.values.clear()
   self.percentages.clear()
-  self.total_stats.0.set(
+  self.total_stats.values.set(
     @maple_stat.EquipStatId::HP,
     self.get_stat(@maple_stat.Id::MAXHP),
   )
-  self.total_stats.0.set(
+  self.total_stats.values.set(
     @maple_stat.EquipStatId::MP,
     self.get_stat(@maple_stat.Id::MAXMP),
   )
-  self.total_stats.0.set(
+  self.total_stats.values.set(
     @maple_stat.EquipStatId::STR,
     self.get_stat(@maple_stat.Id::STR),
   )
-  self.total_stats.0.set(
+  self.total_stats.values.set(
     @maple_stat.EquipStatId::DEX,
     self.get_stat(@maple_stat.Id::DEX),
   )
-  self.total_stats.0.set(
+  self.total_stats.values.set(
     @maple_stat.EquipStatId::INT,
     self.get_stat(@maple_stat.Id::INT),
   )
-  self.total_stats.0.set(
+  self.total_stats.values.set(
     @maple_stat.EquipStatId::LUK,
     self.get_stat(@maple_stat.Id::LUK),
   )
-  self.total_stats.0.set(@maple_stat.EquipStatId::SPEED, 100)
-  self.total_stats.0.set(@maple_stat.EquipStatId::JUMP, 100)
+  self.total_stats.values.set(@maple_stat.EquipStatId::SPEED, 100)
+  self.total_stats.values.set(@maple_stat.EquipStatId::JUMP, 100)
   self.max_damage = 0
   self.min_damage = 0
   // honor_ = 0;
@@ -319,23 +319,24 @@ fn CharStats::get_multiplier(self : CharStats) -> Double {
 
 ///|
 /// Externalising this for easier configurability.
-let eqstat_caps : Map[@maple_stat.EquipStatId, Int] = Map::from_array([
-  (@maple_stat.EquipStatId::STR, 999),
-  (@maple_stat.EquipStatId::DEX, 999),
-  (@maple_stat.EquipStatId::INT, 999),
-  (@maple_stat.EquipStatId::LUK, 999),
-  (@maple_stat.EquipStatId::HP, 30000),
-  (@maple_stat.EquipStatId::MP, 30000),
-  (@maple_stat.EquipStatId::WATK, 999),
-  (@maple_stat.EquipStatId::MAGIC, 2000),
-  (@maple_stat.EquipStatId::WDEF, 999),
-  (@maple_stat.EquipStatId::MDEF, 999),
-  (@maple_stat.EquipStatId::ACC, 999),
-  (@maple_stat.EquipStatId::AVOID, 999),
-  (@maple_stat.EquipStatId::HANDS, 999),
-  (@maple_stat.EquipStatId::SPEED, 140),
-  (@maple_stat.EquipStatId::JUMP, 123),
-])
+let eqstat_caps : @hashmap.HashMap[@maple_stat.EquipStatId, Int] = @hashmap.HashMap([
+    (@maple_stat.EquipStatId::STR, 999),
+    (@maple_stat.EquipStatId::DEX, 999),
+    (@maple_stat.EquipStatId::INT, 999),
+    (@maple_stat.EquipStatId::LUK, 999),
+    (@maple_stat.EquipStatId::HP, 30000),
+    (@maple_stat.EquipStatId::MP, 30000),
+    (@maple_stat.EquipStatId::WATK, 999),
+    (@maple_stat.EquipStatId::MAGIC, 2000),
+    (@maple_stat.EquipStatId::WDEF, 999),
+    (@maple_stat.EquipStatId::MDEF, 999),
+    (@maple_stat.EquipStatId::ACC, 999),
+    (@maple_stat.EquipStatId::AVOID, 999),
+    (@maple_stat.EquipStatId::HANDS, 999),
+    (@maple_stat.EquipStatId::SPEED, 140),
+    (@maple_stat.EquipStatId::JUMP, 123),
+  ],
+)
 
 ///|
 pub fn CharStats::calculate_damage(self : CharStats, mobatk : Int) -> Int {

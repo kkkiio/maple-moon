@@ -2,7 +2,7 @@
 /// Test that passive_system only processes each hit event once per reader.
 test "passive_system_consumes_events" {
   @combat_system.clear_events()
-  let mock = MockPassiveSkill::new()
+  let mock = MockPassiveSkill()
   register_passive_skill(mock)
 
   let event : @combat_system.HitEvent = {
@@ -31,7 +31,7 @@ struct MockPassiveSkill {
 }
 
 ///|
-fn MockPassiveSkill::new() -> MockPassiveSkill {
+fn MockPassiveSkill::MockPassiveSkill() -> MockPassiveSkill {
   { call_count: Ref(0), last_event: Ref((None : @combat_system.HitEvent?)) }
 }
 
@@ -64,14 +64,14 @@ fn make_system_test_ctx() -> PassiveContext {
 ///|
 /// Test that mock passive skill records on_hit calls correctly
 test "mock_passive_skill_on_hit" {
-  let mock = MockPassiveSkill::new()
+  let mock = MockPassiveSkill()
 
   // Initially no calls
   assert_eq(mock.call_count.val, 0)
   assert_true(mock.last_event.val is None)
 
   // Verify mock id
-  assert_eq(mock.id(), -999)
+  assert_eq(PassiveSkill::id(mock), -999)
 
   // Test on_hit records the event (PassiveContext is now empty)
   let ctx = make_system_test_ctx()
@@ -82,7 +82,7 @@ test "mock_passive_skill_on_hit" {
     target_oids: [101, 102],
     result: @combat_proto.AttackResult::default(),
   }
-  mock.on_hit(ctx, event)
+  PassiveSkill::on_hit(mock, ctx, event)
 
   // Verify on_hit was called and recorded the event
   assert_eq(mock.call_count.val, 1)
@@ -98,7 +98,7 @@ test "passive_system_calls_mock_skill" {
   @combat_system.clear_events()
 
   // Create and register mock skill
-  let mock = MockPassiveSkill::new()
+  let mock = MockPassiveSkill()
   register_passive_skill(mock)
 
   for i in 0..<3 {

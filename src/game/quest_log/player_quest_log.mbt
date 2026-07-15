@@ -93,7 +93,7 @@ pub fn handle_player_quest_info(player_quests : PlayerQuestLogInfo) -> Unit {
 pub fn current_player_quest_log() -> PlayerQuestLog {
   match active_module.val {
     Some(m) => m.player_quest_log.val
-    None => @quest.PlayerQuestLog::default()
+    None => Default::default()
   }
 }
 
@@ -107,7 +107,7 @@ fn bump_quest_log_revision() -> Unit {
 pub fn setup(quests_resource : QuestResource) -> Unit {
   let mod = {
     quests_resource,
-    player_quest_log: Ref({ in_progress: {}, completed: {} }),
+    player_quest_log: Ref({ in_progress: Map([]), completed: Map([]) }),
   }
   active_module.val = Some(mod)
   bump_quest_log_revision()
@@ -130,7 +130,7 @@ fn parse_player_quest_log(
   quests_resource : QuestResource,
   player_quests : PlayerQuestLogInfo,
 ) -> PlayerQuestLog {
-  let quest_log : PlayerQuestLog = { in_progress: {}, completed: {} }
+  let quest_log : PlayerQuestLog = { in_progress: Map([]), completed: Map([]) }
   let mut last_in_progress_quest : InProgressQuest? = None
   quest_loop~: for it in player_quests.started {
     let (id, progress_data) = it
@@ -211,7 +211,7 @@ fn PlayerQuestLog::add_in_progress_quest(
     acts: quests_resource.quest_acts_map.get(id).unwrap_or([]),
     progress_data,
     phase: 1, // phase 0 is start requirements
-    info_number_progress_map: {},
+    info_number_progress_map: Map([]),
   }
   self.in_progress[id] = quest
   quest

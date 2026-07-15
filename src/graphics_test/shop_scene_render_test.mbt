@@ -117,7 +117,7 @@ fn setup_shop_scene_npcs() -> @app.App raise {
 
   setup_camera(@math.Vec2(-500.0, 320.0), scene_map.map_info)
 
-  let map_npcs = @npc.MapNpcs::new(fn(_args) {  }, fn() { false })
+  let map_npcs = @npc.MapNpcs(fn(_args) {  }, fn() { false })
   @npc.set_npcs({ map_npcs, physics: scene_map.physics })
 
   for idx in 0..<npc_lives.length() {
@@ -150,10 +150,17 @@ test "shop scene npc render snapshot on map 102000001" {
     raw_delta=0.016,
   )
 
+  let npc_anchors = @npc.list_npc_anchors().map(fn(anchor) {
+    (anchor.oid, anchor.npc_id, anchor.npc_object.get_position())
+  })
+  npc_anchors.sort_by(fn(lhs, rhs) { lhs.0.compare(rhs.0) })
   debug_inspect(
-    @entity.iter_entities().to_array().length(),
+    npc_anchors,
     content=(
-      #|61
+      #|[
+      #|  (100001, 1021000, { x: -298, y: 140 }),
+      #|  (100002, 1021001, { x: -253, y: 140 }),
+      #|]
     ),
   )
   @capture_app.snapshot(

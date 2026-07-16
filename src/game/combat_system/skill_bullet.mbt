@@ -8,22 +8,25 @@ fn load_ball_animation(
   src : Json,
   tag : String,
   base_path : String,
-) -> @ms_animation.Animation {
+) -> @ms_animation.Animation raise {
   let ref_path = match src {
     { "mx_animation": String(path), .. } => path
-    _ => abort("missing mx_animation in skill ball")
+    _ => fail("missing mx_animation in skill ball")
   }
-  let resolved = @resource.resolve_ref(base_path, ref_path)
+  let resolved = @res.resolve_ref(base_path, ref_path)
   let animation_loader = AnimationLoader()
   let loaded = animation_loader.load(resolved)
   let clip = loaded.clip(tag) catch {
-    _ => abort("missing skill ball animation tag '\{tag}': \{resolved}")
+    error =>
+      fail(
+        "missing skill ball animation tag '\{tag}': \{resolved}, error=\{error}",
+      )
   }
   @ms_animation.from_selene_clip(clip, loop_=true)
 }
 
 ///|
-fn Ball::Ball(src : Json, tag : String, base_path : String) -> Ball {
+fn Ball::Ball(src : Json, tag : String, base_path : String) -> Ball raise {
   let animation = load_ball_animation(src, tag, base_path)
   Ball::{ animation, }
 }
@@ -52,10 +55,13 @@ priv struct SingleBullet {
 }
 
 ///|
-fn SingleBullet::SingleBullet(src : Json, base_path : String) -> SingleBullet {
+fn SingleBullet::SingleBullet(
+  src : Json,
+  base_path : String,
+) -> SingleBullet raise {
   let ball = match src {
     { "ball": ball, .. } => Ball(ball, skill_animation_tag(["ball"]), base_path)
-    _ => abort("missing skill ball")
+    _ => fail("missing skill ball")
   }
   { ball, }
 }
@@ -80,13 +86,13 @@ fn BySkillLevelBullet::BySkillLevelBullet(
   src : Json,
   id : Int,
   base_path : String,
-) -> BySkillLevelBullet {
+) -> BySkillLevelBullet raise {
   let bullets = Map([])
   if src is { "level": Object(levels), .. } {
     for level, sub in levels {
       if sub is { "ball": ball, .. } {
         let parsed_level = @string.parse_int(level) catch {
-          _ => abort("invalid skill ball level: \{level}")
+          _ => fail("invalid skill ball level: \{level}")
         }
         bullets.set(
           parsed_level,

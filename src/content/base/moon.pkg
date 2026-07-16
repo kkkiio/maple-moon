@@ -1,0 +1,6 @@
+import {
+  "moonbitlang/core/json",
+  "KKKIIO/maple-moon/game/content_runtime",
+}
+
+supported_targets = "native+js"

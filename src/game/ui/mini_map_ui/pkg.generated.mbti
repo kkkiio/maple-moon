@@ -2,11 +2,11 @@
 package "KKKIIO/maple-moon/game/ui/mini_map_ui"
 
 import {
-  "KKKIIO/maple-moon/engine/resource",
+  "KKKIIO/maple-moon/engine/res",
   "KKKIIO/maple-moon/engine/ui",
   "KKKIIO/maple-moon/game/map",
-  "Milky2018/selene/ecs",
-  "Milky2018/selene/entity",
+  "KKKIIO/selene/ecs",
+  "KKKIIO/selene/entity",
   "moonbitlang/core/json",
 }
 
@@ -20,6 +20,8 @@ pub fn set_current_map(Int, String, String, @map.MiniMapRuntimeResource?) -> Uni
 pub fn set_map_helper_minimap_json_for_test(Json) -> Unit
 
 pub fn set_minimap_json_for_test(Json) -> Unit
+
+pub fn set_modal_suppressed(String, Bool) -> Unit
 
 // Errors
 
@@ -40,7 +42,7 @@ pub fn MiniMapUI::MiniMapUI(MiniMapUIResource, @ui.UIModel) -> Self
 pub fn MiniMapUI::set_map(Self, Int, String, String, @map.MiniMapRuntimeResource?) -> Unit
 
 pub struct MiniMapUIResource {
-  portal_marker : @resource.NxTexture
+  portal_marker : @res.NxTexture
   min_map : NxMiniMapFrames
 }
 pub fn MiniMapUIResource::load() -> Self

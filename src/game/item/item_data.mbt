@@ -5,7 +5,7 @@
 /// Contains all shared data between concrete items
 pub(all) struct ItemData {
   src : Json
-  icons : (@resource.NxTexture, @resource.NxTexture)
+  icons : (@res.NxTexture, @res.NxTexture)
   item_id : Int
   price : Int
   gender : Int
@@ -48,7 +48,7 @@ fn load_item_text_bundle_cached(bundle : String) -> Json {
   if item_text_bundle_cache.get(bundle) is Some(cached) {
     return cached
   }
-  let bundle_json = @resource.require_json("assets/String/" + bundle + ".json")
+  let bundle_json = @res.require_json("res://String/" + bundle + ".json")
   item_text_bundle_cache.set(bundle, bundle_json)
   bundle_json
 }
@@ -85,8 +85,8 @@ pub fn ItemData::load(item_id : Int) -> ItemData {
       }
       let category = equip_id.category
       let equip_zid = equip_id.zid
-      let src = @resource.require_json(
-        "assets/Character/" + category + "/" + equip_zid + ".img.json",
+      let src = @res.require_json(
+        "res://Character/" + category + "/" + equip_zid + ".img.json",
       )
       let strsrc = load_item_text_src("Eqp.img", [
         "Eqp",
@@ -152,7 +152,7 @@ pub fn ItemData::load(item_id : Int) -> ItemData {
   guard src is { "info": Object(info), .. } else {
     abort("item data missing info: \{item_id}")
   }
-  let icons : (@resource.NxTexture, @resource.NxTexture) = (
+  let icons : (@res.NxTexture, @res.NxTexture) = (
     @json.from_json(info["icon"]) catch {
       _ => abort("item icon decode failed: \{item_id}")
     },
@@ -210,8 +210,8 @@ fn load_item_bundle_cached(category : String, bundle : String) -> Json {
   if bundle_cache.get(key) is Some(cached) {
     return cached
   }
-  let bundle_json = @resource.require_json(
-    "assets/Item/" + category + "/" + bundle + ".json",
+  let bundle_json = @res.require_json(
+    "res://Item/" + category + "/" + bundle + ".json",
   )
   bundle_cache.set(key, bundle_json)
   bundle_json
@@ -329,7 +329,7 @@ pub fn ItemData::get_category(self : ItemData) -> String {
 }
 
 ///|
-pub fn ItemData::get_icon(self : ItemData, raw : Bool) -> @resource.NxTexture {
+pub fn ItemData::get_icon(self : ItemData, raw : Bool) -> @res.NxTexture {
   if raw {
     self.icons.1
   } else {

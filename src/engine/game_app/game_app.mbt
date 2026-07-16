@@ -1,12 +1,39 @@
 ///|
-/// Create a base `App` with common viewport, fps, and fixed-hz configuration.
-pub fn base_app() -> @app.App {
-  @app.App()
-  .with_image_smooth(false)
-  .with_viewport_width(@graphics.view_size.0 |> Double::from_int)
-  .with_viewport_height(@graphics.view_size.1 |> Double::from_int)
-  .with_fps(@graphics.fps)
-  .with_fixed_hz(@logic_fps.LOGIC_FPS.reinterpret_as_uint())
+/// Create a base `App` and install its ordered resource packs.
+///
+/// `resource_packs` is ordered from lowest to highest priority. The default
+/// layout mounts the distributed base pack relative to the process or web
+/// application root. Callers that launch from another installation layout can
+/// pass absolute or platform-relative physical roots without changing any
+/// `res://` address used by game code.
+///
+/// # Example
+/// ```moonbit nocheck
+/// let app = @game_app.base_app(resource_packs=[
+///   ("base", "/opt/maple-moon/packs/base"),
+///   ("patch-1", "/opt/maple-moon/packs/patch-1"),
+/// ])
+/// ignore(app)
+/// ```
+///
+/// # Panics
+/// Panics when a pack ID or physical root is invalid, or no packs are supplied.
+pub fn base_app(
+  resource_packs? : Array[(String, String)] = [("base", "assets/base")],
+) -> @app.App {
+  @res.configure_packs(resource_packs) catch {
+    err => abort("failed to configure game resource packs: \{to_repr(err)}")
+  }
+  let viewport_width = Double::from_int(@graphics.view_size.0)
+  let viewport_height = Double::from_int(@graphics.view_size.1)
+  let fixed_hz = @logic_fps.LOGIC_FPS.reinterpret_as_uint()
+  let app = @app.App()
+    .with_image_smooth(false)
+    .with_viewport_width(viewport_width)
+    .with_viewport_height(viewport_height)
+    .with_fps(@graphics.fps)
+    .with_fixed_hz(fixed_hz)
+  app
 }
 
 ///|
@@ -16,14 +43,15 @@ pub fn base_app() -> @app.App {
 ///
 /// # Example
 /// ```moonbit nocheck
+/// let server : &@game_server.GameServer = make_server()
 /// let app = @game_app.base_app()
 ///   .add_plugin(@plugins.default_plugin)
-///   .add_plugin(@game_app.game_systems())
+///   .add_plugin(@game_app.game_systems(server))
 /// @ecs.set_current_world(app.world())
 /// @game_state.init_state(@game_state.GamePhase::GameSetup)
 /// app.run()
 /// ```
-pub fn game_systems() -> @app.Plugin {
+pub fn game_systems(server : &@game_server.GameServer) -> @app.Plugin {
   fn(app : @app.App) -> @app.App {
     app
     .add_system(
@@ -56,6 +84,7 @@ pub fn game_systems() -> @app.Plugin {
       system_name="app_resource_setup_system",
     )
     .add_system(Startup, fn(_world) {
+      @game_server.install(server)
       @item.set_item_data_system(ItemDataSystem())
       @passive.set_passive_randomizer(@random.Rand::new())
       @game_server.init_server()

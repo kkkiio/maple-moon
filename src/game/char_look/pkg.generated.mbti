@@ -5,8 +5,8 @@ import {
   "KKKIIO/maple-moon/game/character_body",
   "KKKIIO/maple-moon/game/character_presentation",
   "KKKIIO/maple-moon/game/vfx_afterimage",
-  "Milky2018/selene/ecs",
-  "Milky2018/selene/entity",
+  "KKKIIO/selene/ecs",
+  "KKKIIO/selene/entity",
   "moonbitlang/core/immut/sorted_map",
 }
 
@@ -33,7 +33,7 @@ pub fn insert_resource(@character_presentation.CharacterPresentationResource) ->
 
 pub let layers_by_name : @sorted_map.SortedMap[String, @character_presentation.HairLayer]
 
-pub fn load_after_images(String) -> @vfx_afterimage.NxAfterImages
+pub fn load_after_images(String) -> @vfx_afterimage.NxAfterImages raise
 
 pub fn set_after_images(String, @vfx_afterimage.NxAfterImages) -> Unit
 

@@ -25,7 +25,7 @@ pub fn HairLayer::z(self : HairLayer) -> Int = "%identity"
 
 ///|
 struct Hair {
-  stances : Map[StanceId, Map[HairLayer, @resource.NxAnimation]]
+  stances : Map[StanceId, Map[HairLayer, @res.NxAnimation]]
   name : String
   color : String
 }
@@ -49,8 +49,8 @@ pub let layers_by_name : @immut/sorted_map.SortedMap[String, HairLayer] = @immut
 ///|
 pub fn Hair::load(hairid : Int, drawinfo : @types.BodyDrawInfo) -> Hair {
   let strid = "000" + hairid.to_string()
-  let hairnode = @resource.require_json(
-    "assets/Character/Hair/" + strid + ".img.json",
+  let hairnode = @res.require_json(
+    "res://Character/Hair/" + strid + ".img.json",
   )
   let hairnode : NxStanceLooks[@types.NxMultiPartFrame] = @json.from_json(
     hairnode,
@@ -66,9 +66,9 @@ pub fn Hair::parse(
   hairnode : NxStanceLooks[@types.NxMultiPartFrame],
   drawinfo : @types.BodyDrawInfo,
 ) -> Hair {
-  let stances : Map[StanceId, Map[HairLayer, @resource.NxAnimation]] = Map([])
+  let stances : Map[StanceId, Map[HairLayer, @res.NxAnimation]] = Map([])
   for stance, stancenode in hairnode.0 {
-    let layers : Map[HairLayer, Array[@resource.NxFrame]] = Map([])
+    let layers : Map[HairLayer, Array[@res.NxFrame]] = Map([])
     for frame, framenode in stancenode {
       for layername, layernode in framenode.part_texture_map {
         let layer = match layers_by_name.get(layername) {
@@ -82,18 +82,18 @@ pub fn Hair::parse(
         }
         let brow = layernode.map.0.get("brow").unwrap_or(Default::default())
         let shift = drawinfo.get_hair_pos(stance, frame) - brow
-        let texture : @resource.NxTexture = layernode.texture.frames[0].texture
+        let texture : @res.NxTexture = layernode.texture.frames[0].texture
         let texture = { ..texture, origin: texture.origin - shift }
         let frames = layers.get_or_init(layer, fn() { [] })
         while frames.length() < frame { // 整个动画里, 有些部位不是一直显示的
-          frames.push(@resource.NxFrame::{
+          frames.push(@res.NxFrame::{
             texture,
             delay: None,
             head: None,
             bounds: None,
           }) // TODO: 填充为空白帧
         }
-        frames.push(@resource.NxFrame::{
+        frames.push(@res.NxFrame::{
           texture,
           delay: None,
           head: None,

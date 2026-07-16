@@ -4,8 +4,7 @@ import {
   "moonbitlang/core/strconv",
   "KKKIIO/maple-moon/game/equip/slot",
   "KKKIIO/maple-moon/game/item",
-  "KKKIIO/maple-moon/engine/resource",
-  "KKKIIO/maple-moon/engine/resource",
+  "KKKIIO/maple-moon/engine/res",
   "KKKIIO/maple-moon/game/weapon",
   "KKKIIO/maple-moon/game/res_types" @struct,
   "KKKIIO/maple-moon/game/char_look/types",
@@ -15,7 +14,8 @@ import {
 }
 
 import {
-  "moonbitlang/x/fs",
   "KKKIIO/maple-moon/game/char_look",
   "KKKIIO/maple-moon/game/character_body" @cb,
+  "KKKIIO/selene/asset",
+  "moonbitlang/x/fs",
 } for "test"

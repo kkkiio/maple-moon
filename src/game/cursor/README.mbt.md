@@ -18,7 +18,7 @@
 在 AppResources 加载阶段调用：
 
 ```moonbit nocheck
-let data = try! CursorAnimationData::load("assets/UI/Basic.img/Cursor/cursor_animation.json")
+let data = try! CursorAnimationData::load("res://UI/Basic.img/Cursor/cursor_animation.json")
 init_cursor(Cursor(data))
 ```
 
@@ -35,6 +35,6 @@ init_cursor(Cursor(data))
 
 ## 资产
 
-- `assets/UI/Basic.img/Cursor/cursor.aseprite`: Aseprite 源文件
-- `assets/UI/Basic.img/Cursor/cursor_animation.json`: Aseprite packed spritesheet 描述
-- `assets/UI/Basic.img/Cursor/cursor_animation.png`: Aseprite packed atlas PNG（301×197）
+- `source_assets/base/UI/Basic.img/Cursor/cursor.aseprite`: Aseprite 源文件
+- `res://UI/Basic.img/Cursor/cursor_animation.json`: Aseprite packed spritesheet 描述
+- `res://UI/Basic.img/Cursor/cursor_animation.png`: Aseprite packed atlas PNG（301×197）

@@ -2,13 +2,13 @@
 package "KKKIIO/maple-moon/game/map"
 
 import {
-  "KKKIIO/maple-moon/engine/resource",
+  "KKKIIO/maple-moon/engine/res",
   "KKKIIO/maple-moon/game/animation",
   "KKKIIO/maple-moon/game/physics",
   "KKKIIO/maple-moon/game/res_types",
-  "Milky2018/selene/ecs",
-  "Milky2018/selene/entity",
-  "Milky2018/selene/tiled",
+  "KKKIIO/selene/ecs",
+  "KKKIIO/selene/entity",
+  "KKKIIO/selene/tiled",
   "moonbitlang/core/debug",
   "moonbitlang/core/json",
 }
@@ -42,7 +42,7 @@ pub fn get_portal_pos_by_id_current(Int) -> @res_types.Point[Int]?
 
 pub fn get_runtime_context() -> (MapInfo, @physics.Physics)?
 
-pub fn load_map_resources_by_id(Int) -> MapRawResources
+pub fn load_map_resources_by_id(Int) -> MapRawResources raise
 
 pub fn portal_system(@ecs.World) -> Unit
 
@@ -50,7 +50,7 @@ pub fn set_portals(MapPortals, get_touch_pos? : () -> @res_types.Point[Int]?) ->
 
 pub fn set_runtime_context(MapInfo, @physics.Physics) -> Unit
 
-pub fn set_tiled_map(@ecs.World, @tiled.TiledMap, background_animations? : Map[String, @resource.SeleneClip]) -> Unit raise
+pub fn set_tiled_map(@ecs.World, @tiled.TiledMap, background_animations? : Map[String, @res.SeleneClip]) -> Unit raise
 
 pub fn tiled_background_motion_system(@ecs.World) -> Unit
 
@@ -121,7 +121,7 @@ pub(all) struct MapRawResources {
   id : Int
   mx_map : MxMap
   tiled_map : @tiled.TiledMap
-  background_animations : Map[String, @resource.SeleneClip]
+  background_animations : Map[String, @res.SeleneClip]
 }
 
 pub(all) struct MiniMapCanvas {
@@ -261,7 +261,7 @@ pub(all) struct PortalWarpInfo {
 pub(all) struct SceneMap {
   id : Int
   tiled_map : @tiled.TiledMap
-  background_animations : Map[String, @resource.SeleneClip]
+  background_animations : Map[String, @res.SeleneClip]
   life_spawns : Array[NxLife]
   physics : @physics.Physics
   map_info : MapInfo

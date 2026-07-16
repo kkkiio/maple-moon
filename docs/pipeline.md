@@ -1,226 +1,251 @@
-# 资源管线 (Asset Pipeline)
+# 资源管线（Asset Pipeline）
 
-本文档描述 Maple Moon 中所有游戏资源的来源、处理流程、导出格式和运行时加载方式。
+本文档描述 Maple Moon 资源从 NX、Aseprite 和 Tiled 到 `res://` 的组织、导出与
+校验流程。运行时寻址与 pack 优先级见
+`docs/engineering/0001-organize-assets-as-resource-packs.md`。
 
 ## 总览
 
-```
-源格式                 导出/转换                运行时格式              加载 API
-────────────────────────────────────────────────────────────────────────────
-Aseprite .aseprite  →  Aseprite 导出  →  .json + .png spritesheet  →  require_json / require_image
-Tiled .tmx          →  Tiled 导出     →  .tmj + .tsj              →  require_json
-NX 容器              →  提取工具       →  .img.json                →  require_json + json_navigate
-```
-
-## 一、精灵与动画 — Aseprite
-
-### 源格式
-
-- **工具**：Aseprite（精灵/像素动画编辑器）
-- **源文件**：`.aseprite`，存放在对应资源的 `animations/` 子目录下，例如：
-  ```
-  assets/Skill/231.img/animations/skill__2311001.aseprite
-  assets/UI/Basic.img/Cursor/cursor.aseprite
-  ```
-
-### 导出格式
-
-从 Aseprite 导出两个文件：
-1. **Spritesheet PNG**：所有帧拼接成一张大图
-2. **JSON 描述文件**：记录每帧在 spritesheet 中的矩形位置、时长、锚点
-
-这两个文件通常放在同一个目录下，JSON 中通过相对路径引用 PNG。
-
-### 导出步骤
-
-在 Aseprite 中打开 `.aseprite` 文件后：
-1. File → Export Sprite Sheet
-2. Output 标签：选择输出目录，勾选 "JSON Data"
-3. Layout 标签：选择合适的排列方式（通常 `Horizontal strip` 或 `Packed`）
-4. 导出，得到 `.json` 和 `.png` 两个文件
-
-> 项目目前用 `$resource-processing-workflow` skill 自动化此流程。缺少资源时优先使用该 skill。
-
-### 运行时加载
-
-```mbt
-// 加载动画 JSON，内部会解析 spritesheet 引用并自行加载 PNG
-AnimationLoader::load("assets/Skill/231.img/animations/skill__2311001.json")
+```text
+源数据                         运行时输出                  运行时地址
+──────────────────────────────────────────────────────────────────────────
+NX *.nx                     → mx/json/tmj/tsj/png/audio → res://<Domain>/...
+Aseprite *.aseprite         → json + png spritesheet    → res://<Domain>/...
+Tiled TMX/TSX 或编辑操作     → tmj + tsj                 → res://Map/...
+Maple Moon 自有数据          → tsv/json/audio            → res://Data/... 等
 ```
 
-根据 ADR 0001，`AnimationLoader` 内部直接调用 `require_json` 和 `require_image`，不再经过统一的 loader 抽象层。
+职责边界：
 
----
+- `../nx_maple_res` 保存原始 `.nx` 输入并实现 NX 导出工具；
+- `assets/<pack-id>/` 保存可直接挂载和分发的运行 resource pack；
+- `source_assets/<pack-id>/` 镜像各 pack 中需要版本控制的可编辑源文件；
+- `src/engine/res` 负责 `res://` 解析、pack 优先级查找和格式 loader；
+- Selene 负责从物理路径加载 bytes 并解码为平台资源；
 
-## 二、地图 — Tiled
+## 一、目录边界
 
-### 源格式
-
-- **工具**：Tiled（瓦片地图编辑器）
-- **源文件**：`.tmx`（Tiled 原生 XML 格式）
-- **瓦片集**：`.tsx`（Tiled Tileset 定义）
-
-### 导出格式
-
-导出为 Tiled JSON 格式：
-- `.tmj`：Tiled Map JSON（地图的层、对象、属性）
-- `.tsj`：Tiled Tileset JSON（瓦片集定义）
-
-### 导出步骤
-
-在 Tiled 中：
-1. Map → Map Properties → 确保使用正确的 tileset 引用
-2. File → Export As → 选择 JSON 格式（`.tmj` / `.tsj`）
-
-### 运行时加载
-
-```mbt
-// 直接按文件路径加载
-require_json("assets/Map/tiles/100000000.img.tmj")
+```text
+maple-moon/
+├── assets/
+│   ├── base/                   base runtime pack
+│   │   ├── pack.json           精确列出 pack 内全部运行文件
+│   │   ├── Character/
+│   │   ├── Data/
+│   │   ├── Effect/
+│   │   ├── Etc/
+│   │   ├── Item/
+│   │   ├── Map/
+│   │   ├── Mob/
+│   │   ├── Npc/
+│   │   ├── Quest/
+│   │   ├── Skill/
+│   │   ├── Sound/
+│   │   ├── String/
+│   │   └── UI/
+│   ├── dlc-elnath/             DLC runtime pack
+│   │   ├── Map/
+│   │   ├── Mob/
+│   │   └── Sound/
+│   └── patch-1/                patch runtime pack
+└── source_assets/
+    ├── base/                   base editable sources
+    ├── dlc-elnath/             DLC editable sources
+    └── patch-1/                patch editable sources
 ```
 
-地图可能进一步引用 tileset `.tsj` 文件和图片资源，由游戏代码自行解析和加载。
+顶层 domain 沿用对应 NX 文件的 stem 大小写。NX 根节点通常没有名字，所以用
+文件 stem 作为稳定的命名空间；domain 内部继续保留有意义的 NX node 层级：
 
----
-
-## 三、原版数据 — NX 容器
-
-### 源格式
-
-- **来源**：原始 MapleStory 客户端数据文件（NX 格式）
-- **提取后格式**：`.img.json` — 将 NX 容器节点树序列化为 JSON
-
-### 目录组织
-
-```
-assets/
-  Npc/          ← .img.json 文件 + 对应的帧图片
-  Skill/        ← .img.json 文件 + 对应动画的 .aseprite 源文件和导出
-  Item/         ← .img.json 文件（消耗品、装备等）
-  Quest/        ← .img.json 文件
-  Mob/          ← .img.json 文件
-  String/       ← .img.json 文件（文本表）
-  Effect/       ← .img.json 文件
-  UI/           ← .img.json 文件 + UI sprite
+```text
+Map.nx : Map/Map1/100000000.img → res://Map/Map1/100000000.img.mx.json
+Map.nx : Back/grassySoil.img     → res://Map/Back/grassySoil.img/...
+Mob.nx : 0100100.img             → res://Mob/0100100.img/...
+Npc.nx : 0002100.img             → res://Npc/0002100.img/...
 ```
 
-每个 `.img.json` 是一个独立的 JSON 文件，内部是树形结构，用路径导航到具体节点。
+Maple Moon 自有 domain 用 `Data`、`Quest` 和 `String`。运行资源不走全局的
+`images/`、`spritesheets/`、`portal/` 这类共享目录；图片和 spritesheet 放在拥有
+它们的 domain 闭包里。
 
-### 资源结构示例
+## 二、运行资源与编辑源文件
 
-```
-assets/Skill/231.img.json           ← 技能 231 的数据容器
-assets/Skill/231.img/               ← 该技能关联的资源目录
-  animations/
-    skill__2311001.aseprite          ← 源文件
-    skill__2311001.json              ← Aseprite 导出 JSON
-    skill__2311001.png               ← Aseprite 导出 spritesheet
-```
+### Aseprite
 
-### 运行时加载
+`.aseprite` 只出现在 `source_assets/<pack-id>/`，导出的 JSON/PNG 只出现在
+`assets/<pack-id>/`。两棵目录镜像 pack ID、domain 和资源相对位置：
 
-```mbt
-// 加载容器文件，然后导航到具体节点
-let container = require_json("assets/Skill/231.img.json")
-let skill_data = json_navigate(container, ["2311001", "level", "1"])
+```text
+source_assets/base/Mob/0100100.img/animations/stand.aseprite
+assets/base/Mob/0100100.img/animations/stand.json
+assets/base/Mob/0100100.img/animations/stand.png
 ```
 
-根据 ADR 0001，`json_navigate` 用于在 `.img.json` 容器内部沿路径导航到具体数据节点。
+Aseprite JSON 使用相对路径引用同目录 PNG。运行时从 JSON 的 `res://` 地址解析
+spritesheet：
 
-### 独立导出的 JSON
-
-部分数据已从 NX 容器中导出为独立 JSON 文件，直接按文件路径加载：
-
-```mbt
-require_json("assets/Item/Consume/2000000.json")  // 红药水
+```moonbit nocheck
+AnimationLoader::load(
+  "res://Mob/0100100.img/animations/stand.json",
+)
 ```
 
----
+### Tiled
 
-## 四、其他资源类型
+TMJ/TSJ 是当前编辑和运行共同使用的格式，因此保存在对应 pack 的
+`assets/<pack-id>/Map/`。TMJ 引用外部 TSJ，TSJ 引用图片，全部使用普通相对路径：
 
-### 图片
-
-- **独立图片**：`.png`，通过 `require_image` 加载
-- 存放于现代资源目录的局部闭包里，例如 `assets/Map/images/`、`assets/UI/`、`assets/images/`
-- `assets/spritesheets/` 保留当前运行、测试或 UI 原型实际引用的 spritesheet
-
-### 音效 / 背景音乐
-
-- `.mp3` / `.ogg` 文件，存放于 `assets/sound/`
-
-### UI 资源
-
-- UI sprite 在 `assets/UI/` 下，`.img.json` 描述 UI 布局，`.aseprite` / `.png` 提供视觉素材
-- UI spritesheet 在 `assets/spritesheets/UI/` 下
-
----
-
-## 五、assets/ 目录结构速查
-
-```
-assets/
-  Character/              ← 角色外观（身体、发型、脸、装备等）
-    Afterimage/           ← 残影特效
-    Body/ Coat/ Face/ Hair/ Longcoat/ Pants/ Shield/ Shoes/ weapon/
-  data/                   ← 游戏数据表
-  Effect/                 ← 特效数据
-  Etc/                    ← 杂项
-  images/                 ← 已接入运行或测试的独立图片
-    Item/ Map/ Npc/ Skill/ UI/
-  Item/                   ← 道具数据（Cash/ Consume/ Etc/ Install/ Pet/ Special）
-  Map/                    ← Tiled 地图数据、tileset 和局部图片闭包
-    Map/ WorldMap/
-  map001/                 ← 地图 001 资源
-    back/
-  minimap/                ← 小地图图片
-  mob/                    ← 怪物数据
-  Npc/                    ← NPC 数据和动画闭包
-  portal/                 ← 传送门图片
-  Quest/                  ← 任务数据
-  Skill/                  ← 技能数据
-  sound/                  ← 音频文件
-  spritesheets/           ← 已接入运行或测试的 spritesheet
-    Item/ Map/ Mob/ UI/
-  String/                 ← 文本字符串数据
-  UI/                     ← UI 布局和素材
+```text
+assets/base/Map/tiles/100000000.img.tmj
+assets/base/Map/tilesets/tile_grassySoil.tsj
+assets/base/Map/images/<bitmap>.png
 ```
 
----
+如果以后保留单独的 TMX/TSX 编辑源文件，它们进入对应的
+`source_assets/<pack-id>/Map/`，TMJ/TSJ 仍进入镜像的 `assets/<pack-id>/Map/`。
 
-## 六、版本控制策略
+### NX
 
-详见 `docs/engineering/0004-iterative-runtime-resource-commits.md`。
+原始输入位于：
 
-**核心原则**：`assets/` 下的现代可使用资源可以进入版本控制，但每次提交只纳入当前范围内能运行、能测试、可复用的资源闭包。闭包包含数据 JSON、Tiled `.tmj/.tsj`、图片、音频、动画 JSON/PNG 和对应 `.aseprite` 源文件。
-
-### 当前提交边界
-
-```
-范围内：Victoria Island 地图、地图引用的怪物和 NPC、当前会播放的 BGM/SFX、
-       以及当前 UI/测试会加载的最小 UI 资源。
-暂缓：范围外地图、未接入职业技能、普通怪物掉落杂物、完整登录/UI dump、
-     旧导出图片池和可由 ../nx_maple_res 重新生成的中间态文件。
+```text
+../nx_maple_res/assets/<Domain>.nx
 ```
 
-### 提交资源的步骤
+运行时只提交导出后的完整资源闭包。根据资源语义选择输出格式：
 
-当测试或运行时路径需要新资源时：
+- playable map：TMJ、TSJ、图片和 map metadata；
+- Mob/Npc/Effect/Skill 动画：结构化 JSON 与 Aseprite JSON/PNG；
+- Character paper-doll：保留锚点、z、stance 和 bitmap 引用的结构化 JSON；
+- String/Etc/Quest/Data：JSON 或 TSV 数据；
+- Sound：音频文件及必要索引。
+
+`../nx_maple_res/cache/nx_export` 是排查和中间输出目录，不作为 Maple Moon 的长期
+运行依赖。
+
+## 三、资源地址与相对引用
+
+游戏代码只用 `res://` 地址，不去碰 `assets/` 物理路径。`res://` 的解析与 pack
+优先级见 `docs/engineering/0001-organize-assets-as-resource-packs.md`。
+
+导出文件内部统一使用相对路径，不写 `res://`、pack 名称或 `assets/`：
+
+```text
+Mob/0100100.img/mx.json
+  + animations/stand.json
+  = Mob/0100100.img/animations/stand.json
+```
+
+Tiled 和 LDtk 内部的相对引用由 Selene loader 根据入口物理路径自行拼接；Maple
+Moon 不预读或改写这两种格式。Aseprite 与 NX JSON 的相对图片引用由 `@res`
+根据 JSON 文件所在目录解析。`res://` 只用于游戏代码的公开入口，以及确实需要
+重新执行全局 pack 查找的显式跨资源引用。
+
+## 四、Base、DLC 与 patch
+
+base、DLC 和 patch 都是 `assets/` 下的同级目录，内部布局相同。构建 DLC 时只分发
+选定的 `assets/<pack-id>/`，对应的 `source_assets/<pack-id>/` 留在开发仓库。
+挂载顺序和覆盖语义见 ADR 0001。
+
+资源文件内部不能写 pack 名称、`assets/`、主机绝对路径或网络 URL。
+
+每个 `assets/<pack-id>/pack.json` 精确列出该 pack 的运行文件。它是运行时 VFS
+索引，随 pack 提交和分发；它不是导出 lock，不记录 NX 输入、时间戳或 hash。
+
+## 五、导出流程
+
+每个 pack 在 `resource_packs/<pack-id>.selene.json` 保存可审查的导出定义：
+
+```json
+{
+  "schema": 1,
+  "id": "base",
+  "runtime_root": "../assets/base",
+  "source_root": "../source_assets/base",
+  "sources": [
+    {
+      "nx": "Map.nx",
+      "entries": ["Map/Map1/102000001.img"]
+    },
+    {
+      "nx": "Mob.nx",
+      "entries": ["Mob/0100100.img"]
+    }
+  ]
+}
+```
+
+`nx` 只写 NX 文件名，由 `nx_maple_res` 从自己的 `assets/` 目录解析。`entries`
+使用精确 NX node/container 路径，不接受 glob；container 会递归导出。输出根目录
+相对于定义文件解析，因此定义不依赖开发者的绝对路径。
+
+缺少 NX 资源时运行：
 
 ```bash
-# 1. 确认需要哪些文件：JSON 引用的图片、spritesheet、tileset、动画、音频等
-# 2. 添加当前范围内的完整闭包
-git add assets/Npc/2041000.img.json
-git add assets/Npc/2041000.img/
-git add assets/Map/Map/100000000.tmj assets/Map/images/
-
-# 3. 确保所有引用的资源都存在（不做半成品提交）
-# 4. 提交
+cd ../nx_maple_res
+moon run --target native cmd/main -- \
+  export selene ../maple-moon/resource_packs/base.selene.json
 ```
 
-**提交检查清单**：
-- [ ] 主 JSON 数据已包含
-- [ ] JSON 引用的图片/PNG 都已包含
-- [ ] 对应的 `.aseprite` 源文件已包含（如适用）
-- [ ] 不存在"图片缺失"的半成品状态
-- [ ] 快照测试通过
+命令执行流程：
+
+1. 从 `entries` 生成底层 exporter 的 include 范围，并导出到空 staging；
+2. JSON/PNG/TMJ/TSJ 等运行输出复制到 `runtime_root`；
+3. `.aseprite` 移入镜像的 `source_root`；
+4. 校验最终运行目录中所有 NX JSON 的 `__i` 都是合法且存在的 pack 内文件；
+5. 扫描最终运行目录并重建按路径排序的 `pack.json`；
+6. 现有 pack 中不属于本次 entries 的手写资源保持不变；删除资源时显式删除文件，
+   由 Git 展示变更，下一次导出同步刷新 manifest。
+
+导出定义、运行产物、编辑源文件与 `pack.json` 一起提交。不生成 lock 文件。
+
+查询 NX 节点：
+
+```bash
+cd ../nx_maple_res
+moon run --target native cmd/main -- info assets/Map.nx 'Map/Map1'
+moon run --target native cmd/main -- tree-path assets/Map.nx 'Map/Map1'
+```
+
+## 六、完整性校验
+
+资源提交前检查：
+
+- `mx.json` 指向的 TMJ 或 animation JSON 存在；
+- TMJ 引用的 TSJ、图片和背景动画存在；
+- TSJ 引用的图片存在；
+- Aseprite JSON 引用的 PNG 存在；
+- `pack.json.files` 与 pack 内运行文件一致，且没有重复路径；
+- `assets/<pack-id>/` 中没有 `.aseprite`；
+- `source_assets/<pack-id>/` 中的源文件有对应运行输出；
+- 路径大小写与 domain 约定一致；
+- 所有引用都能规范化为合法 `ResourceKey`；
+- loader 缺资源时直接报错，不做 fallback。
+
+代码与资源修改完成后执行：
+
+```bash
+just check
+just fmt
+just test
+just build
+```
+
+## 七、版本控制边界
+
+进入版本控制：
+
+- 当前 Victoria Island 范围内 `assets/base/` 的完整运行闭包；
+- `resource_packs/base.selene.json` 与 `assets/base/pack.json`；
+- 与这些运行输出对应的 `source_assets/base/` 编辑源文件；
+- 图形快照测试使用的同一份运行资源。
+
+不进入版本控制：
+
+- `../nx_maple_res/assets/*.nx`；
+- `../nx_maple_res/cache/nx_export*`；
+- Aseprite 临时 manifest、atlas 和诊断日志；
+- 当前游戏范围之外的全量导出。
+
+不要用 `.gitignore` 忽略整个 `assets/` 或 `source_assets/`。资源导出与源文件变化
+都应在 `git status` 中可见并参与 review。

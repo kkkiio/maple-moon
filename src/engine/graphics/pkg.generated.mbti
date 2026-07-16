@@ -3,9 +3,9 @@ package "KKKIIO/maple-moon/engine/graphics"
 
 import {
   "KKKIIO/maple-moon/game/animation",
-  "Milky2018/selene/ecs",
-  "Milky2018/selene/entity",
-  "Milky2018/selene/math",
+  "KKKIIO/selene/ecs",
+  "KKKIIO/selene/entity",
+  "KKKIIO/selene/math",
 }
 
 // Values
@@ -52,6 +52,8 @@ pub const MAP_Y_BIAS_MAX : Int = 1023
 pub const MINI_MAP_ZINDEX_ : Int = 101000
 
 pub const MOB_HP_BAR_ZINDEX : Int = 74000
+
+pub const MODAL_UI_ZINDEX : Int = 110000
 
 pub const OBJECT_TILE_LAYER_ZINDEX : Int = 30000
 

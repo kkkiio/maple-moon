@@ -406,7 +406,7 @@ pub impl @json.FromJson for NxMultiPartFrame with fn from_json(json, path) {
 ///|
 pub(all) struct NxBodyLayerTexture {
   z : BodyLayer?
-  texture : @resource.NxAnimation
+  texture : @res.NxAnimation
   map : ShiftMap
 }
 

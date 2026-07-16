@@ -33,42 +33,28 @@ test "crossbow shoot2 afterimage without range should render" {
   // Keep the effect closer to the muzzle side for left-facing shoot pose.
   @transform2d.set_xy(after_image_host, Vec2(-16.0, 0.0))
 
-  let bodynode = @fs.read_file_to_string(
-      "assets/Character/Body/00002000.img.json",
-    )
-    |> @json.parse
+  let bodynode = @res.load_json("res://Character/Body/00002000.img.json")
   let stance_bodys_map : @char_look.NxStanceLooks[@types.NxStanceBody] = @json.from_json(
     bodynode,
   )
-  let headnode = @fs.read_file_to_string(
-      "assets/Character/Body/00012000.img.json",
-    )
-    |> @json.parse
+  let headnode = @res.load_json("res://Character/Body/00012000.img.json")
   let stance_heads_map : @char_look.NxStanceLooks[@types.NxMultiPartFrame] = @json.from_json(
     headnode,
   )
   let draw_info = @cb.BodyDrawInfo(stance_bodys_map.0, stance_heads_map.0)
-  let hair_node : @char_look.NxStanceLooks[@types.NxMultiPartFrame] = @fs.read_file_to_string(
-      "assets/Character/Hair/00030000.img.json",
+  let hair_node : @char_look.NxStanceLooks[@types.NxMultiPartFrame] = @res.load_json(
+      "res://Character/Hair/00030000.img.json",
     )
-    |> @json.parse
     |> @json.from_json
   let look = @cp.CharLook(
     host,
     Map([]),
     @cp.FullBody(0, draw_info, stance_bodys_map.0, stance_heads_map.0),
     @char_look.Hair::parse(0, hair_node, draw_info),
-    @cp.Face(
-      20000,
-      @fs.read_file_to_string("assets/Character/Face/00020000.img.json")
-      |> @json.parse,
-    ),
+    @cp.Face(20000, @res.load_json("res://Character/Face/00020000.img.json")),
     draw_info,
   )
-  let weapon_node = @fs.read_file_to_string(
-      "assets/Character/Weapon/01462000.img.json",
-    )
-    |> @json.parse
+  let weapon_node = @res.load_json("res://Character/Weapon/01462000.img.json")
   let weapon_info = match weapon_node {
     { "info": Object(info), .. } => info
     _ => Map([])
@@ -146,7 +132,7 @@ test "crossbow shoot2 afterimage without range should render" {
     content=(
       #|[
       #|  {
-      #|    image_path: Some("assets/Character/Body/00002000.img_shoot2_body.png"),
+      #|    image_path: Some("assets/base/Character/Body/00002000.img_shoot2_body.png"),
       #|    source_rect: Some({ x: 124, y: 0, width: 31, height: 30 }),
       #|    destination_size: Some({ x: 31, y: 30 }),
       #|    anchor: { x: 0.27419354838709675, y: -0.5 },
@@ -156,7 +142,7 @@ test "crossbow shoot2 afterimage without range should render" {
       #|    world_translation: Some({ x: 100, y: 100, z: 70005 }),
       #|  },
       #|  {
-      #|    image_path: Some("assets/Character/Face/00020000.img_default_face.png"),
+      #|    image_path: Some("assets/base/Character/Face/00020000.img_default_face.png"),
       #|    source_rect: Some({ x: 0, y: 0, width: 26, height: 16 }),
       #|    destination_size: Some({ x: 26, y: 16 }),
       #|    anchor: { x: 0.2692307692307693, y: -2.4375 },
@@ -166,7 +152,7 @@ test "crossbow shoot2 afterimage without range should render" {
       #|    world_translation: Some({ x: 100, y: 100, z: 70021 }),
       #|  },
       #|  {
-      #|    image_path: Some("assets/Character/Hair/00030000.img.png"),
+      #|    image_path: Some("assets/base/Character/Hair/00030000.img.png"),
       #|    source_rect: Some({ x: 0, y: 0, width: 35, height: 20 }),
       #|    destination_size: Some({ x: 35, y: 20 }),
       #|    anchor: { x: 0.12857142857142856, y: -2.65 },
@@ -176,7 +162,7 @@ test "crossbow shoot2 afterimage without range should render" {
       #|    world_translation: Some({ x: 100, y: 100, z: 70016 }),
       #|  },
       #|  {
-      #|    image_path: Some("assets/Character/Hair/00030000.img.png"),
+      #|    image_path: Some("assets/base/Character/Hair/00030000.img.png"),
       #|    source_rect: Some({ x: 73, y: 0, width: 33, height: 17 }),
       #|    destination_size: Some({ x: 33, y: 17 }),
       #|    anchor: { x: 0.13636363636363635, y: -2.9705882352941178 },
@@ -186,7 +172,7 @@ test "crossbow shoot2 afterimage without range should render" {
       #|    world_translation: Some({ x: 100, y: 100, z: 70020 }),
       #|  },
       #|  {
-      #|    image_path: Some("assets/Character/Hair/00030000.img.png"),
+      #|    image_path: Some("assets/base/Character/Hair/00030000.img.png"),
       #|    source_rect: Some({ x: 35, y: 0, width: 38, height: 22 }),
       #|    destination_size: Some({ x: 38, y: 22 }),
       #|    anchor: { x: 0.10526315789473684, y: -2.4545454545454546 },
@@ -196,7 +182,7 @@ test "crossbow shoot2 afterimage without range should render" {
       #|    world_translation: Some({ x: 100, y: 100, z: 70025 }),
       #|  },
       #|  {
-      #|    image_path: Some("assets/Character/Body/00002000.img_shoot2_arm.png"),
+      #|    image_path: Some("assets/base/Character/Body/00002000.img_shoot2_arm.png"),
       #|    source_rect: Some({ x: 92, y: 0, width: 23, height: 11 }),
       #|    destination_size: Some({ x: 23, y: 11 }),
       #|    anchor: { x: -0.28260869565217395, y: -2.227272727272727 },
@@ -206,7 +192,7 @@ test "crossbow shoot2 afterimage without range should render" {
       #|    world_translation: Some({ x: 100, y: 100, z: 70044 }),
       #|  },
       #|  {
-      #|    image_path: Some("assets/Character/Body/00012000.img_shoot2_head.png"),
+      #|    image_path: Some("assets/base/Character/Body/00012000.img_shoot2_head.png"),
       #|    source_rect: Some({ x: 156, y: 0, width: 39, height: 35 }),
       #|    destination_size: Some({ x: 39, y: 35 }),
       #|    anchor: { x: 0.08974358974358976, y: -1.3 },
@@ -216,7 +202,7 @@ test "crossbow shoot2 afterimage without range should render" {
       #|    world_translation: Some({ x: 100, y: 100, z: 70019 }),
       #|  },
       #|  {
-      #|    image_path: Some("assets/Character/Weapon/spritesheets/01462000.img.png"),
+      #|    image_path: Some("assets/base/Character/Weapon/spritesheets/01462000.img.png"),
       #|    source_rect: Some({ x: 68, y: 17, width: 51, height: 17 }),
       #|    destination_size: Some({ x: 51, y: 17 }),
       #|    anchor: { x: 0.22549019607843135, y: -1.5 },
@@ -226,7 +212,7 @@ test "crossbow shoot2 afterimage without range should render" {
       #|    world_translation: Some({ x: 100, y: 100, z: 70036 }),
       #|  },
       #|  {
-      #|    image_path: Some("assets/Character/Afterimage/crossBow.img/animation.png"),
+      #|    image_path: Some("assets/base/Character/Afterimage/crossBow.img/animation.png"),
       #|    source_rect: Some({ x: 398, y: 226, width: 99, height: 8 }),
       #|    destination_size: Some({ x: 99, y: 8 }),
       #|    anchor: { x: 0.2777777777777778, y: -3.25 },

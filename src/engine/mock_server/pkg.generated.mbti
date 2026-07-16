@@ -1,0 +1,31 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/engine/mock_server"
+
+import {
+  "KKKIIO/maple-moon/engine/game_server",
+  "KKKIIO/maple-moon/engine/log",
+  "KKKIIO/maple-moon/game/server_proto",
+  "moonbitlang/core/json",
+}
+
+// Values
+
+// Errors
+
+// Types and methods
+pub struct MockServer {
+  sent_messages : Array[(Int, Json)]
+  handlers : Map[Int, Array[(Json) -> Unit raise]]
+  mut ticks : Int
+}
+pub fn MockServer::MockServer() -> Self
+pub fn[T : @server_proto.ServerMessage] MockServer::emit(Self, T) -> Unit raise
+pub fn MockServer::latest_sent_json(Self, Int) -> Json?
+pub fn MockServer::sent_count(Self, Int) -> Int
+pub fn MockServer::tick_count(Self) -> Int
+pub impl @game_server.GameServer for MockServer
+
+// Type aliases
+
+// Traits
+

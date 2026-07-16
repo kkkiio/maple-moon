@@ -1,8 +1,8 @@
 import {
   "moonbitlang/core/json",
   "moonbitlang/core/strconv",
-  "Milky2018/selene/ecs",
-  "KKKIIO/maple-moon/engine/resource",
+  "KKKIIO/selene/ecs",
+  "KKKIIO/maple-moon/engine/res",
   "KKKIIO/maple-moon/engine/log",
   "KKKIIO/maple-moon/engine/io_service",
   "KKKIIO/maple-moon/engine/utils",

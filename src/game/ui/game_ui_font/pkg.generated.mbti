@@ -1,0 +1,27 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/game/ui/game_ui_font"
+
+import {
+  "KKKIIO/selene/asset_types",
+  "KKKIIO/selene/ui",
+}
+
+// Values
+pub const ADDRESS : String = "res://UI/Fonts/FusionPixel/fusion-pixel-12px-proportional-zh_hans.ttf"
+
+pub const FAMILY : String = "Fusion Pixel 12px Proportional"
+
+pub const SIZE : Double = 12.0
+
+pub fn load() -> @asset_types.FontHandle
+
+pub fn text_font(size? : Double, bold? : Bool) -> @ui.TextFont
+
+// Errors
+
+// Types and methods
+
+// Type aliases
+
+// Traits
+

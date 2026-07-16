@@ -2,18 +2,22 @@
 using @char_stance {type StanceId}
 
 ///|
+fn init {
+  @asset.set_io(fn(path) {
+    Some(@fs.read_file_to_bytes(path)) catch {
+      _ => None
+    }
+  })
+  try! @res.configure_packs([("base", "assets/base")])
+}
+
+///|
 fn load_draw_info() -> @types.BodyDrawInfo raise {
-  let bodynode = @fs.read_file_to_string(
-      "assets/Character/Body/00002000.img.json",
-    )
-    |> @json.parse
+  let bodynode = @res.require_json("res://Character/Body/00002000.img.json")
   let stance_bodys_map : @char_look.NxStanceLooks[@types.NxStanceBody] = @json.from_json(
     bodynode,
   )
-  let headnode = @fs.read_file_to_string(
-      "assets/Character/Body/00012000.img.json",
-    )
-    |> @json.parse
+  let headnode = @res.require_json("res://Character/Body/00012000.img.json")
   let stance_heads_map : @char_look.NxStanceLooks[@types.NxMultiPartFrame] = @json.from_json(
     headnode,
   )
@@ -33,8 +37,7 @@ fn assert_decode_failed_as_weapon_part(json : Json) -> Unit raise {
 
 ///|
 test "NxWeapon parses shoot2 anchor origin and z" {
-  let src = @fs.read_file_to_string("assets/Character/Weapon/01462000.img.json")
-    |> @json.parse
+  let src = @res.require_json("res://Character/Weapon/01462000.img.json")
   let nx_weapon : NxWeapon = @json.from_json(src)
   guard nx_weapon.get_part("shoot2", 0, "weapon") is Some(part) else {
     fail("missing shoot2/0/weapon part")
@@ -58,7 +61,7 @@ test "NxWeapon skips empty frame placeholders" {
     "heal": {
       "0": {
         "weapon": {
-          "__i": "assets/Character/Weapon/spritesheets/01402000.img.png",
+          "__i": "res://Character/Weapon/spritesheets/01402000.img.png",
           "__w": 62,
           "__h": 21,
           "origin": [23, 10],
@@ -85,21 +88,21 @@ test "NxWeapon skips empty frame placeholders" {
 ///|
 test "NxWeaponPart decode should fail when required fields are missing" {
   assert_decode_failed_as_weapon_part({
-    "__i": "assets/Character/Weapon/spritesheets/01462000.img.png",
+    "__i": "res://Character/Weapon/spritesheets/01462000.img.png",
     "__w": 1,
     "__h": 1,
     "origin": [0, 0],
     "map": { "navel": [0, 0] },
   })
   assert_decode_failed_as_weapon_part({
-    "__i": "assets/Character/Weapon/spritesheets/01462000.img.png",
+    "__i": "res://Character/Weapon/spritesheets/01462000.img.png",
     "__w": 1,
     "__h": 1,
     "z": "weapon",
     "map": { "navel": [0, 0] },
   })
   assert_decode_failed_as_weapon_part({
-    "__i": "assets/Character/Weapon/spritesheets/01462000.img.png",
+    "__i": "res://Character/Weapon/spritesheets/01462000.img.png",
     "__w": 1,
     "__h": 1,
     "z": "weapon",

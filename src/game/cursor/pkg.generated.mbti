@@ -3,10 +3,10 @@ package "KKKIIO/maple-moon/game/cursor"
 
 import {
   "KKKIIO/maple-moon/engine/ui",
-  "Milky2018/selene/asset_types",
-  "Milky2018/selene/ecs",
-  "Milky2018/selene/entity",
-  "Milky2018/selene/math",
+  "KKKIIO/selene/asset_types",
+  "KKKIIO/selene/ecs",
+  "KKKIIO/selene/entity",
+  "KKKIIO/selene/math",
   "moonbitlang/core/hashmap",
 }
 

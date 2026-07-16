@@ -176,8 +176,8 @@ pub fn set_module(resource : CharacterPresentationResource) -> Unit {
 
 ///|
 fn load_stance_bodys_map() -> NxStanceLooks[@types.NxStanceBody] {
-  let bodynode = @resource.require_json(
-    "assets/Character/Body/00002000.img.json",
+  let bodynode = @res.require_json(
+    "res://Character/Body/00002000.img.json",
   )
   let v : NxStanceLooks[@types.NxStanceBody] = @json.from_json(bodynode) catch {
     err => abort("failed to decode body stance map: \{err}")
@@ -187,8 +187,8 @@ fn load_stance_bodys_map() -> NxStanceLooks[@types.NxStanceBody] {
 
 ///|
 fn load_stance_heads_map() -> NxStanceLooks[@types.NxMultiPartFrame] {
-  let headnode = @resource.require_json(
-    "assets/Character/Body/00012000.img.json",
+  let headnode = @res.require_json(
+    "res://Character/Body/00012000.img.json",
   )
   let v : NxStanceLooks[@types.NxMultiPartFrame] = @json.from_json(headnode) catch {
     err => abort("failed to decode head stance map: \{err}")

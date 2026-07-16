@@ -44,7 +44,7 @@ pub(all) struct QuestLogSnapshotRaw {
 ///|
 /// 加载 Quest 资源,返回 (QuestResource, Json)
 pub fn load_quest_resource() -> (QuestResource, Json) {
-  let raw = @resource.require_json("assets/Quest/nx.json")
+  let raw = @res.require_json("res://Quest/nx.json")
   let quests_resource : QuestResource = @json.from_json(raw) catch {
     _ => abort("invalid quest resource")
   }

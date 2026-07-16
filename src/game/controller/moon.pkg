@@ -11,14 +11,13 @@ import {
   "KKKIIO/maple-moon/game/server_proto",
   "KKKIIO/maple-moon/engine/game_server",
   "KKKIIO/maple-moon/engine/log",
-  "Milky2018/selene/ecs",
+  "KKKIIO/selene/ecs",
 }
 
 import {
-  "moonbitlang/x/fs",
   "moonbitlang/core/json",
-  "Milky2018/selene/entity",
-  "Milky2018/selene/inputs",
+  "KKKIIO/selene/entity",
+  "KKKIIO/selene/inputs",
   "KKKIIO/maple-moon/engine/legacy_types",
   "KKKIIO/maple-moon/game/char_look",
   "KKKIIO/maple-moon/game/char_look/types",
@@ -29,12 +28,10 @@ import {
   "KKKIIO/maple-moon/game/server_proto",
   "KKKIIO/maple-moon/game/weapon",
   "KKKIIO/maple-moon/game/combat_system",
-  "KKKIIO/maple-moon/engine/resource",
-  "Milky2018/selene/ecs",
+  "KKKIIO/maple-moon/engine/res",
+  "KKKIIO/selene/ecs",
+  "KKKIIO/selene/asset",
+  "moonbitlang/x/fs",
 } for "test"
 
 supported_targets = "native+js"
-
-options(
-  overrides: [ "Milky2018/selene_raylib/platform_asset_io" ],
-)

@@ -33,12 +33,12 @@ let ui_slice_cache : Map[String, UiSliceResource] = Map([])
 /// Load and cache one UI slice resource from an exported `slice.json`.
 ///
 /// `slice_json_path` must be a resolved asset path such as
-/// `"assets/UI/UIWindow2.img/UtilDlgEx/slice.json"`.
+/// `"res://UI/UIWindow2.img/UtilDlgEx/slice.json"`.
 pub fn load_ui_slice_resource(slice_json_path : String) -> UiSliceResource {
   match ui_slice_cache.get(slice_json_path) {
     Some(cached) => cached
     None => {
-      let source = @resource.require_json(slice_json_path)
+      let source = @res.require_json(slice_json_path)
       let parsed = parse_ui_slice_json(slice_json_path, source) catch {
         _ => abort("invalid ui slice json: \{slice_json_path}")
       }
@@ -124,7 +124,7 @@ fn parse_ui_slice_json(
   }
 
   let image_path = resolve_meta_image_path(slice_json_path, image_ref)
-  let image = @resource.require_image(image_path)
+  let image = @res.require_image(image_path)
 
   let handle = @selene_ui.register_ui_material_asset(
     @selene_ui.UiMaterialAsset::from_draw(fn(context) {

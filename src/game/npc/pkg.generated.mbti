@@ -6,8 +6,8 @@ import {
   "KKKIIO/maple-moon/game/physics",
   "KKKIIO/maple-moon/game/res_types",
   "KKKIIO/maple-moon/game/server_proto",
-  "Milky2018/selene/ecs",
-  "Milky2018/selene/entity",
+  "KKKIIO/selene/ecs",
+  "KKKIIO/selene/entity",
   "moonbitlang/core/debug",
   "moonbitlang/core/json",
 }
@@ -152,6 +152,7 @@ pub enum TalkType {
   SEND_PREV
 } derive(Eq, ToJson, @debug.Debug)
 pub fn TalkType::from_int(Int, Int, Int) -> Self?
+pub fn TalkType::from_value(Int) -> Self?
 pub fn TalkType::int_value(Self) -> Int
 pub impl Hash for TalkType
 

@@ -4,16 +4,16 @@ pub fn parse_markup(
   text : String,
   tag_map : Map[Char, MarkupType],
 ) -> Array[Node] raise ParseError {
-  let nodes = []
-  for token in scan_markup(text, tag_map) {
-    match token {
-      MarkupToken::Text(text) => nodes.push(to_text(text))
-      MarkupToken::Tag(tag, payload) => nodes.push(Node::Tag(tag, payload))
-      MarkupToken::Unknown(tag, _) => raise UnknownTag(tag)
-      MarkupToken::Incomplete(_) => raise MissingMarkupClose
+  [
+    for token in scan_markup(text, tag_map) => {
+      match token {
+        MarkupToken::Text(text) => to_text(text)
+        MarkupToken::Tag(tag, payload) => Node::Tag(tag, payload)
+        MarkupToken::Unknown(tag, _) => raise UnknownTag(tag)
+        MarkupToken::Incomplete(_) => raise MissingMarkupClose
+      }
     }
-  }
-  nodes
+  ]
 }
 
 ///|

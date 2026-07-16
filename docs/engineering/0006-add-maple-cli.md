@@ -58,16 +58,23 @@ child-process ownership remain in the official async packages.
 ## Command semantics
 
 Commands are atomic operations. `start` and plain `open` acknowledge launch or
-connection requests without polling readiness. Plain `status`, `cmd`, `eval`,
+connection requests without polling readiness. Plain `status`, `observe`,
 `logs`, `network`, `screenshot`, `reload`, and `close` each make one attempt.
-Waiting is exposed only by `open --wait`, `status --wait`, `wait-ready`, the
-user-supplied `bot run --timeout-ms` execution bound, and the streaming
+`act` executes one namespaced game action and waits only for that action's
+explicit postcondition. Waiting is exposed by `open --wait`, `status --wait`,
+`wait active`, the user-supplied `playtest run --timeout-ms` execution bound,
+and the streaming
 `logs --follow` command. Finite IPC, HTTP, and CDP deadlines protect each
 operation from hanging; they do not add readiness polling to plain commands.
 
-`bot run` is one atomic playtest execution primitive: it builds `game_debug`,
+`playtest run` is one atomic playtest execution primitive: it builds `game_debug`,
 injects one JavaScript scenario, drives its completion, and returns a bounded
 report.
+
+`maple open` defaults to `game_debug`, which supports normal human play and
+adds BotController actions. `maple open --entry web` selects the normal Web
+entry without BotController. `lookup map|npc|item` reads resource-pack data in
+the native client and does not require a daemon or browser.
 
 Closing Chrome leaves `mapled` alive and clears only the CDP connection. A later
 `maple open` reconnects explicitly. `mapled` never relaunches Chrome in response
@@ -82,7 +89,9 @@ the Chrome child it owns.
 | Console calls and exceptions | `Runtime`, `Log` | `mapled` ring buffer |
 | Network requests and failures | `Network` | `mapled` ring buffer |
 | Screenshots | `Page` | `mapled`, written through async FS |
-| Playtest script execution | `Runtime.evaluate` | one `bot run` request |
+| Verified game actions | `Runtime.evaluate` | one `act` request |
+| Structured observation | `Runtime.evaluate` | one `observe` request |
+| Playtest script execution | `Runtime.evaluate` | one `playtest run` request |
 
 Web profiling belongs in the same daemon boundary as explicit atomic actions:
 
@@ -111,7 +120,7 @@ server.
 
 - `mapled` does not manage Vite or `moon build --watch`.
 - The protocol supports one local daemon and one controlled Chrome profile.
-- Game commands remain registered through `@console.register_command`; the CLI
-  does not duplicate game-side semantics.
+- Game commands remain registered through `@console.register_command`; `act`
+  supplies the stable CLI namespace and client-visible completion checks.
 - Browser verification complements native raylib snapshot tests and does not
   replace them.

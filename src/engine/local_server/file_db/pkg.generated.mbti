@@ -1,0 +1,23 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/engine/local_server/file_db"
+
+import {
+  "KKKIIO/maple-moon/engine/local_server",
+}
+
+// Values
+
+// Errors
+
+// Types and methods
+pub struct FileDB {
+  root_path : String
+}
+pub fn FileDB::FileDB(root_path? : String) -> Self
+pub fn FileDB::root_path_for_debug(Self) -> String
+pub impl @local_server.DB for FileDB
+
+// Type aliases
+
+// Traits
+

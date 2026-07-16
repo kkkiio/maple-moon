@@ -1,0 +1,35 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/engine/game_server"
+
+import {
+  "KKKIIO/maple-moon/engine/log",
+  "KKKIIO/maple-moon/game/server_proto",
+  "moonbitlang/core/json",
+}
+
+// Values
+pub fn add_server_message_handler(String, Int, (Json) -> Unit raise) -> Unit
+
+pub fn init_server() -> Unit
+
+pub fn install(&GameServer) -> Unit
+
+#callsite(autofill(loc))
+pub fn[T : @server_proto.ClientMessage] send(T, log_level? : @log.Level, loc~ : SourceLoc) -> Unit
+
+pub fn server_system(Double) -> Unit
+
+// Errors
+
+// Types and methods
+
+// Type aliases
+
+// Traits
+pub(open) trait GameServer {
+  fn initialize(Self) -> Unit
+  fn send_json(Self, Int, Json, @log.Level, SourceLoc) -> Unit
+  fn register_handler(Self, String, Int, (Json) -> Unit raise) -> Unit
+  fn tick(Self, Double) -> Unit
+}
+

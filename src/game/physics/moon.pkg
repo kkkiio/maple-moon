@@ -2,7 +2,7 @@ import {
   "moonbitlang/core/json",
   "KKKIIO/maple-moon/engine/utils",
   "KKKIIO/maple-moon/game/res_types" @struct,
-  "KKKIIO/maple-moon/engine/resource",
-  "Milky2018/selene/math" @selene_math,
+  "KKKIIO/maple-moon/engine/res",
+  "KKKIIO/selene/math" @selene_math,
   "KKKIIO/maple-moon/game/logic_fps",
 }

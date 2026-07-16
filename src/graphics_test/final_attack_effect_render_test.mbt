@@ -1,5 +1,5 @@
 ///|
-fn final_attack_load_test_mob() -> @monster.Mob {
+fn final_attack_load_test_mob() -> @monster.Mob raise {
   @monster.Mob::load(
     1001,
     100101,
@@ -25,7 +25,7 @@ test "final attack hit effect with EFFECT_ZINDEX stays visible" {
   defer @sprite.sprites().clear()
 
   let data = @skill.SkillData::load(1100002)
-  let skill_base_path = "assets/Skill/110.img.json"
+  let skill_base_path = "res://Skill/110.img.json"
   let hit_effect = @combat_system.make_hit_effect(data.src, skill_base_path)
 
   let user : @combat_proto.AttackUser = {
@@ -90,7 +90,7 @@ test "final attack hit effect with EFFECT_ZINDEX stays visible" {
       #|    {
       #|      layer: "world",
       #|      kind: "Image",
-      #|      texture_path: Some("assets/Skill/110.img/animations/skill__1100002.png"),
+      #|      texture_path: Some("assets/base/Skill/110.img/animations/skill__1100002.png"),
       #|      source_rect: Some({ x: 175, y: 0, width: 167, height: 92 }),
       #|      destination_rect: Some({ x: 114, y: 61, width: 167, height: 92 }),
       #|      color: Some({ r: 255, g: 255, b: 255, a: 1 }),

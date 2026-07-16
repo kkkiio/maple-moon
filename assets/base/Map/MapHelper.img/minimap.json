@@ -1,0 +1,200 @@
+{
+  "another": {
+    "__h": 5,
+    "__w": 5,
+    "__i": "minimap.png",
+    "__off": [
+      0,
+      29
+    ]
+  },
+  "anothertrader": {
+    "__h": 5,
+    "__w": 5,
+    "__i": "minimap.png",
+    "__off": [
+      25,
+      29
+    ]
+  },
+  "arrowdown": {
+    "__h": 7,
+    "__w": 11,
+    "__i": "minimap.png",
+    "__off": [
+      11,
+      13
+    ]
+  },
+  "arrowdownleft": {
+    "__h": 9,
+    "__w": 9,
+    "__i": "minimap.png",
+    "__off": [
+      9,
+      20
+    ]
+  },
+  "arrowdownright": {
+    "__h": 9,
+    "__w": 9,
+    "__i": "minimap.png",
+    "__off": [
+      0,
+      20
+    ]
+  },
+  "arrowleft": {
+    "__h": 11,
+    "__w": 7,
+    "__i": "minimap.png",
+    "__off": [
+      15,
+      0
+    ]
+  },
+  "arrowright": {
+    "__h": 11,
+    "__w": 7,
+    "__i": "minimap.png",
+    "__off": [
+      8,
+      0
+    ]
+  },
+  "arrowup": {
+    "__h": 7,
+    "__w": 11,
+    "__i": "minimap.png",
+    "__off": [
+      0,
+      13
+    ]
+  },
+  "arrowupleft": {
+    "__h": 9,
+    "__w": 9,
+    "__i": "minimap.png",
+    "__off": [
+      22,
+      9
+    ]
+  },
+  "arrowupright": {
+    "__h": 9,
+    "__w": 9,
+    "__i": "minimap.png",
+    "__off": [
+      22,
+      0
+    ]
+  },
+  "endnpc": {
+    "__h": 13,
+    "__w": 4,
+    "__i": "minimap.png",
+    "__off": [
+      4,
+      0
+    ]
+  },
+  "friend": {
+    "__h": 5,
+    "__w": 5,
+    "__i": "minimap.png",
+    "__off": [
+      5,
+      29
+    ]
+  },
+  "guild": {
+    "__h": 5,
+    "__w": 5,
+    "__i": "minimap.png",
+    "__off": [
+      10,
+      29
+    ]
+  },
+  "guildmaster": {
+    "__h": 9,
+    "__w": 5,
+    "__i": "minimap.png",
+    "__off": [
+      18,
+      20
+    ]
+  },
+  "match": {
+    "__h": 6,
+    "__w": 7,
+    "__i": "minimap.png",
+    "__off": [
+      31,
+      8
+    ]
+  },
+  "npc": {
+    "__h": 7,
+    "__w": 4,
+    "__i": "minimap.png",
+    "__off": [
+      31,
+      14
+    ]
+  },
+  "party": {
+    "__h": 5,
+    "__w": 5,
+    "__i": "minimap.png",
+    "__off": [
+      15,
+      29
+    ]
+  },
+  "partymaster": {
+    "__h": 9,
+    "__w": 5,
+    "__i": "minimap.png",
+    "__off": [
+      23,
+      20
+    ]
+  },
+  "portal": {
+    "__h": 8,
+    "__w": 8,
+    "__i": "minimap.png",
+    "__off": [
+      31,
+      0
+    ]
+  },
+  "startnpc": {
+    "__h": 13,
+    "__w": 4,
+    "__i": "minimap.png",
+    "__off": [
+      0,
+      0
+    ]
+  },
+  "user": {
+    "__h": 6,
+    "__w": 6,
+    "__i": "minimap.png",
+    "__off": [
+      31,
+      21
+    ]
+  },
+  "usertrader": {
+    "__h": 5,
+    "__w": 5,
+    "__i": "minimap.png",
+    "__off": [
+      20,
+      29
+    ]
+  }
+}

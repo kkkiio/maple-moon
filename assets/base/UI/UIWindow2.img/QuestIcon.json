@@ -1,0 +1,3095 @@
+{
+  "0": {
+    "0": {
+      "__h": 44,
+      "__w": 44,
+      "_hash": "3b4c7b4f81305d461060fe99e464cae367e8d6588dc6da22c879331a24dec79c",
+      "delay": 150,
+      "origin": [
+        21,
+        22
+      ],
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/0.png",
+      "__off": [
+        0,
+        46
+      ]
+    },
+    "1": {
+      "__h": 46,
+      "__w": 44,
+      "_hash": "04b7e083ba255eb615ac2d810290b4dbdbc8b6c76d02468b21900f99472c5cff",
+      "delay": 150,
+      "origin": [
+        21,
+        24
+      ],
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/0.png",
+      "__off": [
+        0,
+        0
+      ]
+    },
+    "2": {
+      "__h": 46,
+      "__w": 44,
+      "_hash": "10d9e3f48ba114d384ed817ce60f62c3c613643ae0f15050d6b820d251e0cf06",
+      "delay": 150,
+      "origin": [
+        21,
+        24
+      ],
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/0.png",
+      "__off": [
+        44,
+        0
+      ]
+    },
+    "3": {
+      "__h": 46,
+      "__w": 44,
+      "_hash": "20d8e945300bc7e5b47bcd526bb2c84e2fa2d0bd613763036dbac9d2fddaae23",
+      "delay": 150,
+      "origin": [
+        21,
+        24
+      ],
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/0.png",
+      "__off": [
+        88,
+        0
+      ]
+    },
+    "4": {
+      "__h": 44,
+      "__w": 44,
+      "_inlink": "QuestIcon/0/0",
+      "delay": 150,
+      "origin": [
+        21,
+        22
+      ],
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/0.png",
+      "__off": [
+        0,
+        46
+      ]
+    },
+    "5": {
+      "__h": 46,
+      "__w": 44,
+      "_inlink": "QuestIcon/0/1",
+      "delay": 150,
+      "origin": [
+        21,
+        24
+      ],
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/0.png",
+      "__off": [
+        0,
+        0
+      ]
+    },
+    "6": {
+      "__h": 46,
+      "__w": 44,
+      "_inlink": "QuestIcon/0/2",
+      "delay": 150,
+      "origin": [
+        21,
+        24
+      ],
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/0.png",
+      "__off": [
+        44,
+        0
+      ]
+    },
+    "7": {
+      "__h": 46,
+      "__w": 44,
+      "_inlink": "QuestIcon/0/3",
+      "delay": 150,
+      "origin": [
+        21,
+        24
+      ],
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/0.png",
+      "__off": [
+        88,
+        0
+      ]
+    }
+  },
+  "1": {
+    "0": {
+      "__h": 44,
+      "__w": 42,
+      "_hash": "aff2af56128834a8da7bfabd1800759b3b51162c3e535c320aef476d6d1a8b00",
+      "delay": 150,
+      "origin": [
+        21,
+        22
+      ],
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/1.png",
+      "__off": [
+        0,
+        0
+      ]
+    },
+    "1": {
+      "__h": 44,
+      "__w": 42,
+      "_hash": "e7b28125bf0ab86d16c09317d99d24192e33e5f25fe66860e9a63c03221f750a",
+      "delay": 150,
+      "origin": [
+        21,
+        22
+      ],
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/1.png",
+      "__off": [
+        42,
+        0
+      ]
+    },
+    "2": {
+      "__h": 44,
+      "__w": 42,
+      "_hash": "c469b0db7adc09f72123c87effeb1b226770643b4965ff76c893c684f8cdcb24",
+      "delay": 150,
+      "origin": [
+        21,
+        22
+      ],
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/1.png",
+      "__off": [
+        84,
+        0
+      ]
+    },
+    "3": {
+      "__h": 44,
+      "__w": 42,
+      "_hash": "cde754aa0b4117cc46f2550821df484aa40ccc5b88742ce8d63366243d1d9c67",
+      "delay": 150,
+      "origin": [
+        21,
+        22
+      ],
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/1.png",
+      "__off": [
+        0,
+        44
+      ]
+    }
+  },
+  "2": {
+    "0": {
+      "__h": 44,
+      "__w": 44,
+      "_hash": "bf609c6eaace119dd75ab97e6b8758fec9c71260148d82650fe4782b127cf794",
+      "delay": 150,
+      "origin": [
+        22,
+        22
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/2.png",
+      "__off": [
+        0,
+        0
+      ]
+    },
+    "1": {
+      "__h": 44,
+      "__w": 44,
+      "_hash": "1b170b473b9bac4d584033b1ac63be950d48eb2be9aa44a157886457ba66bb50",
+      "delay": 150,
+      "origin": [
+        22,
+        22
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/2.png",
+      "__off": [
+        44,
+        0
+      ]
+    },
+    "2": {
+      "__h": 44,
+      "__w": 44,
+      "_hash": "08a99b2194f252a90beb22cad86a8241f333bf306bf45e3e1718d3cecf98ed09",
+      "delay": 150,
+      "origin": [
+        22,
+        22
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/2.png",
+      "__off": [
+        0,
+        44
+      ]
+    },
+    "3": {
+      "__h": 44,
+      "__w": 44,
+      "_hash": "c151f64de7be4a280325e05651bd1192b26a995daceb45060aa558c2c3251c44",
+      "delay": 150,
+      "origin": [
+        22,
+        22
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/2.png",
+      "__off": [
+        44,
+        44
+      ]
+    },
+    "4": {
+      "__h": 44,
+      "__w": 44,
+      "_inlink": "QuestIcon/2/0",
+      "delay": 150,
+      "origin": [
+        22,
+        22
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/2.png",
+      "__off": [
+        0,
+        0
+      ]
+    },
+    "5": {
+      "__h": 44,
+      "__w": 44,
+      "_inlink": "QuestIcon/2/1",
+      "delay": 150,
+      "origin": [
+        22,
+        22
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/2.png",
+      "__off": [
+        44,
+        0
+      ]
+    },
+    "6": {
+      "__h": 44,
+      "__w": 44,
+      "_inlink": "QuestIcon/2/2",
+      "delay": 150,
+      "origin": [
+        22,
+        22
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/2.png",
+      "__off": [
+        0,
+        44
+      ]
+    },
+    "7": {
+      "__h": 44,
+      "__w": 44,
+      "_inlink": "QuestIcon/2/3",
+      "delay": 150,
+      "origin": [
+        22,
+        22
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/2.png",
+      "__off": [
+        44,
+        44
+      ]
+    }
+  },
+  "3": {
+    "0": {
+      "__h": 18,
+      "__w": 142,
+      "_hash": "7e5ef1fb0d0e9881a4a28e8f3a6d439a907cd4f8ef68dd72eb6e05cc2459510b",
+      "origin": [
+        0,
+        0
+      ],
+      "__i": "../images/72236.png"
+    }
+  },
+  "4": {
+    "0": {
+      "__h": 16,
+      "__w": 80,
+      "_hash": "4700dc5e31ebd001d6e64246e9e12a26041451e25dec0327b142fd44a447815d",
+      "origin": [
+        0,
+        0
+      ],
+      "__i": "../images/72237.png"
+    }
+  },
+  "5": {
+    "0": {
+      "__h": 27,
+      "__w": 30,
+      "_hash": "952d513b47ff9013570dfbf872d468be8f91d77b23fd028616278e948c356388",
+      "origin": [
+        -4,
+        0
+      ],
+      "__i": "../images/72238.png"
+    }
+  },
+  "6": {
+    "0": {
+      "__h": 17,
+      "__w": 51,
+      "_hash": "5448d6a9011aab467ca3bfbbe4159d3718af2401d09128cc61c4570419302b42",
+      "origin": [
+        0,
+        0
+      ],
+      "__i": "../images/72239.png"
+    }
+  },
+  "7": {
+    "0": {
+      "__h": 17,
+      "__w": 60,
+      "_hash": "bf7eaa7d96ccc75cf08d27b8ba75176849c6f26306300874e894791b26448714",
+      "origin": [
+        0,
+        0
+      ],
+      "__i": "../images/72240.png"
+    }
+  },
+  "8": {
+    "0": {
+      "__h": 18,
+      "__w": 42,
+      "_hash": "26df33a90ec9bdbf70939933dab91a28b60bdca8976f6fc449c5339b3b88471c",
+      "origin": [
+        0,
+        0
+      ],
+      "__i": "../images/72241.png"
+    }
+  },
+  "9": {
+    "0": {
+      "__h": 17,
+      "__w": 103,
+      "_hash": "05f949089403549717465c4b4dcd8fadce0cc9d0d75079db9770377b34cee17b",
+      "origin": [
+        0,
+        0
+      ],
+      "__i": "../images/72242.png"
+    }
+  },
+  "10": {
+    "0": {
+      "__h": 19,
+      "__w": 36,
+      "_hash": "f6d26ad4d660916dfccd3f5519615f117d0b5ad3d7b20f6a4afba458275a7c2d",
+      "origin": [
+        0,
+        0
+      ],
+      "__i": "../images/72243.png"
+    }
+  },
+  "11": {
+    "0": {
+      "__h": 20,
+      "__w": 54,
+      "_hash": "7adc1ff9e2cdd2ca32dab547bd12891559c92ffd0e5948b98dafcd1a2787bf43",
+      "origin": [
+        -2,
+        2
+      ],
+      "__i": "../images/72244.png"
+    }
+  },
+  "12": {
+    "0": {
+      "__h": 46,
+      "__w": 49,
+      "_hash": "0475ac747758510db95c274b963639fd0bbda8ab83fc949bdf0a0d1e77ed9fc0",
+      "delay": 150,
+      "origin": [
+        24,
+        23
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/12.png",
+      "__off": [
+        0,
+        0
+      ]
+    },
+    "1": {
+      "__h": 46,
+      "__w": 49,
+      "_hash": "77e638a2c09c41ed31725ebf3beda714f758f6fd871b1754ae5af62b634c1c47",
+      "delay": 150,
+      "origin": [
+        24,
+        23
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/12.png",
+      "__off": [
+        49,
+        0
+      ]
+    },
+    "2": {
+      "__h": 46,
+      "__w": 49,
+      "_hash": "add2790771ab3be79c29c2692c07cade3a36b9494c627597cab7f8bdadafc358",
+      "delay": 150,
+      "origin": [
+        24,
+        23
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/12.png",
+      "__off": [
+        0,
+        46
+      ]
+    },
+    "3": {
+      "__h": 46,
+      "__w": 49,
+      "_hash": "292a15b7e70ca6ea6401deab3ca74d145b638b1179d46c713e634c4551f218a3",
+      "delay": 150,
+      "origin": [
+        24,
+        23
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/12.png",
+      "__off": [
+        49,
+        46
+      ]
+    }
+  },
+  "13": {
+    "0": {
+      "__h": 46,
+      "__w": 49,
+      "_hash": "b42b07ecdd033e0a25a712ee372b736d8b29f79bfa66e64bb12f24995daf9f77",
+      "delay": 150,
+      "origin": [
+        24,
+        23
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/13.png",
+      "__off": [
+        0,
+        0
+      ]
+    },
+    "1": {
+      "__h": 46,
+      "__w": 49,
+      "_hash": "14a3cd86e44f210305a25a98c7d0c238e887495b4aaf56d6c1849ad6592930fb",
+      "delay": 150,
+      "origin": [
+        24,
+        23
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/13.png",
+      "__off": [
+        49,
+        0
+      ]
+    },
+    "2": {
+      "__h": 46,
+      "__w": 49,
+      "_hash": "96bdd4a56e5bdd29c18164539424536d1a11a7338ecf1c2ab8075fc14a4654ad",
+      "delay": 150,
+      "origin": [
+        24,
+        23
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/13.png",
+      "__off": [
+        0,
+        46
+      ]
+    },
+    "3": {
+      "__h": 46,
+      "__w": 49,
+      "_inlink": "QuestIcon/13/1",
+      "delay": 150,
+      "origin": [
+        24,
+        23
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/13.png",
+      "__off": [
+        49,
+        0
+      ]
+    }
+  },
+  "14": {
+    "0": {
+      "__h": 16,
+      "__w": 38,
+      "_hash": "57a221f50eddba0d4254af6f198a69df094d7119983e306c78e82edcf6443a77",
+      "origin": [
+        -5,
+        -3
+      ],
+      "__i": "../images/72253.png"
+    }
+  },
+  "15": {
+    "0": {
+      "__h": 44,
+      "__w": 44,
+      "_hash": "74ee540572f768522eeab1e2accbfbdeb55bc5e178526b717a9093401e6fdf1c",
+      "delay": 150,
+      "origin": [
+        21,
+        22
+      ],
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/15.png",
+      "__off": [
+        0,
+        0
+      ]
+    },
+    "1": {
+      "__h": 44,
+      "__w": 44,
+      "_hash": "ea4bc7bd1016346783bdf43a91eeb5480ee102ac0e17da85b038929d9a28a410",
+      "delay": 150,
+      "origin": [
+        21,
+        22
+      ],
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/15.png",
+      "__off": [
+        44,
+        0
+      ]
+    },
+    "2": {
+      "__h": 44,
+      "__w": 44,
+      "_hash": "36346f1438d9e5d9abe021e5be8dd1482ece2e01a037f4fa06ce6edbbc3c57bc",
+      "delay": 150,
+      "origin": [
+        21,
+        22
+      ],
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/15.png",
+      "__off": [
+        0,
+        44
+      ]
+    },
+    "3": {
+      "__h": 44,
+      "__w": 44,
+      "_inlink": "QuestIcon/15/2",
+      "delay": 150,
+      "origin": [
+        21,
+        22
+      ],
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/15.png",
+      "__off": [
+        0,
+        44
+      ]
+    },
+    "4": {
+      "__h": 44,
+      "__w": 44,
+      "_hash": "63337c1c4f203b63f4b5cc423f6f01f39d0b6406d13a776e05127da97210b69f",
+      "delay": 150,
+      "origin": [
+        21,
+        22
+      ],
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/15.png",
+      "__off": [
+        44,
+        44
+      ]
+    },
+    "5": {
+      "__h": 44,
+      "__w": 44,
+      "_hash": "b976f2c2fea11bc877e4033419d5162e2162cdb84cb876bfb71b58e4006c8cb4",
+      "delay": 150,
+      "origin": [
+        21,
+        22
+      ],
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/15.png",
+      "__off": [
+        88,
+        0
+      ]
+    },
+    "6": {
+      "__h": 44,
+      "__w": 44,
+      "_inlink": "QuestIcon/15/2",
+      "delay": 150,
+      "origin": [
+        21,
+        22
+      ],
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/15.png",
+      "__off": [
+        0,
+        44
+      ]
+    },
+    "7": {
+      "__h": 44,
+      "__w": 44,
+      "_inlink": "QuestIcon/15/2",
+      "delay": 150,
+      "origin": [
+        21,
+        22
+      ],
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/15.png",
+      "__off": [
+        0,
+        44
+      ]
+    }
+  },
+  "16": {
+    "0": {
+      "__h": 44,
+      "__w": 42,
+      "_hash": "2f34effad9c6dabe168c3b6b31580cf2d9e8ff3733589e4f5a86307d80a794bd",
+      "delay": 150,
+      "origin": [
+        21,
+        22
+      ],
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/16.png",
+      "__off": [
+        0,
+        0
+      ]
+    },
+    "1": {
+      "__h": 44,
+      "__w": 42,
+      "_hash": "cc86596ebdc143ffa1a47fdd5387a54c3f03700e28f4f1b4d08cccc0fc2224e5",
+      "delay": 150,
+      "origin": [
+        21,
+        22
+      ],
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/16.png",
+      "__off": [
+        42,
+        0
+      ]
+    },
+    "2": {
+      "__h": 44,
+      "__w": 42,
+      "_hash": "d86f794d02171421a85159c86f03221c87e1ab1c692182ab7f6077d3b0d40522",
+      "delay": 150,
+      "origin": [
+        21,
+        22
+      ],
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/16.png",
+      "__off": [
+        84,
+        0
+      ]
+    },
+    "3": {
+      "__h": 44,
+      "__w": 42,
+      "_hash": "68bb63074cb520bd0ba31abf20844f0c17fccf3bddd6aafaf66c0ad3afa3d8f4",
+      "delay": 150,
+      "origin": [
+        21,
+        22
+      ],
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/16.png",
+      "__off": [
+        0,
+        44
+      ]
+    }
+  },
+  "17": {
+    "0": {
+      "__h": 44,
+      "__w": 44,
+      "_hash": "131750894e5aed59246c525bcedf865773f920e181f6b4abe486ea384a0587c7",
+      "delay": 150,
+      "origin": [
+        21,
+        22
+      ],
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/17.png",
+      "__off": [
+        0,
+        0
+      ]
+    },
+    "1": {
+      "__h": 44,
+      "__w": 44,
+      "_hash": "f611a0cb5915084254083530e64af984de5d165301edc019ef9410f0cca22cdc",
+      "delay": 150,
+      "origin": [
+        21,
+        22
+      ],
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/17.png",
+      "__off": [
+        44,
+        0
+      ]
+    },
+    "2": {
+      "__h": 44,
+      "__w": 44,
+      "_hash": "26c3b00b52b53f3bff8cd03b4b68b134a325eb306183dceb0fdae52f8eaef0ee",
+      "delay": 150,
+      "origin": [
+        21,
+        22
+      ],
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/17.png",
+      "__off": [
+        0,
+        44
+      ]
+    },
+    "3": {
+      "__h": 44,
+      "__w": 44,
+      "_hash": "9988294c3a37bb9676c6c4df89d3d57b0c60b25a2ce848f96d54074e64ef0120",
+      "delay": 150,
+      "origin": [
+        21,
+        22
+      ],
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/17.png",
+      "__off": [
+        44,
+        44
+      ]
+    },
+    "4": {
+      "__h": 44,
+      "__w": 44,
+      "_inlink": "QuestIcon/17/0",
+      "delay": 150,
+      "origin": [
+        21,
+        22
+      ],
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/17.png",
+      "__off": [
+        0,
+        0
+      ]
+    },
+    "5": {
+      "__h": 44,
+      "__w": 44,
+      "_inlink": "QuestIcon/17/1",
+      "delay": 150,
+      "origin": [
+        21,
+        22
+      ],
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/17.png",
+      "__off": [
+        44,
+        0
+      ]
+    },
+    "6": {
+      "__h": 44,
+      "__w": 44,
+      "_inlink": "QuestIcon/17/2",
+      "delay": 150,
+      "origin": [
+        21,
+        22
+      ],
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/17.png",
+      "__off": [
+        0,
+        44
+      ]
+    },
+    "7": {
+      "__h": 44,
+      "__w": 44,
+      "_inlink": "QuestIcon/17/3",
+      "delay": 150,
+      "origin": [
+        21,
+        22
+      ],
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/17.png",
+      "__off": [
+        44,
+        44
+      ]
+    }
+  },
+  "18": {
+    "0": {
+      "__h": 46,
+      "__w": 49,
+      "_hash": "f49f50bc793196003151fc93ecb4b032d4d0b3bd0f4a7eeafc396814f6a04b24",
+      "delay": 150,
+      "origin": [
+        24,
+        23
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/18.png",
+      "__off": [
+        0,
+        0
+      ]
+    },
+    "1": {
+      "__h": 46,
+      "__w": 49,
+      "_hash": "4bacf743384effc9fb047fea3e662a0d83a9920988cc58ffb393cab178dcdd10",
+      "delay": 150,
+      "origin": [
+        24,
+        23
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/18.png",
+      "__off": [
+        49,
+        0
+      ]
+    },
+    "2": {
+      "__h": 46,
+      "__w": 49,
+      "_hash": "ae8715e273b3ab01400427aab0d41cf663c70d065c168b3bfc61eb7fac673cf4",
+      "delay": 150,
+      "origin": [
+        24,
+        23
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/18.png",
+      "__off": [
+        0,
+        46
+      ]
+    },
+    "3": {
+      "__h": 46,
+      "__w": 49,
+      "_hash": "8cdefc90d1f4ef276fee182f191277b57beacae6e18d3cc629e60ae796bcc9a6",
+      "delay": 150,
+      "origin": [
+        24,
+        23
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/18.png",
+      "__off": [
+        49,
+        46
+      ]
+    }
+  },
+  "19": {
+    "0": {
+      "__h": 46,
+      "__w": 49,
+      "_hash": "efbb0ada6c881fd82944e17d5f6bd5c6a8882cf28d41189b8ed798324129918d",
+      "delay": 150,
+      "origin": [
+        24,
+        23
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/19.png",
+      "__off": [
+        0,
+        0
+      ]
+    },
+    "1": {
+      "__h": 46,
+      "__w": 49,
+      "_hash": "3f3cc92c1d455cc1d93ed052036ec27da454d49ec9dd4bd8402bc75fc1b13a2b",
+      "delay": 150,
+      "origin": [
+        24,
+        23
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/19.png",
+      "__off": [
+        49,
+        0
+      ]
+    },
+    "2": {
+      "__h": 46,
+      "__w": 49,
+      "_hash": "222b9a1fcf75d7295286edf56a4236643be9320b708f4d10a91d41207f79b3a1",
+      "delay": 150,
+      "origin": [
+        24,
+        23
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/19.png",
+      "__off": [
+        0,
+        46
+      ]
+    },
+    "3": {
+      "__h": 46,
+      "__w": 49,
+      "_inlink": "QuestIcon/19/1",
+      "delay": 150,
+      "origin": [
+        24,
+        23
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/19.png",
+      "__off": [
+        49,
+        0
+      ]
+    }
+  },
+  "20": {
+    "0": {
+      "__h": 48,
+      "__w": 46,
+      "_hash": "abfa6f9d528b391ea287d32dff9052698a746482b340971d230b06c1b54488dd",
+      "origin": [
+        23,
+        23
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/20.png",
+      "__off": [
+        48,
+        52
+      ]
+    },
+    "1": {
+      "__h": 50,
+      "__w": 48,
+      "_hash": "3710a992368d8158861fba83fb54af57c7e247dca86780227db477690049dde1",
+      "origin": [
+        24,
+        24
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/20.png",
+      "__off": [
+        0,
+        52
+      ]
+    },
+    "2": {
+      "__h": 51,
+      "__w": 50,
+      "_hash": "0c96435a460917ad32d0bffb32924071c888947ffd57701626d83d4c83671b31",
+      "origin": [
+        25,
+        25
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/20.png",
+      "__off": [
+        100,
+        0
+      ]
+    },
+    "3": {
+      "__h": 52,
+      "__w": 50,
+      "_hash": "d2508108ff792aeb1907a1104871eb45cf387e1dd93d4a230a8923e7d0a45116",
+      "origin": [
+        25,
+        25
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/20.png",
+      "__off": [
+        0,
+        0
+      ]
+    },
+    "4": {
+      "__h": 52,
+      "__w": 50,
+      "_hash": "ae9d72aca53d75df70b62371766c0917f086099cd446d578f10d7d6c74bd309f",
+      "origin": [
+        25,
+        25
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/20.png",
+      "__off": [
+        50,
+        0
+      ]
+    },
+    "5": {
+      "__h": 52,
+      "__w": 50,
+      "_inlink": "QuestIcon/20/3",
+      "origin": [
+        25,
+        25
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/20.png",
+      "__off": [
+        0,
+        0
+      ]
+    },
+    "6": {
+      "__h": 51,
+      "__w": 50,
+      "_inlink": "QuestIcon/20/2",
+      "origin": [
+        25,
+        25
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/20.png",
+      "__off": [
+        100,
+        0
+      ]
+    },
+    "7": {
+      "__h": 50,
+      "__w": 48,
+      "_inlink": "QuestIcon/20/1",
+      "origin": [
+        24,
+        24
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/20.png",
+      "__off": [
+        0,
+        52
+      ]
+    }
+  },
+  "21": {
+    "0": {
+      "__h": 48,
+      "__w": 46,
+      "_hash": "9d633021b3ab82646cfb4977a6658a52563ec88f94e7a9e328ca4e5b0cf1b5b3",
+      "origin": [
+        24,
+        22
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/21.png",
+      "__off": [
+        48,
+        52
+      ]
+    },
+    "1": {
+      "__h": 50,
+      "__w": 48,
+      "_hash": "b94b7ba53e951829feb7f5941981689c824d95cb2841a4210ba020ebeef8e64c",
+      "origin": [
+        25,
+        23
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/21.png",
+      "__off": [
+        0,
+        52
+      ]
+    },
+    "2": {
+      "__h": 51,
+      "__w": 50,
+      "_hash": "6974f5a160ad2b24e85c8930be99f8c332276ba8ed0cdc53498df192ca92e726",
+      "origin": [
+        26,
+        24
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/21.png",
+      "__off": [
+        100,
+        0
+      ]
+    },
+    "3": {
+      "__h": 52,
+      "__w": 50,
+      "_hash": "0464f8403048ce91218aa7804b865c76872a7456230ab7aaa6823df30c7afca4",
+      "origin": [
+        26,
+        24
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/21.png",
+      "__off": [
+        0,
+        0
+      ]
+    },
+    "4": {
+      "__h": 52,
+      "__w": 50,
+      "_hash": "7ee0cc24c0557e346d6b8bba56f2e2ad66b78d4c3d4b5095452f1335724dbe3b",
+      "origin": [
+        26,
+        24
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/21.png",
+      "__off": [
+        50,
+        0
+      ]
+    },
+    "5": {
+      "__h": 52,
+      "__w": 50,
+      "_inlink": "QuestIcon/21/3",
+      "origin": [
+        26,
+        24
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/21.png",
+      "__off": [
+        0,
+        0
+      ]
+    },
+    "6": {
+      "__h": 51,
+      "__w": 50,
+      "_inlink": "QuestIcon/21/2",
+      "origin": [
+        26,
+        24
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/21.png",
+      "__off": [
+        100,
+        0
+      ]
+    },
+    "7": {
+      "__h": 50,
+      "__w": 48,
+      "_inlink": "QuestIcon/21/1",
+      "origin": [
+        25,
+        23
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/21.png",
+      "__off": [
+        0,
+        52
+      ]
+    }
+  },
+  "22": {
+    "0": {
+      "__h": 48,
+      "__w": 46,
+      "_hash": "2d003ae59efbc89747fe8ce389c42d83b34d43e278e62d1759655384936695a6",
+      "origin": [
+        23,
+        22
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/22.png",
+      "__off": [
+        48,
+        52
+      ]
+    },
+    "1": {
+      "__h": 50,
+      "__w": 48,
+      "_hash": "83cb23683dfa1e2c272952eb58399ae9920d978d3c723e33ac84e0a0f92d8fb9",
+      "origin": [
+        24,
+        23
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/22.png",
+      "__off": [
+        0,
+        52
+      ]
+    },
+    "2": {
+      "__h": 51,
+      "__w": 50,
+      "_hash": "9df404dc23f1f18c9a23fa3d27427e9dcedaaad60bee08b4ec65d67089b64a31",
+      "origin": [
+        25,
+        24
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/22.png",
+      "__off": [
+        100,
+        0
+      ]
+    },
+    "3": {
+      "__h": 52,
+      "__w": 50,
+      "_hash": "e7411a2e85e8ca9a3a79eb65908537b7b0787403263e48a0f4e3ae08fd5abd28",
+      "origin": [
+        25,
+        24
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/22.png",
+      "__off": [
+        0,
+        0
+      ]
+    },
+    "4": {
+      "__h": 52,
+      "__w": 50,
+      "_hash": "d3df99948085363d2ee1bc58fd8d3c245b7f48637691a06c5537078eaeab65f6",
+      "origin": [
+        25,
+        24
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/22.png",
+      "__off": [
+        50,
+        0
+      ]
+    },
+    "5": {
+      "__h": 52,
+      "__w": 50,
+      "_inlink": "QuestIcon/22/3",
+      "origin": [
+        25,
+        24
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/22.png",
+      "__off": [
+        0,
+        0
+      ]
+    },
+    "6": {
+      "__h": 51,
+      "__w": 50,
+      "_inlink": "QuestIcon/22/2",
+      "origin": [
+        25,
+        24
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/22.png",
+      "__off": [
+        100,
+        0
+      ]
+    },
+    "7": {
+      "__h": 50,
+      "__w": 48,
+      "_inlink": "QuestIcon/22/1",
+      "origin": [
+        24,
+        23
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/22.png",
+      "__off": [
+        0,
+        52
+      ]
+    }
+  },
+  "23": {
+    "0": {
+      "__h": 48,
+      "__w": 46,
+      "_hash": "ef6ae8f03a53471b55123af0876c0ff0911c88ccf724f6ce38c361b696a32fa4",
+      "origin": [
+        24,
+        2
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/23.png",
+      "__off": [
+        48,
+        52
+      ]
+    },
+    "1": {
+      "__h": 50,
+      "__w": 48,
+      "_hash": "d00835f1a7119c01e3bd7c40675ac757cba557e92f99d8624c59bea3fc5278f8",
+      "origin": [
+        25,
+        3
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/23.png",
+      "__off": [
+        0,
+        52
+      ]
+    },
+    "2": {
+      "__h": 51,
+      "__w": 50,
+      "_hash": "83eaa24503010d76e28af90a0b03a72afca5633bcc0f317d0de28e3361f87c90",
+      "origin": [
+        26,
+        4
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/23.png",
+      "__off": [
+        100,
+        0
+      ]
+    },
+    "3": {
+      "__h": 52,
+      "__w": 50,
+      "_hash": "0662776fc192119430f02975d56a3884ef792a8640de26743f104d31fb3fb622",
+      "origin": [
+        26,
+        4
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/23.png",
+      "__off": [
+        0,
+        0
+      ]
+    },
+    "4": {
+      "__h": 52,
+      "__w": 50,
+      "_hash": "b9c2d10543e47f2a7bf89acdb59e5ede06c3b28fb681964cfae5536dd2557ff5",
+      "origin": [
+        26,
+        4
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/23.png",
+      "__off": [
+        50,
+        0
+      ]
+    },
+    "5": {
+      "__h": 52,
+      "__w": 50,
+      "_inlink": "QuestIcon/23/3",
+      "origin": [
+        26,
+        4
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/23.png",
+      "__off": [
+        0,
+        0
+      ]
+    },
+    "6": {
+      "__h": 51,
+      "__w": 50,
+      "_inlink": "QuestIcon/23/2",
+      "origin": [
+        26,
+        4
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/23.png",
+      "__off": [
+        100,
+        0
+      ]
+    },
+    "7": {
+      "__h": 50,
+      "__w": 48,
+      "_inlink": "QuestIcon/23/1",
+      "origin": [
+        25,
+        3
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/23.png",
+      "__off": [
+        0,
+        52
+      ]
+    }
+  },
+  "24": {
+    "0": {
+      "__h": 48,
+      "__w": 46,
+      "_hash": "cb68f94d98c75666024e5208d6632c78884a541c4258c2376d9ac53b80a11540",
+      "origin": [
+        22,
+        21
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/24.png",
+      "__off": [
+        48,
+        52
+      ]
+    },
+    "1": {
+      "__h": 50,
+      "__w": 48,
+      "_hash": "d6d546033aa7ed82219c5bd5dc29211ef36af1ea5d1e2105584b78044d8b0349",
+      "origin": [
+        23,
+        22
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/24.png",
+      "__off": [
+        0,
+        52
+      ]
+    },
+    "2": {
+      "__h": 51,
+      "__w": 50,
+      "_hash": "6711f86563908a287f386966557c60fe68692c18b5c42a0f0060a1dcaaca8544",
+      "origin": [
+        24,
+        23
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/24.png",
+      "__off": [
+        100,
+        0
+      ]
+    },
+    "3": {
+      "__h": 52,
+      "__w": 50,
+      "_hash": "670be89697efb466e8c9b91905278a17badee99f32081e6ab824831fc796c257",
+      "origin": [
+        24,
+        23
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/24.png",
+      "__off": [
+        0,
+        0
+      ]
+    },
+    "4": {
+      "__h": 52,
+      "__w": 50,
+      "_hash": "175bfba5f031629e9e89860a1987ebda1eaeaeb761d0999f09a7b4bd35885db1",
+      "origin": [
+        24,
+        23
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/24.png",
+      "__off": [
+        50,
+        0
+      ]
+    },
+    "5": {
+      "__h": 52,
+      "__w": 50,
+      "_inlink": "QuestIcon/24/3",
+      "origin": [
+        24,
+        23
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/24.png",
+      "__off": [
+        0,
+        0
+      ]
+    },
+    "6": {
+      "__h": 51,
+      "__w": 50,
+      "_inlink": "QuestIcon/24/2",
+      "origin": [
+        24,
+        23
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/24.png",
+      "__off": [
+        100,
+        0
+      ]
+    },
+    "7": {
+      "__h": 50,
+      "__w": 48,
+      "_inlink": "QuestIcon/24/1",
+      "origin": [
+        23,
+        22
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/24.png",
+      "__off": [
+        0,
+        52
+      ]
+    }
+  },
+  "25": {
+    "0": {
+      "__h": 48,
+      "__w": 46,
+      "_hash": "de6a014feade8c86f0662d3c197f5a6b4ae5b5c600db20ebe18ca9afb08a899f",
+      "origin": [
+        23,
+        30
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/25.png",
+      "__off": [
+        48,
+        52
+      ]
+    },
+    "1": {
+      "__h": 50,
+      "__w": 48,
+      "_hash": "33eebff35c99b6eb2283b8d7d6957ee92c26c8fc1c2d3a3e376b21db377e1ba4",
+      "origin": [
+        24,
+        31
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/25.png",
+      "__off": [
+        0,
+        52
+      ]
+    },
+    "2": {
+      "__h": 51,
+      "__w": 50,
+      "_hash": "1f6a74f64bee0e5c84104b3a63d4036fa604d9a7e0e098998e552ac2002165fa",
+      "origin": [
+        25,
+        32
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/25.png",
+      "__off": [
+        100,
+        0
+      ]
+    },
+    "3": {
+      "__h": 52,
+      "__w": 50,
+      "_hash": "9f3f67bad524446681fcaf9f4950b0b138bf180232d05fbfb7d735b7a348b4ec",
+      "origin": [
+        25,
+        32
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/25.png",
+      "__off": [
+        0,
+        0
+      ]
+    },
+    "4": {
+      "__h": 52,
+      "__w": 50,
+      "_hash": "2ca5b6fe983efe9e52cac119cbec7d682e7d68bc203afc3c4decb6c2a01fd150",
+      "origin": [
+        25,
+        32
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/25.png",
+      "__off": [
+        50,
+        0
+      ]
+    },
+    "5": {
+      "__h": 52,
+      "__w": 50,
+      "_inlink": "QuestIcon/25/3",
+      "origin": [
+        25,
+        32
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/25.png",
+      "__off": [
+        0,
+        0
+      ]
+    },
+    "6": {
+      "__h": 51,
+      "__w": 50,
+      "_inlink": "QuestIcon/25/2",
+      "origin": [
+        25,
+        32
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/25.png",
+      "__off": [
+        100,
+        0
+      ]
+    },
+    "7": {
+      "__h": 50,
+      "__w": 48,
+      "_inlink": "QuestIcon/25/1",
+      "origin": [
+        24,
+        31
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/25.png",
+      "__off": [
+        0,
+        52
+      ]
+    }
+  },
+  "26": {
+    "0": {
+      "__h": 48,
+      "__w": 46,
+      "_hash": "ab9fa82bce8e30248638d278f71ca60c425af070d3843008298b30a1f6385369",
+      "origin": [
+        24,
+        22
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/26.png",
+      "__off": [
+        48,
+        52
+      ]
+    },
+    "1": {
+      "__h": 50,
+      "__w": 48,
+      "_hash": "41728fb07da7f02efbfe67a25539c425deb45e074a43829b2f0d46b63906e469",
+      "origin": [
+        25,
+        23
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/26.png",
+      "__off": [
+        0,
+        52
+      ]
+    },
+    "2": {
+      "__h": 51,
+      "__w": 50,
+      "_hash": "1bd3b23ee7342efc0e5c1741636065a6a80333c2429eb05639378f0a050a2e8e",
+      "origin": [
+        26,
+        24
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/26.png",
+      "__off": [
+        100,
+        0
+      ]
+    },
+    "3": {
+      "__h": 52,
+      "__w": 50,
+      "_hash": "79b33de12cbb030127f0e953a1dc4158543a6564a9b28e3b36a48f6a506d9af3",
+      "origin": [
+        26,
+        24
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/26.png",
+      "__off": [
+        0,
+        0
+      ]
+    },
+    "4": {
+      "__h": 52,
+      "__w": 50,
+      "_hash": "a856c041856cf0649cd7ef803a7d4a5558fea9997586d86434dab7eef8986d67",
+      "origin": [
+        26,
+        24
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/26.png",
+      "__off": [
+        50,
+        0
+      ]
+    },
+    "5": {
+      "__h": 52,
+      "__w": 50,
+      "_inlink": "QuestIcon/26/3",
+      "origin": [
+        26,
+        24
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/26.png",
+      "__off": [
+        0,
+        0
+      ]
+    },
+    "6": {
+      "__h": 51,
+      "__w": 50,
+      "_inlink": "QuestIcon/26/2",
+      "origin": [
+        26,
+        24
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/26.png",
+      "__off": [
+        100,
+        0
+      ]
+    },
+    "7": {
+      "__h": 50,
+      "__w": 48,
+      "_inlink": "QuestIcon/26/1",
+      "origin": [
+        25,
+        23
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/26.png",
+      "__off": [
+        0,
+        52
+      ]
+    }
+  },
+  "27": {
+    "0": {
+      "__h": 44,
+      "__w": 44,
+      "_hash": "71f6628d39fdc1312d2bf122739ec3fb81029d273ce79ce0dce1195c9b32e8f0",
+      "delay": 150,
+      "origin": [
+        21,
+        22
+      ],
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/27.png",
+      "__off": [
+        0,
+        0
+      ]
+    },
+    "1": {
+      "__h": 44,
+      "__w": 44,
+      "_inlink": "QuestIcon/27/0",
+      "delay": 150,
+      "origin": [
+        21,
+        22
+      ],
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/27.png",
+      "__off": [
+        0,
+        0
+      ]
+    },
+    "2": {
+      "__h": 44,
+      "__w": 44,
+      "_hash": "2596a96c8ca94bff3b1fe7f8abb970543f37e5ca20993aaa4f06b9a93f5aa604",
+      "delay": 150,
+      "origin": [
+        21,
+        22
+      ],
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/27.png",
+      "__off": [
+        44,
+        0
+      ]
+    },
+    "3": {
+      "__h": 44,
+      "__w": 44,
+      "_inlink": "QuestIcon/27/2",
+      "delay": 150,
+      "origin": [
+        21,
+        22
+      ],
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/27.png",
+      "__off": [
+        44,
+        0
+      ]
+    }
+  },
+  "28": {
+    "0": {
+      "__h": 48,
+      "__w": 46,
+      "_hash": "2cd2166ae64bdcccedda50b9dbe825eea31682732062577469c35c3afcc1cca6",
+      "origin": [
+        23,
+        24
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/28.png",
+      "__off": [
+        48,
+        52
+      ]
+    },
+    "1": {
+      "__h": 50,
+      "__w": 48,
+      "_hash": "1dab1c6741fb777c232b0aae6b1725a203a1117fc3f912b827bf8de092ca3640",
+      "origin": [
+        24,
+        25
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/28.png",
+      "__off": [
+        0,
+        52
+      ]
+    },
+    "2": {
+      "__h": 51,
+      "__w": 50,
+      "_hash": "680dfa6984df7bb1cc62dfa6fe7e52af0bb15683906c1e34d3550d54cf22c490",
+      "origin": [
+        25,
+        26
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/28.png",
+      "__off": [
+        100,
+        0
+      ]
+    },
+    "3": {
+      "__h": 52,
+      "__w": 50,
+      "_hash": "b8c9fb5dc92a2f1c20da653fdace99565f4f5126a5f2755f4c05deec2f18c35f",
+      "origin": [
+        25,
+        26
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/28.png",
+      "__off": [
+        0,
+        0
+      ]
+    },
+    "4": {
+      "__h": 52,
+      "__w": 50,
+      "_hash": "2fb2671e7d32d8c3939e8c449cbea9667d711c7c32baa0df5825e092660bbaea",
+      "origin": [
+        25,
+        26
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/28.png",
+      "__off": [
+        50,
+        0
+      ]
+    },
+    "5": {
+      "__h": 52,
+      "__w": 50,
+      "_inlink": "QuestIcon/28/3",
+      "origin": [
+        25,
+        26
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/28.png",
+      "__off": [
+        0,
+        0
+      ]
+    },
+    "6": {
+      "__h": 51,
+      "__w": 50,
+      "_inlink": "QuestIcon/28/2",
+      "origin": [
+        25,
+        26
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/28.png",
+      "__off": [
+        100,
+        0
+      ]
+    },
+    "7": {
+      "__h": 50,
+      "__w": 48,
+      "_inlink": "QuestIcon/28/1",
+      "origin": [
+        24,
+        25
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/28.png",
+      "__off": [
+        0,
+        52
+      ]
+    }
+  },
+  "29": {
+    "0": {
+      "__h": 48,
+      "__w": 46,
+      "_hash": "b72102041a9b3a3229b574919e67413dbe0a8660648e5c9280bce31ff753cdbd",
+      "origin": [
+        0,
+        -372
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/29.png",
+      "__off": [
+        48,
+        52
+      ]
+    },
+    "1": {
+      "__h": 50,
+      "__w": 48,
+      "_hash": "5cde46926b88d604daa86c4e778bf3d051a65d52d3a2e3320056cfa3d9cc1576",
+      "origin": [
+        1,
+        -371
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/29.png",
+      "__off": [
+        0,
+        52
+      ]
+    },
+    "2": {
+      "__h": 51,
+      "__w": 50,
+      "_hash": "6a66b41f435e09e82605618813fe7234611de7a8d9da7c5a874c09822f39737a",
+      "origin": [
+        2,
+        -370
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/29.png",
+      "__off": [
+        100,
+        0
+      ]
+    },
+    "3": {
+      "__h": 52,
+      "__w": 50,
+      "_hash": "626fa88382b7457faa1c9adbc0177b03824166e3fdac150474cca8a98721dced",
+      "origin": [
+        2,
+        -370
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/29.png",
+      "__off": [
+        0,
+        0
+      ]
+    },
+    "4": {
+      "__h": 52,
+      "__w": 50,
+      "_hash": "d57b80cb6c65a12d86bb39c288f9a076c0246adc78881b6a544414ed52aac8df",
+      "origin": [
+        2,
+        -370
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/29.png",
+      "__off": [
+        50,
+        0
+      ]
+    },
+    "5": {
+      "__h": 52,
+      "__w": 50,
+      "_inlink": "QuestIcon/29/3",
+      "origin": [
+        2,
+        -370
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/29.png",
+      "__off": [
+        0,
+        0
+      ]
+    },
+    "6": {
+      "__h": 51,
+      "__w": 50,
+      "_inlink": "QuestIcon/29/2",
+      "origin": [
+        2,
+        -370
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/29.png",
+      "__off": [
+        100,
+        0
+      ]
+    },
+    "7": {
+      "__h": 50,
+      "__w": 48,
+      "_inlink": "QuestIcon/29/1",
+      "origin": [
+        1,
+        -371
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/29.png",
+      "__off": [
+        0,
+        52
+      ]
+    }
+  },
+  "30": {
+    "0": {
+      "__h": 55,
+      "__w": 44,
+      "_hash": "e513e3ad61515ae5120e99651b1cb26b8570fabd5bfd6d9efe17d695b9c0f10e",
+      "origin": [
+        21,
+        28
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/30.png",
+      "__off": [
+        0,
+        57
+      ]
+    },
+    "1": {
+      "__h": 56,
+      "__w": 44,
+      "_hash": "e69b8fa6688906e4f54ca8b1ba4d48e012cf25a513aa09af18bc23b766fd18cd",
+      "origin": [
+        21,
+        29
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/30.png",
+      "__off": [
+        44,
+        0
+      ]
+    },
+    "2": {
+      "__h": 57,
+      "__w": 44,
+      "_hash": "ab2fab400223340f9f86374766876b2587556530914d80f3afc48a2dd2608bac",
+      "origin": [
+        21,
+        30
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/30.png",
+      "__off": [
+        0,
+        0
+      ]
+    },
+    "3": {
+      "__h": 56,
+      "__w": 44,
+      "_hash": "f806e9a2e456591889409b7dba018683cd5049a2ac7e5be2adc592893c057324",
+      "origin": [
+        21,
+        29
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/30.png",
+      "__off": [
+        88,
+        0
+      ]
+    }
+  },
+  "31": {
+    "0": {
+      "__h": 44,
+      "__w": 42,
+      "_hash": "0cabb63ce7a5b2c0505e1c849bb43a1dbc7f166f3cab3df12420d8a7d40ea702",
+      "origin": [
+        31,
+        30
+      ],
+      "z": 0,
+      "__i": "../images/72362.png"
+    }
+  },
+  "32": {
+    "0": {
+      "__h": 48,
+      "__w": 46,
+      "_hash": "f855b8d1fbe016dad42c75a9ade9971da32a8a9e83172dcb7e5663f0a2791fc6",
+      "origin": [
+        23,
+        24
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/32.png",
+      "__off": [
+        48,
+        52
+      ]
+    },
+    "1": {
+      "__h": 50,
+      "__w": 48,
+      "_hash": "6922c68b97f650aab71e98a5a35f6657060827cf6be8c43618327f46065bf9c7",
+      "origin": [
+        24,
+        25
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/32.png",
+      "__off": [
+        0,
+        52
+      ]
+    },
+    "2": {
+      "__h": 51,
+      "__w": 50,
+      "_hash": "839303672e894a2b38079c01af87730295134afac8a00bef2a7b503387f4834f",
+      "origin": [
+        25,
+        25
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/32.png",
+      "__off": [
+        100,
+        0
+      ]
+    },
+    "3": {
+      "__h": 52,
+      "__w": 50,
+      "_hash": "639d2b719ffb58f0e99fd5690a0291e09a774331938a47b9357102d5a54daaf0",
+      "origin": [
+        25,
+        26
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/32.png",
+      "__off": [
+        0,
+        0
+      ]
+    },
+    "4": {
+      "__h": 52,
+      "__w": 50,
+      "_hash": "ad964a4d1ae79d4a33bb1dc3c88a69fdb2f5a59ff87b27d1cf17f449244e9067",
+      "origin": [
+        25,
+        26
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/32.png",
+      "__off": [
+        50,
+        0
+      ]
+    },
+    "5": {
+      "__h": 52,
+      "__w": 50,
+      "_inlink": "QuestIcon/32/3",
+      "origin": [
+        25,
+        26
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/32.png",
+      "__off": [
+        0,
+        0
+      ]
+    },
+    "6": {
+      "__h": 51,
+      "__w": 50,
+      "_inlink": "QuestIcon/32/2",
+      "origin": [
+        25,
+        25
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/32.png",
+      "__off": [
+        100,
+        0
+      ]
+    },
+    "7": {
+      "__h": 50,
+      "__w": 48,
+      "_inlink": "QuestIcon/32/1",
+      "origin": [
+        24,
+        25
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/32.png",
+      "__off": [
+        0,
+        52
+      ]
+    }
+  },
+  "33": {
+    "0": {
+      "__h": 48,
+      "__w": 46,
+      "_hash": "e86e27e9cd44c69149d97a4fc6886ebe294c578625ee1d58b217bffdf53c1e7c",
+      "origin": [
+        23,
+        22
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/33.png",
+      "__off": [
+        150,
+        0
+      ]
+    },
+    "1": {
+      "__h": 50,
+      "__w": 48,
+      "_hash": "97c330d0531188a391a6ad75db000a6b40b1c18628519cbe751a28d78a803c81",
+      "origin": [
+        24,
+        23
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/33.png",
+      "__off": [
+        50,
+        52
+      ]
+    },
+    "2": {
+      "__h": 51,
+      "__w": 50,
+      "_hash": "9a47d7540741fa8000589447ce0cc7fdbce67f59f3f7bf396d97bd1aa43a86e0",
+      "origin": [
+        25,
+        24
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/33.png",
+      "__off": [
+        0,
+        52
+      ]
+    },
+    "3": {
+      "__h": 52,
+      "__w": 50,
+      "_hash": "0d76ccdbb4ff27a22d1fcdc32da719ef2455c5afd49292d92bff13bbe7839362",
+      "origin": [
+        25,
+        24
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/33.png",
+      "__off": [
+        0,
+        0
+      ]
+    },
+    "4": {
+      "__h": 52,
+      "__w": 50,
+      "_hash": "cb1767d67cb485f50c325b9cdf0c1cf061cc83986a3f9878efb48ba3bd0cfdf8",
+      "origin": [
+        25,
+        24
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/33.png",
+      "__off": [
+        50,
+        0
+      ]
+    },
+    "5": {
+      "__h": 52,
+      "__w": 50,
+      "_hash": "e45fe0b5ac038e65f951855d26cfb15d19bc652f4a81d0996830030d9a378d65",
+      "origin": [
+        25,
+        24
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/33.png",
+      "__off": [
+        100,
+        0
+      ]
+    },
+    "6": {
+      "__h": 51,
+      "__w": 50,
+      "_inlink": "QuestIcon/33/2",
+      "origin": [
+        25,
+        24
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/33.png",
+      "__off": [
+        0,
+        52
+      ]
+    },
+    "7": {
+      "__h": 50,
+      "__w": 48,
+      "_hash": "b687151efa666533d72c6ad5ac4ada954cd460eab0e5d951ad94ebc00613ec91",
+      "origin": [
+        24,
+        23
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/33.png",
+      "__off": [
+        98,
+        52
+      ]
+    }
+  },
+  "34": {
+    "0": {
+      "__h": 48,
+      "__w": 46,
+      "_hash": "69e37c6249c2de1b29388157059eaee61e82fd0b33a7efba228dc2552739b77f",
+      "origin": [
+        22,
+        22
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/34.png",
+      "__off": [
+        150,
+        0
+      ]
+    },
+    "1": {
+      "__h": 50,
+      "__w": 48,
+      "_hash": "d70e55b8c29f19a591d539b364bcae7ca76882d722182843e61ee1cb4f90e914",
+      "origin": [
+        23,
+        23
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/34.png",
+      "__off": [
+        50,
+        52
+      ]
+    },
+    "2": {
+      "__h": 51,
+      "__w": 50,
+      "_hash": "373ed7795d85411fe9f5e1255161e7b2d9d0bcab06e966bbbbd4788bc3218cee",
+      "origin": [
+        24,
+        24
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/34.png",
+      "__off": [
+        0,
+        52
+      ]
+    },
+    "3": {
+      "__h": 52,
+      "__w": 50,
+      "_hash": "55f7e5e025e4ac7b5039d46adaf0ac55cf120a19fcb7e82c56f8d8f4ffc6aca7",
+      "origin": [
+        24,
+        24
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/34.png",
+      "__off": [
+        0,
+        0
+      ]
+    },
+    "4": {
+      "__h": 52,
+      "__w": 50,
+      "_hash": "ed5be8a83d59b7def3ee729af93b8bfe34f274fb338334691e1f52f34e1c05fd",
+      "origin": [
+        24,
+        24
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/34.png",
+      "__off": [
+        50,
+        0
+      ]
+    },
+    "5": {
+      "__h": 52,
+      "__w": 50,
+      "_hash": "091b40f87a44e75b6f9d0de931c692fd7cb847ae7dbd2418cfaeeb75e1277b8a",
+      "origin": [
+        24,
+        24
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/34.png",
+      "__off": [
+        100,
+        0
+      ]
+    },
+    "6": {
+      "__h": 51,
+      "__w": 50,
+      "_inlink": "QuestIcon/34/2",
+      "origin": [
+        24,
+        24
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/34.png",
+      "__off": [
+        0,
+        52
+      ]
+    },
+    "7": {
+      "__h": 50,
+      "__w": 48,
+      "_hash": "58c984db73f03ddeb6c6342a66f782aae8270db9b4011cac4d5f38b8b5be7c8b",
+      "origin": [
+        23,
+        23
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/34.png",
+      "__off": [
+        98,
+        52
+      ]
+    }
+  },
+  "35": {
+    "0": {
+      "__h": 48,
+      "__w": 46,
+      "_hash": "bcb32ae44fca63e051217ef21380cee5ddd4dfb1b960f01a6b3a0f48b122dab5",
+      "origin": [
+        22,
+        23
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/35.png",
+      "__off": [
+        150,
+        0
+      ]
+    },
+    "1": {
+      "__h": 50,
+      "__w": 48,
+      "_hash": "1302f1cf59686e5e08f8c5d47f8f47d74ea408461313ff073a28ba4b91a12a6a",
+      "origin": [
+        23,
+        24
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/35.png",
+      "__off": [
+        50,
+        52
+      ]
+    },
+    "2": {
+      "__h": 51,
+      "__w": 50,
+      "_hash": "048a18a5ed4dabb0fa0698d3ecddb4660cbed16a00d110ed660dc501fc83ae66",
+      "origin": [
+        24,
+        25
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/35.png",
+      "__off": [
+        0,
+        52
+      ]
+    },
+    "3": {
+      "__h": 52,
+      "__w": 50,
+      "_hash": "312159f1168da0f1d53faa941b5d7efe2ed60745704ff7690c1cb62420079462",
+      "origin": [
+        24,
+        25
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/35.png",
+      "__off": [
+        0,
+        0
+      ]
+    },
+    "4": {
+      "__h": 52,
+      "__w": 50,
+      "_hash": "a9ed00c99b6271eefb996d46243506d712007134755d9eff7fd253c8733e820a",
+      "origin": [
+        24,
+        25
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/35.png",
+      "__off": [
+        50,
+        0
+      ]
+    },
+    "5": {
+      "__h": 52,
+      "__w": 50,
+      "_hash": "c0b41fb351bc9dcc229328d36bf11292c42658df5a1a3c4c38152f06378a2085",
+      "origin": [
+        24,
+        25
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/35.png",
+      "__off": [
+        100,
+        0
+      ]
+    },
+    "6": {
+      "__h": 51,
+      "__w": 50,
+      "_inlink": "QuestIcon/35/2",
+      "origin": [
+        24,
+        25
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/35.png",
+      "__off": [
+        0,
+        52
+      ]
+    },
+    "7": {
+      "__h": 50,
+      "__w": 48,
+      "_hash": "2fd405c2d0f42c8cb151452d928a67ed6d00e39c36afa777afa112223e1caa74",
+      "origin": [
+        23,
+        24
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/35.png",
+      "__off": [
+        98,
+        52
+      ]
+    }
+  },
+  "36": {
+    "0": {
+      "__h": 48,
+      "__w": 46,
+      "_hash": "8d364f2e699909cb232a29027481b86d88c407bde2c3bac07068d8926c2da6c2",
+      "origin": [
+        21,
+        22
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/36.png",
+      "__off": [
+        150,
+        0
+      ]
+    },
+    "1": {
+      "__h": 50,
+      "__w": 48,
+      "_hash": "7bbb89379bd74b412f33ba94d58a27848a9364098f02efb64999b4a64248fc14",
+      "origin": [
+        22,
+        23
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/36.png",
+      "__off": [
+        50,
+        52
+      ]
+    },
+    "2": {
+      "__h": 51,
+      "__w": 50,
+      "_hash": "6eaa8dadbf5b15ac054a4e322aef6b0b317ad2ffdee65f050210d629544c914a",
+      "origin": [
+        23,
+        24
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/36.png",
+      "__off": [
+        100,
+        0
+      ]
+    },
+    "3": {
+      "__h": 52,
+      "__w": 50,
+      "_hash": "a1da5bd6b2d677e0b08b8d8ba3c04841fea2b4cd56a1c9759d46210c58c7cd24",
+      "origin": [
+        23,
+        24
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/36.png",
+      "__off": [
+        0,
+        0
+      ]
+    },
+    "4": {
+      "__h": 52,
+      "__w": 50,
+      "_hash": "fe3441fcf17e8b5bdd6955246ba69b2848f7bc9a560146bcc55257d5ae511f82",
+      "origin": [
+        23,
+        24
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/36.png",
+      "__off": [
+        50,
+        0
+      ]
+    },
+    "5": {
+      "__h": 52,
+      "__w": 50,
+      "_inlink": "QuestIcon/36/3",
+      "origin": [
+        23,
+        24
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/36.png",
+      "__off": [
+        0,
+        0
+      ]
+    },
+    "6": {
+      "__h": 51,
+      "__w": 50,
+      "_hash": "9acb215c4975aa8f932f2c599b50da7b4fc0b65789500982ad97ea212a824c2a",
+      "origin": [
+        23,
+        24
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/36.png",
+      "__off": [
+        0,
+        52
+      ]
+    },
+    "7": {
+      "__h": 50,
+      "__w": 48,
+      "_hash": "59146a76e5538f1270b769951c76a6081170fb837336093905ea042e438e3f27",
+      "origin": [
+        22,
+        23
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/36.png",
+      "__off": [
+        98,
+        52
+      ]
+    }
+  },
+  "37": {
+    "0": {
+      "__h": 48,
+      "__w": 46,
+      "_hash": "edc5e5be64c4ae15b6c348229876aa92ce2ed24b9c2fe9f215df49701f6923be",
+      "origin": [
+        21,
+        23
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/37.png",
+      "__off": [
+        48,
+        52
+      ]
+    },
+    "1": {
+      "__h": 50,
+      "__w": 48,
+      "_hash": "773250e0c10faf5289b4de8f9fb948da14ff5295d49040a3e31cf2199084da5d",
+      "origin": [
+        22,
+        24
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/37.png",
+      "__off": [
+        0,
+        52
+      ]
+    },
+    "2": {
+      "__h": 51,
+      "__w": 50,
+      "_hash": "f11f48026265eab80b45d3ce5c670f137e7f92e12a0d6192b8fe11f4522c9921",
+      "origin": [
+        23,
+        25
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/37.png",
+      "__off": [
+        100,
+        0
+      ]
+    },
+    "3": {
+      "__h": 52,
+      "__w": 50,
+      "_hash": "1024e301089fba85a25912d439e392f67aed77a525577e8b1103c15809103c50",
+      "origin": [
+        23,
+        25
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/37.png",
+      "__off": [
+        0,
+        0
+      ]
+    },
+    "4": {
+      "__h": 52,
+      "__w": 50,
+      "_hash": "d62a423719d89bcec947628d81c32a8b9dee9f03ccb94f85944a10ac6b5eefbc",
+      "origin": [
+        23,
+        25
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/37.png",
+      "__off": [
+        50,
+        0
+      ]
+    },
+    "5": {
+      "__h": 52,
+      "__w": 50,
+      "_inlink": "QuestIcon/37/3",
+      "origin": [
+        23,
+        25
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/37.png",
+      "__off": [
+        0,
+        0
+      ]
+    },
+    "6": {
+      "__h": 51,
+      "__w": 50,
+      "_inlink": "QuestIcon/37/2",
+      "origin": [
+        23,
+        25
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/37.png",
+      "__off": [
+        100,
+        0
+      ]
+    },
+    "7": {
+      "__h": 50,
+      "__w": 48,
+      "_inlink": "QuestIcon/37/1",
+      "origin": [
+        22,
+        24
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/37.png",
+      "__off": [
+        0,
+        52
+      ]
+    }
+  },
+  "38": {
+    "0": {
+      "__h": 48,
+      "__w": 46,
+      "_hash": "931ba4b7f977e6870c16224bd3017c28323e7ab3d9bfbac35d1685bbcf23d2e8",
+      "origin": [
+        23,
+        21
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/38.png",
+      "__off": [
+        48,
+        52
+      ]
+    },
+    "1": {
+      "__h": 50,
+      "__w": 48,
+      "_hash": "21b48560375ba7cbf231cf03f9eb1319ab5e4baf38a5af39e2e2104aaba8409a",
+      "origin": [
+        24,
+        22
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/38.png",
+      "__off": [
+        0,
+        52
+      ]
+    },
+    "2": {
+      "__h": 51,
+      "__w": 50,
+      "_hash": "313ab46cb8dcdc0d5a9010909452236404ead9a39fc02f778c7da387e3e38919",
+      "origin": [
+        25,
+        23
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/38.png",
+      "__off": [
+        100,
+        0
+      ]
+    },
+    "3": {
+      "__h": 52,
+      "__w": 50,
+      "_hash": "36b2e260346ba379c439ff4c032a382be0e01f90c59792b281157d9702ebd3cf",
+      "origin": [
+        25,
+        23
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/38.png",
+      "__off": [
+        0,
+        0
+      ]
+    },
+    "4": {
+      "__h": 52,
+      "__w": 50,
+      "_hash": "0b84cc60edd884d5b328e93ab2a754cff440e6a37c3c8e442ad2d8308b5e17a2",
+      "origin": [
+        25,
+        23
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/38.png",
+      "__off": [
+        50,
+        0
+      ]
+    },
+    "5": {
+      "__h": 52,
+      "__w": 50,
+      "_inlink": "QuestIcon/38/3",
+      "origin": [
+        25,
+        23
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/38.png",
+      "__off": [
+        0,
+        0
+      ]
+    },
+    "6": {
+      "__h": 51,
+      "__w": 50,
+      "_inlink": "QuestIcon/38/2",
+      "origin": [
+        25,
+        23
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/38.png",
+      "__off": [
+        100,
+        0
+      ]
+    },
+    "7": {
+      "__h": 50,
+      "__w": 48,
+      "_inlink": "QuestIcon/38/1",
+      "origin": [
+        24,
+        22
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/QuestIcon/38.png",
+      "__off": [
+        0,
+        52
+      ]
+    }
+  }
+}

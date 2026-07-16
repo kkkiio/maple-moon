@@ -2,7 +2,7 @@
 pub(all) struct SceneMap {
   id : Int
   tiled_map : @tiled.TiledMap
-  background_animations : Map[String, @resource.SeleneClip]
+  background_animations : Map[String, @res.SeleneClip]
   life_spawns : Array[NxLife]
   physics : @physics.Physics
   map_info : MapInfo

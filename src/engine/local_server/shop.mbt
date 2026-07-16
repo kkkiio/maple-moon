@@ -3,12 +3,17 @@ fn LocalServer::on_talk_to_npc(self : LocalServer, json : Json) -> Unit raise {
   let msg : @server_proto.TalkToNpcMessage = @json.from_json(json)
   match self.npc_id_by_oid.get(msg.oid) {
     Some(npc_id) =>
-      match self.get_shop_by_npc_id(npc_id) {
-        Some(shop) => {
-          self.active_shop = Some(shop)
-          self.send_server_message(shop)
-        }
-        None => ()
+      match load_npc_script_name(npc_id) {
+        Some(script_name) => self.start_npc_script(npc_id, script_name)
+        None =>
+          match self.get_shop_by_npc_id(npc_id) {
+            Some(shop) => {
+              self.active_npc_script = None
+              self.active_shop = Some(shop)
+              self.send_server_message(shop)
+            }
+            None => ()
+          }
       }
     None => ()
   }

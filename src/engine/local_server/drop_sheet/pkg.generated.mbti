@@ -4,7 +4,7 @@ package "KKKIIO/maple-moon/engine/local_server/drop_sheet"
 // Values
 pub fn build_drop_row_map(String) -> Map[Int, Array[NxMobDropRow]]
 
-pub fn load_drop_row_map(String) -> Map[Int, Array[NxMobDropRow]]
+pub fn load_drop_row_map(String) -> Map[Int, Array[NxMobDropRow]] raise
 
 pub fn parse_drop_rows(String) -> Array[NxMobDropRow]
 

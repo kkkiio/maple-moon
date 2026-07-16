@@ -31,9 +31,19 @@ fn LocalServer::get_shop_by_npc_id(
 
 ///|
 fn LocalServer::load_npc_shop_database(self : LocalServer) -> Unit {
-  @io_service.execute_background(fn() {
-    let by_npc_id = @shop_sheet.load_npc_shop_map()
-    self.npc_shop_db = Some(NpcShopDatabase::from_map(by_npc_id))
-    @log.info("Loaded shops.tsv and shopitems.tsv", data=Map([]))
-  })
+  @io_service.execute_background(
+    fn() raise {
+      let by_npc_id = @shop_sheet.load_npc_shop_map()
+      self.npc_shop_db = Some(NpcShopDatabase::from_map(by_npc_id))
+      @log.info("Loaded shops.tsv and shopitems.tsv", data=Map([]))
+    },
+    on_error=fn(error) {
+      @log.error("failed to load NPC shop database", data={
+        "shops_address": "res://Data/shops.tsv",
+        "shopitems_address": "res://Data/shopitems.tsv",
+        "error": error.to_string(),
+      })
+      abort("failed to load NPC shop database: \{error}")
+    },
+  )
 }

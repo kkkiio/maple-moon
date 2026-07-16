@@ -1,17 +1,21 @@
 import {
-  "Milky2018/selene/app",
-  "Milky2018/selene/ecs",
-  "Milky2018/selene/inputs",
-  "Milky2018/selene/runtime_debug",
-  "Milky2018/selene/system",
+  "KKKIIO/selene/app",
+  "KKKIIO/selene/ecs",
+  "KKKIIO/selene/inputs",
+  "KKKIIO/selene/runtime_debug",
+  "KKKIIO/selene/system",
   "moonbitlang/core/json",
   "KKKIIO/maple-moon/engine/game_server",
   "KKKIIO/maple-moon/engine/game_state",
+  "KKKIIO/maple-moon/game/camera",
   "KKKIIO/maple-moon/game/map",
   "KKKIIO/maple-moon/game/maple_stat",
   "KKKIIO/maple-moon/game/monster",
+  "KKKIIO/maple-moon/game/npc",
   "KKKIIO/maple-moon/game/player",
   "KKKIIO/maple-moon/game/server_proto",
+  "KKKIIO/selene/math" @selene_math,
+  "KKKIIO/selene/physics2d",
 }
 
 supported_targets = "js"

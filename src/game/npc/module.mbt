@@ -51,6 +51,25 @@ pub fn TalkType::from_int(
 }
 
 ///|
+/// Decode the stable dialogue type value used by local-server JSON messages.
+///
+/// # Example
+/// ```moonbit nocheck
+/// inspect(TalkType::from_value(14), content="Some(SEND_NEXT)")
+/// ```
+pub fn TalkType::from_value(value : Int) -> TalkType? {
+  match value {
+    1 => Some(SEND_YESNO)
+    4 => Some(SEND_SIMPLE)
+    13 => Some(SEND_OK)
+    14 => Some(SEND_NEXT)
+    15 => Some(SEND_NEXT_PREV)
+    16 => Some(SEND_PREV)
+    _ => None
+  }
+}
+
+///|
 pub fn TalkType::int_value(self : TalkType) -> Int {
   match self {
     SEND_YESNO => 1

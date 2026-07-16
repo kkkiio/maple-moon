@@ -1,36 +1,45 @@
 ///|
-fn read_basic_mx_animation_ref(src : Json) -> String {
+fn read_basic_mx_animation_ref(src : Json) -> String raise {
   match src {
     { "mx_animation": String(path), .. } => path
-    _ => abort("missing mx_animation in Effect/BasicEff.img/Teleport")
+    _ => fail("missing mx_animation in Effect/BasicEff.img/Teleport")
   }
 }
 
 ///|
-fn read_basic_effect_z(src : Json) -> Int {
+fn read_basic_effect_z(src : Json) -> Int raise {
   match src {
     { "z": Number(z, ..), .. } => z.to_int()
     { "z": String(raw), .. } =>
       @string.parse_int(raw) catch {
-        _ => abort("invalid z in Effect/BasicEff.img/Teleport")
+        _ => fail("invalid z in Effect/BasicEff.img/Teleport")
       }
     _ => 0
   }
 }
 
 ///|
-pub fn load_teleport_use_effect() -> (@character.Character) -> Unit {
-  let teleport_node = @resource.require_json(
-    "assets/Effect/BasicEff.img/Teleport.json",
-  )
+/// Load the shared teleport cast effect.
+///
+/// # Example
+/// ```moonbit nocheck
+/// let effect = try! load_teleport_use_effect()
+/// ignore(effect)
+/// ```
+///
+/// # Errors
+/// Raises when the effect document, its animation reference, or its `main` tag
+/// is invalid or missing.
+pub fn load_teleport_use_effect() -> ((@character.Character) -> Unit) raise {
+  let teleport_node = @res.load_json("res://Effect/BasicEff.img/Teleport.json")
   let ref_path = read_basic_mx_animation_ref(teleport_node)
-  let resolved = @resource.resolve_ref(
-    "assets/Effect/BasicEff.img/Teleport.json", ref_path,
+  let resolved = @res.resolve_ref(
+    "res://Effect/BasicEff.img/Teleport.json", ref_path,
   )
   let animation_loader = AnimationLoader()
   let loaded = animation_loader.load(resolved)
   let clip = loaded.clip("main") catch {
-    _ => abort("missing animation tag 'main': \{resolved}")
+    error => fail("missing animation tag 'main': \{resolved}, error=\{error}")
   }
   let effect : @graphics.EffectAnimation = {
     animation: @ms_animation.from_selene_clip(clip, loop_=false),
@@ -43,7 +52,7 @@ pub fn load_teleport_use_effect() -> (@character.Character) -> Unit {
 }
 
 ///|
-using @resource {type AnimationLoader}
+using @res {type AnimationLoader}
 
 ///|
 using @utils {type BoolPair}

@@ -1,6 +1,6 @@
 ///|
-fn default_player_stats() -> @resource.EnumMap[@maple_stat.Id, Int] {
-  @resource.EnumMap(
+fn default_player_stats() -> @res.EnumMap[@maple_stat.Id, Int] {
+  @res.EnumMap(
     Map([
       (@maple_stat.Id::LEVEL, 50),
       (@maple_stat.Id::JOB, 0),
@@ -56,7 +56,7 @@ fn LocalServer::on_select_char(self : LocalServer, json : Json) -> Unit raise {
       },
       inventory_entry=InventoryEntry::{
         meso: default_server.player_meso,
-        slot_maxs: @resource.EnumMap(default_server.slot_max_by_tab),
+        slot_maxs: @res.EnumMap(default_server.slot_max_by_tab),
         items: current_items,
       },
       skills=[],

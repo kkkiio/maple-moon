@@ -1,0 +1,48 @@
+{
+  "schema": 1,
+  "id": "base",
+  "runtime_root": "../assets/base",
+  "source_root": "../source_assets/base",
+  "sources": [
+    {
+      "nx": "Character.nx",
+      "entries": ["Character"]
+    },
+    {
+      "nx": "Effect.nx",
+      "entries": ["Effect"]
+    },
+    {
+      "nx": "Item.nx",
+      "entries": ["Item"]
+    },
+    {
+      "nx": "Map.nx",
+      "entries": [
+        "Map/Map1",
+        "Map/MapHelper.img/worldMap",
+        "Map/WorldMap"
+      ]
+    },
+    {
+      "nx": "Mob.nx",
+      "entries": ["Mob"]
+    },
+    {
+      "nx": "Npc.nx",
+      "entries": ["Npc"]
+    },
+    {
+      "nx": "Skill.nx",
+      "entries": ["Skill"]
+    },
+    {
+      "nx": "UI.nx",
+      "entries": [
+        "UI/UIWindow2.img/Shop2",
+        "UI/UIWindow2.img/ToolTip",
+        "UI/UIWindow2.img/WorldMap"
+      ]
+    }
+  ]
+}

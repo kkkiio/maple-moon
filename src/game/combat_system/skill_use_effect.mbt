@@ -13,12 +13,12 @@ fn read_mx_animation_ref(src : Json) -> String raise {
 }
 
 ///|
-fn read_effect_z(src : Json) -> Int {
+fn read_effect_z(src : Json) -> Int raise {
   match src {
     { "z": Number(z, ..), .. } => z.to_int()
     { "z": String(raw), .. } =>
       @string.parse_int(raw) catch {
-        _ => abort("invalid z in skill use effect node")
+        _ => fail("invalid z in skill use effect node")
       }
     _ => 0
   }
@@ -29,15 +29,18 @@ fn load_skill_use_effect(
   src : Json,
   tag : String,
   base_path : String,
-) -> SkillUseEffect {
+) -> SkillUseEffect raise {
   let ref_path = read_mx_animation_ref(src) catch {
-    _ => abort("missing mx_animation in skill use effect node")
+    error => fail("missing mx_animation in skill use effect node: \{error}")
   }
-  let resolved = @resource.resolve_ref(base_path, ref_path)
+  let resolved = @res.resolve_ref(base_path, ref_path)
   let animation_loader = AnimationLoader()
   let loaded = animation_loader.load(resolved)
   let clip = loaded.clip(tag) catch {
-    _ => abort("missing skill use effect animation tag '\{tag}': \{resolved}")
+    error =>
+      fail(
+        "missing skill use effect animation tag '\{tag}': \{resolved}, error=\{error}",
+      )
   }
   {
     effect: {
@@ -59,10 +62,19 @@ fn apply_skill_use_effect(
 
 ///|
 /// An effect which displays an animation over the character's position
+///
+/// # Example
+/// ```moonbit nocheck
+/// let effect = try! new_single_use_effect(src, "res://Skill/110.img.json")
+/// ignore(effect)
+/// ```
+///
+/// # Errors
+/// Raises when the referenced animation or expected tag cannot be loaded.
 pub fn new_single_use_effect(
   src : Json,
   base_path : String,
-) -> (@character.Character) -> Unit {
+) -> ((@character.Character) -> Unit) raise {
   let effect = load_skill_use_effect(
     use_effect_get_path(src, ["effect"]),
     skill_animation_tag(["effect"]),
@@ -74,10 +86,22 @@ pub fn new_single_use_effect(
 ///|
 /// An effect which displays an animation over the character's position
 /// The effect changes based on whether the character uses a two-handed weapon
+///
+/// # Example
+/// ```moonbit nocheck
+/// let effect = try! new_twohanded_use_effect(
+///   src,
+///   "res://Skill/110.img.json",
+/// )
+/// ignore(effect)
+/// ```
+///
+/// # Errors
+/// Raises when either referenced animation or expected tag cannot be loaded.
 pub fn new_twohanded_use_effect(
   src : Json,
   base_path : String,
-) -> (@character.Character) -> Unit {
+) -> ((@character.Character) -> Unit) raise {
   let effects = BoolPair(
     apply_skill_use_effect(
       load_skill_use_effect(
@@ -102,10 +126,19 @@ pub fn new_twohanded_use_effect(
 
 ///|
 /// An effect which displays multiple animations over the character's position
+///
+/// # Example
+/// ```moonbit nocheck
+/// let effect = try! new_multi_use_effect(src, "res://Skill/110.img.json")
+/// ignore(effect)
+/// ```
+///
+/// # Errors
+/// Raises when any referenced animation or expected tag cannot be loaded.
 pub fn new_multi_use_effect(
   src : Json,
   base_path : String,
-) -> (@character.Character) -> Unit {
+) -> ((@character.Character) -> Unit) raise {
   let effects = []
   let mut no = -1
   let mut sub = use_effect_get_path(src, ["effect"])
@@ -130,10 +163,22 @@ pub fn new_multi_use_effect(
 
 ///|
 /// The animation changes with the character level
+///
+/// # Example
+/// ```moonbit nocheck
+/// let effect = try! new_by_level_use_effect(
+///   src,
+///   "res://Skill/110.img.json",
+/// )
+/// ignore(effect)
+/// ```
+///
+/// # Errors
+/// Raises when a level key, animation reference, or expected tag is invalid.
 pub fn new_by_level_use_effect(
   src : Json,
   base_path : String,
-) -> (@character.Character) -> Unit {
+) -> ((@character.Character) -> Unit) raise {
   let effects = []
   if src is { "CharLevel": Object(level_map), .. } {
     for level, sub in level_map {
@@ -145,7 +190,7 @@ pub fn new_by_level_use_effect(
         ),
       )
       let parsed_level = @string.parse_int(level) catch {
-        _ => abort("invalid skill use effect level: \{level}")
+        _ => fail("invalid skill use effect level: \{level}")
       }
       effects.push((parsed_level, effect))
     }

@@ -1,4 +1,0 @@
-interface:
-  display_name: "Snapshot Test"
-  short_description: "Write and run snapshot tests (inspect + pixel)."
-  default_prompt: "Use this skill to validate changes by writing snapshot tests. Always put debug_inspect before pixel snapshot. Pixel comparison determines pass/fail; agent diagnoses failures by reading inspect diffs and pixel diffs. Test names and file paths should be self-explanatory."

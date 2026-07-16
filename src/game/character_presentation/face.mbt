@@ -93,14 +93,14 @@ pub impl ToJson for Face with fn to_json(self) -> Json {
 
 ///|
 struct FaceFrame {
-  texture : @resource.NxTexture
+  texture : @res.NxTexture
   delay : Int
 }
 
 ///|
 pub fn FaceFrame::from_resource(src : Json) -> FaceFrame raise {
   guard src is { "face": face, .. }
-  let texture : @resource.NxTexture = @json.from_json(face)
+  let texture : @res.NxTexture = @json.from_json(face)
   // let shift : Point[Int] = face["map"]["brow"].as_point?().unwrap()
   let shift = match face {
     { "map": { "brow": brow, .. }, .. } => @json.from_json(brow)
@@ -118,8 +118,8 @@ pub fn FaceFrame::from_resource(src : Json) -> FaceFrame raise {
 ///|
 pub fn Face::load(faceid : Int) -> Face {
   let strid = "000" + faceid.to_string()
-  let facenode = @resource.require_json(
-    "assets/Character/Face/" + strid + ".img.json",
+  let facenode = @res.require_json(
+    "res://Character/Face/" + strid + ".img.json",
   )
   Face(faceid, facenode) catch {
     err => abort("failed to load face: \{faceid}, error=\{err}")

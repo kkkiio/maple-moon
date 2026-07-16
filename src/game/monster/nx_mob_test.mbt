@@ -1,7 +1,16 @@
 ///|
+fn init {
+  @asset.set_io(fn(path) {
+    Some(@fs.read_file_to_bytes(path)) catch {
+      _ => None
+    }
+  })
+  try! @res.configure_packs([("base", "assets/base")])
+}
+
+///|
 test "parse_mx_mob" {
-  let content = @fs.read_file_to_string("assets/mob/1210102.img/mx.json")
-  let json = @json.parse(content)
+  let json = @res.require_json("res://Mob/1210102.img/mx.json")
   let mx_mob : @monster.MxMob = @json.from_json(json)
   let stance_names = mx_mob.stance_nodes.keys().collect()
   stance_names.sort()

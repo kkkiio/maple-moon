@@ -2,10 +2,10 @@
 package "KKKIIO/maple-moon/game/ui/npc_talk_ui"
 
 import {
-  "KKKIIO/maple-moon/engine/resource",
+  "KKKIIO/maple-moon/engine/res",
   "KKKIIO/maple-moon/engine/ui",
   "KKKIIO/maple-moon/game/npc",
-  "Milky2018/selene/ecs",
+  "KKKIIO/selene/ecs",
   "moonbitlang/core/debug",
 }
 
@@ -29,15 +29,15 @@ pub(all) suberror ParseTalkError {
 
 // Types and methods
 pub(all) struct NpcTalkButtonResource {
-  normal : @resource.NxTexture
-  mouse_over : @resource.NxTexture
-  pressed : @resource.NxTexture
-  disabled : @resource.NxTexture
+  normal : @res.NxTexture
+  mouse_over : @res.NxTexture
+  pressed : @res.NxTexture
+  disabled : @res.NxTexture
 }
 
 pub(all) struct NpcTalkResource {
   window_slice : @ui.UiSliceResource
-  bar : @resource.NxTexture
+  bar : @res.NxTexture
   bt_yes : NpcTalkButtonResource
   bt_no : NpcTalkButtonResource
   bt_ok : NpcTalkButtonResource

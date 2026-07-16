@@ -5,7 +5,7 @@ import {
   "KKKIIO/maple-moon/game/animation",
   "KKKIIO/maple-moon/game/item",
   "KKKIIO/maple-moon/game/res_types",
-  "Milky2018/selene/ecs",
+  "KKKIIO/selene/ecs",
 }
 
 // Values
@@ -39,7 +39,7 @@ pub(all) struct BulletData {
   bullet : @animation.Animation
   watk : Int
 }
-pub fn BulletData::load(String) -> Self
+pub fn BulletData::load(String) -> Self raise
 
 type BulletSystem
 pub fn BulletSystem::BulletSystem() -> Self
@@ -50,7 +50,7 @@ pub fn BulletSystem::update(Self, timestep~ : Int64) -> Unit
 type Module
 pub fn Module::Module(Map[Int, BulletData]) -> Self
 pub fn Module::get_bullet_data(Self, Int) -> BulletData?
-pub fn Module::load() -> Self
+pub fn Module::load() -> Self raise
 
 // Type aliases
 

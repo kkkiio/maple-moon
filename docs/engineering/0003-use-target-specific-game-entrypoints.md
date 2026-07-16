@@ -22,12 +22,21 @@ selectors.
 
 Use one shared runtime package plus two target-specific app packages:
 
-- `src/engine/game_app` owns shared resource setup, local-server handler
-  registration, game-state initialization, and Selene system registration.
+- `src/engine/res` owns `res://` parsing, `ResourceKey` normalization, mount
+  ordering, pack-specific physical-path resolution, and format loaders.
+- `src/engine/game_app` configures base/DLC/patch packs before any asset is
+  loaded, registers local-server handlers, initializes game state, and registers
+  Selene systems.
 - `src/apps/game_web` is the JS/WebGPU main package used for browser runtime
   checks, browser debugging, and the Vite development page.
 - `src/apps/game_native` is the native/raylib main package used for local play
   and player-facing distribution builds.
+
+Both entrypoints keep their existing Selene platform overrides. They call the
+same `game_app` setup and contain no resource path, pack selection, HTTP, or
+native filesystem branches. `@res` selects a physical path from the configured
+packs; Selene backends read and decode that path as an image, audio, font,
+Tiled map, or LDtk world.
 
 Main packages use `README.md`. Non-main packages continue to use
 `README.mbt.md` so documentation examples remain checked by MoonBit.
@@ -45,6 +54,8 @@ Main packages use `README.md`. Non-main packages continue to use
 - Web verification does not replace native build verification before native
   distribution.
 - Backend-specific package overrides stay isolated in thin app packages.
+- `res://` addresses, `ResourceKey` normalization, mount order, and physical
+  path selection are shared across targets.
 
 ## Development Workflow
 

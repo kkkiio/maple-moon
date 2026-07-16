@@ -2,16 +2,16 @@
 package "KKKIIO/maple-moon/game/character_presentation"
 
 import {
-  "KKKIIO/maple-moon/engine/resource",
+  "KKKIIO/maple-moon/engine/res",
   "KKKIIO/maple-moon/game/char_stance",
   "KKKIIO/maple-moon/game/character_body",
   "KKKIIO/maple-moon/game/equip",
   "KKKIIO/maple-moon/game/equip/slot",
   "KKKIIO/maple-moon/game/item",
   "KKKIIO/maple-moon/game/server_proto",
-  "Milky2018/selene/ecs",
-  "Milky2018/selene/entity",
-  "Milky2018/selene/math",
+  "KKKIIO/selene/ecs",
+  "KKKIIO/selene/entity",
+  "KKKIIO/selene/math",
   "moonbitlang/core/debug",
   "moonbitlang/core/immut/sorted_map",
 }
@@ -126,7 +126,7 @@ type FaceFrame
 pub fn FaceFrame::from_resource(Json) -> Self raise
 
 pub(all) struct FullBody {
-  stances : Map[@char_stance.StanceId, Map[String, (Array[@resource.NxFrame], Array[@character_body.BodyLayer])]]
+  stances : Map[@char_stance.StanceId, Map[String, (Array[@res.NxFrame], Array[@character_body.BodyLayer])]]
   name : String
 }
 pub fn FullBody::FullBody(Int, @character_body.BodyDrawInfo, Map[@char_stance.StanceId, Array[@character_body.NxStanceBody]], Map[@char_stance.StanceId, Array[@character_body.NxMultiPartFrame]]) -> Self

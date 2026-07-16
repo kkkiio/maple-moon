@@ -55,7 +55,7 @@ pub impl ToJson for ClothingLayer with fn to_json(self) {
 struct Clothing {
   stances : Map[
     StanceId,
-    Map[String, (Array[@resource.NxFrame], Array[ClothingLayer])],
+    Map[String, (Array[@res.NxFrame], Array[ClothingLayer])],
   ]
   item_id : Int
   eq_slot : @slot.Id
@@ -134,14 +134,14 @@ pub fn Clothing::from_resource(
   }
   let stances : Map[
     StanceId,
-    Map[String, (Array[@resource.NxFrame], Array[ClothingLayer])],
+    Map[String, (Array[@res.NxFrame], Array[ClothingLayer])],
   ] = Map([])
   for stancename, stance in stance_name_id_map {
     guard src is Object(obj) else { continue }
     guard obj.get(stancename) is Some(stancenode) else { continue }
     let part_frames_map : Map[
       String,
-      (Array[@resource.NxFrame], Array[ClothingLayer]),
+      (Array[@res.NxFrame], Array[ClothingLayer]),
     ] = Map([])
     for frame = 0; ; frame = frame + 1 {
       guard stancenode is Object(stance_obj) else { break }
@@ -190,7 +190,7 @@ pub fn Clothing::from_resource(
               }
               _ => ("", Default::default())
             }
-            let tex : @resource.NxTexture = @json.from_json(partnode)
+            let tex : @res.NxTexture = @json.from_json(partnode)
             (tex, zs, parent, parentpos)
           }
         }
@@ -233,7 +233,7 @@ pub fn Clothing::from_resource(
           _ => Default::default()
         }
         let tex = { ..tex, origin: tex.origin - shift }
-        let nx_frame = @resource.NxFrame::{
+        let nx_frame = @res.NxFrame::{
           texture: tex,
           delay: None, // Will be set later if available
           head: None,
@@ -268,7 +268,7 @@ pub fn Clothing::get_animation(
   self : Clothing,
   stance : StanceId,
   part : String,
-) -> (Array[@resource.NxFrame], Array[ClothingLayer])? {
+) -> (Array[@res.NxFrame], Array[ClothingLayer])? {
   self.stances.get(stance).bind(fn(m) { m.get(part) })
 }
 
@@ -276,7 +276,7 @@ pub fn Clothing::get_animation(
 pub fn Clothing::get_parts_for_stance(
   self : Clothing,
   stance : StanceId,
-) -> Map[String, (Array[@resource.NxFrame], Array[ClothingLayer])]? {
+) -> Map[String, (Array[@res.NxFrame], Array[ClothingLayer])]? {
   self.stances.get(stance)
 }
 

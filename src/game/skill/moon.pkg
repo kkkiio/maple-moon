@@ -2,7 +2,7 @@ import {
   "moonbitlang/core/json",
   "moonbitlang/core/strconv",
   "moonbitlang/core/immut/hashmap",
-  "KKKIIO/maple-moon/engine/resource",
+  "KKKIIO/maple-moon/engine/res",
   "KKKIIO/maple-moon/game/weapon",
   "KKKIIO/maple-moon/game/res_types" @struct,
   "KKKIIO/maple-moon/engine/utils",

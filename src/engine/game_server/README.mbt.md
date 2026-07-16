@@ -1,14 +1,17 @@
 # Game Server
 
-Virtual package facade for client-to-server messages.
+Runtime-configurable facade for client-to-server messages.
 
-The default implementation is a no-op fallback. The game executable overrides
-this package with `lib/local_server/local_server_workaround`, which hosts
-`local_server` in process. Tests may override it with `engine/mock_server`.
+Game code calls the package-level `send`, handler-registration, and tick APIs.
+Application entrypoints install one `GameServer` implementation before startup.
+The browser and native games install `LocalServer`; black-box tests can install
+an isolated `MockServer`.
 
 ## Usage
 
 ```moonbit nocheck
+@game_server.install(server)
 @game_server.init_server()
+@game_server.send(message)
 @game_server.server_system(1.0 / 60.0)
 ```

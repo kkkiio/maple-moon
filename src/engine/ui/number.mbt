@@ -1,5 +1,5 @@
 ///|
-using @resource {type NxFrame, type NxAnimation}
+using @res {type NxFrame, type NxAnimation}
 
 ///|
 using @selene_math {type Vec2}
@@ -24,7 +24,7 @@ pub impl @json.FromJson for DamageSkin with fn from_json(json, path) {
     guard name.length() == 1 else { continue }
     let c = name.to_array()[0]
     try {
-      let tex : @resource.NxTexture = @json.from_json(
+      let tex : @res.NxTexture = @json.from_json(
         sub,
         path=path.add_key(name),
       )
@@ -181,7 +181,7 @@ pub fn NumberSet::load() -> NumberSet {
 
 ///|
 fn load_damage_skin(name : String) -> DamageSkin {
-  (@resource.require_json("assets/Effect/BasicEff.img/" + name + ".json")
+  (@res.require_json("res://Effect/BasicEff.img/" + name + ".json")
   |> @json.from_json) catch {
     _ => abort("invalid damage skin resource: BasicEff.img/\{name}")
   }

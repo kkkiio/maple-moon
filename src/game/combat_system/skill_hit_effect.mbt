@@ -52,12 +52,12 @@ fn load_hit_effect(
   src : NxHitEffect,
   tag : String,
   base_path : String,
-) -> LoadedHitEffect {
-  let resolved = @resource.resolve_ref(base_path, src.mx_animation)
+) -> LoadedHitEffect raise {
+  let resolved = @res.resolve_ref(base_path, src.mx_animation)
   let animation_loader = AnimationLoader()
   let loaded = animation_loader.load(resolved)
   let clip = loaded.clip(tag) catch {
-    _ => abort("missing animation tag '\{tag}': \{resolved}")
+    error => fail("missing animation tag '\{tag}': \{resolved}, error=\{error}")
   }
   {
     effect: {
@@ -78,7 +78,7 @@ struct NxHitEntry {
 pub impl @json.FromJson for NxHitEntry with fn from_json(json, path) {
   let hit = match json {
     { "hit": hit, .. } =>
-      @resource.parse_map_based_array(hit, path=path.add_key("hit"))
+      @res.parse_map_based_array(hit, path=path.add_key("hit"))
     _ => []
   }
   { hit, }
@@ -143,7 +143,7 @@ fn new_hit_effect(
   res : NxHitEffect,
   tag : String,
   base_path : String,
-) -> (@monster.Mob, Bool) -> Unit {
+) -> ((@monster.Mob, Bool) -> Unit) raise {
   let loaded = load_hit_effect(res, tag, base_path)
   fn(target : @monster.Mob, flip : Bool) -> Unit {
     target.show_effect(loaded.effect, loaded.pos, loaded.z, flip)
@@ -152,10 +152,22 @@ fn new_hit_effect(
 
 ///|
 /// A single animation
+///
+/// # Example
+/// ```moonbit nocheck
+/// let effect = try! new_single_hit_effect(
+///   hit,
+///   "res://Skill/110.img.json",
+/// )
+/// ignore(effect)
+/// ```
+///
+/// # Errors
+/// Raises when the animation reference or expected hit tag cannot be loaded.
 pub fn new_single_hit_effect(
   res : NxHitEffect,
   base_path : String,
-) -> (@combat_proto.AttackUser, @monster.Mob) -> Unit {
+) -> ((@combat_proto.AttackUser, @monster.Mob) -> Unit) raise {
   let f = new_hit_effect(res, skill_animation_tag(["hit", "0"]), base_path)
   fn(user : @combat_proto.AttackUser, target : @monster.Mob) -> Unit {
     f(target, user.flip)
@@ -164,11 +176,24 @@ pub fn new_single_hit_effect(
 
 ///|
 /// The animation changes depending on the weapon used
+///
+/// # Example
+/// ```moonbit nocheck
+/// let effect = try! new_twohanded_hit_effect(
+///   hit0,
+///   hit1,
+///   "res://Skill/110.img.json",
+/// )
+/// ignore(effect)
+/// ```
+///
+/// # Errors
+/// Raises when either animation reference or expected hit tag cannot be loaded.
 pub fn new_twohanded_hit_effect(
   hit0 : NxHitEffect,
   hit1 : NxHitEffect,
   base_path : String,
-) -> (@combat_proto.AttackUser, @monster.Mob) -> Unit {
+) -> ((@combat_proto.AttackUser, @monster.Mob) -> Unit) raise {
   let effects = BoolPair(
     new_hit_effect(hit0, skill_animation_tag(["hit", "0"]), base_path),
     new_hit_effect(hit1, skill_animation_tag(["hit", "1"]), base_path),
@@ -180,15 +205,27 @@ pub fn new_twohanded_hit_effect(
 
 ///|
 /// The animation changes with the character level
+///
+/// # Example
+/// ```moonbit nocheck
+/// let effect = try! new_by_level_hit_effect(
+///   src,
+///   "res://Skill/110.img.json",
+/// )
+/// ignore(effect)
+/// ```
+///
+/// # Errors
+/// Raises when a level entry or referenced animation resource is invalid.
 pub fn new_by_level_hit_effect(
   src : Json,
   base_path : String,
-) -> (@combat_proto.AttackUser, @monster.Mob) -> Unit {
+) -> ((@combat_proto.AttackUser, @monster.Mob) -> Unit) raise {
   let effects = []
   let by_level : NxCharLevelHit = @json.from_json(
     hit_effect_get_path(src, ["CharLevel"]),
   ) catch {
-    _ => abort("invalid by-character-level skill hit effect")
+    error => fail("invalid by-character-level skill hit effect: \{error}")
   }
   for level, entry in by_level.0 {
     match entry.hit.get(0) {
@@ -224,15 +261,28 @@ pub fn new_by_level_hit_effect(
 
 ///|
 /// The animation changes with the character level and weapon used
+///
+/// # Example
+/// ```moonbit nocheck
+/// let effect = try! new_by_level_twohanded_hit_effect(
+///   src,
+///   "res://Skill/110.img.json",
+/// )
+/// ignore(effect)
+/// ```
+///
+/// # Errors
+/// Raises when a level entry or either referenced animation is invalid.
 pub fn new_by_level_twohanded_hit_effect(
   src : Json,
   base_path : String,
-) -> (@combat_proto.AttackUser, @monster.Mob) -> Unit {
+) -> ((@combat_proto.AttackUser, @monster.Mob) -> Unit) raise {
   let effects = []
   let by_level : NxCharLevelHit = @json.from_json(
     hit_effect_get_path(src, ["CharLevel"]),
   ) catch {
-    _ => abort("invalid by-character-level two-handed skill hit effect")
+    error =>
+      fail("invalid by-character-level two-handed skill hit effect: \{error}")
   }
   for level, entry in by_level.0 {
     match NxTwoHandedHit::from_hit_array(entry.hit) {
@@ -275,15 +325,27 @@ pub fn new_by_level_twohanded_hit_effect(
 
 ///|
 /// The animation changes with the skill level
+///
+/// # Example
+/// ```moonbit nocheck
+/// let effect = try! new_by_skill_level_hit_effect(
+///   src,
+///   "res://Skill/110.img.json",
+/// )
+/// ignore(effect)
+/// ```
+///
+/// # Errors
+/// Raises when a skill-level entry or referenced animation is invalid.
 pub fn new_by_skill_level_hit_effect(
   src : Json,
   base_path : String,
-) -> (@combat_proto.AttackUser, @monster.Mob) -> Unit {
+) -> ((@combat_proto.AttackUser, @monster.Mob) -> Unit) raise {
   let effects = Map([])
   let by_level : NxSkillLevelHit = @json.from_json(
     hit_effect_get_path(src, ["level"]),
   ) catch {
-    _ => abort("invalid by-skill-level hit effect")
+    error => fail("invalid by-skill-level hit effect: \{error}")
   }
   for level, entry in by_level.0 {
     match entry.hit.get(0) {

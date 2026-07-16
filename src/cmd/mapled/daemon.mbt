@@ -293,12 +293,13 @@ async fn Daemon::send_cdp(
   self : Daemon,
   command_method : String,
   params : Json,
+  timeout_ms? : Int = 30000,
 ) -> Json {
   let cdp = match self.cdp {
     Some(cdp) if cdp.open => cdp
     _ => fail("CDP WebSocket is not connected")
   }
-  cdp.send(command_method, params)
+  cdp.send(command_method, params, timeout_ms~)
 }
 
 ///|
@@ -306,13 +307,18 @@ async fn Daemon::evaluate(
   self : Daemon,
   expression : String,
   await_promise : Bool,
+  timeout_ms? : Int = 30000,
 ) -> Json {
-  let response = self.send_cdp("Runtime.evaluate", {
-    "expression": expression,
-    "awaitPromise": await_promise,
-    "returnByValue": true,
-    "userGesture": true,
-  })
+  let response = self.send_cdp(
+    "Runtime.evaluate",
+    {
+      "expression": expression,
+      "awaitPromise": await_promise,
+      "returnByValue": true,
+      "userGesture": true,
+    },
+    timeout_ms~,
+  )
   match response {
     {
       "exceptionDetails": {
@@ -327,6 +333,348 @@ async fn Daemon::evaluate(
     { "result": { "description": String(description), .. }, .. } =>
       Json::string(description)
     _ => Json::null()
+  }
+}
+
+///|
+async fn Daemon::observe_game(self : Daemon, scope : String) -> Json {
+  guard self.evaluate("typeof globalThis.$console", false) is String("object") else {
+    fail("globalThis.$console is not ready; run `maple wait active`")
+  }
+  let value = self.evaluate("globalThis.$console.render_game_to_text()", true)
+  let snapshot = match value {
+    String(text) => @json.parse(text)
+    value => value
+  }
+  if scope == "full" {
+    return {
+      "ok": true,
+      "scope": "full",
+      "observedAt": now_ms(),
+      "state": snapshot,
+    }
+  }
+  guard snapshot is Object(sections) else {
+    fail("game observation is not a JSON object")
+  }
+  if scope == "" || scope == "summary" {
+    let summary : Map[String, Json] = Map([])
+    for name in ["phase", "world", "player", "npc_talk", "shop", "world_map"] {
+      if sections.get(name) is Some(value) {
+        summary[name] = value
+      }
+    }
+    summary["scene"] = match sections.get("npcs") {
+      Some({ "entries": Array(entries), .. }) =>
+        { "npc_count": entries.length() }
+      _ => { "npc_count": 0 }
+    }
+    summary["inventory"] = match sections.get("inventory") {
+      Some({ "meso": meso, "items": Array(items), .. }) =>
+        { "meso": meso, "item_kind_count": items.length() }
+      _ => { "meso": 0, "item_kind_count": 0 }
+    }
+    summary["quest"] = match sections.get("quest") {
+      Some(
+        {
+          "revision": revision,
+          "in_progress": Array(in_progress),
+          "completed": Array(completed),
+          ..
+        }
+      ) =>
+        {
+          "revision": revision,
+          "in_progress_count": in_progress.length(),
+          "completed_count": completed.length(),
+        }
+      _ => { "revision": 0, "in_progress_count": 0, "completed_count": 0 }
+    }
+    summary["clickable_ui_entries"] = sections
+      .get("clickable_ui_entries")
+      .unwrap_or(([] : Json))
+    return {
+      "ok": true,
+      "scope": "summary",
+      "observedAt": now_ms(),
+      "state": Json::object(summary),
+    }
+  }
+  guard sections.get(scope) is Some(section) else {
+    return {
+      "ok": false,
+      "error": "unknown observation scope: \{scope}",
+      "available": [
+        for name, _ in sections => name
+      ],
+    }
+  }
+  { "ok": true, "scope": scope, "observedAt": now_ms(), "state": section }
+}
+
+///|
+async fn Daemon::run_action(self : Daemon, request : Json) -> Json {
+  guard self.evaluate("typeof globalThis.$console", false) is String("object") else {
+    fail("globalThis.$console is not ready; run `maple wait active`")
+  }
+  let action_name = match request {
+    { "name": String(value), .. } => value
+    _ => fail("action name is required")
+  }
+  let args = match request {
+    { "args": Object(values), .. } => values
+    _ => Map([])
+  }
+  let timeout_ms = match request {
+    { "timeoutMs": Number(value, ..), .. } => value.to_int()
+    _ => 30000
+  }
+  let action_id = "act-\{now_ms()}"
+  let before_logs = self.logs.length()
+  let before_requests = self.request_order.length()
+  let result_scope = if action_name.has_prefix("world.") {
+    "world"
+  } else if action_name.has_prefix("inventory.") {
+    "inventory"
+  } else if action_name.has_prefix("player.") ||
+    action_name.has_prefix("input.") ||
+    action_name.has_prefix("combat.") {
+    "player"
+  } else if action_name.has_prefix("ui.") {
+    "npc_talk"
+  } else if action_name.has_prefix("npc.") {
+    "npc_talk"
+  } else {
+    "summary"
+  }
+  let before_full = self.observe_game("full")
+  let before = self.observe_game(result_scope)
+  let mut command_result = Json::null()
+  let mut expected_item_id = -1
+  let mut expected_item_quantity = -1
+  let mut expected_meso = -1
+  let mut expected_map_id = -1
+  let expression = match action_name {
+    "character.create" => "globalThis.$console.cmd(\"new_character\")"
+    "character.select" => {
+      let slot = match args.get("slot") {
+        Some(Number(value, ..)) => value.to_int()
+        _ => 0
+      }
+      "globalThis.$console.cmd(\"select_char\", \{slot})"
+    }
+    "world.warp" => {
+      expected_map_id = match args.get("map_id") {
+        Some(Number(value, ..)) => value.to_int()
+        _ => fail("world.warp requires map_id")
+      }
+      let portal_id = match args.get("portal_id") {
+        Some(Number(value, ..)) => value.to_int()
+        _ => 0
+      }
+      "globalThis.$console.cmd(\"warp\", \{expected_map_id}, \{portal_id})"
+    }
+    "player.teleport" => {
+      let x = match args.get("x") {
+        Some(Number(value, ..)) => value.to_int()
+        _ => fail("player.teleport requires x")
+      }
+      let y = match args.get("y") {
+        Some(Number(value, ..)) => value.to_int()
+        _ => fail("player.teleport requires y")
+      }
+      "globalThis.$console.cmd(\"teleport\", \{x}, \{y})"
+    }
+    "player.teleport_to_npc" => {
+      let npc_id = match args.get("npc_id") {
+        Some(Number(value, ..)) => value.to_int()
+        _ => fail("player.teleport-to-npc requires npc_id")
+      }
+      "globalThis.$console.cmd(\"teleport_to_npc\", \{npc_id})"
+    }
+    "inventory.set_meso" => {
+      expected_meso = match args.get("amount") {
+        Some(Number(value, ..)) => value.to_int()
+        _ => fail("inventory.set-meso requires amount")
+      }
+      "globalThis.$console.cmd(\"meso\", \{expected_meso})"
+    }
+    "inventory.grant" | "inventory.ensure" => {
+      expected_item_id = match args.get("item_id") {
+        Some(Number(value, ..)) => value.to_int()
+        _ => fail("inventory item action requires item_id")
+      }
+      let requested_quantity = match args.get("quantity") {
+        Some(Number(value, ..)) => value.to_int()
+        _ => 1
+      }
+      let mut current_quantity = 0
+      if before_full
+        is { "state": { "inventory": { "items": Array(items), .. }, .. }, .. } {
+        for item in items {
+          if item
+            is {
+              "item_id": Number(item_id, ..),
+              "quantity": Number(quantity, ..),
+              ..
+            } &&
+            item_id.to_int() == expected_item_id {
+            current_quantity = quantity.to_int()
+          }
+        }
+      }
+      let grant_quantity = if action_name == "inventory.ensure" {
+        if current_quantity >= requested_quantity {
+          0
+        } else {
+          requested_quantity - current_quantity
+        }
+      } else {
+        requested_quantity
+      }
+      expected_item_quantity = current_quantity + grant_quantity
+      if grant_quantity == 0 {
+        "({ok:true,code:\"ALREADY_SATISFIED\"})"
+      } else {
+        "globalThis.$console.cmd(\"item\", \{expected_item_id}, \{grant_quantity})"
+      }
+    }
+    "npc.talk" => {
+      let npc_id = match args.get("npc_id") {
+        Some(Number(value, ..)) => value.to_int()
+        _ => fail("npc.talk requires npc_id")
+      }
+      "(async()=>{const result=globalThis.$console.cmd(\"talk_to_npc\", \{npc_id});await globalThis.$console.step(2);return result})()"
+    }
+    "ui.click" => {
+      let package_name = match args.get("package") {
+        Some(String(value)) => value
+        _ => fail("ui.click requires package")
+      }
+      let control_name = match args.get("name") {
+        Some(String(value)) => value
+        _ => fail("ui.click requires name")
+      }
+      "globalThis.$console.ui.click(\{Json::string(package_name).stringify()}, \{Json::string(control_name).stringify()})"
+    }
+    "ui.select" => {
+      let option = match args.get("option") {
+        Some(Number(value, ..)) => value.to_int()
+        _ => fail("ui.select requires option")
+      }
+      "(async()=>{const result=globalThis.$console.cmd(\"npc_talk_select\", \{option});await globalThis.$console.step(2);return result})()"
+    }
+    "input.tap" => {
+      let code = match args.get("code") {
+        Some(String(value)) => value
+        _ => fail("input.tap requires code")
+      }
+      "globalThis.__bot.tap_key(\{Json::string(code).stringify()})"
+    }
+    "combat.attack" => "globalThis.__bot.attack()"
+    "combat.kill" =>
+      "(async()=>{const target=globalThis.__bot.nearest_monster();if(!target)throw new Error(\"no alive monster\");return globalThis.__bot.attack_target(target.oid)})()"
+    _ => fail("unknown action: \{action_name}")
+  }
+  command_result = self.evaluate(expression, true, timeout_ms~)
+  if command_result is { "ok": False, .. } {
+    return {
+      "ok": false,
+      "actionId": action_id,
+      "action": action_name,
+      "status": "rejected",
+      "commandResult": command_result,
+      "before": before,
+      "observation": self.observe_game(result_scope),
+    }
+  }
+  let deadline = now_ms() + timeout_ms.to_double()
+  let mut observation = self.observe_game("full")
+  for ;; {
+    let completed = if expected_map_id >= 0 {
+      observation
+      is {
+        "state": {
+          "phase": "GameActive",
+          "world": { "map_id": Number(map_id, ..), .. },
+          ..
+        },
+        ..
+      } &&
+      map_id.to_int() == expected_map_id
+    } else if expected_meso >= 0 {
+      observation
+      is { "state": { "inventory": { "meso": Number(meso, ..), .. }, .. }, .. } &&
+      meso.to_int() == expected_meso
+    } else if expected_item_id >= 0 {
+      let mut actual_quantity = 0
+      if observation
+        is { "state": { "inventory": { "items": Array(items), .. }, .. }, .. } {
+        for item in items {
+          if item
+            is {
+              "item_id": Number(item_id, ..),
+              "quantity": Number(quantity, ..),
+              ..
+            } &&
+            item_id.to_int() == expected_item_id {
+            actual_quantity = quantity.to_int()
+          }
+        }
+      }
+      actual_quantity >= expected_item_quantity
+    } else if action_name == "character.select" {
+      observation is { "state": { "phase": "GameActive", .. }, .. }
+    } else if action_name == "npc.talk" {
+      observation is { "state": { "npc_talk": { "open": True, .. }, .. }, .. }
+    } else if action_name == "ui.select" {
+      self.observe_game("npc_talk") != before
+    } else {
+      true
+    }
+    if completed {
+      break
+    }
+    if now_ms() >= deadline {
+      return {
+        "ok": false,
+        "actionId": action_id,
+        "action": action_name,
+        "status": "timed_out",
+        "error": "action postcondition did not become true before timeout",
+        "commandResult": command_result,
+        "before": before,
+        "observation": self.observe_game(result_scope),
+      }
+    }
+    @async.sleep(50)
+    observation = self.observe_game("full")
+  }
+  let recent_errors = self.logs
+    .view(start=before_logs)
+    .filter(entry => entry.level == "error")
+    .map(entry => ToJson::to_json(entry))
+  let network_failures = [
+    for id in self.request_order.view(start=before_requests) if self.requests.get(
+      id,
+    )
+    is Some(entry) &&
+    (entry.failed == Some(true) || entry.status.unwrap_or(0) >= 400) => {
+      ToJson::to_json(entry)
+    }
+  ]
+  {
+    "ok": recent_errors.is_empty() && network_failures.is_empty(),
+    "actionId": action_id,
+    "action": action_name,
+    "status": "completed",
+    "commandResult": command_result,
+    "before": before,
+    "observation": self.observe_game(result_scope),
+    "diagnostics": {
+      "consoleErrors": recent_errors,
+      "networkFailures": network_failures,
+    },
   }
 }
 
@@ -398,10 +746,16 @@ async fn Daemon::run_bot(self : Daemon, request : Json) -> Json {
   guard console_ready else {
     fail("globalThis.$console was not installed before timeout")
   }
+  let before_logs = self.logs.length()
+  let before_requests = self.request_order.length()
   let entry = self.ensure_game_active()
   let timeout_ms = match request {
-    { "timeoutMs": Number(value, ..), .. } if value.to_int() > 0 =>
+    { "timeoutMs": Number(value, ..), .. } => {
+      guard value > 0.0 && value <= 2147000000.0 else {
+        fail("timeoutMs must be between 1 and 2147000000")
+      }
       value.to_int()
+    }
     _ => 120000
   }
   let script_path = match request {
@@ -429,8 +783,6 @@ async fn Daemon::run_bot(self : Daemon, request : Json) -> Json {
   guard bot_ready else {
     fail("globalThis.__bot was not installed before timeout")
   }
-  let before_logs = self.logs.length()
-  let before_requests = self.request_order.length()
   let source_url = script_path.replace_all(old="\\", new="/")
   let wrapped = "(async () => {\n\{script}\n})()\n//# sourceURL=\{source_url}"
   let group = match self.group {
@@ -438,23 +790,53 @@ async fn Daemon::run_bot(self : Daemon, request : Json) -> Json {
     None => fail("mapled task group is unavailable")
   }
   let observed = group.spawn(allow_failure=true, () => {
-    self.evaluate(wrapped, true)
+    self.evaluate(wrapped, true, timeout_ms=timeout_ms + 5000)
   })
   let deadline = now_ms() + timeout_ms.to_double()
   let mut observed_result : Json? = None
   let mut observed_error : String? = None
   while observed_result is None && observed_error is None && now_ms() < deadline {
+    for entry in self.logs.view(start=before_logs) {
+      if entry.level == "error" {
+        observed_error = Some("browser error: \{entry.text}")
+        break
+      }
+    }
+    if observed_error is Some(_) {
+      break
+    }
     try observed.try_wait() catch {
       error => observed_error = Some(error.to_string())
     } noraise {
       Some(value) => observed_result = Some(value)
-      None => ignore(self.evaluate("globalThis.$console.step(1)", true))
+      None => {
+        let remaining_ms = (deadline - now_ms()).to_int()
+        if remaining_ms > 0 {
+          try
+            self.evaluate(
+              "globalThis.$console.step(1)",
+              true,
+              timeout_ms=remaining_ms,
+            )
+          catch {
+            error =>
+              if now_ms() < deadline {
+                observed_error = Some(error.to_string())
+              }
+          } noraise {
+            _ => ()
+          }
+        }
+      }
     }
   }
   let mut run_error : String? = None
   let mut result = Json::null()
-  if observed_result is None && observed_error is None {
-    let message = "bot script timed out after \{timeout_ms}ms"
+  if observed_result is None {
+    let message = match observed_error {
+      Some(error) => error
+      None => "bot script timed out after \{timeout_ms}ms"
+    }
     run_error = Some(message)
     observed.cancel()
     let cancel_expression = "globalThis.__bot_cancel_pending?.(\{Json::string(message).stringify()})"
@@ -465,8 +847,6 @@ async fn Daemon::run_bot(self : Daemon, request : Json) -> Json {
     }
   } else if observed_result is Some(value) {
     result = value
-  } else if observed_error is Some(error) {
-    run_error = Some(error)
   }
   let state = try
     self.evaluate("globalThis.$console.render_game_to_text()", true)
@@ -479,12 +859,12 @@ async fn Daemon::run_bot(self : Daemon, request : Json) -> Json {
       }
     value => value
   }
-  let entries : Array[NetworkEntry] = []
-  for id in self.request_order.view(start=before_requests) {
-    if self.requests.get(id) is Some(value) {
-      entries.push(value)
-    }
-  }
+  let entries = [
+    for id in self.request_order.view(start=before_requests) if self.requests.get(
+      id,
+    )
+    is Some(value) => value
+  ]
   let failures = entries.filter(entry => {
     entry.failed == Some(true) || entry.status.unwrap_or(0) >= 400
   })
@@ -515,11 +895,12 @@ async fn Daemon::run_bot(self : Daemon, request : Json) -> Json {
       },
     )
     .map(entry => ToJson::to_json(entry))
-  {
-    "ok": true,
-    "passed": run_error is None &&
+  let passed = run_error is None &&
     failures.is_empty() &&
-    recent_errors.is_empty(),
+    recent_errors.is_empty()
+  let response : Json = {
+    "ok": true,
+    "passed": passed,
     "scriptPath": script_path,
     "timeoutMs": timeout_ms,
     "entry": entry,
@@ -533,6 +914,16 @@ async fn Daemon::run_bot(self : Daemon, request : Json) -> Json {
     "playtestLogs": playtest_logs,
     "state": state,
   }
+  if !passed {
+    try
+      self.send_cdp("Page.reload", { "ignoreCache": true }, timeout_ms=5000)
+    catch {
+      _ => ()
+    } noraise {
+      _ => ()
+    }
+  }
+  response
 }
 
 ///|
@@ -693,23 +1084,47 @@ async fn Daemon::handle(self : Daemon, request : Json) -> Json {
       _ => false
     }
     let connected = self.cdp is Some(cdp) && cdp.open
+    let bot_ready = try self.evaluate("typeof globalThis.__bot", false) catch {
+      _ => false
+    } noraise {
+      String("object") => true
+      _ => false
+    }
+    let entry = if self.game_url.contains("game_debug.html") {
+      "debug"
+    } else {
+      "web"
+    }
     return {
       "ok": true,
+      "entry": entry,
       "url": self.game_url,
       "cdpPort": self.cdp_port,
       "browserConnected": connected,
       "consoleReady": console_ready,
+      "capabilities": if bot_ready {
+        ["admin", "observe", "ui", "input", "combat", "playtest"]
+      } else {
+        ["admin", "observe", "ui"]
+      },
       "logCount": self.logs.length(),
       "networkCount": self.request_order.length(),
     }
   }
   if action == "open" || action == "open-wait" {
+    let requested_url = match request {
+      { "gameUrl": String(game_url), .. } if game_url != "" => game_url
+      _ => self.game_url
+    }
     if self.cdp is Some(cdp) && cdp.open {
+      guard requested_url == self.game_url else {
+        fail(
+          "browser is connected to \{self.game_url}; close it before opening \{requested_url}",
+        )
+      }
       return { "ok": true, "message": "browser already connected" }
     }
-    if request is { "gameUrl": String(game_url), .. } && game_url != "" {
-      self.game_url = game_url
-    }
+    self.game_url = requested_url
     if action == "open" {
       if self.chrome_connecting {
         return { "ok": true, "message": "browser open already requested" }
@@ -764,6 +1179,16 @@ async fn Daemon::handle(self : Daemon, request : Json) -> Json {
     self.logs.clear()
     return { "ok": true, "message": "browser logs cleared" }
   }
+  if action == "observe" {
+    let scope = match request {
+      { "scope": String(value), .. } => value
+      _ => "summary"
+    }
+    return self.observe_game(scope)
+  }
+  if action == "act" {
+    return self.run_action(request)
+  }
   if action == "cmd" {
     guard self.evaluate("typeof globalThis.$console", false) is String("object") else {
       fail("globalThis.$console is not ready; run `maple wait-ready`")
@@ -800,17 +1225,14 @@ async fn Daemon::handle(self : Daemon, request : Json) -> Json {
   }
   if action == "network" {
     let failed_only = request is { "failed": True, .. }
-    let entries : Array[NetworkEntry] = []
-    for id in self.request_order {
-      if self.requests.get(id) is Some(entry) &&
-        (
-          !failed_only ||
-          entry.failed == Some(true) ||
-          entry.status.unwrap_or(0) >= 400
-        ) {
-        entries.push(entry)
-      }
-    }
+    let entries = [
+      for id in self.request_order if self.requests.get(id) is Some(entry) &&
+      (
+        !failed_only ||
+        entry.failed == Some(true) ||
+        entry.status.unwrap_or(0) >= 400
+      ) => entry
+    ]
     let start = if entries.length() > 200 { entries.length() - 200 } else { 0 }
     return {
       "ok": true,
@@ -967,7 +1389,12 @@ async fn Daemon::shutdown(self : Daemon) -> Unit {
   }
   self.subscribers.clear()
   self.group = None
-  remove_path(self.state_path)
+  if @fs.exists(self.state_path) {
+    let state = @fs.read_file(self.state_path).json()
+    if state is { "token": String(token), .. } && token == self.token {
+      @fs.remove(self.state_path)
+    }
+  }
 }
 
 ///|

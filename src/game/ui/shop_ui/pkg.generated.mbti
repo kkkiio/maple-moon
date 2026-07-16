@@ -3,13 +3,15 @@ package "KKKIIO/maple-moon/game/ui/shop_ui"
 
 import {
   "KKKIIO/maple-moon/game/server_proto",
-  "Milky2018/selene/ecs",
+  "KKKIIO/selene/ecs",
 }
 
 // Values
 pub fn clear_for_change_map() -> Unit
 
 pub fn clear_for_leave_world() -> Unit
+
+pub fn debug_state() -> Json
 
 pub fn init_shop_ui() -> Unit
 

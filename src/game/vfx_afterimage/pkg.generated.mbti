@@ -5,8 +5,8 @@ import {
   "KKKIIO/maple-moon/game/animation",
   "KKKIIO/maple-moon/game/character_presentation",
   "KKKIIO/maple-moon/game/res_types",
-  "Milky2018/selene/ecs",
-  "Milky2018/selene/entity",
+  "KKKIIO/selene/ecs",
+  "KKKIIO/selene/entity",
   "moonbitlang/core/json",
 }
 
@@ -17,7 +17,7 @@ pub fn clear_after_image(@entity.Entity) -> Unit
 
 pub fn get_after_image(@entity.Entity) -> AfterImage?
 
-pub fn load_after_images(String) -> NxAfterImages
+pub fn load_after_images(String) -> NxAfterImages raise
 
 pub fn set_after_images(String, NxAfterImages) -> Unit
 

@@ -4,7 +4,7 @@ package "KKKIIO/maple-moon/game/ui/inventory_ui"
 import {
   "KKKIIO/maple-moon/game/inventory",
   "KKKIIO/maple-moon/game/server_proto",
-  "Milky2018/selene/ecs",
+  "KKKIIO/selene/ecs",
 }
 
 // Values

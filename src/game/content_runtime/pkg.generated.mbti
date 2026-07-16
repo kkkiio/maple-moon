@@ -1,0 +1,67 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/game/content_runtime"
+
+import {
+  "moonbitlang/core/debug",
+}
+
+// Values
+
+// Errors
+pub(all) suberror NpcScriptRegistryError {
+  DuplicateScript(String)
+  MissingScript(String)
+}
+
+// Types and methods
+pub(all) struct NpcScript {
+  start : (NpcScriptContext) -> NpcScriptTurn raise
+  respond : (Json, NpcScriptInput, NpcScriptContext) -> NpcScriptTurn raise
+}
+
+pub(all) enum NpcScriptCommand {
+  TakeMeso(Int)
+  Warp(map_id~ : Int, portal_id~ : Int)
+}
+
+pub(all) struct NpcScriptContext {
+  npc_id : Int
+  job_id : Int
+  meso : Int
+}
+
+pub(all) enum NpcScriptInput {
+  Continue
+  Previous
+  Yes
+  No
+  Select(Int)
+  Close
+} derive(Eq, @debug.Debug)
+
+pub(all) enum NpcScriptPrompt {
+  Next(String)
+  YesNo(String)
+  Ok(String)
+  Simple(String)
+}
+
+pub struct NpcScriptRegistry {
+  scripts : Map[String, NpcScript]
+}
+pub fn NpcScriptRegistry::NpcScriptRegistry() -> Self
+pub fn NpcScriptRegistry::contains(Self, String) -> Bool
+pub fn NpcScriptRegistry::register(Self, String, NpcScript) -> Unit raise NpcScriptRegistryError
+pub fn NpcScriptRegistry::require(Self, String) -> NpcScript raise NpcScriptRegistryError
+
+pub(all) struct NpcScriptTurn {
+  state : Json
+  prompt : NpcScriptPrompt?
+  commands : Array[NpcScriptCommand]
+  finished : Bool
+}
+
+// Type aliases
+
+// Traits
+

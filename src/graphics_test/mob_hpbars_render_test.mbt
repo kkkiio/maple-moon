@@ -1,5 +1,5 @@
 ///|
-fn mob_hpbars_load_test_mob() -> @monster.Mob {
+fn mob_hpbars_load_test_mob() -> @monster.Mob raise {
   @monster.Mob::load(
     1001,
     100101,
@@ -15,7 +15,7 @@ fn mob_hpbars_load_test_mob() -> @monster.Mob {
 ///|
 fn attach_visible_mob_sprite(entity : @entity.Entity) -> Unit {
   let stand = @ms_animation.Animation::single_frame(
-    "assets/mob/0100101.img/animations/stand.png",
+    "res://Mob/0100101.img/animations/stand.png",
     @math.Vec2(35.0, 34.0),
     pivot=@math.Vec2(16.0, 34.0),
   )
@@ -85,7 +85,7 @@ test "mob hpbar render snapshot" {
       #|    {
       #|      layer: "world",
       #|      kind: "Image",
-      #|      texture_path: Some("assets/mob/0100101.img/animations/stand.png"),
+      #|      texture_path: Some("assets/base/Mob/0100101.img/animations/stand.png"),
       #|      source_rect: Some({ x: 0, y: 0, width: 35, height: 34 }),
       #|      destination_rect: Some({ x: 80, y: 84, width: 35, height: 34 }),
       #|      color: Some({ r: 255, g: 255, b: 255, a: 1 }),

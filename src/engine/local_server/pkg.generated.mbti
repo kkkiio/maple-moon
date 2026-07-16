@@ -2,7 +2,9 @@
 package "KKKIIO/maple-moon/engine/local_server"
 
 import {
+  "KKKIIO/maple-moon/engine/game_server",
   "KKKIIO/maple-moon/engine/log",
+  "KKKIIO/maple-moon/game/content_runtime",
   "KKKIIO/maple-moon/game/server_proto",
   "moonbitlang/core/debug",
   "moonbitlang/core/json",
@@ -15,23 +17,11 @@ pub fn calculate_mob_drops(Int, Int, Int, Int, MobDropDatabase?, MobDropDatabase
 
 pub let default_rand_seed : @ref.Ref[Bytes]
 
-pub fn init_server(LocalServer) -> Unit
-
-pub fn server_system(LocalServer) -> Unit
-
 // Errors
 
 // Types and methods
-pub struct FileDB {
-  root_path : String
-}
-pub fn FileDB::FileDB(root_path? : String) -> Self
-pub fn FileDB::root_path_for_debug(Self) -> String
-pub impl DB for FileDB
-
 type LocalServer
-pub fn LocalServer::LocalServer(db~ : &DB, drop_rng? : @random.Rand) -> Self
-pub fn LocalServer::add_server_message_handler(Self, String, Int, (Json) -> Unit raise) -> Unit
+pub fn LocalServer::LocalServer(db~ : &DB, npc_scripts~ : @content_runtime.NpcScriptRegistry, drop_rng? : @random.Rand) -> Self
 pub fn LocalServer::init_routes(Self) -> Unit
 pub fn LocalServer::load_character(Self, Int) -> Bool
 pub fn LocalServer::load_character_inventory_tab_data(Self, Json) -> Unit
@@ -42,8 +32,7 @@ pub fn LocalServer::save_character_inventory(Self, Int) -> Unit
 pub fn LocalServer::save_character_inventory_data(Self, Int, Int) -> Unit
 pub fn LocalServer::save_character_quest_data(Self, Int, Int) -> Unit
 pub fn LocalServer::save_character_roster(Self) -> Unit
-#callsite(autofill(loc))
-pub fn[T : @server_proto.ClientMessage] LocalServer::send_client_message(Self, T, log_level? : @log.Level, loc~ : SourceLoc) -> Unit
+pub impl @game_server.GameServer for LocalServer
 
 pub struct MemoryDB {
   stores : @ref.Ref[Map[String, Map[String, Json]]]

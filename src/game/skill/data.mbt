@@ -15,7 +15,7 @@ pub(all) struct SkillData {
   desc : String
   levels : Map[Int, String]
   req_skills : @hashmap.HashMap[Int, Int]
-  icons : (@resource.NxTexture, @resource.NxTexture, @resource.NxTexture) // NORMAL, DISABLED, MOUSEOVER
+  icons : (@res.NxTexture, @res.NxTexture, @res.NxTexture) // NORMAL, DISABLED, MOUSEOVER
   /// Internal: raw JSON source for legacy effect construction.
   /// Will be removed when effect system is refactored.
   src : Json
@@ -58,9 +58,9 @@ pub fn SkillData::get_cached(id : Int) -> SkillData? {
 
 ///|
 struct SkillNxResource {
-  icon : @resource.NxTexture
-  icon_disabled : @resource.NxTexture
-  icon_mouseover : @resource.NxTexture
+  icon : @res.NxTexture
+  icon_disabled : @res.NxTexture
+  icon_mouseover : @res.NxTexture
   elem_attr : String
   req_skills : Nullable[IntMap[Int]]
   invisible : Bool
@@ -83,15 +83,15 @@ pub impl @json.FromJson for SkillNxResource with fn from_json(json, path) -> Ski
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expect object"))
   }
-  let icon : @resource.NxTexture = @json.from_json(
+  let icon : @res.NxTexture = @json.from_json(
     obj.get("icon").unwrap_or(Json::null()),
     path=path.add_key("icon"),
   )
-  let icon_disabled : @resource.NxTexture = @json.from_json(
+  let icon_disabled : @res.NxTexture = @json.from_json(
     obj.get("iconDisabled").unwrap_or(Json::null()),
     path=path.add_key("iconDisabled"),
   )
-  let icon_mouseover : @resource.NxTexture = @json.from_json(
+  let icon_mouseover : @res.NxTexture = @json.from_json(
     obj.get("iconMouseOver").unwrap_or(Json::null()),
     path=path.add_key("iconMouseOver"),
   )
@@ -144,9 +144,9 @@ pub fn SkillNxResource::simplify(self : SkillNxResource) -> SkillResource {
 
 ///|
 struct SkillResource {
-  icon : @resource.NxTexture
-  icon_disabled : @resource.NxTexture
-  icon_mouseover : @resource.NxTexture
+  icon : @res.NxTexture
+  icon_disabled : @res.NxTexture
+  icon_mouseover : @res.NxTexture
   elem_attr : String
   req_skills : Map[Int, Int]
   invisible : Bool
@@ -469,4 +469,4 @@ pub impl @json.FromJson for WeaponType with fn from_json(json, path) -> WeaponTy
 }
 
 ///|
-using @resource {type IntMap, type Nullable}
+using @res {type IntMap, type Nullable}

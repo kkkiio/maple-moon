@@ -44,7 +44,7 @@ priv struct DynamicLayerTrack {
 
 ///|
 priv struct LocalAnimationFrame {
-  texture : @resource.NxTexture
+  texture : @res.NxTexture
   duration : Double
 }
 
@@ -138,7 +138,7 @@ fn update_dynamic_layer_tracks(_world : @ecs.World) -> Unit {
 
 ///|
 fn local_frames_from_nx_animation(
-  src : @resource.NxAnimation,
+  src : @res.NxAnimation,
 ) -> Array[LocalAnimationFrame] {
   let frames : Array[LocalAnimationFrame] = []
   for frame in src.frames {
@@ -162,7 +162,7 @@ fn local_frames_from_nx_animation(
 ///|
 fn start_local_animation(
   entity : @entity.Entity,
-  nx_animation : @resource.NxAnimation,
+  nx_animation : @res.NxAnimation,
   loop_ : Bool,
   transform : @selene_math.Transform,
 ) -> Unit {
@@ -292,7 +292,7 @@ fn apply_local_frame(
   )
   let flip_x = state.transform.a < 0.0
   let anchor = anchor_from_origin(origin, size, flip_x~)
-  let image = @resource.load_image(texture.i)
+  let image = @res.require_image(texture.i)
   match @sprite.sprites().get(entity) {
     Some(sprite) =>
       @sprite.sprites().set(entity, {
@@ -537,7 +537,7 @@ pub fn CharLook::play_animations(self : CharLook) -> Unit {
           "frames.length() != layers.length() for stance: \{stance}, action: \{name}",
         )
       }
-      let nx_anim = @resource.NxAnimation::{
+      let nx_anim = @res.NxAnimation::{
         frames,
         blend: false,
         zigzag: false,
@@ -1043,7 +1043,7 @@ fn attach_face(
   let frames = []
   let mut i = 0
   while face_frames.get(i) is Some(f) {
-    let frame = @resource.NxFrame::{
+    let frame = @res.NxFrame::{
       texture: f.texture,
       delay: Some(f.delay),
       head: None,
@@ -1185,7 +1185,7 @@ fn ensure_sprite_with_z(
 fn attach_equipment(
   entity : @entity.Entity,
   flip_x : Bool,
-  frames : Array[@resource.NxFrame],
+  frames : Array[@res.NxFrame],
   z : Int,
   body_delays : Array[Int?],
   loop_ : Bool,
@@ -1195,7 +1195,7 @@ fn attach_equipment(
     let delay = if i < body_delays.length() { body_delays[i] } else { f.delay }
     { ..f, delay, }
   })
-  let nx_anim = @resource.NxAnimation::{ frames, blend: false, zigzag: false }
+  let nx_anim = @res.NxAnimation::{ frames, blend: false, zigzag: false }
   let transform = facing_transform(flip_x)
   ensure_sprite_with_z(entity, z + @graphics.CHAR_LOOK_ZINDEX, transform)
   set_entity_visible(entity, true)
@@ -1283,7 +1283,7 @@ fn CharLook::play_climbing_animations(
         })
         abort("frames.length() != layers.length() for body action: \{name}")
       }
-      let nx_anim = @resource.NxAnimation::{
+      let nx_anim = @res.NxAnimation::{
         frames,
         blend: false,
         zigzag: false,

@@ -1,0 +1,7 @@
+import {
+  "KKKIIO/maple-moon/engine/res",
+  "KKKIIO/selene/asset",
+  "KKKIIO/selene/ui" @selene_ui,
+}
+
+supported_targets = "native+js"

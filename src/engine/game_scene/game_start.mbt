@@ -124,11 +124,9 @@ pub fn collect_inventory_item_ids(
       id_set.set(item_id, true)
     }
   }
-  let ids : Array[Int] = []
-  for item_id, _ in id_set {
-    ids.push(item_id)
-  }
-  ids
+  [
+    for item_id, _ in id_set => item_id
+  ]
 }
 
 ///|

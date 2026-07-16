@@ -86,14 +86,14 @@ pub fn preload_reference_data() -> Unit {
     return
   }
   reference_data_ref.val = Some({
-    npc_img: @resource.require_json("assets/String/Npc.img.json"),
-    mob_img: @resource.require_json("assets/String/Mob.img.json"),
-    map_img: @resource.require_json("assets/String/Map.img.json"),
-    eqp_img: @resource.require_json("assets/String/Eqp.img.json"),
-    consume_img: @resource.require_json("assets/String/Consume.img.json"),
-    ins_img: @resource.require_json("assets/String/Ins.img.json"),
-    etc_img: @resource.require_json("assets/String/Etc.img.json"),
-    cash_img: @resource.require_json("assets/String/Cash.img.json"),
+    npc_img: @res.require_json("res://String/Npc.img.json"),
+    mob_img: @res.require_json("res://String/Mob.img.json"),
+    map_img: @res.require_json("res://String/Map.img.json"),
+    eqp_img: @res.require_json("res://String/Eqp.img.json"),
+    consume_img: @res.require_json("res://String/Consume.img.json"),
+    ins_img: @res.require_json("res://String/Ins.img.json"),
+    etc_img: @res.require_json("res://String/Etc.img.json"),
+    cash_img: @res.require_json("res://String/Cash.img.json"),
   })
 }
 

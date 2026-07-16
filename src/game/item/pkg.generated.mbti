@@ -2,7 +2,7 @@
 package "KKKIIO/maple-moon/game/item"
 
 import {
-  "KKKIIO/maple-moon/engine/resource",
+  "KKKIIO/maple-moon/engine/res",
   "KKKIIO/maple-moon/engine/utils",
   "moonbitlang/core/debug",
   "moonbitlang/core/ref",
@@ -62,7 +62,7 @@ pub(all) struct EquipId {
 
 pub(all) struct ItemData {
   src : Json
-  icons : (@resource.NxTexture, @resource.NxTexture)
+  icons : (@res.NxTexture, @res.NxTexture)
   item_id : Int
   price : Int
   gender : Int
@@ -77,7 +77,7 @@ pub(all) struct ItemData {
 }
 pub fn ItemData::add_item_data(Int, Self) -> Unit
 pub fn ItemData::get_category(Self) -> String
-pub fn ItemData::get_icon(Self, Bool) -> @resource.NxTexture
+pub fn ItemData::get_icon(Self, Bool) -> @res.NxTexture
 pub fn ItemData::get_info(Self) -> Map[String, Json]
 pub fn ItemData::load(Int) -> Self
 pub fn ItemData::load_item_data(Int) -> Self

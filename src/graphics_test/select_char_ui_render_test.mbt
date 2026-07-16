@@ -21,9 +21,11 @@ fn test_character_list_message() -> @server_proto.CharacterListMessage {
 
 ///|
 fn setup_select_char_ui_scene(
+  server : @mock_server.MockServer,
   script? : (@ecs.World) -> Unit = fn(_world) {  },
 ) -> @app.App {
-  @capture_app.reset_mock_server()
+  @game_server.install(server)
+  @game_server.init_server()
   @select_char_ui.setup_game_server_handlers()
   let (app, _world) = @capture_app.new_graphics_test_app()
   let app = app
@@ -65,16 +67,14 @@ fn setup_select_char_phase() -> Unit {
 
 ///|
 test "select char ui renders character and start button chooses first character" {
-  defer @capture_app.reset_mock_server()
+  let server = @mock_server.MockServer()
   let emitted_character_list = Ref(false)
-  let app = setup_select_char_ui_scene(script=fn(world) {
+  let app = setup_select_char_ui_scene(server, script=fn(world) {
     ignore(world)
     if !emitted_character_list.val &&
-      @capture_app.mock_server_sent_count(
-        @server_proto.CharacterListRequestMessage::type_code(),
-      ) >
+      server.sent_count(@server_proto.CharacterListRequestMessage::type_code()) >
       0 {
-      @capture_app.emit_mock_server_message(test_character_list_message()) catch {
+      server.emit(test_character_list_message()) catch {
         err => abort("failed to emit character list: \{err.to_string()}")
       }
       emitted_character_list.val = true
@@ -90,17 +90,13 @@ test "select char ui renders character and start button chooses first character"
     raw_delta=0.016,
   )
 
-  inspect(
-    @capture_app.mock_server_sent_count(
-      @server_proto.CharacterListRequestMessage::type_code(),
-    ),
-    content=(
-      #|1
-    ),
+  assert_eq(
+    server.sent_count(@server_proto.CharacterListRequestMessage::type_code()),
+    1,
   )
-  let request_json = @capture_app.mock_server_latest_sent_json(
-    @server_proto.CharacterListRequestMessage::type_code(),
-  ).unwrap()
+  let request_json = server
+    .latest_sent_json(@server_proto.CharacterListRequestMessage::type_code())
+    .unwrap()
   let _ : @server_proto.CharacterListRequestMessage = @json.from_json(
     request_json,
   )

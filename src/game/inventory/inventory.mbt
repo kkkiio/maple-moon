@@ -74,6 +74,33 @@ fn init {
     )
     { "ok": true, "code": "OK", "message": "item command sent", "args": args }
   })
+  @console.register_state_section("inventory", fn() {
+    let self = inventory.val
+    let quantities : Map[Int, Int] = Map([])
+    for _, slots in self.inventories.map {
+      for _, slot in slots {
+        quantities[slot.item_id] = quantities.get(slot.item_id).unwrap_or(0) +
+          slot.count
+      }
+    }
+    let items : Array[Json] = [
+      for item_id, quantity in quantities => {
+        { "item_id": item_id, "quantity": quantity }
+      }
+    ]
+    items.sort_by(fn(lhs, rhs) {
+      let lhs_id = match lhs {
+        { "item_id": Number(id, ..), .. } => id.to_int()
+        _ => 0
+      }
+      let rhs_id = match rhs {
+        { "item_id": Number(id, ..), .. } => id.to_int()
+        _ => 0
+      }
+      lhs_id.compare(rhs_id)
+    })
+    { "meso": self.meso, "items": items }
+  })
 }
 
 ///|
@@ -222,12 +249,7 @@ fn Inventory::trigger_item_listeners(self : Inventory, t : TypeId) -> Unit {
   inventory_changed_event_bus.send({ kind: ITEM, tab: Some(t), slot: None })
   match self.item_listeners_map.get(t) {
     Some(listeners) => {
-      let survivors = Array::new()
-      for callback in listeners {
-        if callback() {
-          survivors.push(callback)
-        }
-      }
+      let survivors = [ for callback in listeners if callback() => callback ]
       self.item_listeners_map.set(t, survivors)
     }
     None => ()
@@ -236,6 +258,16 @@ fn Inventory::trigger_item_listeners(self : Inventory, t : TypeId) -> Unit {
 
 ///|
 pub fn setup_game_server_handlers() -> Unit {
+  @game_server.add_server_message_handler(
+    "inventory_logic_change_stats_meso",
+    @server_proto.Opcode::CHANGE_STATS.int_value(),
+    fn(message_json : Json) -> Unit raise {
+      let message : @server_proto.ChangeStatsMesoMessage = @json.from_json(
+        message_json,
+      )
+      inventory.val.set_meso(message.meso)
+    },
+  )
   @game_server.add_server_message_handler(
     "inventory_logic_modify_inventory",
     @server_proto.Opcode::MODIFY_INVENTORY.int_value(),

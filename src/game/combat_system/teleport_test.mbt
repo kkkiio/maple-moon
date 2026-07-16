@@ -1,10 +1,18 @@
 ///|
-fn load_map_physics_from_assets(map_id : Int) -> @physics.Physics raise {
+fn init {
+  @asset.set_io(fn(path) {
+    Some(@fs.read_file_to_bytes(path)) catch {
+      _ => None
+    }
+  })
+  try! @res.configure_packs([("base", "assets/base")])
+}
+
+///|
+fn load_map_physics(map_id : Int) -> @physics.Physics raise {
   let prefix = map_id / 100000000
-  let (_, tiled_map) = @resource.load_tiled_map_from_mx([
-    "Map\{prefix}",
-    "\{map_id}.img.mx.json",
-  ])
+  let mx_address = "res://Map/Map\{prefix}/\{map_id}.img.mx.json"
+  let (_, tiled_map) = @res.load_tiled_map_from_mx(mx_address)
   let foothold_tree = @map.from_tiled_foothold_tree(tiled_map)
   @physics.Physics::from_resource(foothold_tree)
 }
@@ -33,7 +41,7 @@ fn run_physics_frames(
 
 ///|
 test "teleport on map 102030000 should stay on destination platform after frames" {
-  let physics = load_map_physics_from_assets(102030000)
+  let physics = load_map_physics(102030000)
   let phobj = make_physics_object(993, 105, 333)
 
   // The destination used in the regression report should resolve to foothold 176.
@@ -53,7 +61,7 @@ test "teleport on map 102030000 should stay on destination platform after frames
 
 ///|
 test "teleport on map 102030000 should stay on slope destination platform after frames" {
-  let physics = load_map_physics_from_assets(102030000)
+  let physics = load_map_physics(102030000)
   let phobj = make_physics_object(2300, -124, 147)
 
   // Facing left: 2300 -> 2150.

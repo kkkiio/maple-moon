@@ -202,7 +202,7 @@ fn apply_map_image_layer_z(event : @tiled.TiledImageLayerSpawnedEvent) -> Unit {
 pub fn set_tiled_map(
   world : @ecs.World,
   map : @tiled.TiledMap,
-  background_animations? : Map[String, @resource.SeleneClip] = Map([]),
+  background_animations? : Map[String, @res.SeleneClip] = Map([]),
 ) -> Unit raise {
   let root = tiled_root_world_stores.get_or_init(world.id, fn() {
     @entity.Entity()

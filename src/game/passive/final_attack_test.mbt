@@ -1,6 +1,16 @@
 ///|
-fn parse_json_file(path : String) -> Json raise {
-  @json.parse(@fs.read_file_to_string(path))
+fn init {
+  @asset.set_io(fn(path) {
+    Some(@fs.read_file_to_bytes(path)) catch {
+      _ => None
+    }
+  })
+  try! @res.configure_packs([("base", "assets/base")])
+}
+
+///|
+fn parse_json_file(path : String) -> Json {
+  @res.require_json(path)
 }
 
 ///|
@@ -10,7 +20,7 @@ fn make_test_equips(weapon_item_id : Int?) -> @equip.CharEquips raise {
   let equips = CharEquips()
   match weapon_item_id {
     Some(item_id) => {
-      let weapon_path = "assets/Character/Weapon/\{@utils.stoi_left_pad0(item_id, 8)}.img.json"
+      let weapon_path = "res://Character/Weapon/\{@utils.stoi_left_pad0(item_id, 8)}.img.json"
       let weapon_node = parse_json_file(weapon_path)
       guard weapon_node is { "info": Object(info_map), .. } else {
         fail("Failed to parse weapon node for item \{item_id}")

@@ -44,13 +44,6 @@ async fn write_state_file(path : String, content : String) -> Unit {
 }
 
 ///|
-async fn remove_path(path : String) -> Unit {
-  if @fs.exists(path) {
-    @fs.remove(path)
-  }
-}
-
-///|
 async fn write_base64_file(path : String, content : String) -> Unit {
   let destination = @path.Path(path).resolve()
   let parent = destination.dirname().to_string()
@@ -168,6 +161,7 @@ async fn NativeCdp::send(
   self : NativeCdp,
   command_method : String,
   params : Json,
+  timeout_ms? : Int = 30000,
 ) -> Json {
   guard self.open else { fail("CDP WebSocket is not connected") }
   let id = self.next_id
@@ -178,7 +172,7 @@ async fn NativeCdp::send(
     self.socket.send_text(
       ({ "id": id, "method": command_method, "params": params } : Json).stringify(),
     )
-    match @async.with_timeout(30000, () => reply.get()) {
+    match @async.with_timeout(timeout_ms, () => reply.get()) {
       Result(result) => result
       Failure(message) => fail(message)
     }

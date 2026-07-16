@@ -6,15 +6,15 @@
 
 - 加载 `UIWindow2.img/WorldMap`、`UIWindow2.img/ToolTip.WorldMap`
 - 加载 `MapHelper.img/worldMap` marker
-- 加载 `Map/WorldMap/*.img.json`
+- 加载 `Map/WorldMap/*.img/nx.json`
 - 支持打开/关闭、`MapLink` 切页、`MapSpot` hover/path overlay
 
 资源依赖：
 
-- `assets/UI/UIWindow2.img/WorldMap.json`
-- `assets/UI/UIWindow2.img/ToolTip.json`
-- `assets/spritesheets/Map/MapHelper.img/worldMap.json`
-- `assets/map/WorldMap/*.img.json`
+- `res://UI/UIWindow2.img/WorldMap/nx.json`
+- `res://UI/UIWindow2.img/ToolTip/nx.json`
+- `res://Map/MapHelper.img/worldMap/nx.json`
+- `res://Map/WorldMap/<page>.img/nx.json`
 
 测试时可通过 `set_*_for_test` API 直接注入 JSON，避免改正式 loader。
 

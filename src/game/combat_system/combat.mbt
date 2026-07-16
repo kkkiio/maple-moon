@@ -562,19 +562,20 @@ fn Combat::place_numbers(
   oid : Int,
   damage_lines : Array[(Int, Bool)],
 ) -> Array[(@ui.NumberType, Int, Int)] {
-  let numbers = Array::new()
-  let mut head = self.mobs.get_mob_head_position(oid).y
-  for it in damage_lines {
-    let (amount, is_critical) = it
-    let t = if is_critical {
-      @ui.NumberType::HIT_CRITICAL
-    } else {
-      @ui.NumberType::HIT_NORMAL
+  [
+    for
+      it in damage_lines
+      head = self.mobs.get_mob_head_position(oid).y
+      head = head - @ui.Number::row_height(it.1) => {
+      let (amount, is_critical) = it
+      let t = if is_critical {
+        @ui.NumberType::HIT_CRITICAL
+      } else {
+        @ui.NumberType::HIT_NORMAL
+      }
+      (t, amount, head)
     }
-    numbers.push((t, amount, head))
-    head -= @ui.Number::row_height(is_critical)
-  }
-  return numbers
+  ]
 }
 
 ///|

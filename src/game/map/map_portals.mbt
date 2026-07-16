@@ -380,7 +380,7 @@ test "parse portals" {
       "y": 194,
     },
   }
-  let res : @resource.MapBasedArray[NxPortal] = @json.from_json(json)
+  let res : @res.MapBasedArray[NxPortal] = @json.from_json(json)
   json_inspect(res.0, content=[
     {
       "pn": "sp",

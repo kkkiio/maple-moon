@@ -7,7 +7,7 @@ using @server_proto {
 
 ///|
 fn make_inventory_entry() -> InventoryEntry {
-  let slot_maxs : @resource.EnumMap[InventoryType, Int] = @resource.EnumMap::default()
+  let slot_maxs : @res.EnumMap[InventoryType, Int] = @res.EnumMap::default()
   slot_maxs.0.set(InventoryType::EQUIP, 24)
   slot_maxs.0.set(InventoryType::USE, 24)
   slot_maxs.0.set(InventoryType::SETUP, 24)
@@ -61,10 +61,7 @@ fn setup_inventory_ui_test_scene() -> @app.App raise {
   @item.ItemData::add_item_data(1060002, equip_data)
   @item.ItemData::add_item_data(2000000, use_data)
 
-  let ui_item_json = @fs.read_file_to_string(
-      "assets/UI/UIWindow2.img/Item.json",
-    )
-    |> @json.parse
+  let ui_item_json = @res.load_json("res://UI/UIWindow2.img/Item.json")
   @inventory_ui.set_panel_position_for_test(16, 16)
   @inventory_ui.set_item_json_for_test(ui_item_json)
   @inventory_ui.set_inventory_entry(make_inventory_entry())

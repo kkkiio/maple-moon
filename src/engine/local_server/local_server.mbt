@@ -3,7 +3,6 @@ using @server_proto {
   type ChangeStatsMesoMessage,
   type CharacterListEntry,
   type CharacterListMessage,
-  trait ClientMessage,
   type CreateCharacterResultMessage,
   trait ServerMessage,
   type ChangeMapMessage,
@@ -40,7 +39,7 @@ pub let default_rand_seed : Ref[Bytes] = Ref(
 /// Although there is a open-source server implementation `Cosmic`,
 /// it is burdensome to implement the full client features, so we implement a local server here to play the game offline.
 ///
-/// We can use the built-in resource loader in `@resource` package to load the resources and implement the server logic here.
+/// We can use the built-in resource loader in `@res` package to load the resources and implement the server logic here.
 struct LocalServer {
   client_message_queue : @queue.Queue[(Int, Json)]
   server_message_queue : @queue.Queue[(Int, Json)]
@@ -62,6 +61,8 @@ struct LocalServer {
   pending_mob_spawns : Array[PendingMobSpawn]
   pending_npc_spawns : Array[NpcSpawnControllerMessage]
   mut active_shop : OpenNpcShopMessage?
+  npc_scripts : @content_runtime.NpcScriptRegistry
+  mut active_npc_script : ActiveNpcScriptSession?
   npc_id_by_oid : Map[Int, Int]
   mut npc_shop_db : NpcShopDatabase?
   db : &DB
@@ -89,8 +90,28 @@ priv struct PendingMobSpawn {
 }
 
 ///|
+priv struct ActiveNpcScriptSession {
+  npc_id : Int
+  script_name : String
+  state : Json
+}
+
+///|
+/// Create an offline authoritative server with explicit persistence and content dependencies.
+///
+/// The script registry is resolved by exact NX `info.script` name. Missing names surface as
+/// content errors when the corresponding NPC is used.
+///
+/// # Example
+/// ```moonbit nocheck
+/// let server = LocalServer(
+///   db=@file_db.FileDB(),
+///   npc_scripts=@content_runtime.NpcScriptRegistry(),
+/// )
+/// ```
 pub fn LocalServer::LocalServer(
   db~ : &DB,
+  npc_scripts~ : @content_runtime.NpcScriptRegistry,
   drop_rng? : @random.Rand = @random.Rand::chacha8(seed=default_rand_seed.val),
 ) -> LocalServer {
   {
@@ -132,6 +153,8 @@ pub fn LocalServer::LocalServer(
     pending_mob_spawns: Array::new(),
     pending_npc_spawns: Array::new(),
     active_shop: None,
+    npc_scripts,
+    active_npc_script: None,
     npc_id_by_oid: Map([]),
     npc_shop_db: None,
     db,
@@ -145,14 +168,14 @@ pub fn LocalServer::LocalServer(
 }
 
 ///|
-pub fn init_server(server : LocalServer) -> Unit {
-  server.init_routes()
-  server.init_quest_runtime()
-  server.register_debug_console_commands()
+fn LocalServer::initialize_runtime(self : LocalServer) -> Unit {
+  self.init_routes()
+  self.init_quest_runtime()
+  self.register_debug_console_commands()
   // 加载掉落数据库
-  server.load_drop_databases()
+  self.load_drop_databases()
   // 加载 NPC 商店数据库
-  server.load_npc_shop_database()
+  self.load_npc_shop_database()
 }
 
 ///|
@@ -203,8 +226,8 @@ pub fn LocalServer::init_routes(self : LocalServer) -> Unit {
   self.client_message_handler_map[@server_proto.ClientOpcode::TALK_TO_NPC.int_value()] = json => {
     self.on_talk_to_npc(json)
   }
-  self.client_message_handler_map[@server_proto.ClientOpcode::NPC_TALK_MORE.int_value()] = _ => {
-    ()
+  self.client_message_handler_map[@server_proto.ClientOpcode::NPC_TALK_MORE.int_value()] = json => {
+    self.on_npc_talk_more(json)
   }
   self.client_message_handler_map[@server_proto.ClientOpcode::NPC_SHOP_ACTION.int_value()] = json => {
     self.on_npc_shop_action(json)
@@ -368,16 +391,14 @@ fn LocalServer::on_create_char(self : LocalServer, json : Json) -> Unit raise {
 }
 
 ///|
-/// send client message to the server
-#callsite(autofill(loc))
-pub fn[T : ClientMessage] LocalServer::send_client_message(
+/// Enqueue an encoded client message for local processing.
+fn LocalServer::enqueue_client_message(
   self : LocalServer,
-  message : T,
-  log_level? : @log.Level = @log.Level::DEBUG,
-  loc~ : SourceLoc,
+  type_code : Int,
+  json : Json,
+  log_level : @log.Level,
+  loc : SourceLoc,
 ) -> Unit {
-  let type_code = T::type_code()
-  let json = ToJson::to_json(message)
   @log.log(
     log_level,
     "send_client_message",
@@ -740,7 +761,7 @@ fn new_inventory_item_entry(
       expire=0,
       slots=7,
       level=0,
-      stats=@resource.EnumMap(stats),
+      stats=@res.EnumMap(stats),
       owner="",
       flag=0,
       itemlevel=0,
@@ -905,8 +926,9 @@ fn LocalServer::spawn_mobs_for_map(self : LocalServer, map_id : Int) -> Unit {
   self.pending_mob_spawns.clear()
   self.pending_npc_spawns.clear()
   self.active_shop = None
+  self.active_npc_script = None
   self.npc_id_by_oid.clear()
-  @io_service.execute_background(fn() {
+  @io_service.execute_background(fn() raise {
     guard load_tiled_map_by_map_id(map_id) is Some(map) else { return }
     let life_layer = require_life_layer(map)
     for entity in life_layer.objects {
@@ -933,8 +955,8 @@ fn LocalServer::spawn_mobs_for_map(self : LocalServer, map_id : Int) -> Unit {
             team: -1,
           }
           let mob_strid = @utils.stoi_left_pad0(monster_id, 7)
-          let mob_node = @resource.require_json(
-            "assets/mob/" + mob_strid + ".img/mx.json",
+          let mob_node = @res.require_json(
+            "res://Mob/" + mob_strid + ".img/mx.json",
           )
           let max_hp = match mob_node {
             { "info": { "maxHP": Number(max_hp, ..), .. }, .. } =>
@@ -1019,7 +1041,7 @@ fn[T : ServerMessage] LocalServer::send_server_message(
 }
 
 ///|
-pub fn LocalServer::add_server_message_handler(
+fn LocalServer::register_server_message_handler(
   self : LocalServer,
   name : String,
   type_code : Int,
@@ -1031,13 +1053,13 @@ pub fn LocalServer::add_server_message_handler(
 }
 
 ///|
-pub fn server_system(server : LocalServer) -> Unit {
-  while server.server_message_queue.pop() is Some((type_code, json)) {
+fn LocalServer::run_server_system(self : LocalServer) -> Unit {
+  while self.server_message_queue.pop() is Some((type_code, json)) {
     @log.debug("receive server message", data={
       "type_code": @log.HexInt(type_code),
       "json": @log.JsonValue(json),
     })
-    guard server.server_message_handlers_map.get(type_code) is Some(handlers) else {
+    guard self.server_message_handlers_map.get(type_code) is Some(handlers) else {
       continue
     }
     for handler in handlers {
@@ -1050,8 +1072,8 @@ pub fn server_system(server : LocalServer) -> Unit {
       }
     }
   }
-  while server.client_message_queue.pop() is Some((type_code, json)) {
-    guard server.client_message_handler_map.get(type_code) is Some(handler) else {
+  while self.client_message_queue.pop() is Some((type_code, json)) {
+    guard self.client_message_handler_map.get(type_code) is Some(handler) else {
       @log.debug("Missing client message handler", data={
         "type_code": @log.HexInt(type_code),
         "json": @log.JsonValue(json),
@@ -1065,18 +1087,68 @@ pub fn server_system(server : LocalServer) -> Unit {
 }
 
 ///|
+/// Use `LocalServer` as the runtime implementation behind `engine/game_server`.
+pub impl @game_server.GameServer for LocalServer with fn initialize(self) {
+  self.initialize_runtime()
+}
+
+///|
+pub impl @game_server.GameServer for LocalServer with fn send_json(
+  self,
+  type_code,
+  json,
+  log_level,
+  loc,
+) {
+  self.enqueue_client_message(type_code, json, log_level, loc)
+}
+
+///|
+pub impl @game_server.GameServer for LocalServer with fn register_handler(
+  self,
+  name,
+  type_code,
+  handler,
+) {
+  self.register_server_message_handler(name, type_code, handler)
+}
+
+///|
+pub impl @game_server.GameServer for LocalServer with fn tick(self, _delta) {
+  self.run_server_system()
+}
+
+///|
 /// 加载怪物掉落数据库
 fn LocalServer::load_drop_databases(self : LocalServer) -> Unit {
   // 加载怪物特定掉落
-  @io_service.execute_background(fn() {
-    let text = @resource.load_text("assets/data/mob_drops.tsv")
-    self.drop_db = Some(MobDropDatabase::from_tsv(text))
-    @log.info("Loaded mob_drops.tsv", data=Map([]))
-  })
+  @io_service.execute_background(
+    fn() raise {
+      let text = @res.load_text("res://Data/mob_drops.tsv")
+      self.drop_db = Some(MobDropDatabase::from_tsv(text))
+      @log.info("Loaded mob_drops.tsv", data=Map([]))
+    },
+    on_error=fn(error) {
+      @log.error("failed to load mob drop database", data={
+        "address": "res://Data/mob_drops.tsv",
+        "error": error.to_string(),
+      })
+      abort("failed to load mob drop database: \{error}")
+    },
+  )
   // 加载全局掉落
-  @io_service.execute_background(fn() {
-    let text = @resource.load_text("assets/data/drop_data_global.tsv")
-    self.global_drop_db = Some(MobDropDatabase::from_tsv(text))
-    @log.info("Loaded drop_data_global.tsv", data=Map([]))
-  })
+  @io_service.execute_background(
+    fn() raise {
+      let text = @res.load_text("res://Data/drop_data_global.tsv")
+      self.global_drop_db = Some(MobDropDatabase::from_tsv(text))
+      @log.info("Loaded drop_data_global.tsv", data=Map([]))
+    },
+    on_error=fn(error) {
+      @log.error("failed to load global drop database", data={
+        "address": "res://Data/drop_data_global.tsv",
+        "error": error.to_string(),
+      })
+      abort("failed to load global drop database: \{error}")
+    },
+  )
 }

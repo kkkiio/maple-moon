@@ -120,6 +120,26 @@ pub enum FlyDirection {
 }
 
 ///|
+/// Load one monster and its complete animation closure.
+///
+/// # Example
+/// ```moonbit nocheck
+/// let mob = try! Mob::load(
+///   1,
+///   100101,
+///   1,
+///   0,
+///   0,
+///   true,
+///   @struct.Point(0, 0),
+///   @random.Rand::new(),
+/// )
+/// ignore(mob)
+/// ```
+///
+/// # Errors
+/// Raises when an animation reference is invalid, missing, or cannot be
+/// decoded, or when the referenced animation tag does not exist.
 pub fn Mob::load(
   oi : Int,
   mid : Int,
@@ -129,12 +149,12 @@ pub fn Mob::load(
   newspawn : Bool,
   position : @struct.Point[Int],
   randomizer : @random.Rand,
-) -> Mob {
+) -> Mob raise {
   let strid = @utils.stoi_left_pad0(mid, 7)
-  let mx_path = "assets/mob/\{strid}.img/mx.json"
-  let mx_src = @resource.require_json(mx_path)
+  let mx_path = "res://Mob/\{strid}.img/mx.json"
+  let mx_src = @res.require_json(mx_path)
   let mx_mob : MxMob = @json.from_json(mx_src) catch {
-    err => abort("failed to decode mob mx: \{mid}, error=\{err}")
+    error => fail("failed to decode mob mx: \{mid}, error=\{error}")
   }
   let runtime = load_mx_runtime(mx_mob, mx_path)
   Mob(
@@ -160,7 +180,7 @@ priv struct MxMobRuntime {
 }
 
 ///|
-fn load_mx_runtime(mx_mob : MxMob, base_path : String) -> MxMobRuntime {
+fn load_mx_runtime(mx_mob : MxMob, base_path : String) -> MxMobRuntime raise {
   let animation_loader = AnimationLoader()
   let effect_animations : Map[String, MobAnimation] = Map([])
   for path_key, animation_path in mx_mob.mx_animations {
@@ -213,7 +233,7 @@ fn load_mx_runtime(mx_mob : MxMob, base_path : String) -> MxMobRuntime {
           _ => ()
         }
       None =>
-        abort("missing mx_animations ref for stance node: \{node.path_key}")
+        fail("missing mx_animations ref for stance node: \{node.path_key}")
     }
   }
 
@@ -222,7 +242,7 @@ fn load_mx_runtime(mx_mob : MxMob, base_path : String) -> MxMobRuntime {
     match effect_animations.get(attack_node.animation_path_key) {
       Some(anim) => attack_stands[attack_id] = anim
       None =>
-        abort(
+        fail(
           "missing mx_animations ref for attack animation: \{attack_node.animation_path_key}",
         )
     }
@@ -232,7 +252,7 @@ fn load_mx_runtime(mx_mob : MxMob, base_path : String) -> MxMobRuntime {
     match effect_animations.get(skill_node.animation_path_key) {
       Some(anim) => skill_stands[skill_id] = anim
       None =>
-        abort(
+        fail(
           "missing mx_animations ref for skill animation: \{skill_node.animation_path_key}",
         )
     }
@@ -243,16 +263,16 @@ fn load_mx_runtime(mx_mob : MxMob, base_path : String) -> MxMobRuntime {
 
 ///|
 fn load_mx_clip(
-  animation_loader : @resource.AnimationLoader,
+  animation_loader : @res.AnimationLoader,
   animation_path : String,
   tag : String,
   base_path : String,
-) -> @resource.SeleneClip {
+) -> @res.SeleneClip raise {
   let loaded = animation_loader.load(
-    @resource.resolve_ref(base_path, animation_path),
+    @res.resolve_ref(base_path, animation_path),
   )
   loaded.clip(tag) catch {
-    err => abort("missing mob animation tag: \{tag}, error=\{err}")
+    err => fail("missing mob animation tag: \{tag}, error=\{err}")
   }
 }
 
@@ -1156,7 +1176,7 @@ pub fn Mob::apply_damage(self : Mob, damage : Int, toleft : Bool) -> Unit {
 using @physics {type PhysicsObject}
 
 ///|
-using @resource {type AnimationLoader}
+using @res {type AnimationLoader}
 
 ///|
 using @struct {type Range, type Rectangle}

@@ -14,9 +14,9 @@
 		"moon:build:native": "moon build --target native --release src/apps/game_native",
 		"predev": "moon run --target native --build-only src/cmd/maple && moon run --target native --build-only src/cmd/mapled && moon run --target native src/cmd/maple close",
 		"dev": "concurrently --raw --kill-others \"npm:dev:moon\" \"npm:dev:vite\" \"npm:dev:mapled\" \"npm:dev:browser\"",
-		"dev:moon": "moon build --watch --target js --release src/apps/game_web",
+		"dev:moon": "moon build --watch --target js --release src/apps/game_debug",
 		"dev:vite": "vite",
-		"dev:mapled": "_build/native/debug/build/KKKIIO/maple-moon/cmd/mapled/mapled.exe --cdp-port 9333 --url http://localhost:8080",
+		"dev:mapled": "_build/native/debug/build/KKKIIO/maple-moon/cmd/mapled/mapled.exe --cdp-port 9333 --url http://localhost:8080/game_debug.html",
 		"dev:browser": "moon run --target native src/cmd/maple status --wait && moon run --target native src/cmd/maple logs --clear && moon run --target native src/cmd/maple open --wait && moon run --target native src/cmd/maple logs --follow --out logs/browser.log",
 		"build": "npm run moon:build:web && vite build"
 	},

@@ -2,7 +2,7 @@
 package "KKKIIO/maple-moon/game/character_body"
 
 import {
-  "KKKIIO/maple-moon/engine/resource",
+  "KKKIIO/maple-moon/engine/res",
   "KKKIIO/maple-moon/game/char_stance",
   "KKKIIO/maple-moon/game/res_types",
   "moonbitlang/core/debug",
@@ -48,7 +48,7 @@ pub impl ToJson for BodyLayer
 
 pub(all) struct NxBodyLayerTexture {
   z : BodyLayer?
-  texture : @resource.NxAnimation
+  texture : @res.NxAnimation
   map : ShiftMap
 }
 pub impl @json.FromJson for NxBodyLayerTexture

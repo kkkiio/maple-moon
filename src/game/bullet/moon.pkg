@@ -3,7 +3,7 @@ import {
   "moonbitlang/core/json",
   "moonbitlang/core/strconv",
   "KKKIIO/maple-moon/game/item",
-  "KKKIIO/maple-moon/engine/resource",
+  "KKKIIO/maple-moon/engine/res",
   "KKKIIO/maple-moon/engine/utils",
   "KKKIIO/maple-moon/game/combat_proto",
   "KKKIIO/maple-moon/game/res_types" @struct,
@@ -11,15 +11,16 @@ import {
   "KKKIIO/maple-moon/game/monster",
   "KKKIIO/maple-moon/game/logic_fps",
   "KKKIIO/maple-moon/game/animation" @ms_animation,
-  "Milky2018/selene/entity",
-  "Milky2018/selene/sprite",
+  "KKKIIO/selene/entity",
+  "KKKIIO/selene/sprite",
   "KKKIIO/maple-moon/game/transform2d",
-  "Milky2018/selene/ecs",
+  "KKKIIO/selene/ecs",
   "moonbitlang/core/string",
 }
 
-supported_targets = "native+js"
+import {
+  "KKKIIO/selene/asset",
+  "moonbitlang/x/fs",
+} for "test"
 
-options(
-  overrides: [ "Milky2018/selene_raylib/platform_asset_io" ],
-)
+supported_targets = "native+js"

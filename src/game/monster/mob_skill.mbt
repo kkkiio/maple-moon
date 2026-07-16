@@ -1,7 +1,7 @@
 ///|
 pub(all) struct MobBuff {
   time : Int
-  anim : @resource.NxAnimation
+  anim : @res.NxAnimation
 }
 
 ///|
@@ -17,7 +17,7 @@ pub(all) struct MobSkill {
 
 ///|
 pub fn MobSkill::load(id : Int, level : Int) -> MobSkill {
-  let src = @resource.json_navigate("assets/Skill/MobSkill.img.json", [
+  let src = @res.require_json_node("res://Skill/MobSkill.img.json", [
     id.to_string(),
   ])
   MobSkill(id, level, src) catch {

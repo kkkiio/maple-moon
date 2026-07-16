@@ -2,7 +2,7 @@
 package "KKKIIO/maple-moon/game/skill"
 
 import {
-  "KKKIIO/maple-moon/engine/resource",
+  "KKKIIO/maple-moon/engine/res",
   "KKKIIO/maple-moon/game/res_types",
   "KKKIIO/maple-moon/game/weapon",
   "moonbitlang/core/debug",
@@ -42,7 +42,7 @@ pub(all) struct SkillData {
   desc : String
   levels : Map[Int, String]
   req_skills : @hashmap.HashMap[Int, Int]
-  icons : (@resource.NxTexture, @resource.NxTexture, @resource.NxTexture)
+  icons : (@res.NxTexture, @res.NxTexture, @res.NxTexture)
   src : Json
 }
 pub fn SkillData::SkillData(Int, Json, SkillResource, SkillTextResource) -> Self

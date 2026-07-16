@@ -170,31 +170,30 @@ pub fn MiniMapRuntimeResource::from_tiled(
   resource : MiniMapResource,
   portals : MapPortals,
 ) -> MiniMapRuntimeResource {
-  let mini_map_portals = []
-  for _, portal in portals.id_portal_map {
-    let pt_id = match portal.get_type() {
-      PortalType::SPAWN => 0
-      PortalType::INVISIBLE => 1
-      PortalType::REGULAR => 2
-      PortalType::COLLISION => 3
-      PortalType::TYPE4 => 4
-      PortalType::TYPE5 => 5
-      PortalType::WARP => 6
-      PortalType::SCRIPTED => 7
-      PortalType::SCRIPTED_INVISIBLE => 8
-      PortalType::SCRIPTED_COLLISION => 9
-      PortalType::HIDDEN => 10
-      PortalType::SCRIPTED_HIDDEN => 11
-      PortalType::SPRING1 => 12
-      PortalType::SPRING2 => 13
-      PortalType::TYPE14 => 14
+  let mini_map_portals = [
+    for _, portal in portals.id_portal_map => {
+      let pt_id = match portal.get_type() {
+        PortalType::SPAWN => 0
+        PortalType::INVISIBLE => 1
+        PortalType::REGULAR => 2
+        PortalType::COLLISION => 3
+        PortalType::TYPE4 => 4
+        PortalType::TYPE5 => 5
+        PortalType::WARP => 6
+        PortalType::SCRIPTED => 7
+        PortalType::SCRIPTED_INVISIBLE => 8
+        PortalType::SCRIPTED_COLLISION => 9
+        PortalType::HIDDEN => 10
+        PortalType::SCRIPTED_HIDDEN => 11
+        PortalType::SPRING1 => 12
+        PortalType::SPRING2 => 13
+        PortalType::TYPE14 => 14
+      }
+      let pos = portal.get_position()
+      let target = portal.getwarpinfo().map_id
+      MiniMapPortal(pos.x, pos.y, target, MiniMapPortalType::from_int(pt_id))
     }
-    let pos = portal.get_position()
-    let target = portal.getwarpinfo().map_id
-    mini_map_portals.push(
-      MiniMapPortal(pos.x, pos.y, target, MiniMapPortalType::from_int(pt_id)),
-    )
-  }
+  ]
   MiniMapRuntimeResource::load(resource, mini_map_portals)
 }
 

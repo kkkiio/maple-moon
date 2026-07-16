@@ -20,7 +20,7 @@ pub(all) enum SetFieldMessage {
     stats~ : StatsEntry,
     inventory_entry~ : InventoryEntry,
     skills~ : Array[SkillEntry],
-    cooldowns~ : @resource.EnumMap[Int, Int],
+    cooldowns~ : @res.EnumMap[Int, Int],
     quests~ : PlayerQuestLogInfo
   )
 } derive(Debug, ToJson, @json.FromJson)
@@ -34,8 +34,8 @@ pub impl ServerMessage for SetFieldMessage with fn type_code() {
 pub(all) struct StatsEntry {
   name : String
   female : Bool
-  stats : @resource.EnumMap[@maple_stat.Id, Int]
-  i64stats : @resource.EnumMap[@maple_stat.Id, Int64]
+  stats : @res.EnumMap[@maple_stat.Id, Int]
+  i64stats : @res.EnumMap[@maple_stat.Id, Int64]
   map_id : Int
   portal_id : Int
 } derive(Debug, Default, ToJson, @json.FromJson)
@@ -43,7 +43,7 @@ pub(all) struct StatsEntry {
 ///|
 pub(all) struct InventoryEntry {
   meso : Int
-  slot_maxs : @resource.EnumMap[InventoryType, Int]
+  slot_maxs : @res.EnumMap[InventoryType, Int]
   items : Array[InventoryItemEntry]
 } derive(Debug, Default, ToJson, @json.FromJson)
 
@@ -124,7 +124,7 @@ pub(all) enum InventoryItemEntry {
     expire~ : Int64,
     slots~ : Int,
     level~ : Int,
-    stats~ : @resource.EnumMap[@maple_stat.EquipStatId, Int],
+    stats~ : @res.EnumMap[@maple_stat.EquipStatId, Int],
     owner~ : String,
     flag~ : Int,
     itemlevel~ : Int,

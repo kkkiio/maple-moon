@@ -2,7 +2,7 @@
 package "KKKIIO/maple-moon/game/res_types"
 
 import {
-  "Milky2018/selene/math",
+  "KKKIIO/selene/math",
   "moonbitlang/core/debug",
   "moonbitlang/core/json",
 }

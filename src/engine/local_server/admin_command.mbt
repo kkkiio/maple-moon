@@ -28,6 +28,9 @@ fn LocalServer::on_admin_command(self : LocalServer, json : Json) -> Unit raise 
       if map_id <= 0 {
         return
       }
+      guard load_tiled_map_by_map_id(map_id) is Some(_) else {
+        fail("admin warp target map is unavailable: \{map_id}")
+      }
       let target_portal_id = if portal_id >= 0 { portal_id } else { 0 }
       self.last_map_id = map_id
       self.last_portal_id = target_portal_id

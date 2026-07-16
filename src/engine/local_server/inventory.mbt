@@ -71,7 +71,7 @@ pub fn StorageItemEntry::to_server_proto(
 ) -> @server_proto.InventoryItemEntry {
   match self {
     Equip(eq) => {
-      let stats : @resource.EnumMap[@maple_stat.EquipStatId, Int] = Default::default()
+      let stats : @res.EnumMap[@maple_stat.EquipStatId, Int] = Default::default()
       for k, v in eq.stats {
         if @maple_stat.EquipStatId::from_name(k) is Some(stat_id) {
           stats.0.set(stat_id, v)

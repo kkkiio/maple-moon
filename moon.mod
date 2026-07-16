@@ -5,9 +5,9 @@ version = "0.1.0"
 import {
   "moonbitlang/async@0.20.2",
   "moonbitlang/x@0.4.41",
-  "Milky2018/selene@0.34.5",
-  "Milky2018/selene_webgpu@0.34.5",
-  "Milky2018/selene_raylib@0.34.5",
+  "KKKIIO/selene@0.35.1",
+  "KKKIIO/selene_webgpu@0.35.1",
+  "KKKIIO/selene_raylib@0.35.1",
   "tonyfettes/raylib@0.3.1",
 }
 

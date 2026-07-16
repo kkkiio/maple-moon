@@ -777,6 +777,54 @@ fn init {
     }
     { "ok": true, "code": "OK", "map_id": map_id, "x": pos.x, "y": pos.y }
   })
+  @console.register_command("teleport", fn(args) {
+    guard args.length() >= 2 else {
+      return {
+        "ok": false,
+        "code": "INVALID_ARGUMENTS",
+        "message": "teleport requires x and y",
+      }
+    }
+    let x = @string.parse_int(args[0]) catch {
+      _ => return { "ok": false, "code": "INVALID_X" }
+    }
+    let y = @string.parse_int(args[1]) catch {
+      _ => return { "ok": false, "code": "INVALID_Y" }
+    }
+    guard get_player() is Some(player) else {
+      return { "ok": false, "code": "PLAYER_NOT_READY" }
+    }
+    player.set_position(x, y)
+    { "ok": true, "code": "TELEPORTED", "x": x, "y": y }
+  })
+  @console.register_state_section("player", fn() {
+    match get_player() {
+      Some(player) => {
+        let stats = player.get_stats()
+        let character = player.character
+        let phobj = character.get_phobj()
+        let pos = character.get_position()
+        {
+          "present": true,
+          "name": stats.get_name(),
+          "x": pos.x,
+          "y": pos.y,
+          "state": Debug::to_repr(character.get_state()).to_string(),
+          "facing_right": character.is_facing_right(),
+          "on_ground": phobj.is_on_ground(),
+          "climbing": character.is_climbing(),
+          "attacking": player.is_attacking(),
+          "hp": stats.get_stat(@maple_stat.Id::HP),
+          "max_hp": stats.get_stat(@maple_stat.Id::MAXHP),
+          "mp": stats.get_stat(@maple_stat.Id::MP),
+          "max_mp": stats.get_stat(@maple_stat.Id::MAXMP),
+          "job_id": stats.get_job().get_id().int_value(),
+          "job_name": stats.get_job().get_name(),
+        }
+      }
+      None => { "present": false }
+    }
+  })
 }
 
 ///|

@@ -2,10 +2,10 @@
 package "KKKIIO/maple-moon/game/drop"
 
 import {
-  "KKKIIO/maple-moon/engine/resource",
+  "KKKIIO/maple-moon/engine/res",
   "KKKIIO/maple-moon/game/physics",
   "KKKIIO/maple-moon/game/res_types",
-  "Milky2018/selene/ecs",
+  "KKKIIO/selene/ecs",
 }
 
 // Values
@@ -31,7 +31,7 @@ pub fn try_pickup_at(@res_types.Point[Int]) -> Bool
 type DropSpawn
 
 type ItemDrop
-pub fn ItemDrop::ItemDrop(Int, Int, @res_types.Point[Int], @res_types.Point[Int], Int, Int, Int, Bool, @resource.NxTexture) -> Self
+pub fn ItemDrop::ItemDrop(Int, Int, @res_types.Point[Int], @res_types.Point[Int], Int, Int, Int, Bool, @res.NxTexture) -> Self
 pub impl Drop for ItemDrop
 
 type MapDrops
@@ -42,7 +42,7 @@ pub fn MapDrops::spawn(Self, DropSpawn) -> Unit
 pub fn MapDrops::update(Self, @physics.Physics) -> Unit
 
 type MesoDrop
-pub fn MesoDrop::MesoDrop(Int, Int, @res_types.Point[Int], @res_types.Point[Int], Int, Int, Bool, @resource.NxAnimation) -> Self
+pub fn MesoDrop::MesoDrop(Int, Int, @res_types.Point[Int], @res_types.Point[Int], Int, Int, Bool, @res.NxAnimation) -> Self
 pub impl Drop for MesoDrop
 
 type Module

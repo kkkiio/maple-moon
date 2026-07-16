@@ -1,0 +1,7 @@
+import {
+  "KKKIIO/maple-moon/engine/local_server",
+  "moonbitlang/core/json",
+  "moonbitlang/x/fs",
+}
+
+supported_targets = "native"

@@ -1,39 +1,52 @@
 ///|
 fn LocalServer::on_change_map(self : LocalServer, json : Json) -> Unit raise {
   let change_map_message : ChangeMapMessage = @json.from_json(json)
-  @io_service.execute_background(fn() {
-    guard get_target_by_map_id_and_portal_name(
-        self.last_map_id,
-        change_map_message.target_p,
+  let source_map_id = self.last_map_id
+  @io_service.execute_background(
+    fn() raise {
+      guard get_target_by_map_id_and_portal_name(
+          source_map_id,
+          change_map_message.target_p,
+        )
+        is Some({ tm, tn }) else {
+        @log.error("portal target not found", data={
+          "map_id": source_map_id,
+          "portal_name": change_map_message.target_p,
+        })
+        return
+      }
+      guard get_portal_id_by_map_id_and_portal_name(tm, tn) is Some(portal_id) else {
+        @log.error("target portal not found", data={ "tm": tm, "tn": tn })
+        return
+      }
+      self.last_map_id = tm
+      self.last_portal_id = portal_id
+      self.save_character_core_snapshot()
+      let set_field_message : SetFieldMessage = SetFieldMessage::ChangeMap(
+        map_id=tm,
+        portal_id~,
       )
-      is Some({ tm, tn }) else {
-      @log.error("portal target not found", data={
-        "map_id": self.last_map_id,
+      self.send_server_message(set_field_message)
+      self.spawn_mobs_for_map(tm)
+    },
+    on_error=fn(error) {
+      @log.error("failed to load change-map resource closure", data={
+        "source_map_id": source_map_id,
         "portal_name": change_map_message.target_p,
+        "error": error.to_string(),
       })
-      return
-    }
-    guard get_portal_id_by_map_id_and_portal_name(tm, tn) is Some(portal_id) else {
-      @log.error("target portal not found", data={ "tm": tm, "tn": tn })
-      return
-    }
-    self.last_map_id = tm
-    self.last_portal_id = portal_id
-    self.save_character_core_snapshot()
-    let set_field_message : SetFieldMessage = SetFieldMessage::ChangeMap(
-      map_id=tm,
-      portal_id~,
-    )
-    self.send_server_message(set_field_message)
-    self.spawn_mobs_for_map(tm)
-  })
+      abort(
+        "failed to load change-map resource closure: map_id=\{source_map_id}, portal=\{change_map_message.target_p}, error=\{error}",
+      )
+    },
+  )
 }
 
 ///|
 fn get_target_by_map_id_and_portal_name(
   map_id : Int,
   portal_name : String,
-) -> PortalTarget? {
+) -> PortalTarget? raise {
   guard load_tiled_map_by_map_id(map_id) is Some(map) else { return None }
   let portals = require_portal_layer(map)
   for portal in portals.objects {
@@ -57,7 +70,7 @@ priv struct PortalTarget {
 fn get_portal_id_by_map_id_and_portal_name(
   map_id : Int,
   portal_name : String,
-) -> Int? {
+) -> Int? raise {
   guard load_tiled_map_by_map_id(map_id) is Some(map) else { return None }
   let portals = require_portal_layer(map)
   for idx, portal in portals.objects {
@@ -78,17 +91,15 @@ fn require_portal_layer(map : @tiled.TiledMap) -> @tiled.TiledObjectLayer {
 }
 
 ///|
-fn load_tiled_map_by_map_id(map_id : Int) -> @tiled.TiledMap? {
+fn load_tiled_map_by_map_id(map_id : Int) -> @tiled.TiledMap? raise {
   if map_id <= 0 {
     return None
   }
 
   let prefix = (map_id / 100000000).to_string()
   let strid = @utils.stoi_left_pad0(map_id, 9)
-  let (_tiled_path, tiled_map) = @resource.load_tiled_map_from_mx([
-    "Map\{prefix}",
-    "\{strid}.img.mx.json",
-  ])
+  let mx_address = "res://Map/Map\{prefix}/\{strid}.img.mx.json"
+  let (_tiled_path, tiled_map) = @res.load_tiled_map_from_mx(mx_address)
   Some(tiled_map)
 }
 

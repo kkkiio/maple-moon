@@ -1,16 +1,16 @@
 ///|
 fn load_json_from_file(path : String) -> Json raise {
-  @fs.read_file_to_string(path) |> @json.parse
+  @res.load_json(path)
 }
 
 ///|
 fn load_real_mini_map_ui_json() -> Json raise {
-  load_json_from_file("assets/UI/UIWindow2.img/MiniMap.json")
+  load_json_from_file("res://UI/UIWindow2.img/MiniMap.json")
 }
 
 ///|
 fn load_real_map_helper_minimap_json() -> Json raise {
-  load_json_from_file("assets/spritesheets/Map/MapHelper.img/minimap.json")
+  load_json_from_file("res://Map/MapHelper.img/minimap.json")
 }
 
 ///|
@@ -88,7 +88,7 @@ test "mini map ui renders normal frame" {
   @capture_app.ensure_native_context(width=420, height=240)
   let (app, _world) = @capture_app.new_graphics_test_app()
   let resource = make_test_runtime_resource_with_canvas(
-    "assets/images/Map/30691.png", 269, 49,
+    "res://Map/MapHelper.img/30691.png", 269, 49,
   )
   let app = setup_mini_map_ui_scene_with_data(
     app,
@@ -108,7 +108,7 @@ test "mini map ui renders normal frame" {
     mini_map_render_state(resource),
     content=(
       #|{
-      #|  canvas_path: "assets/images/Map/30691.png",
+      #|  canvas_path: "res://Map/MapHelper.img/30691.png",
       #|  canvas_width: 269,
       #|  canvas_height: 49,
       #|  portals: [],
@@ -123,8 +123,8 @@ test "mini map ui renders normal frame" {
 
 ///|
 fn load_real_minimap_runtime_resource_100030000() -> @map.MiniMapRuntimeResource raise {
-  let mx_path = ["Map1", "100030000.img.mx.json"]
-  let (_, tiled_map) = @resource.load_tiled_map_from_mx(mx_path)
+  let mx_path = "res://Map/Map1/100030000.img.mx.json"
+  let (_, tiled_map) = @res.load_tiled_map_from_mx(mx_path)
   let mini_opt = @map.from_tiled_mini_map_resource(tiled_map) catch {
     _ => None
   }
@@ -180,7 +180,7 @@ test "mini map ui renders portal marker from real map 100030000" {
     mini_map_render_state(resource),
     content=(
       #|{
-      #|  canvas_path: "assets/Map/tiles/../images/30864.png",
+      #|  canvas_path: "assets/base/Map/tiles/../images/30864.png",
       #|  canvas_width: 243,
       #|  canvas_height: 155,
       #|  portals: [

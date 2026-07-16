@@ -1,0 +1,62 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  regression:
+    name: Regression
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      MOONBIT_INSTALL_VERSION: nightly
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Install just
+        uses: extractions/setup-just@v4
+        with:
+          just-version: "1.46.0"
+
+      - name: Install test tooling
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ripgrep
+
+      - name: Install MoonBit
+        run: |
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
+          echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
+
+      - name: Install MoonBit dependencies
+        run: |
+          moon version --all
+          moon update
+
+      - name: Check all targets
+        run: just check
+
+      - name: Check formatting and generated interfaces
+        run: |
+          just fmt
+          git diff --exit-code
+
+      - name: Run fast native test suite
+        run: just test
+
+      - name: Build web release
+        run: just build

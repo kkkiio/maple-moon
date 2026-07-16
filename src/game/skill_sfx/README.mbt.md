@@ -10,8 +10,8 @@
 
 当前固定路径规则：
 
-- `assets/sound/Skill.img/<skill_id>/Use.mp3`
-- `assets/sound/Skill.img/<skill_id>/Hit.mp3`
+- `res://Sound/Skill.img/<skill_id>/Use.mp3`
+- `res://Sound/Skill.img/<skill_id>/Hit.mp3`
 
 当前不做资源存在性预检查，不做 manifest，也不做多目标 `Hit` 去重。
 

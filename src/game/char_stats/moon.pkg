@@ -1,7 +1,6 @@
 import {
   "moonbitlang/core/immut/hashmap",
   "KKKIIO/maple-moon/game/res_types" @struct,
-  "KKKIIO/maple-moon/engine/resource",
   "KKKIIO/maple-moon/game/maple_stat",
   "KKKIIO/maple-moon/engine/utils",
   "KKKIIO/maple-moon/game/job",
@@ -9,8 +8,8 @@ import {
   "KKKIIO/maple-moon/engine/log",
   "KKKIIO/maple-moon/game/server_proto",
   "KKKIIO/maple-moon/engine/game_server",
-  "Milky2018/selene/ecs",
-  "Milky2018/selene/event",
+  "KKKIIO/selene/ecs",
+  "KKKIIO/selene/event",
 }
 
 options(

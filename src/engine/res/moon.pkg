@@ -1,0 +1,16 @@
+import {
+  "moonbitlang/core/json",
+  "moonbitlang/core/strconv",
+  "moonbitlang/core/buffer",
+  "moonbitlang/core/encoding/utf8" @encoding/utf8,
+  "moonbitlang/x/path/posix",
+  "KKKIIO/maple-moon/game/res_types" @struct,
+  "KKKIIO/selene/asset",
+  "KKKIIO/selene/platform_asset_io",
+  "KKKIIO/selene/tiled",
+  "KKKIIO/selene/animation" @selene_animation,
+  "KKKIIO/selene/math",
+  "KKKIIO/selene/sprite",
+  "moonbitlang/core/string",
+  "moonbitlang/core/debug",
+}

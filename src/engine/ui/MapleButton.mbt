@@ -2,13 +2,13 @@
 /// A parsed MapleStory button resource with four visual states.
 pub(all) struct NxMapleButton {
   /// Visual for the normal state.
-  normal : @resource.NxAnimation
+  normal : @res.NxAnimation
   /// Visual for the hover state.
-  mouse_over : @resource.NxAnimation
+  mouse_over : @res.NxAnimation
   /// Visual for the pressed state.
-  pressed : @resource.NxAnimation
+  pressed : @res.NxAnimation
   /// Visual for the disabled state.
-  disabled : @resource.NxAnimation
+  disabled : @res.NxAnimation
 } derive(@json.FromJson(fields(mouse_over(rename="mouseOver"))))
 
 ///|
@@ -22,7 +22,7 @@ pub(all) struct MapleButtonResource {
 /// Build a runtime button resource from parsed nx button data.
 pub fn MapleButtonResource::from_nx(src : NxMapleButton) -> MapleButtonResource {
   let selene_animations : Map[ButtonState, @ms_animation.Animation] = Map([])
-  let states : Array[(ButtonState, @resource.NxAnimation)] = [
+  let states : Array[(ButtonState, @res.NxAnimation)] = [
     (ButtonState::NORMAL, src.normal),
     (ButtonState::PRESSED, src.pressed),
     (ButtonState::MOUSEOVER, src.mouse_over),

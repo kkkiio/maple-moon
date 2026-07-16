@@ -176,4 +176,4 @@ fn clear_entity(entity : @entity.Entity) -> Unit {
 using @combat_proto {type Bullet}
 
 ///|
-using @resource {type AnimationLoader}
+using @res {type AnimationLoader}

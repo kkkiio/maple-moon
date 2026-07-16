@@ -14,10 +14,7 @@ fn skill_animation_tag(parts : Array[String]) -> String {
   if parts.is_empty() {
     abort("empty skill animation tag path")
   }
-  let out : Array[String] = []
-  for part in parts {
-    out.push(sanitize_skill_animation_tag_part(part))
-  }
+  let out = [ for part in parts => sanitize_skill_animation_tag_part(part) ]
   out.join("__")
 }
 

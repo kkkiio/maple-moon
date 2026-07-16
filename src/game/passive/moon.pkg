@@ -32,7 +32,3 @@ import {
 } for "wbtest"
 
 supported_targets = "native+js"
-
-options(
-  overrides: [ "KKKIIO/selene_raylib/platform_asset_io" ],
-)

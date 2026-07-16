@@ -1,3 +1,7 @@
+#if defined(__linux__)
+#define _GNU_SOURCE
+#endif
+
 #include <errno.h>
 #include <fcntl.h>
 #include <signal.h>

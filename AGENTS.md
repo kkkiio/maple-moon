@@ -2,6 +2,13 @@
 
 这个项目的目的是学习图形学、游戏引擎、游戏开发. 使用 [MoonBit](https://www.moonbitlang.com/), 一个现代的类 Rust 带 GC 的编程语言. 使用 [Selene](https://github.com/kkkiio/selene), 非常新且小巧的 2D 游戏引擎. 缺少功能时, 先停下, 对比其他现代游戏引擎的实现, 提出改进方案.
 
+## Domain Language
+
+- **Resource pack** — 包含 `pack.json` 清单、可按优先级挂载的一组运行资源.
+- **`res://` address** — 与资源包物理目录解耦的公开资源地址.
+- **Graphics snapshot** — 由 native raylib backend 捕获并与 PNG baseline 逐像素比较的视觉回归结果.
+- **Playtest bot** — 通过 `game_debug` 和 `BotController` 执行场景脚本的自动化玩家.
+
 ## Policies & Mandatory Rules
 
 ### Mandatory Skill Usage
@@ -203,8 +210,11 @@ just build
 `just test` 运行所有 native target 测试，包括普通逻辑测试、数据测试和 native raylib 图形快照测试:
 
 ```bash
-moon test --target native --deny-warn --warn-list=-28-79-82 --diagnostic-limit 200
+moon test --target native --no-parallelize --deny-warn --warn-list=-28-79-82 --diagnostic-limit 200
 ```
+
+native raylib 图形测试共享进程级窗口与 OpenGL context，必须使用
+`--no-parallelize` 顺序执行，避免测试之间并发 clear/draw/capture.
 
 PNG 快照更新使用 `UPDATE_GRAPHICS_SNAPS=true`; MoonBit inspect 快照更新继续使用 `moon test --update`.
 

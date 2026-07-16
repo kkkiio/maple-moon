@@ -5,9 +5,9 @@ fmt:
     moon fmt moon.mod src/engine src/game src/apps src/graphics_test src/cmd
     moon info
 test:
-    moon test --target native --deny-warn --warn-list=-28-79-82 --diagnostic-limit 200
+    moon test --target native --no-parallelize --deny-warn --warn-list=-28-79-82 --diagnostic-limit 200
 update-graphics-snaps:
-    UPDATE_GRAPHICS_SNAPS=true moon test --target native --deny-warn --warn-list=-28-79-82 --diagnostic-limit 200 src/graphics_test
+    UPDATE_GRAPHICS_SNAPS=true moon test --target native --no-parallelize --deny-warn --warn-list=-28-79-82 --diagnostic-limit 200 src/graphics_test
 build:
     moon build --target js --release src/apps/game_web
 

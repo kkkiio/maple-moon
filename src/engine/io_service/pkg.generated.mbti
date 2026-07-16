@@ -3,7 +3,7 @@ package "KKKIIO/maple-moon/engine/io_service"
 
 import {
   "KKKIIO/maple-moon/engine/utils",
-  "Milky2018/selene/ecs",
+  "KKKIIO/selene/ecs",
 }
 
 // Values

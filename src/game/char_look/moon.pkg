@@ -4,6 +4,6 @@ import {
   "KKKIIO/maple-moon/game/vfx_afterimage",
   "moonbitlang/core/json",
   "moonbitlang/core/immut/sorted_map",
-  "Milky2018/selene/entity",
-  "Milky2018/selene/ecs",
+  "KKKIIO/selene/entity",
+  "KKKIIO/selene/ecs",
 }

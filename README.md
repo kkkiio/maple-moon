@@ -1,6 +1,6 @@
 # maple-moon
 
-A from-scratch game client for MapleStory. Built with [MoonBit](https://www.moonbitlang.com/) and [Selene](https://github.com/Yoorkin/selene), a small 2D game engine.
+A from-scratch game client for MapleStory. Built with [MoonBit](https://www.moonbitlang.com/) and [Selene](https://github.com/kkkiio/selene), a small 2D game engine.
 
 Reimplementing every feature of the original game is not a goal.
 

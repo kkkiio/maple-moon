@@ -9,8 +9,8 @@ import {
   "KKKIIO/maple-moon/game/skill_cast",
   "KKKIIO/maple-moon/game/combat_system",
   "KKKIIO/maple-moon/game/weapon",
-  "Milky2018/selene/event",
-  "Milky2018/selene/ecs",
+  "KKKIIO/selene/event",
+  "KKKIIO/selene/ecs",
 }
 
 import {
@@ -21,16 +21,16 @@ import {
   "moonbitlang/x/fs",
   "moonbitlang/core/json",
   "KKKIIO/maple-moon/engine/utils",
-  "Milky2018/selene/ecs",
+  "KKKIIO/selene/ecs",
 } for "test"
 
 import {
   "KKKIIO/maple-moon/engine/legacy_types",
-  "Milky2018/selene/ecs",
+  "KKKIIO/selene/ecs",
 } for "wbtest"
 
 supported_targets = "native+js"
 
 options(
-  overrides: [ "Milky2018/selene_raylib/platform_asset_io" ],
+  overrides: [ "KKKIIO/selene_raylib/platform_asset_io" ],
 )

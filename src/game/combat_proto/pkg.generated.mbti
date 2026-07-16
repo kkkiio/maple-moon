@@ -4,7 +4,7 @@ package "KKKIIO/maple-moon/game/combat_proto"
 import {
   "KKKIIO/maple-moon/game/animation",
   "KKKIIO/maple-moon/game/res_types",
-  "Milky2018/selene/entity",
+  "KKKIIO/selene/entity",
   "moonbitlang/core/debug",
 }
 

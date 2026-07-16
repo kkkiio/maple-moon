@@ -2,7 +2,7 @@
 package "KKKIIO/maple-moon/game/keymap"
 
 import {
-  "Milky2018/selene/inputs",
+  "KKKIIO/selene/inputs",
   "moonbitlang/core/debug",
 }
 

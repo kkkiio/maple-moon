@@ -2,7 +2,7 @@
 package "KKKIIO/maple-moon/game/skill_sfx"
 
 import {
-  "Milky2018/selene/event",
+  "KKKIIO/selene/event",
   "moonbitlang/core/debug",
 }
 

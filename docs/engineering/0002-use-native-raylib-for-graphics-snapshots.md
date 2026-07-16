@@ -22,7 +22,7 @@ Graphics snapshot tests run on the native raylib backend.
 `src/graphics_test/` package uses:
 
 - `supported_targets = "native"`;
-- `Milky2018/selene_raylib/*` platform overrides;
+- `KKKIIO/selene_raylib/*` platform overrides;
 - `@capture_app.capture_after_frames` to run a hidden raylib context and capture
   the selected frame;
 - `@capture_app.snapshot(path, png)` for PNG baseline comparison.

@@ -5,7 +5,7 @@ import {
   "KKKIIO/maple-moon/game/combat_system",
   "KKKIIO/maple-moon/game/equip",
   "KKKIIO/maple-moon/game/skill",
-  "Milky2018/selene/ecs",
+  "KKKIIO/selene/ecs",
   "moonbitlang/core/random",
 }
 

@@ -2,7 +2,7 @@
 package "KKKIIO/maple-moon/game/ui/status_bar_ui"
 
 import {
-  "Milky2018/selene/ecs",
+  "KKKIIO/selene/ecs",
 }
 
 // Values

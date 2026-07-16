@@ -1,8 +1,8 @@
 import {
   "KKKIIO/maple-moon/engine/game_app",
   "KKKIIO/maple-moon/engine/game_state",
-  "Milky2018/selene/ecs",
-  "Milky2018/selene/plugins",
+  "KKKIIO/selene/ecs",
+  "KKKIIO/selene/plugins",
 }
 
 supported_targets = "native"
@@ -11,11 +11,11 @@ pkgtype(kind: "executable")
 
 options(
   overrides: [
-    "Milky2018/selene_raylib/platform_window",
-    "Milky2018/selene_raylib/platform_input",
-    "Milky2018/selene_raylib/platform_render",
-    "Milky2018/selene_raylib/platform_audio",
-    "Milky2018/selene_raylib/platform_asset_io",
+    "KKKIIO/selene_raylib/platform_window",
+    "KKKIIO/selene_raylib/platform_input",
+    "KKKIIO/selene_raylib/platform_render",
+    "KKKIIO/selene_raylib/platform_audio",
+    "KKKIIO/selene_raylib/platform_asset_io",
     "KKKIIO/maple-moon/engine/local_server/local_server_workaround",
   ],
   targets: { "main.mbt": [ "native" ] },

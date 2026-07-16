@@ -5,7 +5,7 @@ import {
   "KKKIIO/maple-moon/engine/resource",
   "KKKIIO/maple-moon/engine/ui",
   "KKKIIO/maple-moon/game/npc",
-  "Milky2018/selene/ecs",
+  "KKKIIO/selene/ecs",
   "moonbitlang/core/debug",
 }
 

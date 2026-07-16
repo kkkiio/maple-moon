@@ -15,8 +15,8 @@ import {
   "KKKIIO/maple-moon/game/skill",
   "KKKIIO/maple-moon/game/vfx_afterimage",
   "KKKIIO/maple-moon/game/weapon",
-  "Milky2018/selene/ecs",
-  "Milky2018/selene/event",
+  "KKKIIO/selene/ecs",
+  "KKKIIO/selene/event",
   "moonbitlang/core/debug",
   "moonbitlang/core/json",
 }

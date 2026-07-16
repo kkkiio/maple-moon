@@ -75,7 +75,7 @@ json_inspect(@npc_talk_ui.describe_npc_talk_ui())
 ### 1. 写图形快照测试
 
 - 在 `src/graphics_test/` 下编写图形快照测试（所有图形测试共享一个 package）。
-- 该 package 使用 native target 和 `Milky2018/selene_raylib/*` platform overrides。
+- 该 package 使用 native target 和 `KKKIIO/selene_raylib/*` platform overrides。
 - 用 `@capture_app.capture_after_frames` 初始化测试 App，挂上 `@plugins.default_plugin` 和被测系统。
 - 如果测试在 `capture_after_frames` 之前会加载 raylib texture，先调用 `@capture_app.ensure_native_context(width=..., height=...)`。
 - 测试里直接读取本地 `assets/...json` 并传给游戏模块解析。

@@ -3,10 +3,10 @@ package "KKKIIO/maple-moon/game/animation"
 
 import {
   "KKKIIO/maple-moon/engine/resource",
-  "Milky2018/selene/asset_types",
-  "Milky2018/selene/entity",
-  "Milky2018/selene/math",
-  "Milky2018/selene/sprite",
+  "KKKIIO/selene/asset_types",
+  "KKKIIO/selene/entity",
+  "KKKIIO/selene/math",
+  "KKKIIO/selene/sprite",
 }
 
 // Values

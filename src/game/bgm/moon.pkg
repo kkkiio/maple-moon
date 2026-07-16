@@ -1,5 +1,5 @@
 import {
   "KKKIIO/maple-moon/engine/log",
-  "Milky2018/selene/audio",
-  "Milky2018/selene/entity",
+  "KKKIIO/selene/audio",
+  "KKKIIO/selene/entity",
 }

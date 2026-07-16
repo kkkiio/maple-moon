@@ -2,7 +2,7 @@
 package "KKKIIO/maple-moon/engine/game_app"
 
 import {
-  "Milky2018/selene/app",
+  "KKKIIO/selene/app",
 }
 
 // Values

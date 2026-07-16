@@ -3,9 +3,9 @@ package "KKKIIO/maple-moon/engine/graphics"
 
 import {
   "KKKIIO/maple-moon/game/animation",
-  "Milky2018/selene/ecs",
-  "Milky2018/selene/entity",
-  "Milky2018/selene/math",
+  "KKKIIO/selene/ecs",
+  "KKKIIO/selene/entity",
+  "KKKIIO/selene/math",
 }
 
 // Values

@@ -3,10 +3,10 @@ package "KKKIIO/maple-moon/engine/resource"
 
 import {
   "KKKIIO/maple-moon/game/res_types",
-  "Milky2018/selene/animation",
-  "Milky2018/selene/asset_types",
-  "Milky2018/selene/sprite",
-  "Milky2018/selene/tiled",
+  "KKKIIO/selene/animation",
+  "KKKIIO/selene/asset_types",
+  "KKKIIO/selene/sprite",
+  "KKKIIO/selene/tiled",
   "moonbitlang/core/debug",
   "moonbitlang/core/json",
 }

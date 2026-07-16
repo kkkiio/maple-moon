@@ -1,12 +1,12 @@
 import {
   "moonbitlang/core/json",
-  "Milky2018/selene/app",
-  "Milky2018/selene/system",
-  "Milky2018/selene/entity",
-  "Milky2018/selene/inputs",
-  "Milky2018/selene/math" @selene_math,
-  "Milky2018/selene/ui" @selene_ui,
-  "Milky2018/selene/ecs",
+  "KKKIIO/selene/app",
+  "KKKIIO/selene/system",
+  "KKKIIO/selene/entity",
+  "KKKIIO/selene/inputs",
+  "KKKIIO/selene/math" @selene_math,
+  "KKKIIO/selene/ui" @selene_ui,
+  "KKKIIO/selene/ecs",
 }
 
 supported_targets = "native+js"

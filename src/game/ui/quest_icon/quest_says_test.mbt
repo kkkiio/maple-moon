@@ -14,7 +14,7 @@ test "parse null phase says" {
       #|}
     ),
   )
-  let quest_say : @resource.MapBasedArray[@quest.NxQuestPhaseSays] = @json.from_json(
+  let quest_say : @res.MapBasedArray[@quest.NxQuestPhaseSays] = @json.from_json(
     q1021,
   )
   let phases = quest_say.0
@@ -51,7 +51,7 @@ test "parse null hint" {
       #| }
     ),
   )
-  let quest_say : @resource.MapBasedArray[@quest.NxQuestPhaseSays] = @json.from_json(
+  let quest_say : @res.MapBasedArray[@quest.NxQuestPhaseSays] = @json.from_json(
     q2300,
   )
   let phases = quest_say.0

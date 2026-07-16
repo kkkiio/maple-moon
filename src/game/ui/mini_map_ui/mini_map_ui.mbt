@@ -9,7 +9,7 @@ using @ui {type UIModel}
 /// Contains parsed graphical assets for markers and the background canvas.
 pub struct MiniMapUIResource {
   /// Marker for portals.
-  portal_marker : @resource.NxTexture
+  portal_marker : @res.NxTexture
   /// Window frame pieces for Normal mode.
   min_map : NxMiniMapFrames
 }
@@ -17,11 +17,11 @@ pub struct MiniMapUIResource {
 ///|
 /// Loads the necessary graphical resources for displaying the MiniMap UI.
 pub fn MiniMapUIResource::load() -> MiniMapUIResource {
-  let mini_map_json : Json = @resource.require_json(
-    "assets/UI/UIWindow2.img/MiniMap.json",
+  let mini_map_json : Json = @res.require_json(
+    "res://UI/UIWindow2.img/MiniMap.json",
   )
-  let map_helper_minimap_json : Json = @resource.require_json(
-    "assets/spritesheets/Map/MapHelper.img/minimap.json",
+  let map_helper_minimap_json : Json = @res.require_json(
+    "res://Map/MapHelper.img/minimap.json",
   )
   mini_map_ui_resource_from_json(mini_map_json, map_helper_minimap_json)
 }
@@ -45,8 +45,8 @@ fn mini_map_ui_resource_from_json(
 
 ///|
 fn first_frame_texture(
-  animation : @resource.NxAnimation,
-) -> @resource.NxTexture {
+  animation : @res.NxAnimation,
+) -> @res.NxTexture {
   if animation.frames.is_empty() {
     abort("mini map ui resource not set")
   }
@@ -55,14 +55,14 @@ fn first_frame_texture(
 
 ///|
 struct NxMiniMapFrames {
-  w : @resource.NxTexture
-  e : @resource.NxTexture
-  n : @resource.NxTexture
-  nw : @resource.NxTexture
-  ne : @resource.NxTexture
-  s : @resource.NxTexture
-  sw : @resource.NxTexture
-  se : @resource.NxTexture
+  w : @res.NxTexture
+  e : @res.NxTexture
+  n : @res.NxTexture
+  nw : @res.NxTexture
+  ne : @res.NxTexture
+  s : @res.NxTexture
+  sw : @res.NxTexture
+  se : @res.NxTexture
 } derive(@json.FromJson)
 
 ///|
@@ -72,7 +72,7 @@ struct NxMiniMapUI {
 
 ///|
 struct NxMapHelperMiniMap {
-  portal : @resource.NxAnimation
+  portal : @res.NxAnimation
 }
 
 ///|
@@ -273,25 +273,25 @@ const ML_MR_Y_ = 17
 
 ///|
 priv struct MiniMapFrameDraw {
-  texture : @resource.NxTexture
+  texture : @res.NxTexture
   x : Int
   y : Int
   z : Int
 }
 
 ///|
-fn ui_image_from_texture(texture : @resource.NxTexture) -> @selene_ui.UiImage {
+fn ui_image_from_texture(texture : @res.NxTexture) -> @selene_ui.UiImage {
   let source = ui_image_source_from_texture(texture)
   @selene_ui.UiImage::from_image(
     @selene_math.Vec2(texture.w.to_double(), texture.h.to_double()),
-    @resource.load_image(texture.i),
+    @res.require_image(texture.i),
     source=Some(source),
   )
 }
 
 ///|
 fn ui_image_source_from_texture(
-  texture : @resource.NxTexture,
+  texture : @res.NxTexture,
 ) -> @render2d_types.ImageRegion2D {
   {
     position: @selene_math.Vec2(
@@ -383,14 +383,14 @@ fn spawn_minimap_frame_entities(
 
 ///|
 fn ui_image_from_texture_with_size(
-  texture : @resource.NxTexture,
+  texture : @res.NxTexture,
   width : Int,
   height : Int,
 ) -> @selene_ui.UiImage {
   let source = ui_image_source_from_texture(texture)
   @selene_ui.UiImage::from_image(
     @selene_math.Vec2(width.to_double(), height.to_double()),
-    @resource.load_image(texture.i),
+    @res.require_image(texture.i),
     source=Some(source),
   )
 }
@@ -398,7 +398,7 @@ fn ui_image_from_texture_with_size(
 ///|
 fn spawn_minimap_texture_entity_sized(
   entities : Array[@entity.Entity],
-  texture : @resource.NxTexture,
+  texture : @res.NxTexture,
   ui_pos : @struct.Point[Int],
   local_x : Int,
   local_y : Int,
@@ -428,7 +428,7 @@ fn spawn_minimap_texture_entity_sized(
 ///|
 fn spawn_minimap_texture_entity(
   entities : Array[@entity.Entity],
-  texture : @resource.NxTexture,
+  texture : @res.NxTexture,
   ui_pos : @struct.Point[Int],
   local_x : Int,
   local_y : Int,

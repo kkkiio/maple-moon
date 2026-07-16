@@ -40,7 +40,7 @@ pub let default_rand_seed : Ref[Bytes] = Ref(
 /// Although there is a open-source server implementation `Cosmic`,
 /// it is burdensome to implement the full client features, so we implement a local server here to play the game offline.
 ///
-/// We can use the built-in resource loader in `@resource` package to load the resources and implement the server logic here.
+/// We can use the built-in resource loader in `@res` package to load the resources and implement the server logic here.
 struct LocalServer {
   client_message_queue : @queue.Queue[(Int, Json)]
   server_message_queue : @queue.Queue[(Int, Json)]
@@ -740,7 +740,7 @@ fn new_inventory_item_entry(
       expire=0,
       slots=7,
       level=0,
-      stats=@resource.EnumMap(stats),
+      stats=@res.EnumMap(stats),
       owner="",
       flag=0,
       itemlevel=0,
@@ -906,7 +906,7 @@ fn LocalServer::spawn_mobs_for_map(self : LocalServer, map_id : Int) -> Unit {
   self.pending_npc_spawns.clear()
   self.active_shop = None
   self.npc_id_by_oid.clear()
-  @io_service.execute_background(fn() {
+  @io_service.execute_background(fn() raise {
     guard load_tiled_map_by_map_id(map_id) is Some(map) else { return }
     let life_layer = require_life_layer(map)
     for entity in life_layer.objects {
@@ -933,8 +933,8 @@ fn LocalServer::spawn_mobs_for_map(self : LocalServer, map_id : Int) -> Unit {
             team: -1,
           }
           let mob_strid = @utils.stoi_left_pad0(monster_id, 7)
-          let mob_node = @resource.require_json(
-            "assets/mob/" + mob_strid + ".img/mx.json",
+          let mob_node = @res.require_json(
+            "res://Mob/" + mob_strid + ".img/mx.json",
           )
           let max_hp = match mob_node {
             { "info": { "maxHP": Number(max_hp, ..), .. }, .. } =>
@@ -1068,15 +1068,33 @@ pub fn server_system(server : LocalServer) -> Unit {
 /// 加载怪物掉落数据库
 fn LocalServer::load_drop_databases(self : LocalServer) -> Unit {
   // 加载怪物特定掉落
-  @io_service.execute_background(fn() {
-    let text = @resource.load_text("assets/data/mob_drops.tsv")
-    self.drop_db = Some(MobDropDatabase::from_tsv(text))
-    @log.info("Loaded mob_drops.tsv", data=Map([]))
-  })
+  @io_service.execute_background(
+    fn() raise {
+      let text = @res.load_text("res://Data/mob_drops.tsv")
+      self.drop_db = Some(MobDropDatabase::from_tsv(text))
+      @log.info("Loaded mob_drops.tsv", data=Map([]))
+    },
+    on_error=fn(error) {
+      @log.error("failed to load mob drop database", data={
+        "address": "res://Data/mob_drops.tsv",
+        "error": error.to_string(),
+      })
+      abort("failed to load mob drop database: \{error}")
+    },
+  )
   // 加载全局掉落
-  @io_service.execute_background(fn() {
-    let text = @resource.load_text("assets/data/drop_data_global.tsv")
-    self.global_drop_db = Some(MobDropDatabase::from_tsv(text))
-    @log.info("Loaded drop_data_global.tsv", data=Map([]))
-  })
+  @io_service.execute_background(
+    fn() raise {
+      let text = @res.load_text("res://Data/drop_data_global.tsv")
+      self.global_drop_db = Some(MobDropDatabase::from_tsv(text))
+      @log.info("Loaded drop_data_global.tsv", data=Map([]))
+    },
+    on_error=fn(error) {
+      @log.error("failed to load global drop database", data={
+        "address": "res://Data/drop_data_global.tsv",
+        "error": error.to_string(),
+      })
+      abort("failed to load global drop database: \{error}")
+    },
+  )
 }

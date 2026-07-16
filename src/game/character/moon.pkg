@@ -13,7 +13,7 @@ import {
   "KKKIIO/maple-moon/game/char_stats",
   "KKKIIO/maple-moon/engine/ui",
   "KKKIIO/maple-moon/game/transform2d",
-  "Milky2018/selene/entity",
+  "KKKIIO/selene/entity",
   "KKKIIO/maple-moon/game/logic_fps",
   "KKKIIO/maple-moon/game/server_proto",
   "KKKIIO/maple-moon/game/char_stance",

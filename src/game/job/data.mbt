@@ -1,6 +1,6 @@
 ///|
 pub(all) struct JobData {
-  icon : @resource.NxTexture
+  icon : @res.NxTexture
   skill_ids : Array[Int]
   name : String
 }
@@ -8,9 +8,9 @@ pub(all) struct JobData {
 ///|
 pub fn JobData::load(id : Int) -> JobData {
   let strid = @utils.stoi_left_pad0(id, 3)
-  let src = @resource.require_json("assets/Skill/" + strid + ".img.json")
+  let src = @res.require_json("res://Skill/" + strid + ".img.json")
   let name = match
-    @resource.json_navigate("assets/String/Skill.img.json", [strid]) {
+    @res.require_json_node("res://String/Skill.img.json", [strid]) {
     { "bookName": String(name), .. } => name
     _ => ""
   }
@@ -19,7 +19,7 @@ pub fn JobData::load(id : Int) -> JobData {
 
 ///|
 pub fn JobData::JobData(src : Json, name : String) -> JobData {
-  let icon : @resource.NxTexture = try! @json.from_json(
+  let icon : @res.NxTexture = try! @json.from_json(
     match src {
       { "info": { "icon": icon, .. }, .. } => icon
       _ => Json::null()

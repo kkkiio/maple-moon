@@ -77,13 +77,28 @@ pub fn MapMobs::add_mob(self : MapMobs, mob : Mob) -> Unit {
 }
 
 ///|
+/// Drain queued monster spawns and advance loaded monsters.
+///
+/// # Example
+/// ```moonbit nocheck
+/// map_mobs.update(physics)
+/// ```
+///
+/// # Panics
+/// Panics after logging when any queued monster's required resource closure
+/// cannot be loaded.
 pub fn MapMobs::update(self : MapMobs, physics : @physics.Physics) -> Unit {
   for ;; {
     guard self.spawns.pop() is Some(spawn) else { break }
     if !self.mobs.contains(spawn.oid) {
       self.loading_mobs.push(
-        @io_service.submit_background_task(fn() {
-          spawn.instantiate(self.randomizer)
+        @io_service.submit_background_task(fn() raise {
+          spawn.instantiate(self.randomizer) catch {
+            error =>
+              fail(
+                "mob resource load failed: oid=\{spawn.oid}, mob_id=\{spawn.id}, error=\{error}",
+              )
+          }
         }),
       )
     }
@@ -92,7 +107,12 @@ pub fn MapMobs::update(self : MapMobs, physics : @physics.Physics) -> Unit {
     guard future.poll() is Some(rs) else { return true }
     match rs {
       Ok(mob) => self.mobs.set(mob.get_oid(), mob)
-      Err(e) => @log.error("Failed to load mob", data={ "err": e })
+      Err(error) => {
+        @log.error("failed to load required mob resources", data={
+          "error": error,
+        })
+        abort("failed to load required mob resources: \{error}")
+      }
     }
     false
   })
@@ -299,7 +319,21 @@ pub fn create_mob_spawn(
 }
 
 ///|
-pub fn MobSpawn::instantiate(self : MobSpawn, randomizer : @random.Rand) -> Mob {
+/// Instantiate a queued monster spawn from its required resource closure.
+///
+/// # Example
+/// ```moonbit nocheck
+/// let mob = try! spawn.instantiate(@random.Rand::new())
+/// ignore(mob)
+/// ```
+///
+/// # Errors
+/// Raises when the monster resource or any referenced animation cannot be
+/// loaded.
+pub fn MobSpawn::instantiate(
+  self : MobSpawn,
+  randomizer : @random.Rand,
+) -> Mob raise {
   Mob::load(
     self.oid,
     self.id,

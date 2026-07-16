@@ -2,12 +2,12 @@
 struct MapDrops {
   drops : Map[Int, &Drop]
   spawns : @queue.Queue[DropSpawn]
-  meso_icons : Map[MesoIcon, @resource.NxAnimation]
+  meso_icons : Map[MesoIcon, @res.NxAnimation]
 }
 
 ///|
 fn MapDrops::MapDrops(src : Json) -> MapDrops raise @json.JsonDecodeError {
-  let meso_icons : Map[MesoIcon, @resource.NxAnimation] = Map([])
+  let meso_icons : Map[MesoIcon, @res.NxAnimation] = Map([])
   meso_icons[MesoIcon::BRONZE] = nx_node_to_animation(
     get_icon_raw(src, "09000000"),
   )
@@ -26,7 +26,7 @@ fn MapDrops::MapDrops(src : Json) -> MapDrops raise @json.JsonDecodeError {
 ///|
 fn nx_node_to_animation(
   node : Json,
-) -> @resource.NxAnimation raise @json.JsonDecodeError {
+) -> @res.NxAnimation raise @json.JsonDecodeError {
   @json.from_json(node)
 }
 
@@ -151,7 +151,7 @@ struct DropSpawn {
 ///|
 fn DropSpawn::instantiate_meso(
   self : DropSpawn,
-  icon : @resource.NxAnimation,
+  icon : @res.NxAnimation,
 ) -> &Drop {
   MesoDrop(
     self.oid,
@@ -168,7 +168,7 @@ fn DropSpawn::instantiate_meso(
 ///|
 fn DropSpawn::instantiate_item(
   self : DropSpawn,
-  icon : @resource.NxTexture,
+  icon : @res.NxTexture,
 ) -> &Drop {
   ItemDrop(
     self.oid,

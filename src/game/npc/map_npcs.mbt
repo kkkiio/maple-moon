@@ -158,13 +158,30 @@ pub fn MapNpcs::MapNpcs(
 ///|
 
 ///|
+/// Drain queued NPC spawns and advance loaded NPCs.
+///
+/// # Example
+/// ```moonbit nocheck
+/// map_npcs.update(physics)
+/// ```
+///
+/// # Panics
+/// Panics after logging when any queued NPC's required resource closure cannot
+/// be loaded.
 pub fn MapNpcs::update(self : MapNpcs, physics : @physics.Physics) -> Unit {
   for ;; {
     guard self.spawns.pop() is Some(spawn) else { break }
     let oid = spawn.get_oid()
     if !self.npcs.contains(oid) {
       self.loading_npcs.push(
-        @io_service.submit_background_task(() => spawn.instantiate(physics)),
+        @io_service.submit_background_task(fn() raise {
+          spawn.instantiate(physics) catch {
+            error =>
+              fail(
+                "npc resource load failed: oid=\{spawn.oid}, npc_id=\{spawn.id}, error=\{error}",
+              )
+          }
+        }),
       )
     }
   }
@@ -172,8 +189,12 @@ pub fn MapNpcs::update(self : MapNpcs, physics : @physics.Physics) -> Unit {
     guard future.poll() is Some(rs) else { return true }
     match rs {
       Ok(npc) => self.npcs.set(npc.get_oid(), npc)
-      Err(e) =>
-        @log.error("failed to load npc", data={ "error": e.to_string() })
+      Err(error) => {
+        @log.error("failed to load required npc resources", data={
+          "error": error,
+        })
+        abort("failed to load required npc resources: \{error}")
+      }
     }
     false
   })
@@ -302,7 +323,7 @@ struct Npc {
 
 ///|
 priv struct NpcAnimation {
-  clip : @resource.SeleneClip
+  clip : @res.SeleneClip
   duration_ms : Int
   dimensions : @struct.Point[Int]
 }
@@ -360,20 +381,20 @@ pub fn Npc::load(
     @transform2d.set_xy(entity, pos)
   })
   let strid = @utils.stoi_left_pad0(id, 7) + ".img"
-  let mut mx_path = "assets/Npc/" + strid + "/mx.json"
-  let mut src = @resource.require_json(mx_path)
-  let strsrc = @resource.json_navigate("assets/String/Npc.img.json", [
+  let mut mx_path = "res://Npc/" + strid + "/mx.json"
+  let mut src = @res.require_json(mx_path)
+  let strsrc = @res.require_json_node("res://String/Npc.img.json", [
     id.to_string(),
   ])
   let mut mx_npc : MxNpc = @json.from_json(src)
   if mx_npc.info.link is Some(link) {
-    mx_path = "assets/Npc/" + link + ".img/mx.json"
-    src = @resource.require_json(mx_path)
+    mx_path = "res://Npc/" + link + ".img/mx.json"
+    src = @res.require_json(mx_path)
     mx_npc = @json.from_json(src)
   }
   let animation_loader = AnimationLoader()
   let loaded_aseprite = animation_loader.load(
-    @resource.resolve_ref(mx_path, mx_npc.animations_path),
+    @res.resolve_ref(mx_path, mx_npc.animations_path),
   )
   let scripted = mx_npc.info.scripted
   let dialogue = Map([])
@@ -540,7 +561,7 @@ fn Npc::sync_sprite(self : Npc) -> Unit {
 ///|
 fn play_aseprite_clip(
   entity : @entity.Entity,
-  clip : @resource.SeleneClip,
+  clip : @res.SeleneClip,
   flip_x : Bool,
 ) -> Unit {
   @selene_animation.animation_target_ids().set(
@@ -669,4 +690,4 @@ pub fn Npc::get_npc_id(self : Npc) -> Int {
 using @physics {type PhysicsObject}
 
 ///|
-using @resource {type AnimationLoader}
+using @res {type AnimationLoader}

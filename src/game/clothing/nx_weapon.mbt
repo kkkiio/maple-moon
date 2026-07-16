@@ -15,7 +15,7 @@ pub(all) struct NxMapAnchor {
 /// - `z`: raw layer tag string from resource, such as `"weaponOverArm"`.
 /// - `anchor`: map anchor metadata used to align with body draw points.
 pub(all) struct NxWeaponPart {
-  texture : @resource.NxTexture
+  texture : @res.NxTexture
   z : String
   anchor : NxMapAnchor
 } derive(Debug)
@@ -78,7 +78,7 @@ pub impl @json.FromJson for NxWeaponPart with fn from_json(json, path) -> NxWeap
     Some(map_json) => @json.from_json(map_json, path=path.add_key("map"))
     None => raise @json.JsonDecodeError((path, "NxWeaponPart: missing map"))
   }
-  let texture : @resource.NxTexture = @json.from_json(json, path~)
+  let texture : @res.NxTexture = @json.from_json(json, path~)
   { texture, z, anchor }
 }
 

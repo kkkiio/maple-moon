@@ -479,12 +479,12 @@ async fn Daemon::run_bot(self : Daemon, request : Json) -> Json {
       }
     value => value
   }
-  let entries : Array[NetworkEntry] = []
-  for id in self.request_order.view(start=before_requests) {
-    if self.requests.get(id) is Some(value) {
-      entries.push(value)
-    }
-  }
+  let entries = [
+    for id in self.request_order.view(start=before_requests) if self.requests.get(
+      id,
+    )
+    is Some(value) => value
+  ]
   let failures = entries.filter(entry => {
     entry.failed == Some(true) || entry.status.unwrap_or(0) >= 400
   })
@@ -800,17 +800,14 @@ async fn Daemon::handle(self : Daemon, request : Json) -> Json {
   }
   if action == "network" {
     let failed_only = request is { "failed": True, .. }
-    let entries : Array[NetworkEntry] = []
-    for id in self.request_order {
-      if self.requests.get(id) is Some(entry) &&
-        (
-          !failed_only ||
-          entry.failed == Some(true) ||
-          entry.status.unwrap_or(0) >= 400
-        ) {
-        entries.push(entry)
-      }
-    }
+    let entries = [
+      for id in self.request_order if self.requests.get(id) is Some(entry) &&
+      (
+        !failed_only ||
+        entry.failed == Some(true) ||
+        entry.status.unwrap_or(0) >= 400
+      ) => entry
+    ]
     let start = if entries.length() > 200 { entries.length() - 200 } else { 0 }
     return {
       "ok": true,

@@ -28,7 +28,7 @@ priv struct State {
   mut slot_max_by_tab : Map[InventoryType, Int]
   mut ui_resources : UiResources?
   mut ui_loading : @utils.Future[Result[UiResources, Error]]?
-  icon_by_item_id : Map[Int, @resource.NxTexture]
+  icon_by_item_id : Map[Int, @res.NxTexture]
   ui_entities : Array[@entity.Entity]
   tab_buttons : Array[TabButton]
   slot_buttons : Array[SlotButton]
@@ -39,10 +39,10 @@ priv struct State {
 
 ///|
 priv struct UiResources {
-  full_backgrnd : @resource.NxTexture
-  full_backgrnd2 : @resource.NxTexture
-  full_backgrnd3 : @resource.NxTexture
-  tab_btn_resources : Array[(@resource.NxTexture, @resource.NxTexture)]
+  full_backgrnd : @res.NxTexture
+  full_backgrnd2 : @res.NxTexture
+  full_backgrnd3 : @res.NxTexture
+  tab_btn_resources : Array[(@res.NxTexture, @res.NxTexture)]
 }
 
 ///|
@@ -161,7 +161,7 @@ fn clear_entities(entities : Array[@entity.Entity]) -> Unit {
 
 ///|
 fn load_ui_resources() -> UiResources {
-  let item = @resource.require_json("assets/UI/UIWindow2.img/Item.json")
+  let item = @res.require_json("res://UI/UIWindow2.img/Item.json")
   parse_ui_resources_from_item_json(item) catch {
     _ => abort("invalid UIWindow2 Item resource")
   }
@@ -181,13 +181,13 @@ fn parse_ui_resources_from_item_json(item_json : Json) -> UiResources raise {
       },
       ..
     } => {
-      let full_backgrnd : @resource.NxTexture = @json.from_json(
+      let full_backgrnd : @res.NxTexture = @json.from_json(
         full_backgrnd_json,
       )
-      let full_backgrnd2 : @resource.NxTexture = @json.from_json(
+      let full_backgrnd2 : @res.NxTexture = @json.from_json(
         full_backgrnd2_json,
       )
-      let full_backgrnd3 : @resource.NxTexture = @json.from_json(
+      let full_backgrnd3 : @res.NxTexture = @json.from_json(
         full_backgrnd3_json,
       )
       let tab_btn_resources = []
@@ -199,10 +199,10 @@ fn parse_ui_resources_from_item_json(item_json : Json) -> UiResources raise {
         guard enabled_tabs.get(key) is Some(enabled_tab_json) else {
           fail("missing Tab.enabled.\{key}")
         }
-        let disabled_tab : @resource.NxTexture = @json.from_json(
+        let disabled_tab : @res.NxTexture = @json.from_json(
           disabled_tab_json,
         )
-        let enabled_tab : @resource.NxTexture = @json.from_json(
+        let enabled_tab : @res.NxTexture = @json.from_json(
           enabled_tab_json,
         )
         tab_btn_resources.push((disabled_tab, enabled_tab))
@@ -214,18 +214,18 @@ fn parse_ui_resources_from_item_json(item_json : Json) -> UiResources raise {
 }
 
 ///|
-fn ui_image_from_texture(texture : @resource.NxTexture) -> @selene_ui.UiImage {
+fn ui_image_from_texture(texture : @res.NxTexture) -> @selene_ui.UiImage {
   let source = ui_image_source_from_texture(texture)
   @selene_ui.UiImage::from_image(
     @selene_math.Vec2(texture.w.to_double(), texture.h.to_double()),
-    @resource.load_image(texture.i),
+    @res.require_image(texture.i),
     source=Some(source),
   )
 }
 
 ///|
 fn ui_image_source_from_texture(
-  texture : @resource.NxTexture,
+  texture : @res.NxTexture,
 ) -> @render2d_types.ImageRegion2D {
   {
     position: @selene_math.Vec2(
@@ -239,7 +239,7 @@ fn ui_image_source_from_texture(
 ///|
 fn set_image_texture(
   entity : @entity.Entity,
-  texture : @resource.NxTexture,
+  texture : @res.NxTexture,
 ) -> Unit {
   @selene_ui.ui_images().set(entity, ui_image_from_texture(texture))
 }
@@ -247,7 +247,7 @@ fn set_image_texture(
 ///|
 fn spawn_image_node(
   entities : Array[@entity.Entity],
-  texture : @resource.NxTexture,
+  texture : @res.NxTexture,
   x : Int,
   y : Int,
   z : Int,
@@ -312,12 +312,12 @@ fn spawn_text_node(
 }
 
 ///|
-fn texture_draw_x(panel_x : Int, texture : @resource.NxTexture) -> Int {
+fn texture_draw_x(panel_x : Int, texture : @res.NxTexture) -> Int {
   panel_x - texture.origin.x
 }
 
 ///|
-fn texture_draw_y(panel_y : Int, texture : @resource.NxTexture) -> Int {
+fn texture_draw_y(panel_y : Int, texture : @res.NxTexture) -> Int {
   panel_y - texture.origin.y
 }
 

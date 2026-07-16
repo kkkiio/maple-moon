@@ -2,11 +2,11 @@
 package "KKKIIO/maple-moon/engine/game_app"
 
 import {
-  "Milky2018/selene/app",
+  "KKKIIO/selene/app",
 }
 
 // Values
-pub fn base_app() -> @app.App
+pub fn base_app(resource_packs? : Array[(String, String)]) -> @app.App
 
 pub fn game_systems() -> (@app.App) -> @app.App
 

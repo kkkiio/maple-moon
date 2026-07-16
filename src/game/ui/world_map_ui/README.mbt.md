@@ -11,10 +11,10 @@
 
 资源依赖：
 
-- `assets/UI/UIWindow2.img/WorldMap.json`
-- `assets/UI/UIWindow2.img/ToolTip.json`
-- `assets/spritesheets/Map/MapHelper.img/worldMap.json`
-- `assets/map/WorldMap/*.img.json`
+- `res://UI/UIWindow2.img/WorldMap.json`
+- `res://UI/UIWindow2.img/ToolTip.json`
+- `res://Map/MapHelper.img/worldMap.json`
+- `res://Map/WorldMap/*.img.json`
 
 测试时可通过 `set_*_for_test` API 直接注入 JSON，避免改正式 loader。
 

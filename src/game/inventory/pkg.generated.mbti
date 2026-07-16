@@ -8,7 +8,7 @@ import {
   "KKKIIO/maple-moon/game/maple_stat",
   "KKKIIO/maple-moon/game/server_proto",
   "KKKIIO/maple-moon/game/weapon",
-  "Milky2018/selene/event",
+  "KKKIIO/selene/event",
   "moonbitlang/core/debug",
   "moonbitlang/core/ref",
 }

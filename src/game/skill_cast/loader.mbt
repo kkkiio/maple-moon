@@ -1,6 +1,16 @@
 ///|
 /// Load a skill and convert it into `SpecialMove` for cast/attack pipeline.
-pub fn load_skill_move(move_id : Int) -> @combat_system.CombatAction {
+///
+/// # Example
+/// ```moonbit nocheck
+/// let move = try! load_skill_move(1001004)
+/// ignore(move)
+/// ```
+///
+/// # Errors
+/// Raises when the skill or any referenced runtime effect resource cannot be
+/// loaded.
+pub fn load_skill_move(move_id : Int) -> @combat_system.CombatAction raise {
   let it = @combat_system.Skill::load(move_id)
   {
     id: it.get_id(),

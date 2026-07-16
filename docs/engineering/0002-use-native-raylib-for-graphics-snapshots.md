@@ -22,10 +22,17 @@ Graphics snapshot tests run on the native raylib backend.
 `src/graphics_test/` package uses:
 
 - `supported_targets = "native"`;
-- `Milky2018/selene_raylib/*` platform overrides;
+- `KKKIIO/selene_raylib/*` platform overrides;
+- the repository `assets/base/` pack mounted as the base source in the same
+  `res://` VFS used by the game;
 - `@capture_app.capture_after_frames` to run a hidden raylib context and capture
   the selected frame;
 - `@capture_app.snapshot(path, png)` for PNG baseline comparison.
+
+The graphics test package initializes `src/engine/res` before loading JSON,
+images, audio, or fonts. Tests refer to runtime resources with `res://` paths;
+`@res` resolves them to physical paths within the mounted packs, and Selene
+loads and decodes from those paths.
 
 `@capture_app.capture_after_frames` delegates frame execution and screenshot
 selection to `App::run_frames_capture`. Maple tests pass
@@ -47,6 +54,11 @@ let capture = @capture_app.capture_after_frames(app, 60, width=800, height=600)
 Tests that load raylib textures before `capture_after_frames` must call
 `@capture_app.ensure_native_context(width=..., height=...)` first.
 
+Pure data and gameplay tests do not inherit the graphics package overrides.
+They construct resource values directly. Resolver and loader tests replace
+Selene's virtual platform reader with an in-memory map of physical paths, then
+exercise the same ordered directory mounts used by production.
+
 ## Consequences
 
 - Routine graphics tests run with `moon test --target native`.
@@ -56,6 +68,8 @@ Tests that load raylib textures before `capture_after_frames` must call
 - Selene's `test_graphics` package is not part of the Maple graphics snapshot
   path.
 - Snapshot tests compare deterministic PNG files without `visual_desc`.
+- Missing resource keys and invalid `res://` paths fail before pixel comparison;
+  transparent output is not accepted as a resource-load result.
 
 ## Alternatives Considered
 

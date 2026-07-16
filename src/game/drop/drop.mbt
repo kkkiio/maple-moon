@@ -164,7 +164,7 @@ pub fn MesoDrop::MesoDrop(
   t : Int,
   mode : Int,
   player_drop : Bool,
-  icon : @resource.NxAnimation,
+  icon : @res.NxAnimation,
 ) -> MesoDrop {
   let base = DropBase(oid, owner, start, dest, t, mode, player_drop)
   let selene_anim = @ms_animation.from_nx_animation(icon, loop_=true)
@@ -277,7 +277,7 @@ pub fn ItemDrop::ItemDrop(
   mode : Int,
   _iid : Int,
   player_drop : Bool,
-  icon : @resource.NxTexture,
+  icon : @res.NxTexture,
 ) -> ItemDrop {
   let base = DropBase(oid, owner, start, dest, t, mode, player_drop)
   let selene_picture = @ms_animation.from_nx_texture(icon)

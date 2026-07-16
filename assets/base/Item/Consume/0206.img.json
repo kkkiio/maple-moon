@@ -1,0 +1,426 @@
+{
+  "02060000": {
+    "bullet": {
+      "mx_animation": "0206.img/animations/02060000__bullet.json"
+    },
+    "info": {
+      "icon": {
+        "__i": "0206.img/bitmap/15773.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ]
+      },
+      "iconRaw": {
+        "__i": "0206.img/bitmap/15774.png",
+        "__w": 32,
+        "__h": 31,
+        "origin": [
+          0,
+          32
+        ]
+      },
+      "price": 0,
+      "slotMax": 2000
+    }
+  },
+  "02060001": {
+    "bullet": {
+      "mx_animation": "0206.img/animations/02060001__bullet.json"
+    },
+    "info": {
+      "icon": {
+        "__i": "0206.img/bitmap/15776.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ]
+      },
+      "iconRaw": {
+        "__i": "0206.img/bitmap/15777.png",
+        "__w": 32,
+        "__h": 31,
+        "origin": [
+          0,
+          32
+        ]
+      },
+      "incPAD": 1,
+      "price": 5,
+      "slotMax": 1800
+    }
+  },
+  "02060002": {
+    "bullet": {
+      "mx_animation": "0206.img/animations/02060002__bullet.json"
+    },
+    "info": {
+      "icon": {
+        "__i": "0206.img/bitmap/15779.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ]
+      },
+      "iconRaw": {
+        "__i": "0206.img/bitmap/15780.png",
+        "__w": 32,
+        "__h": 31,
+        "origin": [
+          0,
+          32
+        ]
+      },
+      "incPAD": 2,
+      "price": 10,
+      "slotMax": 1600
+    }
+  },
+  "02060003": {
+    "bullet": {
+      "mx_animation": "0206.img/animations/02060003__bullet.json"
+    },
+    "info": {
+      "icon": {
+        "__i": "0206.img/bitmap/15737.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ]
+      },
+      "iconRaw": {
+        "__i": "0206.img/bitmap/15738.png",
+        "__w": 32,
+        "__h": 31,
+        "origin": [
+          0,
+          32
+        ]
+      },
+      "incPAD": 4,
+      "price": 20,
+      "slotMax": 1000
+    }
+  },
+  "02060004": {
+    "bullet": {
+      "mx_animation": "0206.img/animations/02060004__bullet.json"
+    },
+    "info": {
+      "icon": {
+        "__i": "0206.img/bitmap/15765.png",
+        "__w": 34,
+        "__h": 34,
+        "origin": [
+          0,
+          32
+        ]
+      },
+      "iconRaw": {
+        "__i": "0206.img/bitmap/15766.png",
+        "__w": 28,
+        "__h": 28,
+        "origin": [
+          0,
+          32
+        ]
+      },
+      "incPAD": 4,
+      "price": 20,
+      "slotMax": 1000
+    }
+  },
+  "02060005": {
+    "bullet": {
+      "mx_animation": "0206.img/animations/02060005__bullet.json"
+    },
+    "hit": {
+      "0": {
+        "__i": "0206.img/bitmap/15747.png",
+        "__w": 55,
+        "__h": 38,
+        "delay": 90,
+        "origin": [
+          13,
+          20
+        ]
+      },
+      "1": {
+        "__i": "0206.img/bitmap/15748.png",
+        "__w": 43,
+        "__h": 55,
+        "delay": 100,
+        "origin": [
+          17,
+          29
+        ]
+      },
+      "2": {
+        "__i": "0206.img/bitmap/15749.png",
+        "__w": 51,
+        "__h": 65,
+        "delay": 100,
+        "origin": [
+          26,
+          34
+        ]
+      },
+      "3": {
+        "__i": "0206.img/bitmap/15750.png",
+        "__w": 62,
+        "__h": 87,
+        "delay": 100,
+        "origin": [
+          34,
+          57
+        ]
+      }
+    },
+    "info": {
+      "icon": {
+        "__i": "0206.img/bitmap/15741.png",
+        "__w": 26,
+        "__h": 25,
+        "origin": [
+          -3,
+          25
+        ],
+        "z": 0
+      },
+      "iconRaw": {
+        "__i": "0206.img/bitmap/15742.png",
+        "__w": 20,
+        "__h": 18,
+        "origin": [
+          -6,
+          25
+        ],
+        "z": 0
+      },
+      "incPAD": 10,
+      "reqLevel": 10,
+      "slotMax": 800,
+      "tradeBlock": 1
+    }
+  },
+  "02060006": {
+    "bullet": {
+      "mx_animation": "0206.img/animations/02060006__bullet.json"
+    },
+    "hit": {
+      "0": {
+        "__i": "0206.img/bitmap/15757.png",
+        "__w": 83,
+        "__h": 57,
+        "delay": 90,
+        "origin": [
+          24,
+          29
+        ]
+      },
+      "1": {
+        "__i": "0206.img/bitmap/15758.png",
+        "__w": 64,
+        "__h": 83,
+        "delay": 100,
+        "origin": [
+          27,
+          42
+        ]
+      },
+      "2": {
+        "__i": "0206.img/bitmap/15759.png",
+        "__w": 77,
+        "__h": 98,
+        "delay": 100,
+        "origin": [
+          39,
+          51
+        ]
+      },
+      "3": {
+        "__i": "0206.img/bitmap/15760.png",
+        "__w": 94,
+        "__h": 123,
+        "delay": 100,
+        "origin": [
+          50,
+          76
+        ]
+      }
+    },
+    "info": {
+      "icon": {
+        "__i": "0206.img/bitmap/15751.png",
+        "__w": 26,
+        "__h": 29,
+        "origin": [
+          -3,
+          29
+        ],
+        "z": 0
+      },
+      "iconRaw": {
+        "__i": "0206.img/bitmap/15752.png",
+        "__w": 25,
+        "__h": 23,
+        "origin": [
+          -3,
+          29
+        ],
+        "z": 0
+      },
+      "incPAD": 10,
+      "reqLevel": 10,
+      "slotMax": 800,
+      "tradeBlock": 1
+    }
+  },
+  "02061000": {
+    "bullet": {
+      "mx_animation": "0206.img/animations/02061000__bullet.json"
+    },
+    "info": {
+      "icon": {
+        "__i": "0206.img/bitmap/15782.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ]
+      },
+      "iconRaw": {
+        "__i": "0206.img/bitmap/15783.png",
+        "__w": 32,
+        "__h": 31,
+        "origin": [
+          0,
+          32
+        ]
+      },
+      "price": 0,
+      "slotMax": 2000
+    }
+  },
+  "02061001": {
+    "bullet": {
+      "mx_animation": "0206.img/animations/02061001__bullet.json"
+    },
+    "info": {
+      "icon": {
+        "__i": "0206.img/bitmap/15785.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ]
+      },
+      "iconRaw": {
+        "__i": "0206.img/bitmap/15786.png",
+        "__w": 32,
+        "__h": 31,
+        "origin": [
+          0,
+          32
+        ]
+      },
+      "incPAD": 1,
+      "price": 5,
+      "slotMax": 1800
+    }
+  },
+  "02061002": {
+    "bullet": {
+      "mx_animation": "0206.img/animations/02061002__bullet.json"
+    },
+    "info": {
+      "icon": {
+        "__i": "0206.img/bitmap/15788.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ]
+      },
+      "iconRaw": {
+        "__i": "0206.img/bitmap/15789.png",
+        "__w": 32,
+        "__h": 31,
+        "origin": [
+          0,
+          32
+        ]
+      },
+      "incPAD": 2,
+      "price": 10,
+      "slotMax": 1600
+    }
+  },
+  "02061003": {
+    "bullet": {
+      "mx_animation": "0206.img/animations/02061003__bullet.json"
+    },
+    "info": {
+      "icon": {
+        "__i": "0206.img/bitmap/15761.png",
+        "__w": 32,
+        "__h": 32,
+        "origin": [
+          0,
+          32
+        ]
+      },
+      "iconRaw": {
+        "__i": "0206.img/bitmap/15762.png",
+        "__w": 32,
+        "__h": 31,
+        "origin": [
+          0,
+          32
+        ]
+      },
+      "incPAD": 4,
+      "price": 20,
+      "slotMax": 1000
+    }
+  },
+  "02061004": {
+    "bullet": {
+      "mx_animation": "0206.img/animations/02061004__bullet.json"
+    },
+    "info": {
+      "icon": {
+        "__i": "0206.img/bitmap/15769.png",
+        "__w": 34,
+        "__h": 34,
+        "origin": [
+          0,
+          32
+        ]
+      },
+      "iconRaw": {
+        "__i": "0206.img/bitmap/15770.png",
+        "__w": 28,
+        "__h": 28,
+        "origin": [
+          0,
+          32
+        ]
+      },
+      "incPAD": 4,
+      "price": 20,
+      "slotMax": 1000
+    }
+  }
+}

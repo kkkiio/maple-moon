@@ -36,23 +36,23 @@ fn load_animations(src : Json) -> Map[StanceType, MobAnimation] raise {
 
 ///|
 pub(all) struct MobAnimations {
-  fly : @resource.NxAnimation?
-  stand : @resource.NxAnimation?
-  move_ : @resource.NxAnimation?
-  jump : @resource.NxAnimation?
-  hit1 : @resource.NxAnimation
-  die1 : @resource.NxAnimation
+  fly : @res.NxAnimation?
+  stand : @res.NxAnimation?
+  move_ : @res.NxAnimation?
+  jump : @res.NxAnimation?
+  hit1 : @res.NxAnimation
+  die1 : @res.NxAnimation
 } derive(@json.FromJson(fields(move_(rename="move"))), Debug)
 
 ///|
 fn load_animation(src : Json) -> MobAnimation raise @json.JsonDecodeError {
-  let nx : @resource.NxAnimation = @json.from_json(src)
+  let nx : @res.NxAnimation = @json.from_json(src)
   nx_animation_to_mob_animation(nx, loop_=false)
 }
 
 ///|
 fn nx_animation_to_mob_animation(
-  nx : @resource.NxAnimation,
+  nx : @res.NxAnimation,
   loop_~ : Bool,
 ) -> MobAnimation {
   let selene = @ms_animation.from_nx_animation(nx, loop_~)
@@ -83,7 +83,7 @@ test "parse monster" {
         "delay": 180,
         "head": [-4, -34],
         "origin": [30, 32],
-        "__i": "mob/0100101.img_die1.png",
+        "__i": "res://Mob/0100101.img_die1.png",
         "__off": [0, 0],
       },
       "1": {
@@ -92,7 +92,7 @@ test "parse monster" {
         "delay": 180,
         "head": [-6, -22],
         "origin": [30, 32],
-        "__i": "mob/0100101.img_die1.png",
+        "__i": "res://Mob/0100101.img_die1.png",
         "__off": [56, 0],
       },
       "2": {
@@ -103,7 +103,7 @@ test "parse monster" {
         "delay": 300,
         "head": [-10, -12],
         "origin": [30, 32],
-        "__i": "mob/0100101.img_die1.png",
+        "__i": "res://Mob/0100101.img_die1.png",
         "__off": [112, 0],
       },
     },
@@ -116,7 +116,7 @@ test "parse monster" {
         "lt": [-16, -39],
         "origin": [16, 39],
         "rb": [25, 0],
-        "__i": "mob/0100101.img_hit1.png",
+        "__i": "res://Mob/0100101.img_hit1.png",
         "__off": [0, 0],
       },
     },
@@ -148,7 +148,7 @@ test "parse monster" {
         "lt": [-16, -34],
         "origin": [16, 34],
         "rb": [19, 0],
-        "__i": "mob/0100101.img_move.png",
+        "__i": "res://Mob/0100101.img_move.png",
         "__off": [0, 0],
       },
       "1": {
@@ -159,7 +159,7 @@ test "parse monster" {
         "lt": [-13, -34],
         "origin": [16, 34],
         "rb": [24, 0],
-        "__i": "mob/0100101.img_move.png",
+        "__i": "res://Mob/0100101.img_move.png",
         "__off": [44, 0],
       },
       "2": {
@@ -170,7 +170,7 @@ test "parse monster" {
         "lt": [-10, -34],
         "origin": [16, 34],
         "rb": [29, 0],
-        "__i": "mob/0100101.img_move.png",
+        "__i": "res://Mob/0100101.img_move.png",
         "__off": [88, 0],
       },
       "3": {
@@ -181,7 +181,7 @@ test "parse monster" {
         "lt": [-7, -34],
         "origin": [16, 34],
         "rb": [34, 0],
-        "__i": "mob/0100101.img_move.png",
+        "__i": "res://Mob/0100101.img_move.png",
         "__off": [132, 0],
       },
       "zigzag": 1,
@@ -194,7 +194,7 @@ test "parse monster" {
         "lt": [-16, -34],
         "origin": [16, 34],
         "rb": [19, 0],
-        "__i": "mob/0100101.img_stand.png",
+        "__i": "res://Mob/0100101.img_stand.png",
         "__off": [0, 0],
       },
     },
@@ -210,7 +210,7 @@ test "parse monster" {
       #|      frames: [
       #|        {
       #|          texture: {
-      #|            i: "mob/0100101.img_stand.png",
+      #|            i: "res://Mob/0100101.img_stand.png",
       #|            w: 35,
       #|            h: 34,
       #|            offset: { x: 0, y: 0 },
@@ -230,7 +230,7 @@ test "parse monster" {
       #|      frames: [
       #|        {
       #|          texture: {
-      #|            i: "mob/0100101.img_move.png",
+      #|            i: "res://Mob/0100101.img_move.png",
       #|            w: 44,
       #|            h: 34,
       #|            offset: { x: 0, y: 0 },
@@ -242,7 +242,7 @@ test "parse monster" {
       #|        },
       #|        {
       #|          texture: {
-      #|            i: "mob/0100101.img_move.png",
+      #|            i: "res://Mob/0100101.img_move.png",
       #|            w: 44,
       #|            h: 34,
       #|            offset: { x: 44, y: 0 },
@@ -254,7 +254,7 @@ test "parse monster" {
       #|        },
       #|        {
       #|          texture: {
-      #|            i: "mob/0100101.img_move.png",
+      #|            i: "res://Mob/0100101.img_move.png",
       #|            w: 44,
       #|            h: 34,
       #|            offset: { x: 88, y: 0 },
@@ -266,7 +266,7 @@ test "parse monster" {
       #|        },
       #|        {
       #|          texture: {
-      #|            i: "mob/0100101.img_move.png",
+      #|            i: "res://Mob/0100101.img_move.png",
       #|            w: 44,
       #|            h: 34,
       #|            offset: { x: 132, y: 0 },
@@ -286,7 +286,7 @@ test "parse monster" {
       #|    frames: [
       #|      {
       #|        texture: {
-      #|          i: "mob/0100101.img_hit1.png",
+      #|          i: "res://Mob/0100101.img_hit1.png",
       #|          w: 41,
       #|          h: 39,
       #|          offset: { x: 0, y: 0 },
@@ -304,7 +304,7 @@ test "parse monster" {
       #|    frames: [
       #|      {
       #|        texture: {
-      #|          i: "mob/0100101.img_die1.png",
+      #|          i: "res://Mob/0100101.img_die1.png",
       #|          w: 56,
       #|          h: 32,
       #|          offset: { x: 0, y: 0 },
@@ -316,7 +316,7 @@ test "parse monster" {
       #|      },
       #|      {
       #|        texture: {
-      #|          i: "mob/0100101.img_die1.png",
+      #|          i: "res://Mob/0100101.img_die1.png",
       #|          w: 56,
       #|          h: 32,
       #|          offset: { x: 56, y: 0 },
@@ -328,7 +328,7 @@ test "parse monster" {
       #|      },
       #|      {
       #|        texture: {
-      #|          i: "mob/0100101.img_die1.png",
+      #|          i: "res://Mob/0100101.img_die1.png",
       #|          w: 56,
       #|          h: 32,
       #|          offset: { x: 112, y: 0 },

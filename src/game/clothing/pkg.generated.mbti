@@ -2,7 +2,7 @@
 package "KKKIIO/maple-moon/game/clothing"
 
 import {
-  "KKKIIO/maple-moon/engine/resource",
+  "KKKIIO/maple-moon/engine/res",
   "KKKIIO/maple-moon/game/char_stance",
   "KKKIIO/maple-moon/game/character_body",
   "KKKIIO/maple-moon/game/equip/slot",
@@ -20,10 +20,10 @@ pub fn resolve_anchor_shift(@character_body.BodyDrawInfo, @char_stance.StanceId,
 // Types and methods
 type Clothing derive(@debug.Debug)
 pub fn Clothing::from_resource(@item.ItemData, @character_body.BodyDrawInfo) -> Self raise
-pub fn Clothing::get_animation(Self, @char_stance.StanceId, String) -> (Array[@resource.NxFrame], Array[ClothingLayer])?
+pub fn Clothing::get_animation(Self, @char_stance.StanceId, String) -> (Array[@res.NxFrame], Array[ClothingLayer])?
 pub fn Clothing::get_eqslot(Self) -> @slot.Id
 pub fn Clothing::get_id(Self) -> Int
-pub fn Clothing::get_parts_for_stance(Self, @char_stance.StanceId) -> Map[String, (Array[@resource.NxFrame], Array[ClothingLayer])]?
+pub fn Clothing::get_parts_for_stance(Self, @char_stance.StanceId) -> Map[String, (Array[@res.NxFrame], Array[ClothingLayer])]?
 pub fn Clothing::get_stand(Self) -> @char_stance.StanceId
 pub fn Clothing::get_vslot(Self) -> String
 pub fn Clothing::get_walk(Self) -> @char_stance.StanceId
@@ -94,7 +94,7 @@ pub(all) struct NxWeaponFrame {
 pub impl @json.FromJson for NxWeaponFrame
 
 pub(all) struct NxWeaponPart {
-  texture : @resource.NxTexture
+  texture : @res.NxTexture
   z : String
   anchor : NxMapAnchor
 } derive(@debug.Debug)

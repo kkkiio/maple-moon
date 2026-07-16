@@ -57,13 +57,13 @@ pub fn CursorAnimationData::current_frame(
 /// # Example
 /// ```moonbit nocheck
 /// let data = try! CursorAnimationData::load(
-///   "assets/UI/Basic.img/Cursor/cursor_animation.json",
+///   "res://UI/Basic.img/Cursor/cursor_animation.json",
 /// )
 /// ```
 pub fn CursorAnimationData::load(
   json_path : String,
 ) -> CursorAnimationData raise {
-  let json = @resource.require_json(json_path)
+  let json = @res.require_json(json_path)
   guard json
     is {
       "frames": Array(frames_json),
@@ -187,7 +187,7 @@ pub fn CursorAnimationData::load(
   }
 
   let atlas_path = json_path.replace(old=".json", new=".png")
-  let atlas_image = @resource.require_image(atlas_path)
+  let atlas_image = @res.require_image(atlas_path)
 
   { atlas_image, animations }
 }

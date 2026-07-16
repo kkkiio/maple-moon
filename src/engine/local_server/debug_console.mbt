@@ -25,7 +25,7 @@ fn LocalServer::send_temp_set_field(
     },
     inventory_entry=InventoryEntry::{
       meso: self.player_meso,
-      slot_maxs: @resource.EnumMap(self.slot_max_by_tab),
+      slot_maxs: @res.EnumMap(self.slot_max_by_tab),
       items: current_items,
     },
     skills=[],

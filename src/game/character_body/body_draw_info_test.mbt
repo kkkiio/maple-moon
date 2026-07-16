@@ -9,7 +9,7 @@ test "parse stand1" {
         "map": { "hand": [-1, 5], "navel": [-13, -1] },
         "origin": [5, 9],
         "z": "arm",
-        "__i": "assets/Character/Body/basic_bodys.png",
+        "__i": "res://Character/Body/basic_bodys.png",
         "__off": [493, 264],
       },
       "body": {
@@ -19,7 +19,7 @@ test "parse stand1" {
         "map": { "navel": [-8, -21], "neck": [-4, -32] },
         "origin": [16, 31],
         "z": "body",
-        "__i": "assets/Character/Body/basic_bodys.png",
+        "__i": "res://Character/Body/basic_bodys.png",
         "__off": [369, 218],
       },
       "delay": 500,
@@ -33,7 +33,7 @@ test "parse stand1" {
         "map": { "hand": [-1, 5], "navel": [-13, 0] },
         "origin": [5, 9],
         "z": "arm",
-        "__i": "assets/Character/Body/basic_bodys.png",
+        "__i": "res://Character/Body/basic_bodys.png",
         "__off": [438, 322],
       },
       "body": {
@@ -43,7 +43,7 @@ test "parse stand1" {
         "map": { "navel": [-7, -20], "neck": [-4, -32] },
         "origin": [17, 31],
         "z": "body",
-        "__i": "assets/Character/Body/basic_bodys.png",
+        "__i": "res://Character/Body/basic_bodys.png",
         "__off": [391, 244],
       },
       "delay": 500,
@@ -57,7 +57,7 @@ test "parse stand1" {
         "map": { "hand": [-1, 5], "navel": [-13, -1] },
         "origin": [6, 9],
         "z": "arm",
-        "__i": "assets/Character/Body/basic_bodys.png",
+        "__i": "res://Character/Body/basic_bodys.png",
         "__off": [470, 262],
       },
       "body": {
@@ -67,12 +67,12 @@ test "parse stand1" {
         "map": { "navel": [-6, -21], "neck": [-4, -32] },
         "origin": [18, 31],
         "z": "body",
-        "__i": "assets/Character/Body/basic_bodys.png",
+        "__i": "res://Character/Body/basic_bodys.png",
         "__off": [391, 213],
       },
       "delay": 500,
       "face": 1,
     },
   }
-  let _ : @resource.MapBasedArray[NxStanceBody] = @json.from_json(stand1)
+  let _ : @res.MapBasedArray[NxStanceBody] = @json.from_json(stand1)
 }

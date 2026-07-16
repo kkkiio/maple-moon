@@ -1,19 +1,19 @@
 ///|
 priv struct QuestLogButtonResource {
-  normal : @resource.NxTexture
-  mouse_over : @resource.NxTexture
-  pressed : @resource.NxTexture
-  disabled : @resource.NxTexture
+  normal : @res.NxTexture
+  mouse_over : @res.NxTexture
+  pressed : @res.NxTexture
+  disabled : @res.NxTexture
 }
 
 ///|
 priv struct QuestListUiResource {
-  backgrnd : @resource.NxTexture
-  backgrnd2 : @resource.NxTexture
-  search_area : @resource.NxTexture
-  tab_disabled : Array[@resource.NxTexture]
-  tab_enabled : Array[@resource.NxTexture]
-  quest_state_icons : Array[@resource.NxTexture]
+  backgrnd : @res.NxTexture
+  backgrnd2 : @res.NxTexture
+  search_area : @res.NxTexture
+  tab_disabled : Array[@res.NxTexture]
+  tab_enabled : Array[@res.NxTexture]
+  quest_state_icons : Array[@res.NxTexture]
   bt_search : QuestLogButtonResource
   bt_my_level : QuestLogButtonResource
   bt_all_level : QuestLogButtonResource
@@ -23,10 +23,10 @@ priv struct QuestListUiResource {
 
 ///|
 priv struct QuestInfoUiResource {
-  backgrnd : @resource.NxTexture
-  backgrnd2 : @resource.NxTexture
-  backgrnd3 : @resource.NxTexture
-  summary : @resource.NxTexture
+  backgrnd : @res.NxTexture
+  backgrnd2 : @res.NxTexture
+  backgrnd3 : @res.NxTexture
+  summary : @res.NxTexture
   bt_giveup : QuestLogButtonResource
   bt_navi : QuestLogButtonResource
   bt_helper : QuestLogButtonResource
@@ -165,18 +165,18 @@ fn clear_entities(entities : Array[@entity.Entity]) -> Unit {
 }
 
 ///|
-fn ui_image_from_texture(texture : @resource.NxTexture) -> @selene_ui.UiImage {
+fn ui_image_from_texture(texture : @res.NxTexture) -> @selene_ui.UiImage {
   let source = ui_image_source_from_texture(texture)
   @selene_ui.UiImage::from_image(
     @selene_math.Vec2(texture.w.to_double(), texture.h.to_double()),
-    @resource.load_image(texture.i),
+    @res.require_image(texture.i),
     source=Some(source),
   )
 }
 
 ///|
 fn ui_image_source_from_texture(
-  texture : @resource.NxTexture,
+  texture : @res.NxTexture,
 ) -> @render2d_types.ImageRegion2D {
   {
     position: @selene_math.Vec2(
@@ -190,7 +190,7 @@ fn ui_image_source_from_texture(
 ///|
 fn set_image_texture(
   entity : @entity.Entity,
-  texture : @resource.NxTexture,
+  texture : @res.NxTexture,
 ) -> Unit {
   @selene_ui.ui_images().set(entity, ui_image_from_texture(texture))
 }
@@ -198,7 +198,7 @@ fn set_image_texture(
 ///|
 fn spawn_image_node(
   entities : Array[@entity.Entity],
-  texture : @resource.NxTexture,
+  texture : @res.NxTexture,
   x : Int,
   y : Int,
   z : Int,
@@ -321,9 +321,9 @@ fn spawn_rich_text_block(
 
 ///|
 fn first_frame_texture(
-  animation : @resource.NxAnimation,
+  animation : @res.NxAnimation,
   label : String,
-) -> @resource.NxTexture raise {
+) -> @res.NxTexture raise {
   guard animation.frames.length() > 0 else {
     fail("invalid button animation without frame: \{label}")
   }
@@ -348,7 +348,7 @@ fn parse_button_resource(
 fn parse_tab_textures(
   src : Json,
   label : String,
-) -> Array[@resource.NxTexture] raise {
+) -> Array[@res.NxTexture] raise {
   guard src is Object(obj) else { fail("invalid tab json: \{label}") }
   let result = []
   for i in 0..<QUEST_LOG_TAB_COUNT {
@@ -356,14 +356,14 @@ fn parse_tab_textures(
     guard obj.get(key) is Some(value) else {
       fail("missing tab state: \{label}.\{key}")
     }
-    let texture : @resource.NxTexture = @json.from_json(value)
+    let texture : @res.NxTexture = @json.from_json(value)
     result.push(texture)
   }
   result
 }
 
 ///|
-fn parse_quest_state_icons(src : Json) -> Array[@resource.NxTexture] raise {
+fn parse_quest_state_icons(src : Json) -> Array[@res.NxTexture] raise {
   guard src is Object(obj) else { fail("invalid list.questState") }
   let icon0 = match obj.get("0") {
     Some(v) => v
@@ -439,19 +439,19 @@ fn parse_quest_ui_resource(json : Json) -> QuestLogUiResource raise {
 
 ///|
 fn load_quest_ui_resource() -> QuestLogUiResource {
-  let raw : Json = @resource.require_json("assets/UI/UIWindow2.img/Quest.json")
+  let raw : Json = @res.require_json("res://UI/UIWindow2.img/Quest.json")
   parse_quest_ui_resource(raw) catch {
     _ => abort("invalid UIWindow2 Quest resource")
   }
 }
 
 ///|
-fn texture_draw_x(panel_x : Int, texture : @resource.NxTexture) -> Int {
+fn texture_draw_x(panel_x : Int, texture : @res.NxTexture) -> Int {
   panel_x - texture.origin.x
 }
 
 ///|
-fn texture_draw_y(panel_y : Int, texture : @resource.NxTexture) -> Int {
+fn texture_draw_y(panel_y : Int, texture : @res.NxTexture) -> Int {
   panel_y - texture.origin.y
 }
 

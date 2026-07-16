@@ -2,9 +2,9 @@
 package "KKKIIO/maple-moon/game/camera"
 
 import {
-  "Milky2018/selene/ecs",
-  "Milky2018/selene/entity",
-  "Milky2018/selene/math",
+  "KKKIIO/selene/ecs",
+  "KKKIIO/selene/entity",
+  "KKKIIO/selene/math",
 }
 
 // Values

@@ -222,12 +222,7 @@ fn Inventory::trigger_item_listeners(self : Inventory, t : TypeId) -> Unit {
   inventory_changed_event_bus.send({ kind: ITEM, tab: Some(t), slot: None })
   match self.item_listeners_map.get(t) {
     Some(listeners) => {
-      let survivors = Array::new()
-      for callback in listeners {
-        if callback() {
-          survivors.push(callback)
-        }
-      }
+      let survivors = [ for callback in listeners if callback() => callback ]
       self.item_listeners_map.set(t, survivors)
     }
     None => ()

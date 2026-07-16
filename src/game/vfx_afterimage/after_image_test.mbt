@@ -1,11 +1,21 @@
 ///|
+fn init {
+  @asset.set_io(fn(path) {
+    Some(@fs.read_file_to_bytes(path)) catch {
+      _ => None
+    }
+  })
+  try! @res.configure_packs([("base", "assets/base")])
+}
+
+///|
 fn create_test_resource(first_frame : Int) -> NxAfterImage {
   {
-    animation: @ms_animation.from_nx_animation(@resource.NxAnimation::{
+    animation: @ms_animation.from_nx_animation(@res.NxAnimation::{
       frames: [
         {
           texture: {
-            i: "assets/Character/Afterimage/bow.img/animation.png",
+            i: "res://Character/Afterimage/bow.img/animation.png",
             w: 10,
             h: 10,
             offset: Default::default(),
@@ -26,36 +36,25 @@ fn create_test_resource(first_frame : Int) -> NxAfterImage {
 
 ///|
 fn load_test_look(host : @entity.Entity) -> @cp.CharLook raise {
-  let bodynode = @fs.read_file_to_string(
-      "assets/Character/Body/00002000.img.json",
-    )
-    |> @json.parse
+  let bodynode = @res.require_json("res://Character/Body/00002000.img.json")
   let stance_bodys_map : @cb.NxStanceLooks[@cb.NxStanceBody] = @json.from_json(
     bodynode,
   )
-  let headnode = @fs.read_file_to_string(
-      "assets/Character/Body/00012000.img.json",
-    )
-    |> @json.parse
+  let headnode = @res.require_json("res://Character/Body/00012000.img.json")
   let stance_heads_map : @cb.NxStanceLooks[@cb.NxMultiPartFrame] = @json.from_json(
     headnode,
   )
   let draw_info = @cb.BodyDrawInfo(stance_bodys_map.0, stance_heads_map.0)
-  let hair_node : @cb.NxStanceLooks[@cb.NxMultiPartFrame] = @fs.read_file_to_string(
-      "assets/Character/Hair/00030000.img.json",
+  let hair_node : @cb.NxStanceLooks[@cb.NxMultiPartFrame] = @res.require_json(
+      "res://Character/Hair/00030000.img.json",
     )
-    |> @json.parse
     |> @json.from_json
   @cp.CharLook(
     host,
     Map([]),
     @cp.FullBody(0, draw_info, stance_bodys_map.0, stance_heads_map.0),
     @cp.Hair::parse(0, hair_node, draw_info),
-    @cp.Face(
-      20000,
-      @fs.read_file_to_string("assets/Character/Face/00020000.img.json")
-      |> @json.parse,
-    ),
+    @cp.Face(20000, @res.require_json("res://Character/Face/00020000.img.json")),
     draw_info,
   )
 }

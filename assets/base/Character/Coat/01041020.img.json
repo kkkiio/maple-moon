@@ -1,0 +1,4019 @@
+{
+  "alert": {
+    "0": {
+      "mail": {
+        "__h": 13,
+        "__w": 17,
+        "map": {
+          "navel": [
+            -2,
+            0
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          178,
+          26
+        ]
+      },
+      "mailArm": {
+        "__h": 14,
+        "__w": 8,
+        "map": {
+          "navel": [
+            -9,
+            6
+          ]
+        },
+        "origin": [
+          4,
+          4
+        ],
+        "z": "mailArmOverHair",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          134,
+          119
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 14,
+        "__w": 17,
+        "map": {
+          "navel": [
+            -2,
+            0
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          143,
+          121
+        ]
+      },
+      "mailArm": {
+        "__h": 13,
+        "__w": 7,
+        "map": {
+          "navel": [
+            -8,
+            5
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmOverHair",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          202,
+          26
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 15,
+        "__w": 17,
+        "map": {
+          "navel": [
+            -3,
+            1
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          143,
+          36
+        ]
+      },
+      "mailArm": {
+        "__h": 15,
+        "__w": 7,
+        "map": {
+          "navel": [
+            -8,
+            5
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmOverHair",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          62,
+          180
+        ]
+      }
+    }
+  },
+  "fly": {
+    "0": {
+      "mail": {
+        "__h": 13,
+        "__w": 18,
+        "map": {
+          "navel": [
+            -1,
+            2
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          90,
+          153
+        ]
+      },
+      "mailArm": {
+        "__h": 9,
+        "__w": 8,
+        "map": {
+          "navel": [
+            -9,
+            7
+          ]
+        },
+        "origin": [
+          4,
+          4
+        ],
+        "z": "mailArmOverHair",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          212,
+          112
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 13,
+        "__w": 18,
+        "map": {
+          "navel": [
+            -1,
+            2
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          90,
+          153
+        ]
+      },
+      "mailArm": {
+        "__h": 9,
+        "__w": 8,
+        "map": {
+          "navel": [
+            -9,
+            7
+          ]
+        },
+        "origin": [
+          4,
+          4
+        ],
+        "z": "mailArmOverHair",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          212,
+          112
+        ]
+      }
+    }
+  },
+  "heal": {
+    "0": {
+      "mail": {
+        "__h": 14,
+        "__w": 17,
+        "map": {
+          "navel": [
+            -2,
+            0
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          143,
+          121
+        ]
+      },
+      "mailArm": {
+        "__h": 13,
+        "__w": 7,
+        "map": {
+          "navel": [
+            -8,
+            5
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmOverHair",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          202,
+          26
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 14,
+        "__w": 15,
+        "map": {
+          "navel": [
+            -3,
+            2
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          178,
+          121
+        ]
+      },
+      "mailArm": {
+        "__h": 7,
+        "__w": 17,
+        "map": {
+          "navel": [
+            15,
+            5
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmBelowHead",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          178,
+          82
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 11,
+        "__w": 15,
+        "map": {
+          "navel": [
+            -4,
+            0
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          45,
+          166
+        ]
+      },
+      "mailArm": {
+        "__h": 9,
+        "__w": 17,
+        "map": {
+          "navel": [
+            12,
+            9
+          ]
+        },
+        "origin": [
+          4,
+          4
+        ],
+        "z": "mailArmBelowHead",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          178,
+          73
+        ]
+      }
+    }
+  },
+  "info": {
+    "cash": 0,
+    "icon": {
+      "__h": 27,
+      "__w": 30,
+      "origin": [
+        -1,
+        27
+      ],
+      "__i": "spritesheets/01041020.img.png",
+      "__off": [
+        0,
+        34
+      ]
+    },
+    "iconRaw": {
+      "__h": 21,
+      "__w": 30,
+      "origin": [
+        -1,
+        27
+      ],
+      "__i": "spritesheets/01041020.img.png",
+      "__off": [
+        34,
+        13
+      ]
+    },
+    "incDEX": 1,
+    "incPDD": 25,
+    "islot": "Ma",
+    "price": 4500,
+    "reqDEX": 0,
+    "reqINT": 0,
+    "reqJob": 1,
+    "reqLUK": 0,
+    "reqLevel": 20,
+    "reqSTR": 65,
+    "tuc": 7,
+    "vslot": "Ma"
+  },
+  "jump": {
+    "0": {
+      "mail": {
+        "__h": 13,
+        "__w": 18,
+        "map": {
+          "navel": [
+            -2,
+            1
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          108,
+          153
+        ]
+      },
+      "mailArm": {
+        "__h": 9,
+        "__w": 8,
+        "map": {
+          "navel": [
+            -10,
+            6
+          ]
+        },
+        "origin": [
+          4,
+          4
+        ],
+        "z": "mailArmOverHair",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          212,
+          121
+        ]
+      }
+    }
+  },
+  "ladder": {
+    "0": {
+      "mail": {
+        "__h": 18,
+        "__w": 21,
+        "map": {
+          "navel": [
+            1,
+            5
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "backMailChestOverPants",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          120,
+          35
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 18,
+        "__w": 21,
+        "map": {
+          "navel": [
+            0,
+            5
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "backMailChestOverPants",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          120,
+          53
+        ]
+      }
+    }
+  },
+  "prone": {
+    "0": {
+      "mail": {
+        "__h": 15,
+        "__w": 34,
+        "map": {
+          "navel": [
+            23,
+            2
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          0,
+          0
+        ]
+      },
+      "mailArm": {
+        "__h": 8,
+        "__w": 9,
+        "map": {
+          "navel": [
+            -1,
+            1
+          ]
+        },
+        "origin": [
+          4,
+          4
+        ],
+        "z": "mailArmOverHair",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          212,
+          130
+        ]
+      }
+    }
+  },
+  "proneStab": {
+    "0": {
+      "mail": {
+        "__h": 15,
+        "__w": 34,
+        "map": {
+          "navel": [
+            23,
+            2
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          0,
+          0
+        ]
+      },
+      "mailArm": {
+        "__h": 8,
+        "__w": 9,
+        "map": {
+          "navel": [
+            -1,
+            1
+          ]
+        },
+        "origin": [
+          4,
+          4
+        ],
+        "z": "mailArmOverHair",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          212,
+          130
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 15,
+        "__w": 34,
+        "map": {
+          "navel": [
+            23,
+            2
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          0,
+          0
+        ]
+      },
+      "mailArm": {
+        "__h": 8,
+        "__w": 18,
+        "map": {
+          "navel": [
+            16,
+            0
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmOverHair",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          144,
+          153
+        ]
+      }
+    }
+  },
+  "rope": {
+    "0": {
+      "mail": {
+        "__h": 20,
+        "__w": 19,
+        "map": {
+          "navel": [
+            0,
+            7
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "backMailChestOverPants",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          0,
+          119
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 14,
+        "__w": 19,
+        "map": {
+          "navel": [
+            -1,
+            1
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "backMailChestOverPants",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          0,
+          139
+        ]
+      }
+    }
+  },
+  "shoot1": {
+    "0": {
+      "mail": {
+        "__h": 12,
+        "__w": 26,
+        "map": {
+          "navel": [
+            8,
+            1
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          54,
+          61
+        ]
+      },
+      "mailArm": {
+        "__h": 9,
+        "__w": 14,
+        "map": {
+          "navel": [
+            0,
+            10
+          ]
+        },
+        "origin": [
+          4,
+          4
+        ],
+        "z": "mailArmOverHair",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          88,
+          166
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 12,
+        "__w": 26,
+        "map": {
+          "navel": [
+            8,
+            1
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          94,
+          0
+        ]
+      },
+      "mailArm": {
+        "__h": 11,
+        "__w": 11,
+        "map": {
+          "navel": [
+            -9,
+            10
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmOverHair",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          212,
+          36
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 12,
+        "__w": 26,
+        "map": {
+          "navel": [
+            8,
+            1
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          94,
+          0
+        ]
+      },
+      "mailArm": {
+        "__h": 11,
+        "__w": 11,
+        "map": {
+          "navel": [
+            -9,
+            10
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmOverHair",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          212,
+          36
+        ]
+      }
+    }
+  },
+  "shoot2": {
+    "0": {
+      "mail": {
+        "__h": 11,
+        "__w": 20,
+        "map": {
+          "navel": [
+            0,
+            1
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          48,
+          92
+        ]
+      },
+      "mailArm": {
+        "__h": 8,
+        "__w": 11,
+        "map": {
+          "navel": [
+            -8,
+            8
+          ]
+        },
+        "origin": [
+          4,
+          4
+        ],
+        "z": "mailArmOverHair",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          212,
+          87
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 11,
+        "__w": 20,
+        "map": {
+          "navel": [
+            0,
+            1
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          68,
+          92
+        ]
+      },
+      "mailArm": {
+        "__h": 7,
+        "__w": 13,
+        "map": {
+          "navel": [
+            2,
+            8
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmOverHair",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          133,
+          139
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 11,
+        "__w": 20,
+        "map": {
+          "navel": [
+            -1,
+            2
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          88,
+          92
+        ]
+      },
+      "mailArm": {
+        "__h": 6,
+        "__w": 7,
+        "map": {
+          "navel": [
+            -10,
+            7
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmOverHair",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          212,
+          138
+        ]
+      }
+    },
+    "3": {
+      "mail": {
+        "__h": 11,
+        "__w": 20,
+        "map": {
+          "navel": [
+            -1,
+            2
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          41,
+          105
+        ]
+      },
+      "mailArm": {
+        "__h": 8,
+        "__w": 11,
+        "map": {
+          "navel": [
+            -7,
+            7
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmOverHair",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          212,
+          95
+        ]
+      }
+    },
+    "4": {
+      "mail": {
+        "__h": 11,
+        "__w": 18,
+        "map": {
+          "navel": [
+            -3,
+            2
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          126,
+          153
+        ]
+      },
+      "mailArm": {
+        "__h": 8,
+        "__w": 14,
+        "map": {
+          "navel": [
+            -6,
+            7
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmOverHair",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          130,
+          166
+        ]
+      }
+    }
+  },
+  "shootF": {
+    "0": {
+      "mail": {
+        "__h": 15,
+        "__w": 27,
+        "map": {
+          "navel": [
+            11,
+            3
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          65,
+          26
+        ]
+      },
+      "mailArm": {
+        "__h": 11,
+        "__w": 12,
+        "map": {
+          "navel": [
+            -1,
+            12
+          ]
+        },
+        "origin": [
+          4,
+          4
+        ],
+        "z": "mailArmOverHair",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          108,
+          92
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 16,
+        "__w": 26,
+        "map": {
+          "navel": [
+            10,
+            4
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          26,
+          74
+        ]
+      },
+      "mailArm": {
+        "__h": 10,
+        "__w": 11,
+        "map": {
+          "navel": [
+            -9,
+            6
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmOverHair",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          212,
+          47
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 16,
+        "__w": 26,
+        "map": {
+          "navel": [
+            10,
+            4
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          26,
+          74
+        ]
+      },
+      "mailArm": {
+        "__h": 10,
+        "__w": 11,
+        "map": {
+          "navel": [
+            -9,
+            6
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmOverHair",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          212,
+          47
+        ]
+      }
+    }
+  },
+  "sit": {
+    "0": {
+      "mail": {
+        "__h": 11,
+        "__w": 13,
+        "map": {
+          "navel": [
+            -5,
+            0
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          170,
+          180
+        ]
+      },
+      "mailArm": {
+        "__h": 13,
+        "__w": 6,
+        "map": {
+          "navel": [
+            -9,
+            6
+          ]
+        },
+        "origin": [
+          4,
+          4
+        ],
+        "z": "mailArmOverHair",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          202,
+          39
+        ]
+      }
+    }
+  },
+  "stabO1": {
+    "0": {
+      "mail": {
+        "__h": 13,
+        "__w": 24,
+        "map": {
+          "navel": [
+            7,
+            2
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          0,
+          92
+        ]
+      },
+      "mailArm": {
+        "__h": 10,
+        "__w": 12,
+        "map": {
+          "navel": [
+            -9,
+            7
+          ]
+        },
+        "origin": [
+          4,
+          4
+        ],
+        "z": "mailArm",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          183,
+          180
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 13,
+        "__w": 19,
+        "map": {
+          "navel": [
+            -3,
+            2
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          38,
+          139
+        ]
+      },
+      "mailArm": {
+        "__h": 7,
+        "__w": 19,
+        "map": {
+          "navel": [
+            18,
+            6
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmOverHair",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          76,
+          139
+        ]
+      }
+    }
+  },
+  "stabO2": {
+    "0": {
+      "mail": {
+        "__h": 12,
+        "__w": 25,
+        "map": {
+          "navel": [
+            6,
+            1
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          94,
+          75
+        ]
+      },
+      "mailArm": {
+        "__h": 7,
+        "__w": 12,
+        "map": {
+          "navel": [
+            -10,
+            7
+          ]
+        },
+        "origin": [
+          4,
+          4
+        ],
+        "z": "mailArmOverHair",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          146,
+          139
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 13,
+        "__w": 18,
+        "map": {
+          "navel": [
+            -4,
+            1
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          72,
+          153
+        ]
+      },
+      "mailArm": {
+        "__h": 7,
+        "__w": 19,
+        "map": {
+          "navel": [
+            16,
+            6
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmOverHair",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          95,
+          139
+        ]
+      }
+    }
+  },
+  "stabOF": {
+    "0": {
+      "mail": {
+        "__h": 14,
+        "__w": 15,
+        "map": {
+          "navel": [
+            2,
+            3
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          15,
+          166
+        ]
+      },
+      "mailArm": {
+        "__h": 9,
+        "__w": 13,
+        "map": {
+          "navel": [
+            -1,
+            10
+          ]
+        },
+        "origin": [
+          4,
+          4
+        ],
+        "z": "mailArmOverHair",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          13,
+          195
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 12,
+        "__w": 29,
+        "map": {
+          "navel": [
+            15,
+            -1
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          65,
+          14
+        ]
+      },
+      "mailArm": {
+        "__h": 8,
+        "__w": 16,
+        "map": {
+          "navel": [
+            0,
+            4
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmOverHair",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          178,
+          113
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 13,
+        "__w": 26,
+        "map": {
+          "navel": [
+            7,
+            2
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          52,
+          74
+        ]
+      },
+      "mailArm": {
+        "__h": 7,
+        "__w": 19,
+        "map": {
+          "navel": [
+            19,
+            6
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmOverHair",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          114,
+          139
+        ]
+      }
+    }
+  },
+  "stabT1": {
+    "0": {
+      "mail": {
+        "__h": 18,
+        "__w": 18,
+        "map": {
+          "navel": [
+            0,
+            3
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          160,
+          18
+        ]
+      },
+      "mailArm": {
+        "__h": 8,
+        "__w": 19,
+        "map": {
+          "navel": [
+            -3,
+            10
+          ]
+        },
+        "origin": [
+          4,
+          4
+        ],
+        "z": "mailArmBelowHead",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          119,
+          105
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 18,
+        "__w": 19,
+        "map": {
+          "navel": [
+            -1,
+            1
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          39,
+          119
+        ]
+      },
+      "mailArm": {
+        "__h": 9,
+        "__w": 20,
+        "map": {
+          "navel": [
+            -4,
+            9
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmBelowHead",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          61,
+          105
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 13,
+        "__w": 31,
+        "map": {
+          "navel": [
+            10,
+            1
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          34,
+          0
+        ]
+      },
+      "mailArm": {
+        "__h": 7,
+        "__w": 12,
+        "map": {
+          "navel": [
+            -5,
+            6
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmBelowHead",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          157,
+          166
+        ]
+      }
+    }
+  },
+  "stabT2": {
+    "0": {
+      "mail": {
+        "__h": 16,
+        "__w": 23,
+        "map": {
+          "navel": [
+            3,
+            4
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          120,
+          0
+        ]
+      },
+      "mailArm": {
+        "__h": 11,
+        "__w": 17,
+        "map": {
+          "navel": [
+            -5,
+            12
+          ]
+        },
+        "origin": [
+          4,
+          4
+        ],
+        "z": "mailArmBelowHead",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          178,
+          62
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 19,
+        "__w": 20,
+        "map": {
+          "navel": [
+            4,
+            3
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          19,
+          119
+        ]
+      },
+      "mailArm": {
+        "__h": 9,
+        "__w": 19,
+        "map": {
+          "navel": [
+            1,
+            12
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmBelowHead",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          81,
+          105
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 14,
+        "__w": 29,
+        "map": {
+          "navel": [
+            9,
+            3
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          65,
+          0
+        ]
+      },
+      "mailArm": {
+        "__h": 14,
+        "__w": 14,
+        "map": {
+          "navel": [
+            -3,
+            7
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmBelowHead",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          103,
+          180
+        ]
+      }
+    }
+  },
+  "stabTF": {
+    "0": {
+      "mail": {
+        "__h": 14,
+        "__w": 27,
+        "map": {
+          "navel": [
+            6,
+            2
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          65,
+          41
+        ]
+      },
+      "mailArm": {
+        "__h": 9,
+        "__w": 20,
+        "map": {
+          "navel": [
+            -9,
+            13
+          ]
+        },
+        "origin": [
+          4,
+          4
+        ],
+        "z": "mailArm",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          30,
+          51
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 15,
+        "__w": 25,
+        "map": {
+          "navel": [
+            4,
+            3
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          94,
+          46
+        ]
+      },
+      "mailArm": {
+        "__h": 8,
+        "__w": 19,
+        "map": {
+          "navel": [
+            -9,
+            11
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArm",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          100,
+          105
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 14,
+        "__w": 15,
+        "map": {
+          "navel": [
+            -2,
+            3
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          30,
+          166
+        ]
+      },
+      "mailArm": {
+        "__h": 8,
+        "__w": 19,
+        "map": {
+          "navel": [
+            -5,
+            11
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmBelowHead",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          57,
+          139
+        ]
+      },
+      "mailArmOverHair": {
+        "__h": 8,
+        "__w": 13,
+        "map": {
+          "navel": [
+            0,
+            1
+          ]
+        },
+        "origin": [
+          6,
+          8
+        ],
+        "z": "mailArmOverHair",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          144,
+          166
+        ]
+      }
+    },
+    "3": {
+      "mail": {
+        "__h": 13,
+        "__w": 31,
+        "map": {
+          "navel": [
+            10,
+            1
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          34,
+          0
+        ]
+      },
+      "mailArm": {
+        "__h": 7,
+        "__w": 12,
+        "map": {
+          "navel": [
+            -5,
+            6
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmBelowHead",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          157,
+          166
+        ]
+      }
+    }
+  },
+  "stand1": {
+    "0": {
+      "mail": {
+        "__h": 12,
+        "__w": 16,
+        "map": {
+          "navel": [
+            -6,
+            0
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          178,
+          89
+        ]
+      },
+      "mailArm": {
+        "__h": 12,
+        "__w": 9,
+        "map": {
+          "navel": [
+            -11,
+            5
+          ]
+        },
+        "origin": [
+          3,
+          4
+        ],
+        "z": "mailArm",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          212,
+          24
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 13,
+        "__w": 17,
+        "map": {
+          "navel": [
+            -3,
+            1
+          ]
+        },
+        "origin": [
+          10,
+          9
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          178,
+          0
+        ]
+      },
+      "mailArm": {
+        "__h": 12,
+        "__w": 10,
+        "map": {
+          "navel": [
+            -10,
+            6
+          ]
+        },
+        "origin": [
+          3,
+          4
+        ],
+        "z": "mailArm",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          212,
+          12
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 14,
+        "__w": 17,
+        "map": {
+          "navel": [
+            -2,
+            0
+          ]
+        },
+        "origin": [
+          10,
+          9
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          143,
+          93
+        ]
+      },
+      "mailArm": {
+        "__h": 12,
+        "__w": 11,
+        "map": {
+          "navel": [
+            -10,
+            5
+          ]
+        },
+        "origin": [
+          4,
+          4
+        ],
+        "z": "mailArm",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          212,
+          0
+        ]
+      }
+    }
+  },
+  "stand2": {
+    "0": {
+      "mail": {
+        "__h": 12,
+        "__w": 16,
+        "map": {
+          "navel": [
+            -6,
+            0
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          178,
+          101
+        ]
+      },
+      "mailArm": {
+        "__h": 14,
+        "__w": 7,
+        "map": {
+          "navel": [
+            -9,
+            4
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArm",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          195,
+          42
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 13,
+        "__w": 17,
+        "map": {
+          "navel": [
+            -3,
+            1
+          ]
+        },
+        "origin": [
+          10,
+          9
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          178,
+          13
+        ]
+      },
+      "mailArm": {
+        "__h": 14,
+        "__w": 7,
+        "map": {
+          "navel": [
+            -9,
+            5
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArm",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          195,
+          56
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 14,
+        "__w": 17,
+        "map": {
+          "navel": [
+            -2,
+            0
+          ]
+        },
+        "origin": [
+          10,
+          9
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          143,
+          107
+        ]
+      },
+      "mailArm": {
+        "__h": 14,
+        "__w": 7,
+        "map": {
+          "navel": [
+            -9,
+            5
+          ]
+        },
+        "origin": [
+          3,
+          4
+        ],
+        "z": "mailArm",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          195,
+          70
+        ]
+      }
+    }
+  },
+  "swingO1": {
+    "0": {
+      "mail": {
+        "__h": 15,
+        "__w": 19,
+        "map": {
+          "navel": [
+            -4,
+            3
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          58,
+          119
+        ]
+      },
+      "mailArm": {
+        "__h": 11,
+        "__w": 9,
+        "map": {
+          "navel": [
+            9,
+            4
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArm",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          212,
+          57
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 14,
+        "__w": 19,
+        "map": {
+          "navel": [
+            -6,
+            1
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          96,
+          119
+        ]
+      },
+      "mailArm": {
+        "__h": 8,
+        "__w": 11,
+        "map": {
+          "navel": [
+            7,
+            7
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmOverHair",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          212,
+          79
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 13,
+        "__w": 19,
+        "map": {
+          "navel": [
+            -5,
+            1
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          19,
+          139
+        ]
+      },
+      "mailArm": {
+        "__h": 14,
+        "__w": 14,
+        "map": {
+          "navel": [
+            -4,
+            14
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmOverHair",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          75,
+          180
+        ]
+      }
+    }
+  },
+  "swingO2": {
+    "0": {
+      "mail": {
+        "__h": 11,
+        "__w": 15,
+        "map": {
+          "navel": [
+            -4,
+            0
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          45,
+          166
+        ]
+      },
+      "mailArm": {
+        "__h": 9,
+        "__w": 17,
+        "map": {
+          "navel": [
+            12,
+            9
+          ]
+        },
+        "origin": [
+          4,
+          4
+        ],
+        "z": "mailArmBelowHead",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          178,
+          73
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 14,
+        "__w": 15,
+        "map": {
+          "navel": [
+            -3,
+            2
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          178,
+          121
+        ]
+      },
+      "mailArm": {
+        "__h": 7,
+        "__w": 17,
+        "map": {
+          "navel": [
+            15,
+            5
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmBelowHead",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          178,
+          82
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 14,
+        "__w": 21,
+        "map": {
+          "navel": [
+            1,
+            3
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          0,
+          105
+        ]
+      },
+      "mailArm": {
+        "__h": 11,
+        "__w": 13,
+        "map": {
+          "navel": [
+            -7,
+            7
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArm",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          157,
+          180
+        ]
+      }
+    }
+  },
+  "swingO3": {
+    "0": {
+      "mail": {
+        "__h": 12,
+        "__w": 27,
+        "map": {
+          "navel": [
+            9,
+            1
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          27,
+          61
+        ]
+      },
+      "mailArm": {
+        "__h": 8,
+        "__w": 14,
+        "map": {
+          "navel": [
+            -6,
+            8
+          ]
+        },
+        "origin": [
+          4,
+          4
+        ],
+        "z": "mailArm",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          162,
+          153
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 14,
+        "__w": 15,
+        "map": {
+          "navel": [
+            -5,
+            3
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          178,
+          135
+        ]
+      },
+      "mailArm": {
+        "__h": 8,
+        "__w": 14,
+        "map": {
+          "navel": [
+            11,
+            6
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArm",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          102,
+          166
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 15,
+        "__w": 19,
+        "map": {
+          "navel": [
+            -8,
+            3
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          77,
+          119
+        ]
+      },
+      "mailArm": {
+        "__h": 11,
+        "__w": 9,
+        "map": {
+          "navel": [
+            5,
+            4
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArm",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          212,
+          68
+        ]
+      }
+    }
+  },
+  "swingOF": {
+    "0": {
+      "mail": {
+        "__h": 17,
+        "__w": 30,
+        "map": {
+          "navel": [
+            4,
+            5
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          30,
+          34
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 19,
+        "__w": 32,
+        "map": {
+          "navel": [
+            3,
+            6
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "backMailChestOverPants",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          0,
+          15
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 13,
+        "__w": 27,
+        "map": {
+          "navel": [
+            6,
+            4
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          0,
+          61
+        ]
+      }
+    },
+    "3": {
+      "mail": {
+        "__h": 17,
+        "__w": 25,
+        "map": {
+          "navel": [
+            1,
+            7
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          94,
+          12
+        ]
+      },
+      "mailArm": {
+        "__h": 15,
+        "__w": 6,
+        "map": {
+          "navel": [
+            11,
+            4
+          ]
+        },
+        "origin": [
+          4,
+          4
+        ],
+        "z": "mailArm",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          69,
+          180
+        ]
+      }
+    }
+  },
+  "swingP1": {
+    "0": {
+      "mail": {
+        "__h": 11,
+        "__w": 14,
+        "map": {
+          "navel": [
+            -5,
+            0
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          60,
+          166
+        ]
+      },
+      "mailArm": {
+        "__h": 15,
+        "__w": 9,
+        "map": {
+          "navel": [
+            4,
+            17
+          ]
+        },
+        "origin": [
+          4,
+          4
+        ],
+        "z": "mailArmOverHairBelowWeapon",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          44,
+          180
+        ]
+      },
+      "mailArmOverHair": {
+        "__h": 18,
+        "__w": 13,
+        "map": {
+          "navel": [
+            -10,
+            16
+          ]
+        },
+        "origin": [
+          6,
+          8
+        ],
+        "z": "mailArmOverHair",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          160,
+          68
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 14,
+        "__w": 25,
+        "map": {
+          "navel": [
+            6,
+            3
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          94,
+          61
+        ]
+      },
+      "mailArmOverHair": {
+        "__h": 12,
+        "__w": 13,
+        "map": {
+          "navel": [
+            5,
+            11
+          ]
+        },
+        "origin": [
+          7,
+          6
+        ],
+        "z": "mailArmOverHair",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          144,
+          180
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 13,
+        "__w": 18,
+        "map": {
+          "navel": [
+            -4,
+            2
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          36,
+          153
+        ]
+      },
+      "mailArm": {
+        "__h": 15,
+        "__w": 11,
+        "map": {
+          "navel": [
+            11,
+            2
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArm",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          22,
+          180
+        ]
+      }
+    }
+  },
+  "swingP2": {
+    "0": {
+      "mail": {
+        "__h": 18,
+        "__w": 18,
+        "map": {
+          "navel": [
+            -1,
+            7
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          160,
+          0
+        ]
+      },
+      "mailArm": {
+        "__h": 8,
+        "__w": 18,
+        "map": {
+          "navel": [
+            13,
+            5
+          ]
+        },
+        "origin": [
+          4,
+          4
+        ],
+        "z": "mailArm",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          160,
+          143
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 17,
+        "__w": 25,
+        "map": {
+          "navel": [
+            6,
+            5
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          94,
+          29
+        ]
+      },
+      "mailArm": {
+        "__h": 8,
+        "__w": 14,
+        "map": {
+          "navel": [
+            9,
+            2
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArm",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          116,
+          166
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 13,
+        "__w": 18,
+        "map": {
+          "navel": [
+            -3,
+            2
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          54,
+          153
+        ]
+      },
+      "mailArm": {
+        "__h": 16,
+        "__w": 21,
+        "map": {
+          "navel": [
+            6,
+            7
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmBelowHead",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          120,
+          87
+        ]
+      }
+    }
+  },
+  "swingPF": {
+    "0": {
+      "mail": {
+        "__h": 14,
+        "__w": 27,
+        "map": {
+          "navel": [
+            6,
+            2
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          65,
+          41
+        ]
+      },
+      "mailArm": {
+        "__h": 9,
+        "__w": 20,
+        "map": {
+          "navel": [
+            -9,
+            13
+          ]
+        },
+        "origin": [
+          4,
+          4
+        ],
+        "z": "mailArm",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          30,
+          51
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 15,
+        "__w": 25,
+        "map": {
+          "navel": [
+            4,
+            3
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          94,
+          46
+        ]
+      },
+      "mailArm": {
+        "__h": 8,
+        "__w": 19,
+        "map": {
+          "navel": [
+            -9,
+            11
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArm",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          100,
+          105
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 14,
+        "__w": 15,
+        "map": {
+          "navel": [
+            -3,
+            4
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          0,
+          166
+        ]
+      },
+      "mailArm": {
+        "__h": 15,
+        "__w": 9,
+        "map": {
+          "navel": [
+            11,
+            16
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmOverHair",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          53,
+          180
+        ]
+      },
+      "mailArmOverHair": {
+        "__h": 18,
+        "__w": 13,
+        "map": {
+          "navel": [
+            -6,
+            16
+          ]
+        },
+        "origin": [
+          6,
+          8
+        ],
+        "z": "mailArmOverHair",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          160,
+          86
+        ]
+      }
+    },
+    "3": {
+      "mail": {
+        "__h": 17,
+        "__w": 17,
+        "map": {
+          "navel": [
+            1,
+            1
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          143,
+          19
+        ]
+      },
+      "mailArm": {
+        "__h": 15,
+        "__w": 11,
+        "map": {
+          "navel": [
+            13,
+            2
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmOverHair",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          33,
+          180
+        ]
+      }
+    }
+  },
+  "swingT1": {
+    "0": {
+      "mail": {
+        "__h": 11,
+        "__w": 14,
+        "map": {
+          "navel": [
+            -6,
+            -1
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          80,
+          61
+        ]
+      },
+      "mailArm": {
+        "__h": 13,
+        "__w": 10,
+        "map": {
+          "navel": [
+            0,
+            15
+          ]
+        },
+        "origin": [
+          4,
+          4
+        ],
+        "z": "mailArmOverHairBelowWeapon",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          202,
+          0
+        ]
+      },
+      "mailArmOverHair": {
+        "__h": 18,
+        "__w": 13,
+        "map": {
+          "navel": [
+            -11,
+            15
+          ]
+        },
+        "origin": [
+          6,
+          8
+        ],
+        "z": "mailArmOverHair",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          160,
+          50
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 14,
+        "__w": 15,
+        "map": {
+          "navel": [
+            -4,
+            2
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          178,
+          149
+        ]
+      },
+      "mailArm": {
+        "__h": 9,
+        "__w": 14,
+        "map": {
+          "navel": [
+            15,
+            5
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmOverHairBelowWeapon",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          50,
+          51
+        ]
+      },
+      "mailArmOverHair": {
+        "__h": 12,
+        "__w": 13,
+        "map": {
+          "navel": [
+            5,
+            10
+          ]
+        },
+        "origin": [
+          7,
+          6
+        ],
+        "z": "mailArmOverHair",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          131,
+          180
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 13,
+        "__w": 18,
+        "map": {
+          "navel": [
+            -4,
+            1
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          160,
+          104
+        ]
+      },
+      "mailArm": {
+        "__h": 15,
+        "__w": 11,
+        "map": {
+          "navel": [
+            11,
+            1
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArm",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          0,
+          180
+        ]
+      }
+    }
+  },
+  "swingT2": {
+    "0": {
+      "mail": {
+        "__h": 18,
+        "__w": 26,
+        "map": {
+          "navel": [
+            1,
+            4
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          0,
+          74
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 12,
+        "__w": 24,
+        "map": {
+          "navel": [
+            5,
+            1
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          24,
+          92
+        ]
+      },
+      "mailArm": {
+        "__h": 6,
+        "__w": 15,
+        "map": {
+          "navel": [
+            7,
+            4
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArm",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          65,
+          55
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 13,
+        "__w": 18,
+        "map": {
+          "navel": [
+            -3,
+            2
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          160,
+          117
+        ]
+      },
+      "mailArm": {
+        "__h": 16,
+        "__w": 21,
+        "map": {
+          "navel": [
+            6,
+            7
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmBelowHeadOverMailChest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          120,
+          71
+        ]
+      }
+    }
+  },
+  "swingT3": {
+    "0": {
+      "mail": {
+        "__h": 14,
+        "__w": 18,
+        "map": {
+          "navel": [
+            -4,
+            2
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          160,
+          36
+        ]
+      },
+      "mailArm": {
+        "__h": 9,
+        "__w": 10,
+        "map": {
+          "navel": [
+            1,
+            4
+          ]
+        },
+        "origin": [
+          4,
+          4
+        ],
+        "z": "mailArm",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          212,
+          103
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 12,
+        "__w": 15,
+        "map": {
+          "navel": [
+            -2,
+            -1
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          78,
+          74
+        ]
+      },
+      "mailArm": {
+        "__h": 14,
+        "__w": 19,
+        "map": {
+          "navel": [
+            5,
+            4
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmBelowHeadOverMailChest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          115,
+          119
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 13,
+        "__w": 18,
+        "map": {
+          "navel": [
+            -3,
+            1
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          160,
+          130
+        ]
+      },
+      "mailArm": {
+        "__h": 13,
+        "__w": 14,
+        "map": {
+          "navel": [
+            16,
+            9
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmBelowHead",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          117,
+          180
+        ]
+      }
+    }
+  },
+  "swingTF": {
+    "0": {
+      "mail": {
+        "__h": 19,
+        "__w": 21,
+        "map": {
+          "navel": [
+            0,
+            9
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "backMailChestOverPants",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          120,
+          16
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 13,
+        "__w": 18,
+        "map": {
+          "navel": [
+            -1,
+            1
+          ]
+        },
+        "origin": [
+          10,
+          10
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          0,
+          153
+        ]
+      },
+      "mailArm": {
+        "__h": 9,
+        "__w": 14,
+        "map": {
+          "navel": [
+            -3,
+            8
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmBelowHeadOverMailChest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          74,
+          166
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 14,
+        "__w": 14,
+        "map": {
+          "navel": [
+            -5,
+            3
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          89,
+          180
+        ]
+      },
+      "mailArm": {
+        "__h": 19,
+        "__w": 17,
+        "map": {
+          "navel": [
+            9,
+            18
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmOverHair",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          143,
+          0
+        ]
+      }
+    },
+    "3": {
+      "mail": {
+        "__h": 13,
+        "__w": 18,
+        "map": {
+          "navel": [
+            -2,
+            3
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          18,
+          153
+        ]
+      },
+      "mailArm": {
+        "__h": 15,
+        "__w": 11,
+        "map": {
+          "navel": [
+            13,
+            3
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArmOverHair",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          11,
+          180
+        ]
+      }
+    }
+  },
+  "walk1": {
+    "0": {
+      "mail": {
+        "__h": 11,
+        "__w": 17,
+        "map": {
+          "navel": [
+            -4,
+            1
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          178,
+          51
+        ]
+      },
+      "mailArm": {
+        "__h": 9,
+        "__w": 12,
+        "map": {
+          "navel": [
+            -9,
+            7
+          ]
+        },
+        "origin": [
+          4,
+          3
+        ],
+        "z": "mailArm",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          26,
+          195
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 12,
+        "__w": 17,
+        "map": {
+          "navel": [
+            -5,
+            1
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          178,
+          39
+        ]
+      },
+      "mailArm": {
+        "__h": 14,
+        "__w": 7,
+        "map": {
+          "navel": [
+            -9,
+            4
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArm",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          195,
+          0
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 11,
+        "__w": 17,
+        "map": {
+          "navel": [
+            -4,
+            1
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          178,
+          51
+        ]
+      },
+      "mailArm": {
+        "__h": 9,
+        "__w": 12,
+        "map": {
+          "navel": [
+            -9,
+            7
+          ]
+        },
+        "origin": [
+          4,
+          3
+        ],
+        "z": "mailArm",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          26,
+          195
+        ]
+      }
+    },
+    "3": {
+      "mail": {
+        "__h": 13,
+        "__w": 20,
+        "map": {
+          "navel": [
+            -1,
+            3
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          21,
+          105
+        ]
+      },
+      "mailArm": {
+        "__h": 9,
+        "__w": 13,
+        "map": {
+          "navel": [
+            -10,
+            10
+          ]
+        },
+        "origin": [
+          4,
+          2
+        ],
+        "z": "mailArm",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          0,
+          195
+        ]
+      }
+    }
+  },
+  "walk2": {
+    "0": {
+      "mail": {
+        "__h": 14,
+        "__w": 17,
+        "map": {
+          "navel": [
+            -4,
+            1
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          143,
+          51
+        ]
+      },
+      "mailArm": {
+        "__h": 13,
+        "__w": 7,
+        "map": {
+          "navel": [
+            -9,
+            4
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArm",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          202,
+          13
+        ]
+      }
+    },
+    "1": {
+      "mail": {
+        "__h": 14,
+        "__w": 17,
+        "map": {
+          "navel": [
+            -5,
+            1
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          143,
+          65
+        ]
+      },
+      "mailArm": {
+        "__h": 14,
+        "__w": 7,
+        "map": {
+          "navel": [
+            -8,
+            4
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArm",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          195,
+          14
+        ]
+      }
+    },
+    "2": {
+      "mail": {
+        "__h": 14,
+        "__w": 17,
+        "map": {
+          "navel": [
+            -4,
+            1
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          143,
+          51
+        ]
+      },
+      "mailArm": {
+        "__h": 13,
+        "__w": 7,
+        "map": {
+          "navel": [
+            -9,
+            4
+          ]
+        },
+        "origin": [
+          3,
+          5
+        ],
+        "z": "mailArm",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          202,
+          13
+        ]
+      }
+    },
+    "3": {
+      "mail": {
+        "__h": 14,
+        "__w": 17,
+        "map": {
+          "navel": [
+            -4,
+            3
+          ]
+        },
+        "origin": [
+          11,
+          9
+        ],
+        "z": "mailChestOverHighest",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          143,
+          79
+        ]
+      },
+      "mailArm": {
+        "__h": 14,
+        "__w": 7,
+        "map": {
+          "navel": [
+            -10,
+            7
+          ]
+        },
+        "origin": [
+          3,
+          4
+        ],
+        "z": "mailArm",
+        "__i": "spritesheets/01041020.img.png",
+        "__off": [
+          195,
+          28
+        ]
+      }
+    }
+  }
+}

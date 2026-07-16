@@ -194,8 +194,16 @@ pub fn get_stage() -> Stage? {
 }
 
 ///|
-
-///|
+/// Advance resource-backed transitions between game scenes.
+///
+/// # Example
+/// ```moonbit nocheck
+/// scene_transition_system(world)
+/// ```
+///
+/// # Panics
+/// Panics after logging when a required player-start or map resource closure
+/// cannot be loaded.
 pub fn scene_transition_system(world : @ecs.World) -> Unit {
   match @game_state.current_phase() {
     @game_state.GamePhase::GameSetup => ()
@@ -252,7 +260,7 @@ pub fn scene_transition_system(world : @ecs.World) -> Unit {
           "inventory_item_count": inventory_entry.items.length(),
         })
         set_loading_data(
-          @io_service.submit_background_task(fn() {
+          @io_service.submit_background_task(fn() raise {
             let hair = @char_look.Hair::load(30000, draw_info)
             let face = @char_look.Face::load(20000)
             let weapon_data = match weapon_id {
@@ -291,7 +299,7 @@ pub fn scene_transition_system(world : @ecs.World) -> Unit {
             }
             let bullet_module = @bullet.Module::load()
             @bullet.set_bullet_module(bullet_module)
-            // Load and register skills (optional - missing skills log warning only)
+            // Load and register the required startup skill closure.
             let skill_ids = [
               @skill.SkillId::TELEPORT_FP.int_value(),
               @skill.SkillId::POWER_STRIKE.int_value(),
@@ -318,8 +326,20 @@ pub fn scene_transition_system(world : @ecs.World) -> Unit {
       guard fut.poll() is Some(res) else { return }
 
       // 3. 数据加载完成，处理结果
-      let (weapon_data, top_data, bottom_data, shoes_data, hair, face) = res
-        |> @log.unwrap_rst
+      let (weapon_data, top_data, bottom_data, shoes_data, hair, face) = match
+        res {
+        Ok(resources) => resources
+        Err(error) => {
+          @log.error("failed to load game-start resource closure", data={
+            "map_id": map_id,
+            "phase": "game_start_resources",
+            "error": error.to_string(),
+          })
+          abort(
+            "failed to load game-start resource closure: map_id=\{map_id}, error=\{error}",
+          )
+        }
+      }
 
       // 4. 创建 Character Look 并装备武器
       let char_look = try {
@@ -406,7 +426,7 @@ pub fn scene_transition_system(world : @ecs.World) -> Unit {
       let stage = stage_ref.val.unwrap()
       guard transiting_loading_ref.val is Some(fut) else {
         transiting_loading_ref.val = Some(
-          @io_service.submit_background_task(fn() {
+          @io_service.submit_background_task(fn() raise {
             let map_resources = @map.load_map_resources_by_id(map_id)
             @map.create_scene_map(map_resources, stage.map_portals_animations) catch {
               err => abort("failed to create scene map: \{map_id}, err=\{err}")
@@ -416,7 +436,19 @@ pub fn scene_transition_system(world : @ecs.World) -> Unit {
         return
       }
       guard fut.poll() is Some(res) else { return }
-      let sence_map = res |> @log.unwrap_rst
+      let sence_map = match res {
+        Ok(scene_map) => scene_map
+        Err(error) => {
+          @log.error("failed to load map resource closure", data={
+            "map_id": map_id,
+            "phase": "game_transiting_resources",
+            "error": error.to_string(),
+          })
+          abort(
+            "failed to load map resource closure: map_id=\{map_id}, error=\{error}",
+          )
+        }
+      }
       set_active_scene_map(sence_map)
       @map.set_tiled_map(
         world,

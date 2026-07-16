@@ -43,10 +43,9 @@ fn remove_ui_entry_by_entity(entity : @entity.Entity) -> Unit {
 
 ///|
 fn cleanup_invalid_ui_entities() -> Unit {
-  let entities : Array[@entity.Entity] = []
-  for entity, _entry in ui_entries_by_entity_ref.val {
-    entities.push(entity)
-  }
+  let entities = [
+    for entity, _entry in ui_entries_by_entity_ref.val => entity
+  ]
   for entity in entities {
     if !entity.is_alive() || !@selene_ui.global_ui_nodes().contains(entity) {
       remove_ui_entry_by_entity(entity)
@@ -57,28 +56,29 @@ fn cleanup_invalid_ui_entities() -> Unit {
 ///|
 fn list_ui_entries_json() -> Json {
   cleanup_invalid_ui_entities()
-  let entries : Array[Json] = []
-  for entity, entry in ui_entries_by_entity_ref.val {
-    let rect_json : Json = match @selene_ui.global_ui_nodes().get(entity) {
-      Some(global_ui_node) => {
-        let rect = global_ui_node.screen_rect
-        (
-          {
-            "x": rect.position[@selene_math.X],
-            "y": rect.position[@selene_math.Y],
-            "w": rect.size[@selene_math.X],
-            "h": rect.size[@selene_math.Y],
-          } : Json)
+  let entries : Array[Json] = [
+    for entity, entry in ui_entries_by_entity_ref.val => {
+      let rect_json : Json = match @selene_ui.global_ui_nodes().get(entity) {
+        Some(global_ui_node) => {
+          let rect = global_ui_node.screen_rect
+          (
+            {
+              "x": rect.position[@selene_math.X],
+              "y": rect.position[@selene_math.Y],
+              "w": rect.size[@selene_math.X],
+              "h": rect.size[@selene_math.Y],
+            } : Json)
+        }
+        None => Json::null()
       }
-      None => Json::null()
+      {
+        "package": entry.package_name,
+        "name": entry.ui_name,
+        "alive": entity.is_alive(),
+        "rect": rect_json,
+      }
     }
-    entries.push({
-      "package": entry.package_name,
-      "name": entry.ui_name,
-      "alive": entity.is_alive(),
-      "rect": rect_json,
-    })
-  }
+  ]
   entries.to_json()
 }
 

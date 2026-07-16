@@ -8,21 +8,19 @@ fn reset_npc_talk_ui_test_state() -> Unit {
 
 ///|
 fn load_quest_2090_quiz_text() -> String raise {
-  let quest = @fs.read_file_to_string("assets/Quest/nx.json") |> @json.parse
+  let quest = @res.load_json("res://Quest/nx.json")
   match quest {
     { "Say.img": { "2090": { "1": { "0": String(text), .. }, .. }, .. }, .. } =>
       text
-    _ => fail("assets/Quest/nx.json missing Say.img/2090 phase 1 quiz text")
+    _ => fail("res://Quest/nx.json missing Say.img/2090 phase 1 quiz text")
   }
 }
 
 ///|
 fn setup_npc_talk_resource_cache() -> Unit raise {
-  let util_dlg_ex = @resource.require_json(
-    "assets/UI/UIWindow2.img/UtilDlgEx.json",
-  )
+  let util_dlg_ex = @res.require_json("res://UI/UIWindow2.img/UtilDlgEx.json")
   let window_slice = @ui.load_ui_slice_resource(
-    "assets/UI/UIWindow2.img/UtilDlgEx/slice.json",
+    "res://UI/UIWindow2.img/UtilDlgEx/slice.json",
   )
   let resource = @npc_talk_ui.NpcTalkResource::from_resource(
     util_dlg_ex, window_slice,
@@ -73,7 +71,7 @@ fn npc_talk_setup_scene() -> @app.App raise {
   @system.configure_display(800.0, 540.0, 1.0)
   @game_state.init_state(@game_state.GamePhase::GameSetup)
   let cursor_data = @cursor.CursorAnimationData::load(
-    "assets/UI/Basic.img/Cursor/cursor_animation.json",
+    "res://UI/Basic.img/Cursor/cursor_animation.json",
   )
   @cursor.init_cursor(Cursor(cursor_data))
   let camera_anchor = @entity.Entity()

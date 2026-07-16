@@ -1,0 +1,2198 @@
+{
+  "alert": {
+    "0": {
+      "shoes": {
+        "__h": 10,
+        "__w": 25,
+        "map": {
+          "navel": [
+            2,
+            -13
+          ]
+        },
+        "origin": [
+          12,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          25,
+          111
+        ]
+      }
+    },
+    "1": {
+      "shoes": {
+        "__h": 10,
+        "__w": 25,
+        "map": {
+          "navel": [
+            2,
+            -14
+          ]
+        },
+        "origin": [
+          12,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          50,
+          111
+        ]
+      }
+    },
+    "2": {
+      "shoes": {
+        "__h": 10,
+        "__w": 25,
+        "map": {
+          "navel": [
+            2,
+            -15
+          ]
+        },
+        "origin": [
+          12,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          75,
+          111
+        ]
+      }
+    }
+  },
+  "fly": {
+    "0": {
+      "shoes": {
+        "__h": 19,
+        "__w": 15,
+        "map": {
+          "navel": [
+            -14,
+            -10
+          ]
+        },
+        "origin": [
+          13,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          145,
+          88
+        ]
+      }
+    },
+    "1": {
+      "shoes": {
+        "__h": 15,
+        "__w": 8,
+        "map": {
+          "navel": [
+            -17,
+            -14
+          ]
+        },
+        "origin": [
+          13,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          108,
+          33
+        ]
+      }
+    }
+  },
+  "heal": {
+    "0": {
+      "shoes": {
+        "__h": 10,
+        "__w": 25,
+        "map": {
+          "navel": [
+            2,
+            -14
+          ]
+        },
+        "origin": [
+          12,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          50,
+          111
+        ]
+      }
+    },
+    "1": {
+      "shoes": {
+        "__h": 10,
+        "__w": 28,
+        "map": {
+          "navel": [
+            2,
+            -13
+          ]
+        },
+        "origin": [
+          11,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          79,
+          92
+        ]
+      }
+    },
+    "2": {
+      "shoes": {
+        "__h": 10,
+        "__w": 23,
+        "map": {
+          "navel": [
+            0,
+            -15
+          ]
+        },
+        "origin": [
+          11,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          23,
+          136
+        ]
+      }
+    }
+  },
+  "info": {
+    "cash": 0,
+    "icon": {
+      "__h": 31,
+      "__w": 26,
+      "origin": [
+        -4,
+        31
+      ],
+      "__i": "spritesheets/01072050.img.png",
+      "__off": [
+        82,
+        33
+      ]
+    },
+    "iconRaw": {
+      "__h": 30,
+      "__w": 23,
+      "origin": [
+        -4,
+        31
+      ],
+      "__i": "spritesheets/01072050.img.png",
+      "__off": [
+        0,
+        81
+      ]
+    },
+    "incPDD": 9,
+    "islot": "So",
+    "price": 2500,
+    "reqDEX": 0,
+    "reqINT": 0,
+    "reqJob": 1,
+    "reqLUK": 0,
+    "reqLevel": 15,
+    "reqSTR": 50,
+    "tuc": 5,
+    "vslot": "So"
+  },
+  "jump": {
+    "0": {
+      "shoes": {
+        "__h": 13,
+        "__w": 35,
+        "map": {
+          "navel": [
+            0,
+            -11
+          ]
+        },
+        "origin": [
+          17,
+          6
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          82,
+          0
+        ]
+      }
+    }
+  },
+  "ladder": {
+    "0": {
+      "shoes": {
+        "__h": 13,
+        "__w": 16,
+        "map": {
+          "navel": [
+            0,
+            -14
+          ]
+        },
+        "origin": [
+          8,
+          6
+        ],
+        "z": "backShoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          10,
+          147
+        ]
+      }
+    },
+    "1": {
+      "shoes": {
+        "__h": 13,
+        "__w": 16,
+        "map": {
+          "navel": [
+            0,
+            -14
+          ]
+        },
+        "origin": [
+          8,
+          6
+        ],
+        "z": "backShoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          26,
+          147
+        ]
+      }
+    }
+  },
+  "prone": {
+    "0": {
+      "shoes": {
+        "__h": 6,
+        "__w": 11,
+        "map": {
+          "navel": [
+            -17,
+            0
+          ]
+        },
+        "origin": [
+          5,
+          3
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          82,
+          74
+        ]
+      }
+    }
+  },
+  "proneStab": {
+    "0": {
+      "shoes": {
+        "__h": 6,
+        "__w": 11,
+        "map": {
+          "navel": [
+            -17,
+            0
+          ]
+        },
+        "origin": [
+          5,
+          3
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          82,
+          74
+        ]
+      }
+    },
+    "1": {
+      "shoes": {
+        "__h": 6,
+        "__w": 11,
+        "map": {
+          "navel": [
+            -17,
+            0
+          ]
+        },
+        "origin": [
+          5,
+          3
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          82,
+          74
+        ]
+      }
+    }
+  },
+  "rope": {
+    "0": {
+      "shoes": {
+        "__h": 11,
+        "__w": 15,
+        "map": {
+          "navel": [
+            1,
+            -19
+          ]
+        },
+        "origin": [
+          7,
+          5
+        ],
+        "z": "backShoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          58,
+          147
+        ]
+      }
+    },
+    "1": {
+      "shoes": {
+        "__h": 11,
+        "__w": 19,
+        "map": {
+          "navel": [
+            0,
+            -12
+          ]
+        },
+        "origin": [
+          9,
+          5
+        ],
+        "z": "backShoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          145,
+          122
+        ]
+      }
+    }
+  },
+  "shoot1": {
+    "0": {
+      "shoes": {
+        "__h": 10,
+        "__w": 23,
+        "map": {
+          "navel": [
+            0,
+            -14
+          ]
+        },
+        "origin": [
+          13,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          69,
+          136
+        ]
+      }
+    },
+    "1": {
+      "shoes": {
+        "__h": 10,
+        "__w": 23,
+        "map": {
+          "navel": [
+            0,
+            -14
+          ]
+        },
+        "origin": [
+          13,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          69,
+          136
+        ]
+      }
+    },
+    "2": {
+      "shoes": {
+        "__h": 10,
+        "__w": 23,
+        "map": {
+          "navel": [
+            0,
+            -14
+          ]
+        },
+        "origin": [
+          13,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          69,
+          136
+        ]
+      }
+    }
+  },
+  "shoot2": {
+    "0": {
+      "shoes": {
+        "__h": 9,
+        "__w": 24,
+        "map": {
+          "navel": [
+            0,
+            -14
+          ]
+        },
+        "origin": [
+          11,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          49,
+          126
+        ]
+      }
+    },
+    "1": {
+      "shoes": {
+        "__h": 9,
+        "__w": 24,
+        "map": {
+          "navel": [
+            0,
+            -14
+          ]
+        },
+        "origin": [
+          11,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          49,
+          126
+        ]
+      }
+    },
+    "2": {
+      "shoes": {
+        "__h": 9,
+        "__w": 24,
+        "map": {
+          "navel": [
+            0,
+            -14
+          ]
+        },
+        "origin": [
+          11,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          49,
+          126
+        ]
+      }
+    },
+    "3": {
+      "shoes": {
+        "__h": 9,
+        "__w": 24,
+        "map": {
+          "navel": [
+            0,
+            -14
+          ]
+        },
+        "origin": [
+          11,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          49,
+          126
+        ]
+      }
+    },
+    "4": {
+      "shoes": {
+        "__h": 9,
+        "__w": 24,
+        "map": {
+          "navel": [
+            0,
+            -14
+          ]
+        },
+        "origin": [
+          11,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          49,
+          126
+        ]
+      }
+    }
+  },
+  "shootF": {
+    "0": {
+      "shoes": {
+        "__h": 10,
+        "__w": 24,
+        "map": {
+          "navel": [
+            4,
+            -14
+          ]
+        },
+        "origin": [
+          11,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          25,
+          126
+        ]
+      }
+    },
+    "1": {
+      "shoes": {
+        "__h": 10,
+        "__w": 28,
+        "map": {
+          "navel": [
+            5,
+            -13
+          ]
+        },
+        "origin": [
+          11,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          117,
+          20
+        ]
+      }
+    },
+    "2": {
+      "shoes": {
+        "__h": 10,
+        "__w": 28,
+        "map": {
+          "navel": [
+            5,
+            -13
+          ]
+        },
+        "origin": [
+          11,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          117,
+          20
+        ]
+      }
+    }
+  },
+  "sit": {
+    "0": {
+      "shoes": {
+        "__h": 10,
+        "__w": 20,
+        "map": {
+          "navel": [
+            0,
+            -10
+          ]
+        },
+        "origin": [
+          17,
+          6
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          145,
+          78
+        ]
+      }
+    }
+  },
+  "stabO1": {
+    "0": {
+      "shoes": {
+        "__h": 10,
+        "__w": 34,
+        "map": {
+          "navel": [
+            9,
+            -12
+          ]
+        },
+        "origin": [
+          11,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          82,
+          13
+        ]
+      }
+    },
+    "1": {
+      "shoes": {
+        "__h": 10,
+        "__w": 34,
+        "map": {
+          "navel": [
+            0,
+            -10
+          ]
+        },
+        "origin": [
+          11,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          82,
+          23
+        ]
+      }
+    }
+  },
+  "stabO2": {
+    "0": {
+      "shoes": {
+        "__h": 10,
+        "__w": 26,
+        "map": {
+          "navel": [
+            2,
+            -15
+          ]
+        },
+        "origin": [
+          11,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          117,
+          98
+        ]
+      }
+    },
+    "1": {
+      "shoes": {
+        "__h": 10,
+        "__w": 36,
+        "map": {
+          "navel": [
+            -1,
+            -11
+          ]
+        },
+        "origin": [
+          11,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          0,
+          62
+        ]
+      }
+    }
+  },
+  "stabOF": {
+    "0": {
+      "shoes": {
+        "__h": 8,
+        "__w": 17,
+        "map": {
+          "navel": [
+            -1,
+            -10
+          ]
+        },
+        "origin": [
+          11,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          65,
+          72
+        ]
+      }
+    },
+    "1": {
+      "shoes": {
+        "__h": 12,
+        "__w": 37,
+        "map": {
+          "navel": [
+            9,
+            -12
+          ]
+        },
+        "origin": [
+          11,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          43,
+          30
+        ]
+      }
+    },
+    "2": {
+      "shoes": {
+        "__h": 10,
+        "__w": 37,
+        "map": {
+          "navel": [
+            1,
+            -10
+          ]
+        },
+        "origin": [
+          11,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          0,
+          52
+        ]
+      }
+    }
+  },
+  "stabT1": {
+    "0": {
+      "shoes": {
+        "__h": 10,
+        "__w": 27,
+        "map": {
+          "navel": [
+            5,
+            -14
+          ]
+        },
+        "origin": [
+          11,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          117,
+          66
+        ]
+      }
+    },
+    "1": {
+      "shoes": {
+        "__h": 10,
+        "__w": 31,
+        "map": {
+          "navel": [
+            -4,
+            -13
+          ]
+        },
+        "origin": [
+          11,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          82,
+          64
+        ]
+      }
+    },
+    "2": {
+      "shoes": {
+        "__h": 11,
+        "__w": 41,
+        "map": {
+          "navel": [
+            2,
+            -8
+          ]
+        },
+        "origin": [
+          11,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          0,
+          11
+        ]
+      }
+    }
+  },
+  "stabT2": {
+    "0": {
+      "shoes": {
+        "__h": 10,
+        "__w": 23,
+        "map": {
+          "navel": [
+            -1,
+            -13
+          ]
+        },
+        "origin": [
+          11,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          46,
+          136
+        ]
+      }
+    },
+    "1": {
+      "shoes": {
+        "__h": 11,
+        "__w": 30,
+        "map": {
+          "navel": [
+            -1,
+            -10
+          ]
+        },
+        "origin": [
+          11,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          23,
+          81
+        ]
+      }
+    },
+    "2": {
+      "shoes": {
+        "__h": 11,
+        "__w": 43,
+        "map": {
+          "navel": [
+            4,
+            -8
+          ]
+        },
+        "origin": [
+          11,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          0,
+          0
+        ]
+      }
+    }
+  },
+  "stabTF": {
+    "0": {
+      "shoes": {
+        "__h": 10,
+        "__w": 39,
+        "map": {
+          "navel": [
+            1,
+            -10
+          ]
+        },
+        "origin": [
+          11,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          43,
+          20
+        ]
+      }
+    },
+    "1": {
+      "shoes": {
+        "__h": 9,
+        "__w": 36,
+        "map": {
+          "navel": [
+            0,
+            -10
+          ]
+        },
+        "origin": [
+          11,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          0,
+          72
+        ]
+      }
+    },
+    "2": {
+      "shoes": {
+        "__h": 24,
+        "__w": 21,
+        "map": {
+          "navel": [
+            1,
+            -11
+          ]
+        },
+        "origin": [
+          11,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          145,
+          24
+        ]
+      }
+    },
+    "3": {
+      "shoes": {
+        "__h": 11,
+        "__w": 41,
+        "map": {
+          "navel": [
+            2,
+            -8
+          ]
+        },
+        "origin": [
+          11,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          0,
+          11
+        ]
+      }
+    }
+  },
+  "stand1": {
+    "0": {
+      "shoes": {
+        "__h": 10,
+        "__w": 20,
+        "map": {
+          "navel": [
+            -3,
+            -16
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          145,
+          48
+        ]
+      }
+    },
+    "1": {
+      "shoes": {
+        "__h": 10,
+        "__w": 20,
+        "map": {
+          "navel": [
+            -2,
+            -15
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          145,
+          58
+        ]
+      }
+    },
+    "2": {
+      "shoes": {
+        "__h": 10,
+        "__w": 20,
+        "map": {
+          "navel": [
+            -1,
+            -16
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          145,
+          68
+        ]
+      }
+    }
+  },
+  "stand2": {
+    "0": {
+      "shoes": {
+        "__h": 10,
+        "__w": 20,
+        "map": {
+          "navel": [
+            -3,
+            -16
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          145,
+          48
+        ]
+      }
+    },
+    "1": {
+      "shoes": {
+        "__h": 10,
+        "__w": 20,
+        "map": {
+          "navel": [
+            -2,
+            -15
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          145,
+          58
+        ]
+      }
+    },
+    "2": {
+      "shoes": {
+        "__h": 10,
+        "__w": 20,
+        "map": {
+          "navel": [
+            -1,
+            -16
+          ]
+        },
+        "origin": [
+          10,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          145,
+          68
+        ]
+      }
+    }
+  },
+  "swingO1": {
+    "0": {
+      "shoes": {
+        "__h": 10,
+        "__w": 28,
+        "map": {
+          "navel": [
+            -1,
+            -11
+          ]
+        },
+        "origin": [
+          11,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          51,
+          92
+        ]
+      }
+    },
+    "1": {
+      "shoes": {
+        "__h": 11,
+        "__w": 16,
+        "map": {
+          "navel": [
+            -10,
+            -14
+          ]
+        },
+        "origin": [
+          14,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          42,
+          147
+        ]
+      }
+    },
+    "2": {
+      "shoes": {
+        "__h": 10,
+        "__w": 37,
+        "map": {
+          "navel": [
+            -6,
+            -12
+          ]
+        },
+        "origin": [
+          14,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          0,
+          42
+        ]
+      }
+    }
+  },
+  "swingO2": {
+    "0": {
+      "shoes": {
+        "__h": 10,
+        "__w": 23,
+        "map": {
+          "navel": [
+            0,
+            -15
+          ]
+        },
+        "origin": [
+          11,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          23,
+          136
+        ]
+      }
+    },
+    "1": {
+      "shoes": {
+        "__h": 10,
+        "__w": 28,
+        "map": {
+          "navel": [
+            2,
+            -13
+          ]
+        },
+        "origin": [
+          11,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          79,
+          92
+        ]
+      }
+    },
+    "2": {
+      "shoes": {
+        "__h": 10,
+        "__w": 29,
+        "map": {
+          "navel": [
+            -2,
+            -11
+          ]
+        },
+        "origin": [
+          14,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          82,
+          81
+        ]
+      }
+    }
+  },
+  "swingO3": {
+    "0": {
+      "shoes": {
+        "__h": 9,
+        "__w": 28,
+        "map": {
+          "navel": [
+            -2,
+            -12
+          ]
+        },
+        "origin": [
+          11,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          117,
+          30
+        ]
+      }
+    },
+    "1": {
+      "shoes": {
+        "__h": 10,
+        "__w": 18,
+        "map": {
+          "navel": [
+            -9,
+            -12
+          ]
+        },
+        "origin": [
+          11,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          125,
+          111
+        ]
+      }
+    },
+    "2": {
+      "shoes": {
+        "__h": 10,
+        "__w": 28,
+        "map": {
+          "navel": [
+            -8,
+            -11
+          ]
+        },
+        "origin": [
+          14,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          117,
+          0
+        ]
+      }
+    }
+  },
+  "swingOF": {
+    "0": {
+      "shoes": {
+        "__h": 9,
+        "__w": 29,
+        "map": {
+          "navel": [
+            3,
+            -13
+          ]
+        },
+        "origin": [
+          11,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          36,
+          72
+        ]
+      }
+    },
+    "1": {
+      "shoes": {
+        "__h": 15,
+        "__w": 25,
+        "map": {
+          "navel": [
+            -2,
+            -15
+          ]
+        },
+        "origin": [
+          11,
+          5
+        ],
+        "z": "backShoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          0,
+          111
+        ]
+      }
+    },
+    "2": {
+      "shoes": {
+        "__h": 18,
+        "__w": 10,
+        "map": {
+          "navel": [
+            -16,
+            -8
+          ]
+        },
+        "origin": [
+          14,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          0,
+          147
+        ]
+      }
+    },
+    "3": {
+      "shoes": {
+        "__h": 9,
+        "__w": 36,
+        "map": {
+          "navel": [
+            2,
+            -8
+          ]
+        },
+        "origin": [
+          14,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          36,
+          62
+        ]
+      }
+    }
+  },
+  "swingP1": {
+    "0": {
+      "shoes": {
+        "__h": 10,
+        "__w": 22,
+        "map": {
+          "navel": [
+            1,
+            -15
+          ]
+        },
+        "origin": [
+          11,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          114,
+          136
+        ]
+      }
+    },
+    "1": {
+      "shoes": {
+        "__h": 9,
+        "__w": 28,
+        "map": {
+          "navel": [
+            1,
+            -13
+          ]
+        },
+        "origin": [
+          11,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          117,
+          48
+        ]
+      }
+    },
+    "2": {
+      "shoes": {
+        "__h": 10,
+        "__w": 37,
+        "map": {
+          "navel": [
+            -1,
+            -11
+          ]
+        },
+        "origin": [
+          11,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          37,
+          42
+        ]
+      }
+    }
+  },
+  "swingP2": {
+    "0": {
+      "shoes": {
+        "__h": 10,
+        "__w": 25,
+        "map": {
+          "navel": [
+            0,
+            -15
+          ]
+        },
+        "origin": [
+          11,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          0,
+          126
+        ]
+      }
+    },
+    "1": {
+      "shoes": {
+        "__h": 9,
+        "__w": 28,
+        "map": {
+          "navel": [
+            1,
+            -14
+          ]
+        },
+        "origin": [
+          11,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          117,
+          57
+        ]
+      }
+    },
+    "2": {
+      "shoes": {
+        "__h": 9,
+        "__w": 37,
+        "map": {
+          "navel": [
+            0,
+            -12
+          ]
+        },
+        "origin": [
+          11,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          37,
+          52
+        ]
+      }
+    }
+  },
+  "swingPF": {
+    "0": {
+      "shoes": {
+        "__h": 10,
+        "__w": 39,
+        "map": {
+          "navel": [
+            1,
+            -10
+          ]
+        },
+        "origin": [
+          11,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          43,
+          20
+        ]
+      }
+    },
+    "1": {
+      "shoes": {
+        "__h": 9,
+        "__w": 36,
+        "map": {
+          "navel": [
+            0,
+            -10
+          ]
+        },
+        "origin": [
+          11,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          0,
+          72
+        ]
+      }
+    },
+    "2": {
+      "shoes": {
+        "__h": 24,
+        "__w": 21,
+        "map": {
+          "navel": [
+            1,
+            -11
+          ]
+        },
+        "origin": [
+          11,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          145,
+          0
+        ]
+      }
+    },
+    "3": {
+      "shoes": {
+        "__h": 9,
+        "__w": 18,
+        "map": {
+          "navel": [
+            -1,
+            -12
+          ]
+        },
+        "origin": [
+          11,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          73,
+          126
+        ]
+      }
+    }
+  },
+  "swingT1": {
+    "0": {
+      "shoes": {
+        "__h": 10,
+        "__w": 22,
+        "map": {
+          "navel": [
+            0,
+            -16
+          ]
+        },
+        "origin": [
+          11,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          92,
+          136
+        ]
+      }
+    },
+    "1": {
+      "shoes": {
+        "__h": 9,
+        "__w": 28,
+        "map": {
+          "navel": [
+            1,
+            -14
+          ]
+        },
+        "origin": [
+          11,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          117,
+          39
+        ]
+      }
+    },
+    "2": {
+      "shoes": {
+        "__h": 10,
+        "__w": 39,
+        "map": {
+          "navel": [
+            1,
+            -12
+          ]
+        },
+        "origin": [
+          11,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          0,
+          22
+        ]
+      }
+    }
+  },
+  "swingT2": {
+    "0": {
+      "shoes": {
+        "__h": 15,
+        "__w": 28,
+        "map": {
+          "navel": [
+            4,
+            -8
+          ]
+        },
+        "origin": [
+          11,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          23,
+          92
+        ]
+      }
+    },
+    "1": {
+      "shoes": {
+        "__h": 10,
+        "__w": 28,
+        "map": {
+          "navel": [
+            0,
+            -13
+          ]
+        },
+        "origin": [
+          11,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          117,
+          10
+        ]
+      }
+    },
+    "2": {
+      "shoes": {
+        "__h": 10,
+        "__w": 39,
+        "map": {
+          "navel": [
+            2,
+            -11
+          ]
+        },
+        "origin": [
+          11,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          0,
+          32
+        ]
+      }
+    }
+  },
+  "swingT3": {
+    "0": {
+      "shoes": {
+        "__h": 11,
+        "__w": 29,
+        "map": {
+          "navel": [
+            2,
+            -12
+          ]
+        },
+        "origin": [
+          11,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          53,
+          81
+        ]
+      }
+    },
+    "1": {
+      "shoes": {
+        "__h": 10,
+        "__w": 25,
+        "map": {
+          "navel": [
+            -6,
+            -11
+          ]
+        },
+        "origin": [
+          11,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          100,
+          111
+        ]
+      }
+    },
+    "2": {
+      "shoes": {
+        "__h": 10,
+        "__w": 39,
+        "map": {
+          "navel": [
+            2,
+            -12
+          ]
+        },
+        "origin": [
+          11,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          43,
+          0
+        ]
+      }
+    }
+  },
+  "swingTF": {
+    "0": {
+      "shoes": {
+        "__h": 12,
+        "__w": 10,
+        "map": {
+          "navel": [
+            -9,
+            -14
+          ]
+        },
+        "origin": [
+          11,
+          5
+        ],
+        "z": "backShoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          166,
+          0
+        ]
+      }
+    },
+    "1": {
+      "shoes": {
+        "__h": 15,
+        "__w": 19,
+        "map": {
+          "navel": [
+            -4,
+            -12
+          ]
+        },
+        "origin": [
+          11,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          145,
+          107
+        ]
+      }
+    },
+    "2": {
+      "shoes": {
+        "__h": 12,
+        "__w": 26,
+        "map": {
+          "navel": [
+            -4,
+            -11
+          ]
+        },
+        "origin": [
+          11,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          117,
+          76
+        ]
+      }
+    },
+    "3": {
+      "shoes": {
+        "__h": 10,
+        "__w": 39,
+        "map": {
+          "navel": [
+            3,
+            -10
+          ]
+        },
+        "origin": [
+          11,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          43,
+          10
+        ]
+      }
+    }
+  },
+  "walk1": {
+    "0": {
+      "shoes": {
+        "__h": 11,
+        "__w": 11,
+        "map": {
+          "navel": [
+            -8,
+            -14
+          ]
+        },
+        "origin": [
+          5,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          73,
+          147
+        ]
+      }
+    },
+    "1": {
+      "shoes": {
+        "__h": 10,
+        "__w": 26,
+        "map": {
+          "navel": [
+            -3,
+            -15
+          ]
+        },
+        "origin": [
+          13,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          117,
+          88
+        ]
+      }
+    },
+    "2": {
+      "shoes": {
+        "__h": 10,
+        "__w": 13,
+        "map": {
+          "navel": [
+            -4,
+            -15
+          ]
+        },
+        "origin": [
+          6,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          136,
+          136
+        ]
+      }
+    },
+    "3": {
+      "shoes": {
+        "__h": 11,
+        "__w": 23,
+        "map": {
+          "navel": [
+            -2,
+            -12
+          ]
+        },
+        "origin": [
+          11,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          0,
+          136
+        ]
+      }
+    }
+  },
+  "walk2": {
+    "0": {
+      "shoes": {
+        "__h": 11,
+        "__w": 11,
+        "map": {
+          "navel": [
+            -8,
+            -14
+          ]
+        },
+        "origin": [
+          5,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          73,
+          147
+        ]
+      }
+    },
+    "1": {
+      "shoes": {
+        "__h": 10,
+        "__w": 26,
+        "map": {
+          "navel": [
+            -3,
+            -15
+          ]
+        },
+        "origin": [
+          13,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          117,
+          88
+        ]
+      }
+    },
+    "2": {
+      "shoes": {
+        "__h": 10,
+        "__w": 13,
+        "map": {
+          "navel": [
+            -4,
+            -15
+          ]
+        },
+        "origin": [
+          6,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          136,
+          136
+        ]
+      }
+    },
+    "3": {
+      "shoes": {
+        "__h": 11,
+        "__w": 23,
+        "map": {
+          "navel": [
+            -2,
+            -12
+          ]
+        },
+        "origin": [
+          11,
+          5
+        ],
+        "z": "shoes",
+        "__i": "spritesheets/01072050.img.png",
+        "__off": [
+          0,
+          136
+        ]
+      }
+    }
+  }
+}

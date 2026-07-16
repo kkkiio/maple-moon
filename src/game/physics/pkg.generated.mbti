@@ -4,7 +4,7 @@ package "KKKIIO/maple-moon/game/physics"
 import {
   "KKKIIO/maple-moon/engine/utils",
   "KKKIIO/maple-moon/game/res_types",
-  "Milky2018/selene/math",
+  "KKKIIO/selene/math",
   "moonbitlang/core/debug",
   "moonbitlang/core/json",
 }

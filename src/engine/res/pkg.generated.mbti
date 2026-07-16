@@ -1,0 +1,126 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "KKKIIO/maple-moon/engine/res"
+
+import {
+  "KKKIIO/maple-moon/game/res_types",
+  "KKKIIO/selene/animation",
+  "KKKIIO/selene/asset_types",
+  "KKKIIO/selene/sprite",
+  "KKKIIO/selene/tiled",
+  "moonbitlang/core/debug",
+  "moonbitlang/core/json",
+}
+
+// Values
+pub fn clear_mounts() -> Unit
+
+pub fn configure_packs(Array[(String, String)]) -> Unit raise ResourceLoadError
+
+pub fn load_json(String) -> Json raise ResourceLoadError
+
+pub fn load_text(String) -> String raise ResourceLoadError
+
+pub fn load_tiled_map(String) -> @tiled.TiledMap raise ResourceLoadError
+
+pub fn load_tiled_map_from_mx(String) -> (String, @tiled.TiledMap) raise ResourceLoadError
+
+pub fn mount_pack(String, String) -> Unit raise ResourceLoadError
+
+pub fn[K : Eq + Hash + @json.FromJson, V : @json.FromJson] parse_enum_map(Json, path~ : @json.JsonPath) -> Map[K, V] raise @json.JsonDecodeError
+
+pub fn[T : @json.FromJson] parse_map_based_array(Json, path~ : @json.JsonPath) -> Array[T] raise @json.JsonDecodeError
+
+pub fn require_image(String) -> @asset_types.ImageHandle
+
+pub fn require_json(String) -> Json
+
+pub fn require_json_node(String, Array[String]) -> Json
+
+pub fn require_path(String) -> String
+
+pub fn resolve(String) -> String raise ResourceLoadError
+
+pub fn resolve_ref(String, String) -> String raise ResourceLoadError
+
+// Errors
+pub(all) suberror ResourceLoadError {
+  InvalidAddress(String)
+  InvalidMount(String)
+  NotFound(String)
+  DecodeFailed(String, String)
+} derive(@debug.Debug)
+
+// Types and methods
+pub(all) struct AnimationLoader {
+} derive(Default)
+pub fn AnimationLoader::AnimationLoader() -> Self
+pub fn AnimationLoader::load(Self, String) -> LoadedAnimations raise
+
+pub(all) struct EnumMap[K, V](Map[K, V]) derive(@debug.Debug)
+pub impl[K : Eq + Hash, V] Default for EnumMap[K, V]
+pub impl[K : ToJson, V : ToJson] ToJson for EnumMap[K, V]
+pub impl[K : Eq + Hash + @json.FromJson, V : @json.FromJson] @json.FromJson for EnumMap[K, V]
+
+pub struct IntMap[T](Map[Int, T]) derive(@debug.Debug)
+pub impl[T : @json.FromJson] @json.FromJson for IntMap[T]
+
+pub(all) struct LoadedAnimations {
+  clips : Map[String, SeleneClip]
+  tags : Array[String]
+}
+pub fn LoadedAnimations::clip(Self, String) -> SeleneClip raise
+pub fn LoadedAnimations::list_tags(Self) -> Array[String]
+
+pub struct MapBasedArray[T](Array[T]) derive(@debug.Debug)
+pub impl[T : @json.FromJson] @json.FromJson for MapBasedArray[T]
+
+pub struct Nullable[T](T?) derive(@debug.Debug)
+pub impl[T : @json.FromJson] @json.FromJson for Nullable[T]
+
+pub(all) struct NxAnimation {
+  frames : Array[NxFrame]
+  blend : Bool
+  zigzag : Bool
+} derive(@debug.Debug)
+pub fn NxAnimation::get_size(Self) -> (Int, Int)
+pub impl @json.FromJson for NxAnimation
+
+pub(all) struct NxFrame {
+  texture : NxTexture
+  delay : Int?
+  head : @res_types.Point[Int]?
+  bounds : @res_types.Rectangle[Int]?
+} derive(@debug.Debug)
+pub impl @json.FromJson for NxFrame
+
+pub(all) struct NxTexture {
+  i : String
+  w : Int
+  h : Int
+  offset : @res_types.Point[Int]
+  origin : @res_types.Point[Int]
+} derive(@debug.Debug)
+pub fn NxTexture::get_size(Self) -> (Int, Int)
+pub impl @json.FromJson for NxTexture
+
+pub struct ResourceKey(String) derive(Eq, @debug.Debug)
+pub fn ResourceKey::parse(String) -> Self raise ResourceLoadError
+pub fn ResourceKey::to_address(Self) -> String
+pub fn ResourceKey::to_string(Self) -> String
+
+pub(all) struct SeleneClip {
+  image : @asset_types.ImageHandle
+  layout : @sprite.TextureAtlasLayoutHandle
+  graph : @animation.AnimationGraphHandle
+  node : @animation.AnimationNodeIndex
+  anchor : @sprite.Anchor
+  duration_ms : Int
+  dimensions : @res_types.Point[Int]
+  frame_durations_ms : Array[Int]
+  frame_alphas : Array[Double]
+}
+
+// Type aliases
+
+// Traits
+

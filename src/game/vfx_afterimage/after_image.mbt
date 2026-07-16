@@ -1,5 +1,5 @@
 ///|
-using @resource {type AnimationLoader}
+using @res {type AnimationLoader}
 
 ///|
 using @struct {type Rectangle}
@@ -60,7 +60,7 @@ pub impl @json.FromJson for NxAfterImage with fn from_json(json, path) -> NxAfte
   if animation_json is Json::Null {
     raise @json.JsonDecodeError((path, "no frame data found"))
   }
-  let animation : @resource.NxAnimation = @json.from_json(
+  let animation : @res.NxAnimation = @json.from_json(
     animation_json,
     path=path.add_key(first_frame.to_string()),
   )
@@ -105,49 +105,59 @@ pub fn set_after_images(name : String, after_images : NxAfterImages) -> Unit {
 ///|
 /// Load one exported afterimage bundle by weapon/skill afterimage name.
 ///
-/// The exported bundle is `assets/Character/Afterimage/<name>.img/mx.json`.
+/// The exported bundle is `res://Character/Afterimage/<name>.img/mx.json`.
 /// `first_frame` is the paper-doll stance frame that starts playback; the
 /// referenced Aseprite tag always plays from its own first frame.
-pub fn load_after_images(name : String) -> NxAfterImages {
-  let mx_path = "assets/Character/Afterimage/\{name}.img/mx.json"
-  let src = @resource.require_json(mx_path)
+///
+/// # Example
+/// ```moonbit nocheck
+/// let afterimages = try! load_after_images("bow")
+/// ignore(afterimages)
+/// ```
+///
+/// # Errors
+/// Raises when the bundle structure, a relative animation reference, or a
+/// referenced animation tag is invalid.
+pub fn load_after_images(name : String) -> NxAfterImages raise {
+  let mx_path = "res://Character/Afterimage/\{name}.img/mx.json"
+  let src = @res.load_json(mx_path)
   guard src
     is {
       "animations_path": String(animations_path),
       "levels": Object(levels_obj),
       ..
     } else {
-    abort("invalid afterimage mx resource: \{mx_path}")
+    fail("invalid afterimage mx resource: \{mx_path}")
   }
   let loaded = AnimationLoader().load(
-    @resource.resolve_ref(mx_path, animations_path),
+    @res.resolve_ref(mx_path, animations_path),
   )
   let level_map : Map[Int, Map[String, NxAfterImage]] = Map([])
   for level_key, level_val in levels_obj {
     guard level_val is Object(stance_obj) else {
-      abort("invalid afterimage level entry: \{mx_path}/levels/\{level_key}")
+      fail("invalid afterimage level entry: \{mx_path}/levels/\{level_key}")
     }
     let level = @string.parse_int(level_key) catch {
-      _ => abort("invalid afterimage level key: \{mx_path}/levels/\{level_key}")
+      _ => fail("invalid afterimage level key: \{mx_path}/levels/\{level_key}")
     }
     let stance_map : Map[String, NxAfterImage] = Map([])
     for stance_key, stance_val in stance_obj {
       guard stance_val is Object(entry_obj) else {
-        abort(
+        fail(
           "invalid afterimage stance entry: \{mx_path}/levels/\{level_key}/\{stance_key}",
         )
       }
       let tag = match entry_obj.get("tag") {
         Some(String(tag)) => tag
         _ =>
-          abort(
+          fail(
             "missing afterimage tag: \{mx_path}/levels/\{level_key}/\{stance_key}",
           )
       }
       let first_frame = match entry_obj.get("first_frame") {
         Some(Number(first_frame, ..)) => first_frame.to_int()
         _ =>
-          abort(
+          fail(
             "missing afterimage first_frame: \{mx_path}/levels/\{level_key}/\{stance_key}",
           )
       }
@@ -155,14 +165,17 @@ pub fn load_after_images(name : String) -> NxAfterImages {
         Some(range_json) =>
           @json.from_json(range_json) catch {
             _ =>
-              abort(
+              fail(
                 "invalid afterimage range: \{mx_path}/levels/\{level_key}/\{stance_key}",
               )
           }
         None => @struct.Rectangle::from4(0, 0, 0, 0)
       }
       let clip = loaded.clip(tag) catch {
-        _ => abort("missing afterimage animation tag '\{tag}' in \{mx_path}")
+        error =>
+          fail(
+            "missing afterimage animation tag '\{tag}' in \{mx_path}: \{error}",
+          )
       }
       stance_map[stance_key] = {
         animation: @ms_animation.from_selene_clip(clip, loop_=false),

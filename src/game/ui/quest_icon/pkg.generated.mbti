@@ -2,15 +2,15 @@
 package "KKKIIO/maple-moon/game/ui/quest_icon"
 
 import {
-  "KKKIIO/maple-moon/engine/resource",
+  "KKKIIO/maple-moon/engine/res",
   "KKKIIO/maple-moon/engine/ui",
   "KKKIIO/maple-moon/game/npc",
   "KKKIIO/maple-moon/game/physics",
   "KKKIIO/maple-moon/game/player",
   "KKKIIO/maple-moon/game/quest",
   "KKKIIO/maple-moon/game/res_types",
-  "Milky2018/selene/ecs",
-  "Milky2018/selene/entity",
+  "KKKIIO/selene/ecs",
+  "KKKIIO/selene/entity",
   "moonbitlang/core/debug",
   "moonbitlang/core/json",
 }
@@ -40,7 +40,7 @@ pub fn remove_npc(Int) -> Unit
 
 pub fn select_demo_quest_by_npcs(Array[Int]) -> DemoQuestSelection?
 
-pub fn set_resources_for_test(@resource.NxAnimation, @resource.NxAnimation, @resource.NxAnimation) -> Unit
+pub fn set_resources_for_test(@res.NxAnimation, @res.NxAnimation, @res.NxAnimation) -> Unit
 
 pub fn setup(@quest.QuestResource, Json, MapQuestsResource, (@npc.TalkArgs) -> Unit) -> Unit
 
@@ -78,7 +78,7 @@ pub fn MapQuests::set_player(Self, @player.Player) -> Unit
 pub fn MapQuests::update_quest(Self, Int) -> Unit
 
 type MapQuestsResource
-pub fn MapQuestsResource::MapQuestsResource(@resource.NxAnimation, @resource.NxAnimation, @resource.NxAnimation) -> Self
+pub fn MapQuestsResource::MapQuestsResource(@res.NxAnimation, @res.NxAnimation, @res.NxAnimation) -> Self
 pub fn MapQuestsResource::load() -> Self
 
 type Module
@@ -87,7 +87,7 @@ pub fn Module::query_npc_icon(Self, Int) -> QuestIconQueryResult?
 pub(all) struct NpcQuest {
   npc_id : Int
   icon_state : QuestIconState
-  icon : @resource.NxAnimation
+  icon : @res.NxAnimation
   icon_offset : @res_types.Point[Int]
   icon_size : @res_types.Point[Int]
   quest_id : Int

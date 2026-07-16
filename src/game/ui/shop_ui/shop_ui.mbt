@@ -217,12 +217,12 @@ fn make_text_sprite(
 
 ///|
 fn nx_texture_to_inventory_icon_animation(
-  texture : @resource.NxTexture,
+  texture : @res.NxTexture,
 ) -> @ms_animation.Animation {
   Animation(
     [
       @ms_animation.AnimationFrame::{
-        image: @resource.load_image(texture.i),
+        image: @res.require_image(texture.i),
         size: @selene_math.Vec2(texture.w.to_double(), texture.h.to_double()),
         offset: @selene_math.Vec2(
           texture.offset.x.to_double(),
@@ -241,7 +241,7 @@ fn nx_texture_to_inventory_icon_animation(
 
 ///|
 fn nx_texture_to_static_animation(
-  texture : @resource.NxTexture,
+  texture : @res.NxTexture,
 ) -> @ms_animation.Animation {
   @ms_animation.Animation::single_frame(
     texture.i,
@@ -259,13 +259,13 @@ fn nx_texture_to_static_animation(
 
 ///|
 priv struct NxShop {
-  backgrnd : @resource.NxTexture
-  backgrnd2 : @resource.NxTexture
-  backgrnd3 : @resource.NxTexture
-  backgrnd4 : @resource.NxTexture
-  select : @resource.NxTexture
-  select2 : @resource.NxTexture
-  meso : @resource.NxTexture
+  backgrnd : @res.NxTexture
+  backgrnd2 : @res.NxTexture
+  backgrnd3 : @res.NxTexture
+  backgrnd4 : @res.NxTexture
+  select : @res.NxTexture
+  select2 : @res.NxTexture
+  meso : @res.NxTexture
   tab_buy : NxShopTabGroup
   tab_sell : NxShopTabGroup
   bt_buy : NxShopButton
@@ -287,35 +287,35 @@ priv struct NxShop {
 
 ///|
 priv struct NxShopTabGroup {
-  enabled : Array[@resource.NxTexture]
-  disabled : Array[@resource.NxTexture]
+  enabled : Array[@res.NxTexture]
+  disabled : Array[@res.NxTexture]
 }
 
 ///|
 priv struct NxShopButton {
-  normal : @resource.NxTexture
+  normal : @res.NxTexture
 }
 
 ///|
 priv struct NxShopCheckBox {
-  off : @resource.NxTexture
+  off : @res.NxTexture
 }
 
 ///|
 fn parse_texture_array(
   json : Json,
   path : @json.JsonPath,
-) -> Array[@resource.NxTexture] raise @json.JsonDecodeError {
+) -> Array[@res.NxTexture] raise @json.JsonDecodeError {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError((path, "expected object for texture array"))
   }
-  let kvs : Array[(Int, @resource.NxTexture)] = []
+  let kvs : Array[(Int, @res.NxTexture)] = []
   for key, value in obj {
     let index = @string.parse_int(key) catch {
       _ =>
         raise @json.JsonDecodeError((path.add_key(key), "tab key is not int"))
     }
-    let texture : @resource.NxTexture = @json.from_json(
+    let texture : @res.NxTexture = @json.from_json(
       value,
       path=path.add_key(key),
     )
@@ -332,7 +332,7 @@ fn parse_texture_array(
       0
     }
   })
-  let textures : Array[@resource.NxTexture] = []
+  let textures : Array[@res.NxTexture] = []
   for kv in kvs {
     textures.push(kv.1)
   }
@@ -358,7 +358,7 @@ impl @json.FromJson for NxShopTabGroup with fn from_json(json, path) {
 impl @json.FromJson for NxShopButton with fn from_json(json, path) {
   match json {
     { "normal": { "0": normal_json, .. }, .. } => {
-      let normal : @resource.NxTexture = @json.from_json(
+      let normal : @res.NxTexture = @json.from_json(
         normal_json,
         path=path.add_key("normal").add_key("0"),
       )
@@ -372,7 +372,7 @@ impl @json.FromJson for NxShopButton with fn from_json(json, path) {
 impl @json.FromJson for NxShopCheckBox with fn from_json(json, path) {
   match json {
     { "0": off_json, .. } => {
-      let off : @resource.NxTexture = @json.from_json(
+      let off : @res.NxTexture = @json.from_json(
         off_json,
         path=path.add_key("0"),
       )
@@ -384,7 +384,7 @@ impl @json.FromJson for NxShopCheckBox with fn from_json(json, path) {
 
 ///|
 fn load_ui_resources() -> UiResources {
-  let shop2 = @resource.require_json("assets/UI/UIWindow2.img/Shop2.json")
+  let shop2 = @res.require_json("res://UI/UIWindow2.img/Shop2.json")
   parse_ui_resources_from_shop2_json(shop2) catch {
     _ => abort("invalid Shop2 ui resource")
   }

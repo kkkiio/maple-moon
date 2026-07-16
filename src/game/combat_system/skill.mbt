@@ -17,11 +17,22 @@ struct Skill {
 }
 
 ///|
-pub fn Skill::load(skill_id : Int) -> Skill {
+/// Load and compile one skill's runtime actions and effects.
+///
+/// # Example
+/// ```moonbit nocheck
+/// let skill = try! Skill::load(1001004)
+/// ignore(skill)
+/// ```
+///
+/// # Errors
+/// Raises with `skill_id` context when a referenced bullet, cast effect, or hit
+/// effect resource cannot be loaded.
+pub fn Skill::load(skill_id : Int) -> Skill raise {
   let data = @skill.SkillData::load(skill_id)
   let strid = @utils.stoi_left_pad0(skill_id, 7)
   let jobid = strid.view(end_offset=3)
-  let skill_base_path = "assets/Skill/\{jobid}.img.json"
+  let skill_base_path = "res://Skill/\{jobid}.img.json"
   Skill(
     skill_id,
     data.src,
@@ -31,10 +42,27 @@ pub fn Skill::load(skill_id : Int) -> Skill {
     data.stats,
     data.req_weapon,
     SkillSound(skill_id),
-  )
+  ) catch {
+    error =>
+      fail("failed to compile skill: skill_id=\{skill_id}, error=\{error}")
+  }
 }
 
 ///|
+/// Compile runtime behavior from a decoded skill document.
+///
+/// Callers normally use `Skill::load`, which supplies the decoded document and
+/// canonical resource base.
+///
+/// # Example
+/// ```moonbit nocheck
+/// let skill = try! Skill::load(1001004)
+/// ignore(skill)
+/// ```
+///
+/// # Errors
+/// Raises when any bullet, cast effect, or hit effect animation reference is
+/// invalid or missing.
 pub fn Skill::Skill(
   skill_id : Int,
   src : Json,
@@ -44,7 +72,7 @@ pub fn Skill::Skill(
   stats : Map[Int, @skill.Stats],
   req_weapon : @weapon.Type,
   sound : SkillSound,
-) -> Skill {
+) -> Skill raise {
   let mut projectile = true
   let mut over_regular = false
   let has_action0 = json_get_string(skill_get_path(src, ["action", "0"]))
@@ -110,7 +138,7 @@ pub fn Skill::Skill(
         continue
       }
       let resource : @char_look.NxAfterImage = @json.from_json(v) catch {
-        _ => abort("invalid skill afterimage resource: \{k}")
+        error => fail("invalid skill afterimage resource: \{k}, error=\{error}")
       }
       after_image.set(k, resource)
     }
@@ -334,11 +362,21 @@ pub fn Skill::apply_hit_sfx(
 pub struct UseEffect((@character.Character) -> Unit)
 
 ///|
+/// Compile the cast effect selected by a decoded skill document.
+///
+/// # Example
+/// ```moonbit nocheck
+/// let effect = try! make_use_effect({}, 0, "res://Skill/000.img.json")
+/// ignore(effect)
+/// ```
+///
+/// # Errors
+/// Raises when the selected effect references an invalid or missing animation.
 pub fn make_use_effect(
   src : Json,
   skill_id : Int,
   skill_base_path : String,
-) -> UseEffect {
+) -> UseEffect raise {
   let by_level_effect = json_has_children(
     skill_get_path(src, ["CharLevel", "10", "effect"]),
   )
@@ -376,17 +414,27 @@ struct NxSkill {
 pub impl @json.FromJson for NxSkill with fn from_json(json, path) {
   let hit = match json {
     { "hit": hit, .. } =>
-      @resource.parse_map_based_array(hit, path=path.add_key("hit"))
+      @res.parse_map_based_array(hit, path=path.add_key("hit"))
     _ => []
   }
   { hit, }
 }
 
 ///|
+/// Compile the hit effect selected by a decoded skill document.
+///
+/// # Example
+/// ```moonbit nocheck
+/// let effect = try! make_hit_effect({}, "res://Skill/000.img.json")
+/// ignore(effect)
+/// ```
+///
+/// # Errors
+/// Raises when a hit entry or its referenced animation is invalid or missing.
 pub fn make_hit_effect(
   src : Json,
   skill_base_path : String,
-) -> (@combat_proto.AttackUser, @monster.Mob) -> Unit {
+) -> ((@combat_proto.AttackUser, @monster.Mob) -> Unit) raise {
   let by_level_hit = json_has_children(
     skill_get_path(src, ["CharLevel", "10", "hit"]),
   )
@@ -394,7 +442,7 @@ pub fn make_hit_effect(
     skill_get_path(src, ["level", "1", "hit"]),
   )
   let res : NxSkill = @json.from_json(src) catch {
-    _ => abort("invalid skill hit effect resource")
+    error => fail("invalid skill hit effect resource: error=\{error}")
   }
   let has_hit0 = res.hit.get(0) is Some(_)
   let has_hit1 = res.hit.get(1) is Some(_)

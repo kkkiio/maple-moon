@@ -23,15 +23,15 @@ priv struct ButtonStateResource {
   mouse_over : @ms_animation.Animation
   pressed : @ms_animation.Animation
   disabled : @ms_animation.Animation
-  normal_texture : @resource.NxTexture
+  normal_texture : @res.NxTexture
 }
 
 ///|
 priv struct WorldMapUIResource {
-  border_texture : @resource.NxTexture
-  search_background_texture : @resource.NxTexture
-  search_notice_texture : @resource.NxTexture
-  title_texture : @resource.NxTexture
+  border_texture : @res.NxTexture
+  search_background_texture : @res.NxTexture
+  search_notice_texture : @res.NxTexture
+  title_texture : @res.NxTexture
   close_hitbox : Hitbox
   button_resources : Map[ButtonId, ButtonStateResource]
 }
@@ -40,21 +40,21 @@ priv struct WorldMapUIResource {
 priv struct WorldMapMarkerResource {
   cur_pos : @ms_animation.Animation
   npc_pos : Array[@ms_animation.Animation]
-  map_images : Array[@resource.NxTexture]
+  map_images : Array[@res.NxTexture]
   map_image_sizes : Array[(Int, Int)]
 }
 
 ///|
 priv struct WorldMapTooltipResource {
-  line : @resource.NxTexture
-  mob : @resource.NxTexture
-  npc : @resource.NxTexture
-  party : @resource.NxTexture
+  line : @res.NxTexture
+  mob : @res.NxTexture
+  npc : @res.NxTexture
+  party : @res.NxTexture
 }
 
 ///|
 priv struct WorldMapLink {
-  link_img_texture : @resource.NxTexture
+  link_img_texture : @res.NxTexture
   link_map : String
   // tooltip : String
 }
@@ -63,7 +63,7 @@ priv struct WorldMapLink {
 priv struct WorldMapSpot {
   title : String
   description : String
-  path_texture : @resource.NxTexture?
+  path_texture : @res.NxTexture?
   spot_x : Int
   spot_y : Int
   type_ : Int
@@ -72,7 +72,7 @@ priv struct WorldMapSpot {
 
 ///|
 priv struct WorldMapPageResource {
-  base_img_texture : @resource.NxTexture
+  base_img_texture : @res.NxTexture
   parent_map : String
   map_links : Array[WorldMapLink]
   map_spots : Array[WorldMapSpot]
@@ -80,19 +80,19 @@ priv struct WorldMapPageResource {
 
 ///|
 priv struct NxWorldMapSearch {
-  background : @resource.NxTexture
-  notice : @resource.NxTexture
+  background : @res.NxTexture
+  notice : @res.NxTexture
 } derive(@json.FromJson(fields(background(rename="backgrnd"))))
 
 ///|
 priv struct NxWorldMapUI {
-  border : @resource.NxAnimation
+  border : @res.NxAnimation
   bt_search : @ui.NxMapleButton
   bt_all : @ui.NxMapleButton
   bt_auto_fly : @ui.NxMapleButton
   bt_navi_register : @ui.NxMapleButton
   search : NxWorldMapSearch
-  title : @resource.NxTexture
+  title : @res.NxTexture
 } derive (
   @json.FromJson(
     fields(
@@ -108,15 +108,15 @@ priv struct NxWorldMapUI {
 
 ///|
 priv struct NxWorldMapMarker {
-  cur_pos : @resource.NxAnimation
-  npc_pos0 : @resource.NxAnimation
-  npc_pos1 : @resource.NxAnimation
-  npc_pos2 : @resource.NxAnimation
-  npc_pos3 : @resource.NxAnimation
-  map_image0 : @resource.NxTexture
-  map_image1 : @resource.NxTexture
-  map_image2 : @resource.NxTexture
-  map_image3 : @resource.NxTexture
+  cur_pos : @res.NxAnimation
+  npc_pos0 : @res.NxAnimation
+  npc_pos1 : @res.NxAnimation
+  npc_pos2 : @res.NxAnimation
+  npc_pos3 : @res.NxAnimation
+  map_image0 : @res.NxTexture
+  map_image1 : @res.NxTexture
+  map_image2 : @res.NxTexture
+  map_image3 : @res.NxTexture
 }
 
 ///|
@@ -166,10 +166,10 @@ impl @json.FromJson for NxWorldMapMarker with fn from_json(json, path) -> NxWorl
 
 ///|
 priv struct NxWorldMapToolTip {
-  line : @resource.NxTexture
-  mob : @resource.NxTexture
-  npc : @resource.NxTexture
-  party : @resource.NxTexture
+  line : @res.NxTexture
+  mob : @res.NxTexture
+  npc : @res.NxTexture
+  party : @res.NxTexture
 }
 
 ///|
@@ -190,7 +190,7 @@ impl @json.FromJson for NxWorldMapToolTip with fn from_json(json, path) -> NxWor
 
 ///|
 priv struct NxWorldMapLinkInner {
-  link_img : @resource.NxTexture
+  link_img : @res.NxTexture
   link_map : String
 } derive (
   @json.FromJson(fields(link_img(rename="linkImg"), link_map(rename="linkMap"))),
@@ -214,7 +214,7 @@ impl @json.FromJson for NxWorldMapLink with fn from_json(json, path) -> NxWorldM
 priv struct NxWorldMapSpot {
   title : String?
   desc : String?
-  path : @resource.NxTexture?
+  path : @res.NxTexture?
   spot_x : Int
   spot_y : Int
   type_ : Int
@@ -277,7 +277,7 @@ priv struct NxWorldMapInfo {
 
 ///|
 priv struct NxWorldMapPage {
-  base_img : @resource.NxAnimation
+  base_img : @res.NxAnimation
   map_links : Array[NxWorldMapLink]
   map_spots : Array[NxWorldMapSpot]
   info : NxWorldMapInfo
@@ -289,7 +289,7 @@ impl @json.FromJson for NxWorldMapPage with fn from_json(json, path) -> NxWorldM
     { "BaseImg": base_img, "MapList": map_list, "info": info, .. } => {
       let map_links = match json {
         { "MapLink": map_link, .. } =>
-          @resource.parse_map_based_array(
+          @res.parse_map_based_array(
             map_link,
             path=path.add_key("MapLink"),
           )
@@ -298,7 +298,7 @@ impl @json.FromJson for NxWorldMapPage with fn from_json(json, path) -> NxWorldM
       {
         base_img: @json.from_json(base_img, path=path.add_key("BaseImg")),
         map_links,
-        map_spots: @resource.parse_map_based_array(
+        map_spots: @res.parse_map_based_array(
           map_list,
           path=path.add_key("MapList"),
         ),
@@ -631,20 +631,20 @@ fn load_ui_resources(
 ) -> UiResources {
   let ui_json = match ui_json {
     Some(json) => json
-    None => @resource.require_json("assets/UI/UIWindow2.img/WorldMap.json")
+    None => @res.require_json("res://UI/UIWindow2.img/WorldMap.json")
   }
   let tooltip_json = match tooltip_json {
     Some(json) => json
     None =>
-      @resource.json_navigate("assets/UI/UIWindow2.img/ToolTip.json", [
+      @res.require_json_node("res://UI/UIWindow2.img/ToolTip.json", [
         "WorldMap",
       ])
   }
   let map_helper_json = match map_helper_json {
     Some(json) => json
     None =>
-      @resource.require_json(
-        "assets/spritesheets/Map/MapHelper.img/worldMap.json",
+      @res.require_json(
+        "res://Map/MapHelper.img/worldMap.json",
       )
   }
   let ui = parse_world_map_ui_resource(ui_json) catch {
@@ -667,7 +667,7 @@ fn load_world_map_page(
 ) -> (String, WorldMapPageResource) {
   let json = match injected_json {
     Some(json) => json
-    None => @resource.require_json("assets/Map/WorldMap/" + name + ".img.json")
+    None => @res.require_json("res://Map/WorldMap/" + name + ".img.json")
   }
   let page = parse_world_map_page_resource(json, marker) catch {
     _ => abort("invalid world map page resource: \{name}")
@@ -702,7 +702,7 @@ fn point_in_hitbox(hitbox : Hitbox, pos : @selene_math.Vec2) -> Bool {
 ///|
 fn button_hitbox(
   state : State,
-  texture : @resource.NxTexture,
+  texture : @res.NxTexture,
   extra_x? : Int = 0,
 ) -> Hitbox {
   make_hitbox(
@@ -971,13 +971,13 @@ fn spawn_rect(
 ///|
 fn spawn_texture(
   state : State,
-  texture : @resource.NxTexture,
+  texture : @res.NxTexture,
   x : Int,
   y : Int,
   z : Int,
 ) -> Unit {
   let animation = @ms_animation.Animation::single_frame_from_image(
-    @resource.load_image(texture.i),
+    @res.require_image(texture.i),
     @selene_math.Vec2(texture.w.to_double(), texture.h.to_double()),
     offset=@selene_math.Vec2(
       texture.offset.x.to_double(),

@@ -23,7 +23,7 @@ pub const HIDE_SECONDS : Int = 12
 /// # Example
 /// ```moonbit nocheck
 /// let data = try! CursorAnimationData::load(
-///   "assets/UI/Basic.img/Cursor/cursor_animation.json",
+///   "res://UI/Basic.img/Cursor/cursor_animation.json",
 /// )
 ///
 /// let cursor = Cursor(data)
@@ -148,7 +148,7 @@ let cursor : Ref[Cursor?] = Ref(None)
 ///
 /// # Example
 /// ```moonbit nocheck
-/// let data = try! CursorAnimationData::load("assets/UI/Basic.img/Cursor/cursor_animation.json")
+/// let data = try! CursorAnimationData::load("res://UI/Basic.img/Cursor/cursor_animation.json")
 /// init_cursor(Cursor(data))
 /// ```
 pub fn init_cursor(c : Cursor) -> Unit {

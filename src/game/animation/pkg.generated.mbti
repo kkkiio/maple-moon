@@ -2,25 +2,25 @@
 package "KKKIIO/maple-moon/game/animation"
 
 import {
-  "KKKIIO/maple-moon/engine/resource",
-  "Milky2018/selene/asset_types",
-  "Milky2018/selene/entity",
-  "Milky2018/selene/math",
-  "Milky2018/selene/sprite",
+  "KKKIIO/maple-moon/engine/res",
+  "KKKIIO/selene/asset_types",
+  "KKKIIO/selene/entity",
+  "KKKIIO/selene/math",
+  "KKKIIO/selene/sprite",
 }
 
 // Values
 pub fn animation_dimensions(Animation) -> @math.Vec2
 
-pub fn from_nx_animation(@resource.NxAnimation, loop_? : Bool) -> Animation
+pub fn from_nx_animation(@res.NxAnimation, loop_? : Bool) -> Animation
 
-pub fn from_nx_texture(@resource.NxTexture, size? : @math.Vec2, repeat? : @math.RepeatMode, flip_x? : Bool) -> Picture
+pub fn from_nx_texture(@res.NxTexture, size? : @math.Vec2, repeat? : @math.RepeatMode, flip_x? : Bool) -> Picture
 
-pub fn from_selene_clip(@resource.SeleneClip, loop_? : Bool) -> Animation
+pub fn from_selene_clip(@res.SeleneClip, loop_? : Bool) -> Animation
 
 pub fn is_animation_finished(@entity.Entity) -> Bool
 
-pub fn nx_texture_to_picture_spec(@resource.NxTexture, size? : @math.Vec2, repeat? : @math.RepeatMode, flip_x? : Bool) -> PictureSpec
+pub fn nx_texture_to_picture_spec(@res.NxTexture, size? : @math.Vec2, repeat? : @math.RepeatMode, flip_x? : Bool) -> PictureSpec
 
 pub fn play_animation(@entity.Entity, Animation, loop_? : Bool, transform? : @math.Transform) -> Unit
 
@@ -38,7 +38,7 @@ pub fn stop_animation(@entity.Entity) -> Unit
 
 // Types and methods
 pub(all) struct Animation {
-  clip : @resource.SeleneClip
+  clip : @res.SeleneClip
   loop_ : Bool
 }
 pub fn Animation::Animation(Array[AnimationFrame], loop_? : Bool) -> Self

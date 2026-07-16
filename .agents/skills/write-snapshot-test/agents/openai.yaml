@@ -1,0 +1,4 @@
+interface:
+  display_name: "Write Snapshot Test"
+  short_description: "Write focused Maple Moon inspect and pixel snapshot tests."
+  default_prompt: "Use $write-snapshot-test to add a focused snapshot test for this behavior."

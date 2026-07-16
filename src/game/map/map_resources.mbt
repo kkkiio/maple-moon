@@ -3,7 +3,7 @@ pub(all) struct MapRawResources {
   id : Int
   mx_map : MxMap
   tiled_map : @tiled.TiledMap
-  background_animations : Map[String, @resource.SeleneClip]
+  background_animations : Map[String, @res.SeleneClip]
 }
 
 ///|
@@ -22,13 +22,23 @@ pub impl @json.FromJson for MxMap with fn from_json(json, path) {
 
 ///|
 /// Loads the raw map resources by map id.
-pub fn load_map_resources_by_id(map_id : Int) -> MapRawResources {
-  guard map_id >= 0 else { abort("invalid map_id=\{map_id}") }
+///
+/// # Example
+/// ```moonbit nocheck
+/// let resources = try! load_map_resources_by_id(100000000)
+/// inspect(resources.id, content="100000000")
+/// ```
+///
+/// # Errors
+/// Raises when `map_id` is invalid, the map closure cannot be loaded, or a
+/// referenced background animation has no `main` tag.
+pub fn load_map_resources_by_id(map_id : Int) -> MapRawResources raise {
+  guard map_id >= 0 else { fail("invalid map_id=\{map_id}") }
   let prefix = (map_id / 100000000).to_string()
   let strid = @utils.stoi_left_pad0(map_id, 9)
-  let mx_path = ["Map\{prefix}", "\{strid}.img.mx.json"]
-  @log.info("loading map mx resource", data={ "path": mx_path })
-  let (tiled_path, tiled_map) = @resource.load_tiled_map_from_mx(mx_path)
+  let mx_address = "res://Map/Map\{prefix}/\{strid}.img.mx.json"
+  @log.info("loading map mx resource", data={ "address": mx_address })
+  let (tiled_path, tiled_map) = @res.load_tiled_map_from_mx(mx_address)
   let animation_loader = AnimationLoader()
   let background_animations = load_tiled_background_animations(
     tiled_path, tiled_map, animation_loader,
@@ -48,31 +58,20 @@ fn aseprite_to_json_path(path : String) -> String? {
 fn load_tiled_background_animations(
   tiled_path : String,
   tiled_map : @tiled.TiledMap,
-  animation_loader : @resource.AnimationLoader,
-) -> Map[String, @resource.SeleneClip] {
-  let loaded : Map[String, @resource.SeleneClip] = Map([])
+  animation_loader : @res.AnimationLoader,
+) -> Map[String, @res.SeleneClip] raise {
+  let loaded : Map[String, @res.SeleneClip] = Map([])
   for layer in tiled_map.layers {
     guard layer.kind is ImageLayer(image_layer) else { continue }
     guard image_layer.image is Some(image_path) else { continue }
     guard aseprite_to_json_path(image_path) is Some(json_path) else { continue }
-    let resolved_json_path = @resource.resolve_ref(tiled_path, json_path)
+    let resolved_json_path = @res.resolve_ref(tiled_path, json_path)
     let clips = animation_loader.load(resolved_json_path)
-    let clip = if clips.list_tags().contains("main") {
-      clips.clip("main") catch {
-        err =>
-          abort(
-            "missing main background animation: \{resolved_json_path}, error=\{err}",
-          )
-      }
-    } else if clips.list_tags().is_empty() {
-      abort("no tags in background animation: \{resolved_json_path}")
-    } else {
-      clips.clip(clips.list_tags()[0]) catch {
-        err =>
-          abort(
-            "missing fallback background animation: \{resolved_json_path}, error=\{err}",
-          )
-      }
+    let clip = clips.clip("main") catch {
+      error =>
+        fail(
+          "missing required main background animation: \{resolved_json_path}, error=\{error}",
+        )
     }
     loaded[layer.name] = clip
   }
@@ -172,4 +171,4 @@ test "parse misssing" {
 }
 
 ///|
-using @resource {type AnimationLoader}
+using @res {type AnimationLoader}

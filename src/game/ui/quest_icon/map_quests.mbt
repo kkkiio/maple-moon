@@ -49,19 +49,19 @@ priv struct PlayerDeps {
 /// Resources for `MapQuests`.
 struct MapQuestsResource {
   /// Icon shown when a quest is available from an NPC.
-  available_quest_icon : @resource.NxAnimation
+  available_quest_icon : @res.NxAnimation
   /// Icon shown when a quest is in progress with an NPC.
-  inprogress_quest_icon : @resource.NxAnimation
+  inprogress_quest_icon : @res.NxAnimation
   /// Icon shown when a quest can be completed with an NPC.
-  completed_quest_icon : @resource.NxAnimation
+  completed_quest_icon : @res.NxAnimation
 }
 
 ///|
 /// Creates quest icon resources from caller-provided animations.
 pub fn MapQuestsResource::MapQuestsResource(
-  available_quest_icon : @resource.NxAnimation,
-  inprogress_quest_icon : @resource.NxAnimation,
-  completed_quest_icon : @resource.NxAnimation,
+  available_quest_icon : @res.NxAnimation,
+  inprogress_quest_icon : @res.NxAnimation,
+  completed_quest_icon : @res.NxAnimation,
 ) -> MapQuestsResource {
   { available_quest_icon, inprogress_quest_icon, completed_quest_icon }
 }
@@ -71,17 +71,17 @@ pub fn MapQuestsResource::MapQuestsResource(
 pub fn MapQuestsResource::load() -> MapQuestsResource {
   {
     available_quest_icon: @json.from_json(
-      @resource.json_navigate("assets/UI/UIWindow2.img/QuestIcon.json", ["0"]),
+      @res.require_json_node("res://UI/UIWindow2.img/QuestIcon.json", ["0"]),
     ) catch {
       _ => abort("invalid available quest icon")
     },
     inprogress_quest_icon: @json.from_json(
-      @resource.json_navigate("assets/UI/UIWindow2.img/QuestIcon.json", ["1"]),
+      @res.require_json_node("res://UI/UIWindow2.img/QuestIcon.json", ["1"]),
     ) catch {
       _ => abort("invalid in-progress quest icon")
     },
     completed_quest_icon: @json.from_json(
-      @resource.json_navigate("assets/UI/UIWindow2.img/QuestIcon.json", ["2"]),
+      @res.require_json_node("res://UI/UIWindow2.img/QuestIcon.json", ["2"]),
     ) catch {
       _ => abort("invalid completed quest icon")
     },
@@ -313,7 +313,7 @@ fn NpcQuestRuntime::inrange(
 pub(all) struct NpcQuest {
   npc_id : Int
   icon_state : QuestIconState
-  icon : @resource.NxAnimation
+  icon : @res.NxAnimation
   icon_offset : @struct.Point[Int]
   icon_size : @struct.Point[Int]
   quest_id : Int
@@ -326,7 +326,7 @@ fn NpcQuest::NpcQuest(
   in_progress_quest : (Int, Bool)?,
   npc_id : Int,
   icon_state : QuestIconState,
-  icon : @resource.NxAnimation,
+  icon : @res.NxAnimation,
 ) -> NpcQuest {
   {
     quest_id,

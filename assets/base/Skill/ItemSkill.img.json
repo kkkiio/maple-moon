@@ -1,0 +1,426 @@
+{
+  "10000": {
+    "info": "봉인",
+    "level": {
+      "1": {
+        "mob": {
+          "0": {
+            "__i": "ItemSkill.img/bitmap/15207.png",
+            "__w": 40,
+            "__h": 31,
+            "delay": 300,
+            "origin": [
+              13,
+              50
+            ]
+          },
+          "1": {
+            "__i": "ItemSkill.img/bitmap/15208.png",
+            "__w": 40,
+            "__h": 31,
+            "delay": 300,
+            "origin": [
+              13,
+              50
+            ]
+          },
+          "2": {
+            "__i": "ItemSkill.img/bitmap/15209.png",
+            "__w": 40,
+            "__h": 31,
+            "delay": 300,
+            "origin": [
+              13,
+              50
+            ]
+          },
+          "3": {
+            "__i": "ItemSkill.img/bitmap/15210.png",
+            "__w": 40,
+            "__h": 31,
+            "delay": 300,
+            "origin": [
+              13,
+              50
+            ]
+          },
+          "pos": 2,
+          "repeat": 1
+        },
+        "mpCon": 5,
+        "prop": 10,
+        "time": 10
+      }
+    }
+  },
+  "10001": {
+    "info": "암흑",
+    "level": {
+      "1": {
+        "mob": {
+          "0": {
+            "__i": "ItemSkill.img/bitmap/15211.png",
+            "__w": 46,
+            "__h": 48,
+            "delay": 100,
+            "origin": [
+              23,
+              52
+            ]
+          },
+          "1": {
+            "__i": "ItemSkill.img/bitmap/15212.png",
+            "__w": 47,
+            "__h": 49,
+            "delay": 100,
+            "origin": [
+              24,
+              54
+            ]
+          },
+          "2": {
+            "__i": "ItemSkill.img/bitmap/15213.png",
+            "__w": 44,
+            "__h": 49,
+            "delay": 100,
+            "origin": [
+              24,
+              55
+            ]
+          },
+          "3": {
+            "__i": "ItemSkill.img/bitmap/15214.png",
+            "__w": 45,
+            "__h": 48,
+            "delay": 100,
+            "origin": [
+              25,
+              54
+            ]
+          },
+          "4": {
+            "__i": "ItemSkill.img/bitmap/15215.png",
+            "__w": 45,
+            "__h": 47,
+            "delay": 100,
+            "origin": [
+              25,
+              52
+            ]
+          },
+          "5": {
+            "__i": "ItemSkill.img/bitmap/15216.png",
+            "__w": 45,
+            "__h": 51,
+            "delay": 100,
+            "origin": [
+              24,
+              54
+            ]
+          },
+          "6": {
+            "__i": "ItemSkill.img/bitmap/15217.png",
+            "__w": 48,
+            "__h": 50,
+            "delay": 100,
+            "origin": [
+              25,
+              55
+            ]
+          },
+          "pos": 2,
+          "repeat": 1
+        },
+        "mpCon": 5,
+        "prop": 10,
+        "time": 20,
+        "x": 70
+      }
+    }
+  },
+  "10002": {
+    "info": "스턴",
+    "level": {
+      "1": {
+        "mob": {
+          "0": {
+            "__i": "ItemSkill.img/bitmap/15218.png",
+            "__w": 66,
+            "__h": 18,
+            "delay": 100,
+            "origin": [
+              33,
+              9
+            ]
+          },
+          "1": {
+            "__i": "ItemSkill.img/bitmap/15219.png",
+            "__w": 58,
+            "__h": 17,
+            "delay": 100,
+            "origin": [
+              29,
+              9
+            ]
+          },
+          "2": {
+            "__i": "ItemSkill.img/bitmap/15220.png",
+            "__w": 58,
+            "__h": 17,
+            "delay": 100,
+            "origin": [
+              28,
+              9
+            ]
+          },
+          "pos": 2,
+          "repeat": 1
+        },
+        "mpCon": 5,
+        "prop": 10,
+        "time": 5
+      },
+      "2": {
+        "mob": {
+          "0": {
+            "__i": "ItemSkill.img/bitmap/15221.png",
+            "__w": 66,
+            "__h": 18,
+            "delay": 100,
+            "origin": [
+              33,
+              9
+            ]
+          },
+          "1": {
+            "__i": "ItemSkill.img/bitmap/15222.png",
+            "__w": 58,
+            "__h": 17,
+            "delay": 100,
+            "origin": [
+              29,
+              9
+            ]
+          },
+          "2": {
+            "__i": "ItemSkill.img/bitmap/15223.png",
+            "__w": 58,
+            "__h": 17,
+            "delay": 100,
+            "origin": [
+              28,
+              9
+            ]
+          },
+          "pos": 2,
+          "repeat": 1
+        },
+        "mpCon": 1,
+        "prop": 10,
+        "time": 10
+      }
+    }
+  },
+  "10003": {
+    "info": "도트",
+    "level": {
+      "1": {
+        "mob": {
+          "0": {
+            "__i": "ItemSkill.img/bitmap/15224.png",
+            "__w": 26,
+            "__h": 37,
+            "delay": 70,
+            "origin": [
+              13,
+              28
+            ]
+          },
+          "1": {
+            "__i": "ItemSkill.img/bitmap/15225.png",
+            "__w": 29,
+            "__h": 41,
+            "delay": 70,
+            "origin": [
+              14,
+              28
+            ]
+          },
+          "2": {
+            "__i": "ItemSkill.img/bitmap/15226.png",
+            "__w": 37,
+            "__h": 40,
+            "delay": 70,
+            "origin": [
+              17,
+              30
+            ]
+          },
+          "3": {
+            "__i": "ItemSkill.img/bitmap/15227.png",
+            "__w": 38,
+            "__h": 42,
+            "delay": 70,
+            "origin": [
+              19,
+              30
+            ]
+          },
+          "4": {
+            "__i": "ItemSkill.img/bitmap/15228.png",
+            "__w": 33,
+            "__h": 36,
+            "delay": 70,
+            "origin": [
+              16,
+              28
+            ],
+            "z": 0
+          },
+          "pos": 2,
+          "repeat": 1
+        },
+        "mpCon": 5,
+        "prop": 10,
+        "time": 30,
+        "x": 120
+      },
+      "2": {
+        "mob": {
+          "0": {
+            "__i": "ItemSkill.img/bitmap/15229.png",
+            "__w": 26,
+            "__h": 37,
+            "delay": 70,
+            "origin": [
+              13,
+              28
+            ]
+          },
+          "1": {
+            "__i": "ItemSkill.img/bitmap/15230.png",
+            "__w": 29,
+            "__h": 41,
+            "delay": 70,
+            "origin": [
+              14,
+              28
+            ]
+          },
+          "2": {
+            "__i": "ItemSkill.img/bitmap/15231.png",
+            "__w": 37,
+            "__h": 40,
+            "delay": 70,
+            "origin": [
+              17,
+              30
+            ]
+          },
+          "3": {
+            "__i": "ItemSkill.img/bitmap/15232.png",
+            "__w": 38,
+            "__h": 42,
+            "delay": 70,
+            "origin": [
+              19,
+              30
+            ]
+          },
+          "4": {
+            "__i": "ItemSkill.img/bitmap/15233.png",
+            "__w": 33,
+            "__h": 36,
+            "delay": 70,
+            "origin": [
+              16,
+              28
+            ],
+            "z": 0
+          },
+          "pos": 2,
+          "repeat": 1
+        },
+        "mpCon": 5,
+        "prop": 5,
+        "time": 10,
+        "x": 300
+      }
+    }
+  },
+  "10004": {
+    "info": "결빙",
+    "level": {
+      "1": {
+        "mpCon": 5,
+        "prop": 10,
+        "time": 5
+      }
+    }
+  },
+  "10005": {
+    "info": "슬로우",
+    "level": {
+      "1": {
+        "mob": {
+          "0": {
+            "__i": "ItemSkill.img/bitmap/15234.png",
+            "__w": 48,
+            "__h": 38,
+            "delay": 100,
+            "origin": [
+              24,
+              19
+            ]
+          },
+          "1": {
+            "__i": "ItemSkill.img/bitmap/15235.png",
+            "__w": 46,
+            "__h": 38,
+            "delay": 100,
+            "origin": [
+              23,
+              19
+            ]
+          },
+          "2": {
+            "__i": "ItemSkill.img/bitmap/15236.png",
+            "__w": 45,
+            "__h": 38,
+            "delay": 100,
+            "origin": [
+              22,
+              19
+            ]
+          },
+          "3": {
+            "__i": "ItemSkill.img/bitmap/15237.png",
+            "__w": 45,
+            "__h": 36,
+            "delay": 100,
+            "origin": [
+              22,
+              18
+            ]
+          },
+          "4": {
+            "__i": "ItemSkill.img/bitmap/15238.png",
+            "__w": 41,
+            "__h": 34,
+            "delay": 100,
+            "origin": [
+              20,
+              17
+            ]
+          },
+          "pos": 3,
+          "repeat": 1
+        },
+        "mpCon": 5,
+        "prop": 10,
+        "time": 10,
+        "x": -50
+      }
+    }
+  }
+}

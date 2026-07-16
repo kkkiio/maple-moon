@@ -15,8 +15,8 @@ import {
   "KKKIIO/maple-moon/game/skill",
   "KKKIIO/maple-moon/game/vfx_afterimage",
   "KKKIIO/maple-moon/game/weapon",
-  "Milky2018/selene/ecs",
-  "Milky2018/selene/event",
+  "KKKIIO/selene/ecs",
+  "KKKIIO/selene/event",
   "moonbitlang/core/debug",
   "moonbitlang/core/json",
 }
@@ -34,38 +34,38 @@ pub let hit_event_bus : @event.Events[HitEvent]
 
 pub fn is_empty() -> Bool
 
-pub fn load_teleport_use_effect() -> (@character.Character) -> Unit
+pub fn load_teleport_use_effect() -> ((@character.Character) -> Unit) raise
 
 #callsite(autofill(loc))
 pub fn[E : Show] log_background_err(@utils.Future[Result[Unit, E]], loc~ : SourceLoc) -> @utils.Future[Unit]
 
 pub fn make_attack_range(@combat_proto.Attack) -> @res_types.Rectangle[Int]
 
-pub fn make_hit_effect(Json, String) -> (@combat_proto.AttackUser, @monster.Mob) -> Unit
+pub fn make_hit_effect(Json, String) -> ((@combat_proto.AttackUser, @monster.Mob) -> Unit) raise
 
 pub fn make_regular_attack(@character.Character, Int, @combat_proto.AttackType, Bool, max_target_count? : Int) -> @combat_proto.Attack
 
-pub fn make_use_effect(Json, Int, String) -> UseEffect
+pub fn make_use_effect(Json, Int, String) -> UseEffect raise
 
-pub fn new_by_level_hit_effect(Json, String) -> (@combat_proto.AttackUser, @monster.Mob) -> Unit
+pub fn new_by_level_hit_effect(Json, String) -> ((@combat_proto.AttackUser, @monster.Mob) -> Unit) raise
 
-pub fn new_by_level_twohanded_hit_effect(Json, String) -> (@combat_proto.AttackUser, @monster.Mob) -> Unit
+pub fn new_by_level_twohanded_hit_effect(Json, String) -> ((@combat_proto.AttackUser, @monster.Mob) -> Unit) raise
 
-pub fn new_by_level_use_effect(Json, String) -> (@character.Character) -> Unit
+pub fn new_by_level_use_effect(Json, String) -> ((@character.Character) -> Unit) raise
 
-pub fn new_by_skill_level_hit_effect(Json, String) -> (@combat_proto.AttackUser, @monster.Mob) -> Unit
+pub fn new_by_skill_level_hit_effect(Json, String) -> ((@combat_proto.AttackUser, @monster.Mob) -> Unit) raise
 
 pub fn new_iron_body_use_effect() -> (@character.Character) -> Unit
 
-pub fn new_multi_use_effect(Json, String) -> (@character.Character) -> Unit
+pub fn new_multi_use_effect(Json, String) -> ((@character.Character) -> Unit) raise
 
-pub fn new_single_hit_effect(NxHitEffect, String) -> (@combat_proto.AttackUser, @monster.Mob) -> Unit
+pub fn new_single_hit_effect(NxHitEffect, String) -> ((@combat_proto.AttackUser, @monster.Mob) -> Unit) raise
 
-pub fn new_single_use_effect(Json, String) -> (@character.Character) -> Unit
+pub fn new_single_use_effect(Json, String) -> ((@character.Character) -> Unit) raise
 
-pub fn new_twohanded_hit_effect(NxHitEffect, NxHitEffect, String) -> (@combat_proto.AttackUser, @monster.Mob) -> Unit
+pub fn new_twohanded_hit_effect(NxHitEffect, NxHitEffect, String) -> ((@combat_proto.AttackUser, @monster.Mob) -> Unit) raise
 
-pub fn new_twohanded_use_effect(Json, String) -> (@character.Character) -> Unit
+pub fn new_twohanded_use_effect(Json, String) -> ((@character.Character) -> Unit) raise
 
 pub fn push_event(HitEvent) -> Unit
 
@@ -185,7 +185,7 @@ type SingleAction
 pub impl SkillAction for SingleAction
 
 type Skill
-pub fn Skill::Skill(Int, Json, String, Bool, Int, Map[Int, @skill.Stats], @weapon.Type, SkillSound) -> Self
+pub fn Skill::Skill(Int, Json, String, Bool, Int, Map[Int, @skill.Stats], @weapon.Type, SkillSound) -> Self raise
 pub fn Skill::apply_actions(Self, @character.Character, @combat_proto.AttackType) -> Unit
 pub fn Skill::apply_hit_effects(Self, @combat_proto.AttackUser, @monster.Mob) -> Unit
 pub fn Skill::apply_hit_sfx(Self, @combat_proto.AttackUser, @monster.Mob) -> Unit
@@ -196,7 +196,7 @@ pub fn Skill::get_afterimage(Self) -> Map[String, @vfx_afterimage.NxAfterImage]
 pub fn Skill::get_bullet(Self, @character.Character, Int) -> @animation.Animation
 pub fn Skill::get_id(Self) -> Int
 pub fn Skill::is_attack(Self) -> Bool
-pub fn Skill::load(Int) -> Self
+pub fn Skill::load(Int) -> Self raise
 pub fn Skill::make_attack(Self, @character.Character, Int, @combat_proto.AttackType) -> @combat_proto.Attack
 
 type SkillSound

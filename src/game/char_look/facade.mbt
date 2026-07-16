@@ -85,7 +85,18 @@ pub fn set_after_images(name : String, after_images : NxAfterImages) -> Unit {
 }
 
 ///|
-pub fn load_after_images(name : String) -> NxAfterImages {
+/// Load and parse the named weapon afterimage bundle.
+///
+/// # Example
+/// ```moonbit nocheck
+/// let afterimages = try! load_after_images("bow")
+/// ignore(afterimages)
+/// ```
+///
+/// # Errors
+/// Raises when the bundle or any referenced animation resource is invalid or
+/// missing.
+pub fn load_after_images(name : String) -> NxAfterImages raise {
   @vfx_afterimage.load_after_images(name)
 }
 

@@ -3,7 +3,7 @@ import {
   "KKKIIO/maple-moon/game/res_types" @struct,
   "KKKIIO/maple-moon/game/map",
   "KKKIIO/maple-moon/game/item",
-  "KKKIIO/maple-moon/engine/resource",
+  "KKKIIO/maple-moon/engine/res",
   "moonbitlang/core/string",
 }
 

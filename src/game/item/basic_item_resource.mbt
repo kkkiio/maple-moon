@@ -26,11 +26,9 @@ fn discover_preloaded_item_ids() -> Array[Int] {
     let bundle_json = load_item_bundle_cached("Consume", bundle)
     collect_item_ids_from_bundle(bundle_json, id_set)
   }
-  let ids : Array[Int] = []
-  for item_id, _ in id_set {
-    ids.push(item_id)
-  }
-  ids
+  [
+    for item_id, _ in id_set => item_id
+  ]
 }
 
 ///|

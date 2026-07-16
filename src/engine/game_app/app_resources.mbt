@@ -15,7 +15,7 @@ fn AppResources::load() -> AppResources raise {
   let quest_result = @quest.load_quest_resource()
   let map_quests_resource = @quest_icon.MapQuestsResource::load()
   let cursor_animation_data = @cursor.CursorAnimationData::load(
-    "assets/UI/Basic.img/Cursor/cursor_animation.json",
+    "res://UI/Basic.img/Cursor/cursor_animation.json",
   )
   {
     basic_item_resource,

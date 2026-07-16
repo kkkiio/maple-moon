@@ -2,7 +2,7 @@
 package "KKKIIO/maple-moon/game/job"
 
 import {
-  "KKKIIO/maple-moon/engine/resource",
+  "KKKIIO/maple-moon/engine/res",
   "KKKIIO/maple-moon/game/maple_stat",
   "KKKIIO/maple-moon/game/weapon",
   "moonbitlang/core/debug",
@@ -34,7 +34,7 @@ pub fn Job::is_a(Self, Int) -> Bool
 pub fn Job::load(id? : Int) -> Self
 
 pub(all) struct JobData {
-  icon : @resource.NxTexture
+  icon : @res.NxTexture
   skill_ids : Array[Int]
   name : String
 }

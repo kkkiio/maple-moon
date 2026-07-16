@@ -44,7 +44,7 @@ fn skill_sfx_stage_name(stage : SkillSfxStage) -> String {
 
 ///|
 fn skill_sfx_path(skill_id : Int, stage : SkillSfxStage) -> String {
-  "assets/sound/Skill.img/\{skill_id.to_string()}/\{skill_sfx_stage_name(stage)}.mp3"
+  "res://Sound/Skill.img/\{skill_id.to_string()}/\{skill_sfx_stage_name(stage)}.mp3"
 }
 
 ///|
@@ -63,10 +63,11 @@ fn play_skill_sfx(skill_id : Int, stage : SkillSfxStage) -> Unit {
   }
   let path = skill_sfx_path(skill_id, stage)
   push_event({ skill_id, stage, path })
+  let physical_path = @res.require_path(path)
   let entity = @entity.Entity()
   @audio.attach_audio(
     entity,
-    @audio.AudioPlayer::from_path(path),
+    @audio.AudioPlayer::from_path(physical_path),
     settings=@audio.PlaybackSettings::despawn().with_volume(0.1),
   )
 }

@@ -39,8 +39,7 @@ fn LocalServer::set_default_quest_state(self : LocalServer) -> Unit {
 
 ///|
 fn LocalServer::init_quest_runtime(self : LocalServer) -> Unit {
-  let path = @resource.resolve_resource_path("quest", "nx.json")
-  let raw = @resource.require_json(path)
+  let raw = @res.require_json("res://Quest/nx.json")
   self.quest_defs = parse_quest_definitions(raw)
 }
 

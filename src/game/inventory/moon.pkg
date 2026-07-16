@@ -8,15 +8,14 @@ import {
   "KKKIIO/maple-moon/game/pet",
   "KKKIIO/maple-moon/game/player",
   "KKKIIO/maple-moon/game/item_use_events",
-  "KKKIIO/maple-moon/engine/resource",
   "KKKIIO/maple-moon/game/maple_stat",
   "KKKIIO/maple-moon/game/server_proto",
   "KKKIIO/maple-moon/engine/legacy_types",
   "moonbitlang/core/json",
   "KKKIIO/maple-moon/engine/game_server",
   "KKKIIO/maple-moon/engine/log",
-  "Milky2018/selene/ecs",
-  "Milky2018/selene/event",
+  "KKKIIO/selene/ecs",
+  "KKKIIO/selene/event",
   "moonbitlang/core/string",
 }
 

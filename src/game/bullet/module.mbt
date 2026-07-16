@@ -17,12 +17,25 @@ pub let all_bullet_ids : Array[String] = [
 let module_ref : Ref[Module?] = Ref(None)
 
 ///|
-pub fn Module::load() -> Module {
+/// Load the complete runtime bullet database.
+///
+/// # Example
+/// ```moonbit nocheck
+/// let bullets = try! Module::load()
+/// ignore(bullets)
+/// ```
+///
+/// # Errors
+/// Raises with the offending bullet id when any required bullet resource or
+/// animation cannot be loaded.
+pub fn Module::load() -> Module raise {
   let bullet_data = Map([])
   for id in all_bullet_ids {
-    let data = BulletData::load(id)
+    let data = BulletData::load(id) catch {
+      error => fail("failed to load bullet: bullet_id=\{id}, error=\{error}")
+    }
     let int_id = (id.trim_start(chars="0").to_owned() |> @string.parse_int) catch {
-      _ => abort("Invalid bullet id: \{id}")
+      _ => fail("invalid bullet id: \{id}")
     }
     bullet_data.set(int_id, data)
   }

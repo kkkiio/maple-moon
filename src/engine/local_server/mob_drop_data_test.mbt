@@ -1,4 +1,14 @@
 ///|
+fn init {
+  @asset.set_io(fn(path) {
+    Some(@fs.read_file_to_bytes(path)) catch {
+      _ => None
+    }
+  })
+  try! @res.configure_packs([("base", "assets/base")])
+}
+
+///|
 test "MobDropDatabase::has_drops" {
   let tsv =
     #|id	dropperid	itemid	minimum_quantity	maximum_quantity	questid	chance
@@ -153,15 +163,11 @@ test "MobDropDatabase::roll_drops gates quest drops by started quest ids" {
 }
 
 ///|
-/// 测试 calculate_mob_drops 纯函数 - 使用 assets/data/mob_drops.tsv 中真实的猪猪掉落配置
+/// 测试 calculate_mob_drops 纯函数 - 使用 res://Data/mob_drops.tsv 中真实的猪猪掉落配置
 /// 使用固定随机种子，让结果可预测，用 inspect 输出具体掉落内容
-/// 真实数据位置：assets/data/mob_drops.tsv (dropperid=1210100)
+/// 真实数据位置：res://Data/mob_drops.tsv (dropperid=1210100)
 test "calculate_mob_drops for pig with real config" {
-  let tsv_content : String = @fs.read_file_to_string(
-    "assets/data/mob_drops.tsv",
-  ) catch {
-    @fs.IOError(message) => fail("failed to read mob_drops.tsv: \{message}")
-  }
+  let tsv_content = @res.load_text("res://Data/mob_drops.tsv")
   let drop_db = MobDropDatabase::from_tsv(tsv_content)
 
   // 验证数据库中猪猪的掉落配置有 28 个可能的物品

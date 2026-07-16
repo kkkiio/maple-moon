@@ -2,7 +2,7 @@
 using @types {type NxStanceBody, type NxMultiPartFrame}
 
 ///|
-using @resource {type NxFrame}
+using @res {type NxFrame}
 
 ///|
 pub(all) struct FullBody {
@@ -16,7 +16,7 @@ pub(all) struct FullBody {
 ///|
 // fn Body::load(skin : Int, drawinfo : @types.BodyDrawInfo) -> Body raise {
 //   let strid : String = @utils.stoi_left_pad0(skin, 2)
-//   let loader = @resource.get_async_loader("body")
+//   let loader = @res.get_async_loader("body")
 //   let bodynode = loader.load_res_async(["000020" + strid + ".img"])
 //   let headnode = loader.load_res_async(["000120" + strid + ".img"])
 //   Body::new(skin, drawinfo, bodynode, headnode)
@@ -102,7 +102,7 @@ fn parse_body_animations_by_stance(
         ([], [])
       })
       while frames.length() < frame { // 整个动画里, 有些部位不是一直显示的
-        frames.push(@resource.NxFrame::{
+        frames.push(@res.NxFrame::{
           texture: { ..texture, w: 0, h: 0 },
           delay: None,
           head: None,
@@ -110,7 +110,7 @@ fn parse_body_animations_by_stance(
         })
         layers.push(layer)
       }
-      frames.push(@resource.NxFrame::{
+      frames.push(@res.NxFrame::{
         texture,
         delay: None,
         head: None,
@@ -127,7 +127,7 @@ fn parse_body_animations_by_stance(
     if frames.length() > 0 && frames.length() < total_frames {
       let last_texture = frames[frames.length() - 1].texture
       while frames.length() < total_frames {
-        frames.push(@resource.NxFrame::{
+        frames.push(@res.NxFrame::{
           texture: { ..last_texture, w: 0, h: 0 },
           delay: None,
           head: None,
@@ -151,7 +151,7 @@ fn parse_body_animations_by_stance(
         let texture = head_texture.texture.frames[0].texture
         let shift = drawinfo.get_head_position(stance, frame)
         let texture = { ..texture, origin: texture.origin - shift }
-        head_frames.push(@resource.NxFrame::{
+        head_frames.push(@res.NxFrame::{
           texture,
           delay: body_frame_delays[frame],
           head: None,

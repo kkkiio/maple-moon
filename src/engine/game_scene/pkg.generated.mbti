@@ -12,7 +12,7 @@ import {
   "KKKIIO/maple-moon/game/monster",
   "KKKIIO/maple-moon/game/npc",
   "KKKIIO/maple-moon/game/server_proto",
-  "Milky2018/selene/ecs",
+  "KKKIIO/selene/ecs",
 }
 
 // Values

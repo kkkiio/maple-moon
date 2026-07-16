@@ -1,7 +1,8 @@
 import {
   "KKKIIO/maple-moon/engine/log",
-  "Milky2018/selene/audio",
-  "Milky2018/selene/ecs",
-  "Milky2018/selene/entity",
-  "Milky2018/selene/event",
+  "KKKIIO/maple-moon/engine/res",
+  "KKKIIO/selene/audio",
+  "KKKIIO/selene/ecs",
+  "KKKIIO/selene/entity",
+  "KKKIIO/selene/event",
 }

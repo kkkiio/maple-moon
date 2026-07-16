@@ -15,25 +15,18 @@ test "character stand1" {
   })
   defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
   defer @sprite.sprites().clear()
-  let bodynode = @fs.read_file_to_string(
-      "assets/Character/Body/00002000.img.json",
-    )
-    |> @json.parse
+  let bodynode = @res.load_json("res://Character/Body/00002000.img.json")
   let stance_bodys_map : @char_look.NxStanceLooks[@types.NxStanceBody] = @json.from_json(
     bodynode,
   )
-  let headnode = @fs.read_file_to_string(
-      "assets/Character/Body/00012000.img.json",
-    )
-    |> @json.parse
+  let headnode = @res.load_json("res://Character/Body/00012000.img.json")
   let stance_heads_map : @char_look.NxStanceLooks[@types.NxMultiPartFrame] = @json.from_json(
     headnode,
   )
   let draw_info = @cb.BodyDrawInfo(stance_bodys_map.0, stance_heads_map.0)
-  let hair_node : @char_look.NxStanceLooks[@types.NxMultiPartFrame] = @fs.read_file_to_string(
-      "assets/Character/Hair/00030000.img.json",
+  let hair_node : @char_look.NxStanceLooks[@types.NxMultiPartFrame] = @res.load_json(
+      "res://Character/Hair/00030000.img.json",
     )
-    |> @json.parse
     |> @json.from_json
   let entity = @entity.Entity()
   let look = @cp.CharLook(
@@ -41,19 +34,12 @@ test "character stand1" {
     Map([]),
     @cp.FullBody(0, draw_info, stance_bodys_map.0, stance_heads_map.0),
     @char_look.Hair::parse(0, hair_node, draw_info),
-    @cp.Face(
-      20000,
-      @fs.read_file_to_string("assets/Character/Face/00020000.img.json")
-      |> @json.parse,
-    ),
+    @cp.Face(20000, @res.load_json("res://Character/Face/00020000.img.json")),
     draw_info,
   )
   look.set_stance(StanceId::STAND1)
   look.set_pos(Vec2(100.0, 100.0))
-  let weapon_node = @fs.read_file_to_string(
-      "assets/Character/Weapon/01302000.img.json",
-    )
-    |> @json.parse
+  let weapon_node = @res.load_json("res://Character/Weapon/01302000.img.json")
   let weapon_info = match weapon_node {
     { "info": Object(info), .. } => info
     _ => Map([])
@@ -80,10 +66,7 @@ test "character stand1" {
   look.add_equip(weapon_item, @slot.Id::WEAPON)
 
   // Add Coat
-  let coat_node = @fs.read_file_to_string(
-      "assets/Character/Coat/01040002.img.json",
-    )
-    |> @json.parse
+  let coat_node = @res.load_json("res://Character/Coat/01040002.img.json")
   let coat_info = match coat_node {
     { "info": Object(info), .. } => info
     _ => Map([])
@@ -110,10 +93,7 @@ test "character stand1" {
   look.add_equip(coat_item, @slot.Id::TOP)
 
   // Add Pants
-  let pants_node = @fs.read_file_to_string(
-      "assets/Character/Pants/01060002.img.json",
-    )
-    |> @json.parse
+  let pants_node = @res.load_json("res://Character/Pants/01060002.img.json")
   let pants_info = match pants_node {
     { "info": Object(info), .. } => info
     _ => Map([])
@@ -140,10 +120,7 @@ test "character stand1" {
   look.add_equip(pants_item, @slot.Id::BOTTOM)
 
   // Add Shoes
-  let shoes_node = @fs.read_file_to_string(
-      "assets/Character/Shoes/01072001.img.json",
-    )
-    |> @json.parse
+  let shoes_node = @res.load_json("res://Character/Shoes/01072001.img.json")
   let shoes_info = match shoes_node {
     { "info": Object(info), .. } => info
     _ => Map([])
@@ -199,7 +176,7 @@ test "character stand1" {
     content=(
       #|[
       #|  {
-      #|    image_path: Some("assets/Character/Body/00002000.img_stand1_body.png"),
+      #|    image_path: Some("assets/base/Character/Body/00002000.img_stand1_body.png"),
       #|    source_rect: Some({ x: 0, y: 0, width: 23, height: 31 }),
       #|    destination_size: Some({ x: 23, y: 31 }),
       #|    anchor: { x: 0.28260869565217395, y: -0.5 },
@@ -209,7 +186,7 @@ test "character stand1" {
       #|    world_translation: Some({ x: 100, y: 100, z: 70005 }),
       #|  },
       #|  {
-      #|    image_path: Some("assets/Character/Hair/00030000.img.png"),
+      #|    image_path: Some("assets/base/Character/Hair/00030000.img.png"),
       #|    source_rect: Some({ x: 0, y: 0, width: 35, height: 20 }),
       #|    destination_size: Some({ x: 35, y: 20 }),
       #|    anchor: { x: 0.12857142857142856, y: -2.7 },
@@ -219,7 +196,7 @@ test "character stand1" {
       #|    world_translation: Some({ x: 100, y: 100, z: 70016 }),
       #|  },
       #|  {
-      #|    image_path: Some("assets/Character/Hair/00030000.img.png"),
+      #|    image_path: Some("assets/base/Character/Hair/00030000.img.png"),
       #|    source_rect: Some({ x: 73, y: 0, width: 33, height: 17 }),
       #|    destination_size: Some({ x: 33, y: 17 }),
       #|    anchor: { x: 0.13636363636363635, y: -3.0294117647058822 },
@@ -229,7 +206,7 @@ test "character stand1" {
       #|    world_translation: Some({ x: 100, y: 100, z: 70020 }),
       #|  },
       #|  {
-      #|    image_path: Some("assets/Character/Hair/00030000.img.png"),
+      #|    image_path: Some("assets/base/Character/Hair/00030000.img.png"),
       #|    source_rect: Some({ x: 35, y: 0, width: 38, height: 22 }),
       #|    destination_size: Some({ x: 38, y: 22 }),
       #|    anchor: { x: 0.10526315789473684, y: -2.5 },
@@ -239,7 +216,7 @@ test "character stand1" {
       #|    world_translation: Some({ x: 100, y: 100, z: 70025 }),
       #|  },
       #|  {
-      #|    image_path: Some("assets/Character/Body/00002000.img_stand1_arm.png"),
+      #|    image_path: Some("assets/base/Character/Body/00002000.img_stand1_arm.png"),
       #|    source_rect: Some({ x: 0, y: 0, width: 11, height: 19 }),
       #|    destination_size: Some({ x: 11, y: 19 }),
       #|    anchor: { x: -0.40909090909090906, y: -1.0263157894736843 },
@@ -249,7 +226,7 @@ test "character stand1" {
       #|    world_translation: Some({ x: 100, y: 100, z: 70035 }),
       #|  },
       #|  {
-      #|    image_path: Some("assets/Character/Body/00012000.img_stand1_head.png"),
+      #|    image_path: Some("assets/base/Character/Body/00012000.img_stand1_head.png"),
       #|    source_rect: Some({ x: 0, y: 0, width: 39, height: 35 }),
       #|    destination_size: Some({ x: 39, y: 35 }),
       #|    anchor: { x: 0.08974358974358976, y: -1.3285714285714285 },
@@ -259,7 +236,7 @@ test "character stand1" {
       #|    world_translation: Some({ x: 100, y: 100, z: 70019 }),
       #|  },
       #|  {
-      #|    image_path: Some("assets/Character/Face/00020000.img_default_face.png"),
+      #|    image_path: Some("assets/base/Character/Face/00020000.img_default_face.png"),
       #|    source_rect: Some({ x: 0, y: 0, width: 26, height: 16 }),
       #|    destination_size: Some({ x: 26, y: 16 }),
       #|    anchor: { x: 0.2692307692307693, y: -2.5 },
@@ -269,7 +246,7 @@ test "character stand1" {
       #|    world_translation: Some({ x: 100, y: 100, z: 70021 }),
       #|  },
       #|  {
-      #|    image_path: Some("assets/Character/Weapon/01302000.img_stand1.png"),
+      #|    image_path: Some("assets/base/Character/Weapon/01302000.img_stand1.png"),
       #|    source_rect: Some({ x: 0, y: 0, width: 41, height: 13 }),
       #|    destination_size: Some({ x: 41, y: 13 }),
       #|    anchor: { x: 0.1585365853658537, y: -0.8076923076923077 },
@@ -279,7 +256,7 @@ test "character stand1" {
       #|    world_translation: Some({ x: 100, y: 100, z: 70036 }),
       #|  },
       #|  {
-      #|    image_path: Some("assets/Character/Coat/01040002.img.png"),
+      #|    image_path: Some("assets/base/Character/Coat/01040002.img.png"),
       #|    source_rect: Some({ x: 910, y: 0, width: 14, height: 14 }),
       #|    destination_size: Some({ x: 14, y: 14 }),
       #|    anchor: { x: 0.2857142857142857, y: -1.7142857142857144 },
@@ -289,7 +266,7 @@ test "character stand1" {
       #|    world_translation: Some({ x: 100, y: 100, z: 70014 }),
       #|  },
       #|  {
-      #|    image_path: Some("assets/Character/Coat/01040002.img.png"),
+      #|    image_path: Some("assets/base/Character/Coat/01040002.img.png"),
       #|    source_rect: Some({ x: 924, y: 0, width: 5, height: 7 }),
       #|    destination_size: Some({ x: 5, y: 7 }),
       #|    anchor: { x: -0.7, y: -3.6428571428571432 },
@@ -299,7 +276,7 @@ test "character stand1" {
       #|    world_translation: Some({ x: 100, y: 100, z: 70034 }),
       #|  },
       #|  {
-      #|    image_path: Some("assets/Character/Pants/01060002.img.png"),
+      #|    image_path: Some("assets/base/Character/Pants/01060002.img.png"),
       #|    source_rect: Some({ x: 697, y: 0, width: 16, height: 11 }),
       #|    destination_size: Some({ x: 16, y: 11 }),
       #|    anchor: { x: 0.25, y: -1.4090909090909092 },
@@ -309,7 +286,7 @@ test "character stand1" {
       #|    world_translation: Some({ x: 100, y: 100, z: 70012 }),
       #|  },
       #|  {
-      #|    image_path: Some("assets/Character/Shoes/01072001.img.png"),
+      #|    image_path: Some("assets/base/Character/Shoes/01072001.img.png"),
       #|    source_rect: Some({ x: 930, y: 0, width: 20, height: 9 }),
       #|    destination_size: Some({ x: 20, y: 9 }),
       #|    anchor: { x: 0.25, y: -0.5 },

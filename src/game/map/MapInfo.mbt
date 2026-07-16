@@ -199,24 +199,30 @@ pub fn MapInfo::from_resource(
       bgmpath.view(start_offset=split + 1)
     None => bgmpath
   }
-  let seats = Array::new()
-  if seat is Object(seat_obj) {
-    for _, it in seat_obj {
-      let nx_seat : NxSeat = @json.from_json(it) catch {
-        _ => abort("failed to parse NxSeat")
-      }
-      seats.push(Seat::from_resource(nx_seat))
-    }
-  }
-  let ladders = Array::new()
-  if ladder_rope is Object(ladder_obj) {
-    for _, it in ladder_obj {
-      let nx_ladder : NxLadder = @json.from_json(it) catch {
-        _ => abort("failed to parse NxLadder")
-      }
-      ladders.push(Ladder::from_resource(nx_ladder))
-    }
-  }
+  let seats = [
+    ..if seat is Object(seat_obj) {
+      [
+        for _, it in seat_obj => {
+          let nx_seat : NxSeat = @json.from_json(it) catch {
+            _ => abort("failed to parse NxSeat")
+          }
+          Seat::from_resource(nx_seat)
+        }
+      ]
+    },
+  ]
+  let ladders = [
+    ..if ladder_rope is Object(ladder_obj) {
+      [
+        for _, it in ladder_obj => {
+          let nx_ladder : NxLadder = @json.from_json(it) catch {
+            _ => abort("failed to parse NxLadder")
+          }
+          Ladder::from_resource(nx_ladder)
+        }
+      ]
+    },
+  ]
   {
     field_limit: json_get_int(info_obj, "fieldLimit"),
     cloud: json_get_bool(info_obj, "cloud"),

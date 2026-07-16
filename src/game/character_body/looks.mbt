@@ -12,7 +12,7 @@ pub impl[T : @json.FromJson] @json.FromJson for NxStanceLooks[T] with fn from_js
   let map = Map([])
   for k, v in obj {
     guard StanceId::from_name(k) is Some(stance_id) else { continue }
-    let nodes : Array[T] = @resource.parse_map_based_array(
+    let nodes : Array[T] = @res.parse_map_based_array(
       v,
       path=path.add_key(k),
     )

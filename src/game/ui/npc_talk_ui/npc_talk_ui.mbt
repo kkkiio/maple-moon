@@ -4,7 +4,7 @@ using @npc {type TalkArgs}
 ///|
 pub(all) struct NpcTalkResource {
   window_slice : @ui.UiSliceResource
-  bar : @resource.NxTexture
+  bar : @res.NxTexture
   bt_yes : NpcTalkButtonResource
   bt_no : NpcTalkButtonResource
   bt_ok : NpcTalkButtonResource
@@ -24,22 +24,22 @@ pub(all) struct NpcTalkResource {
 
 ///|
 pub(all) struct NpcTalkButtonResource {
-  normal : @resource.NxTexture
-  mouse_over : @resource.NxTexture
-  pressed : @resource.NxTexture
-  disabled : @resource.NxTexture
+  normal : @res.NxTexture
+  mouse_over : @res.NxTexture
+  pressed : @res.NxTexture
+  disabled : @res.NxTexture
 }
 
 ///|
-fn json_to_texture(json : Json) -> @resource.NxTexture raise {
+fn json_to_texture(json : Json) -> @res.NxTexture raise {
   @json.from_json(json)
 }
 
 ///|
 fn first_frame_texture(
-  animation : @resource.NxAnimation,
+  animation : @res.NxAnimation,
   label : String,
-) -> @resource.NxTexture raise {
+) -> @res.NxTexture raise {
   guard animation.frames.length() > 0 else {
     fail("invalid button animation without frame: \{label}")
   }
@@ -203,11 +203,11 @@ fn current_player_name() -> String {
 
 ///|
 fn load_npc_talk_resource() -> NpcTalkResource {
-  let src : Json = @resource.require_json(
-    "assets/UI/UIWindow2.img/UtilDlgEx.json",
+  let src : Json = @res.require_json(
+    "res://UI/UIWindow2.img/UtilDlgEx.json",
   )
   let window_slice = @ui.load_ui_slice_resource(
-    "assets/UI/UIWindow2.img/UtilDlgEx/slice.json",
+    "res://UI/UIWindow2.img/UtilDlgEx/slice.json",
   )
   NpcTalkResource::from_resource(src, window_slice) catch {
     _ => abort("invalid UtilDlgEx NPC talk resource")
@@ -616,13 +616,13 @@ fn UINpcTalk::spawn_action_buttons(self : UINpcTalk) -> Unit {
 
 ///|
 fn ui_image_from_texture(
-  texture : @resource.NxTexture,
+  texture : @res.NxTexture,
   fit? : @selene_ui.ImageFit = @selene_ui.ImageFit::None,
 ) -> @selene_ui.UiImage {
   let source = ui_image_source_from_texture(texture)
   @selene_ui.UiImage::from_image(
     @selene_math.Vec2(texture.w.to_double(), texture.h.to_double()),
-    @resource.load_image(texture.i),
+    @res.require_image(texture.i),
     fit~,
     source=Some(source),
   )
@@ -630,7 +630,7 @@ fn ui_image_from_texture(
 
 ///|
 fn ui_image_source_from_texture(
-  texture : @resource.NxTexture,
+  texture : @res.NxTexture,
 ) -> @render2d_types.ImageRegion2D {
   {
     position: @selene_math.Vec2(
@@ -645,7 +645,7 @@ fn ui_image_source_from_texture(
 fn UINpcTalk::set_image_texture(
   self : UINpcTalk,
   entity : @entity.Entity,
-  texture : @resource.NxTexture,
+  texture : @res.NxTexture,
   fit? : @selene_ui.ImageFit = @selene_ui.ImageFit::None,
 ) -> Unit {
   ignore(self)
@@ -655,7 +655,7 @@ fn UINpcTalk::set_image_texture(
 ///|
 fn UINpcTalk::spawn_image_node(
   self : UINpcTalk,
-  texture : @resource.NxTexture,
+  texture : @res.NxTexture,
   x : Int,
   y : Int,
   z : Int,

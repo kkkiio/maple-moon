@@ -10,8 +10,8 @@
 
 ## 资源来源
 
-- UI 外框：`assets/UI/UIWindow2.img/MiniMap.json`
-- Marker 图标：`assets/spritesheets/Map/MapHelper.img/minimap.json`
+- UI 外框：`res://UI/UIWindow2.img/MiniMap.json`
+- Marker 图标：`res://Map/MapHelper.img/minimap.json`
   - 当前要求包含 `portal/user/npc/another` 字段。
   - portal marker 使用 `minimap.portal`。
 

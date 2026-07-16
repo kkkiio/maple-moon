@@ -53,7 +53,7 @@ priv struct TiledBackgroundMotionState {
   tile_counts : (Int, Int)
   image_size : @selene_math.Vec2
   layer_z : Int
-  clip : @resource.SeleneClip?
+  clip : @res.SeleneClip?
   sprite_template : @sprite.Sprite
   background_type : NxBackgroundType
   base_screen_offset : @selene_math.Vec2
@@ -490,7 +490,7 @@ fn replace_aseprite_suffix(path : String) -> String? {
 fn create_background_motion_states(
   tile_map : @tiled.TiledMap,
   root : @entity.Entity,
-  clips_by_entity : Map[@entity.Entity, @resource.SeleneClip],
+  clips_by_entity : Map[@entity.Entity, @res.SeleneClip],
 ) -> Map[@entity.Entity, TiledBackgroundMotionState] raise {
   let states : Map[@entity.Entity, TiledBackgroundMotionState] = Map([])
   let parallax_origin = @selene_math.Vec2(
@@ -601,9 +601,9 @@ fn create_background_motion_states(
 fn collect_background_animation_clips(
   image_layer_events : Array[@tiled.TiledImageLayerSpawnedEvent],
   root : @entity.Entity,
-  background_animations : Map[String, @resource.SeleneClip],
-) -> Map[@entity.Entity, @resource.SeleneClip] raise {
-  let clips_by_entity : Map[@entity.Entity, @resource.SeleneClip] = Map([])
+  background_animations : Map[String, @res.SeleneClip],
+) -> Map[@entity.Entity, @res.SeleneClip] raise {
+  let clips_by_entity : Map[@entity.Entity, @res.SeleneClip] = Map([])
   for event in image_layer_events {
     if event.map_entity == root {
       if background_animations.get(event.layer.name) is Some(clip) {
@@ -625,7 +625,7 @@ fn set_tiled_backgrounds(
   map : @tiled.TiledMap,
   root : @entity.Entity,
   image_layer_events : Array[@tiled.TiledImageLayerSpawnedEvent],
-  background_animations : Map[String, @resource.SeleneClip],
+  background_animations : Map[String, @res.SeleneClip],
 ) -> Unit raise {
   let clips_by_entity = collect_background_animation_clips(
     image_layer_events, root, background_animations,

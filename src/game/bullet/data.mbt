@@ -6,15 +6,26 @@ pub(all) struct BulletData {
 }
 
 ///|
-pub fn BulletData::load(strid : String) -> BulletData {
-  guard strid.length() == 8 else { abort("Invalid bullet id: \{strid}") }
+/// Load one bullet item and its native animation.
+///
+/// # Example
+/// ```moonbit nocheck
+/// let arrow = try! BulletData::load("02060000")
+/// ignore(arrow)
+/// ```
+///
+/// # Errors
+/// Raises when `strid` is invalid or its referenced animation resource cannot
+/// be loaded or decoded.
+pub fn BulletData::load(strid : String) -> BulletData raise {
+  guard strid.length() == 8 else { fail("invalid bullet id: \{strid}") }
   let prefix = strid[:4]
-  let src = @resource.json_navigate(
-    "assets/Item/Consume/" + prefix.to_owned() + ".img.json",
+  let src = @res.require_json_node(
+    "res://Item/Consume/" + prefix.to_owned() + ".img.json",
     [strid],
   )
   let id = (strid.trim_start(chars="0") |> @string.parse_int) catch {
-    _ => abort("Invalid bullet id: \{strid}")
+    _ => fail("invalid bullet id: \{strid}")
   }
   let item_data = @item.ItemData::load(id)
   BulletData(src, item_data, strid)
@@ -32,17 +43,19 @@ fn read_mx_animation_ref(src : Json) -> String raise {
 fn load_bullet_native_animation(
   strid : String,
   bullet_src : Json,
-) -> @ms_animation.Animation {
+) -> @ms_animation.Animation raise {
   let prefix = strid[:4]
-  let base_path = "assets/Item/Consume/\{prefix}.img.json"
+  let base_path = "res://Item/Consume/\{prefix}.img.json"
   let ref_path = read_mx_animation_ref(bullet_src) catch {
-    _ => abort("missing mx_animation in bullet node: \{strid}")
+    error =>
+      fail("missing mx_animation in bullet node: \{strid}, error=\{error}")
   }
-  let resolved = @resource.resolve_ref(base_path, ref_path)
+  let resolved = @res.resolve_ref(base_path, ref_path)
   let animation_loader = AnimationLoader()
   let loaded = animation_loader.load(resolved)
   let clip = loaded.clip("main") catch {
-    _ => abort("missing main clip in bullet animation: \{strid}")
+    error =>
+      fail("missing main clip in bullet animation: \{strid}, error=\{error}")
   }
   @ms_animation.from_selene_clip(clip, loop_=true)
 }
@@ -52,7 +65,7 @@ fn BulletData::BulletData(
   src : Json,
   item_data : @item.ItemData,
   strid : String,
-) -> BulletData {
+) -> BulletData raise {
   match src {
     { "bullet": bullet_src, "info": info, .. } => {
       let watk = match info {
@@ -62,6 +75,6 @@ fn BulletData::BulletData(
       let bullet = load_bullet_native_animation(strid, bullet_src)
       { item_data, bullet, watk }
     }
-    _ => abort("Invalid bullet data")
+    _ => fail("invalid bullet data: \{strid}")
   }
 }

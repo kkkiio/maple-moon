@@ -1,8 +1,8 @@
 ///|
 priv struct QuestIconResources {
-  available : @resource.NxAnimation
-  in_progress : @resource.NxAnimation
-  completed : @resource.NxAnimation
+  available : @res.NxAnimation
+  in_progress : @res.NxAnimation
+  completed : @res.NxAnimation
 }
 
 ///|
@@ -55,9 +55,9 @@ fn default_icon_offset() -> @struct.Point[Int] {
 ///|
 /// Overrides icon resources for tests to avoid async loader dependency.
 pub fn set_resources_for_test(
-  available : @resource.NxAnimation,
-  in_progress : @resource.NxAnimation,
-  completed : @resource.NxAnimation,
+  available : @res.NxAnimation,
+  in_progress : @res.NxAnimation,
+  completed : @res.NxAnimation,
 ) -> Unit {
   quest_icon_resources.val = Some({ available, in_progress, completed })
   quest_icon_loading.val = None
@@ -164,17 +164,17 @@ fn poll_loading_result() -> Unit {
 fn load_resources() -> QuestIconResources {
   {
     available: @json.from_json(
-      @resource.json_navigate("assets/UI/UIWindow2.img/QuestIcon.json", ["0"]),
+      @res.require_json_node("res://UI/UIWindow2.img/QuestIcon.json", ["0"]),
     ) catch {
       _ => abort("invalid available quest icon")
     },
     in_progress: @json.from_json(
-      @resource.json_navigate("assets/UI/UIWindow2.img/QuestIcon.json", ["1"]),
+      @res.require_json_node("res://UI/UIWindow2.img/QuestIcon.json", ["1"]),
     ) catch {
       _ => abort("invalid in-progress quest icon")
     },
     completed: @json.from_json(
-      @resource.json_navigate("assets/UI/UIWindow2.img/QuestIcon.json", ["2"]),
+      @res.require_json_node("res://UI/UIWindow2.img/QuestIcon.json", ["2"]),
     ) catch {
       _ => abort("invalid completed quest icon")
     },
@@ -334,7 +334,7 @@ fn handle_pointer_clicks() -> Unit {
 fn state_to_icon(
   resources : QuestIconResources,
   state : QuestIconState,
-) -> @resource.NxAnimation {
+) -> @res.NxAnimation {
   match state {
     QuestIconState::AVAILABLE => resources.available
     QuestIconState::IN_PROGRESS => resources.in_progress
@@ -352,7 +352,7 @@ fn destroy_icon_entity(icon_entity : @entity.Entity) -> Unit {
 
 ///|
 fn nx_animation_dimensions(
-  animation : @resource.NxAnimation,
+  animation : @res.NxAnimation,
 ) -> @struct.Point[Int] {
   let mut width = 0
   let mut height = 0

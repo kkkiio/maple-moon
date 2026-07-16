@@ -2,9 +2,9 @@
 package "KKKIIO/maple-moon/engine/console"
 
 import {
-  "Milky2018/selene/app",
-  "Milky2018/selene/ecs",
-  "Milky2018/selene/entity",
+  "KKKIIO/selene/app",
+  "KKKIIO/selene/ecs",
+  "KKKIIO/selene/entity",
 }
 
 // Values

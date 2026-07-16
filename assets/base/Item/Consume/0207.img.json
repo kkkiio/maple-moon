@@ -1,0 +1,543 @@
+{
+  "02070000": {
+    "bullet": {
+      "mx_animation": "0207.img/animations/02070000__bullet.json"
+    },
+    "info": {
+      "icon": {
+        "__i": "0207.img/bitmap/15661.png",
+        "__w": 26,
+        "__h": 28,
+        "origin": [
+          -3,
+          28
+        ],
+        "z": 0
+      },
+      "iconRaw": {
+        "__i": "0207.img/bitmap/15662.png",
+        "__w": 25,
+        "__h": 26,
+        "origin": [
+          -3,
+          28
+        ],
+        "z": 0
+      },
+      "incPAD": 15,
+      "price": 250,
+      "reqLevel": 10,
+      "slotMax": 500,
+      "unitPrice": 0.3
+    }
+  },
+  "02070001": {
+    "bullet": {
+      "mx_animation": "0207.img/animations/02070001__bullet.json"
+    },
+    "info": {
+      "icon": {
+        "__i": "0207.img/bitmap/15665.png",
+        "__w": 27,
+        "__h": 29,
+        "origin": [
+          -3,
+          29
+        ],
+        "z": 0
+      },
+      "iconRaw": {
+        "__i": "0207.img/bitmap/15666.png",
+        "__w": 27,
+        "__h": 27,
+        "origin": [
+          -3,
+          29
+        ],
+        "z": 0
+      },
+      "incPAD": 17,
+      "price": 500,
+      "reqLevel": 10,
+      "slotMax": 500,
+      "unitPrice": 0.4
+    }
+  },
+  "02070002": {
+    "bullet": {
+      "mx_animation": "0207.img/animations/02070002__bullet.json"
+    },
+    "info": {
+      "icon": {
+        "__i": "0207.img/bitmap/15669.png",
+        "__w": 28,
+        "__h": 30,
+        "origin": [
+          -2,
+          30
+        ],
+        "z": 0
+      },
+      "iconRaw": {
+        "__i": "0207.img/bitmap/15670.png",
+        "__w": 28,
+        "__h": 28,
+        "origin": [
+          -2,
+          30
+        ],
+        "z": 0
+      },
+      "incPAD": 19,
+      "price": 1000,
+      "reqLevel": 10,
+      "slotMax": 700,
+      "unitPrice": 0.5
+    }
+  },
+  "02070003": {
+    "bullet": {
+      "mx_animation": "0207.img/animations/02070003__bullet.json"
+    },
+    "info": {
+      "icon": {
+        "__i": "0207.img/bitmap/15673.png",
+        "__w": 28,
+        "__h": 30,
+        "origin": [
+          -2,
+          30
+        ],
+        "z": 0
+      },
+      "iconRaw": {
+        "__i": "0207.img/bitmap/15674.png",
+        "__w": 27,
+        "__h": 27,
+        "origin": [
+          -2,
+          30
+        ],
+        "z": 0
+      },
+      "incPAD": 21,
+      "price": 1500,
+      "reqLevel": 10,
+      "slotMax": 500,
+      "unitPrice": 0.6
+    }
+  },
+  "02070004": {
+    "bullet": {
+      "mx_animation": "0207.img/animations/02070004__bullet.json"
+    },
+    "info": {
+      "icon": {
+        "__i": "0207.img/bitmap/15677.png",
+        "__w": 28,
+        "__h": 30,
+        "origin": [
+          -2,
+          30
+        ],
+        "z": 0
+      },
+      "iconRaw": {
+        "__i": "0207.img/bitmap/15678.png",
+        "__w": 28,
+        "__h": 28,
+        "origin": [
+          -2,
+          30
+        ],
+        "z": 0
+      },
+      "incPAD": 23,
+      "price": 2500,
+      "reqLevel": 10,
+      "slotMax": 1000,
+      "unitPrice": 0.6
+    }
+  },
+  "02070005": {
+    "bullet": {
+      "mx_animation": "0207.img/animations/02070005__bullet.json"
+    },
+    "info": {
+      "icon": {
+        "__i": "0207.img/bitmap/15681.png",
+        "__w": 27,
+        "__h": 29,
+        "origin": [
+          -3,
+          29
+        ],
+        "z": 0
+      },
+      "iconRaw": {
+        "__i": "0207.img/bitmap/15682.png",
+        "__w": 25,
+        "__h": 29,
+        "origin": [
+          -3,
+          29
+        ],
+        "z": 0
+      },
+      "incPAD": 25,
+      "price": 10000,
+      "reqLevel": 10,
+      "slotMax": 1000,
+      "unitPrice": 0.7
+    }
+  },
+  "02070006": {
+    "bullet": {
+      "mx_animation": "0207.img/animations/02070006__bullet.json"
+    },
+    "info": {
+      "icon": {
+        "__i": "0207.img/bitmap/15685.png",
+        "__w": 27,
+        "__h": 30,
+        "origin": [
+          -3,
+          30
+        ],
+        "z": 0
+      },
+      "iconRaw": {
+        "__i": "0207.img/bitmap/15686.png",
+        "__w": 27,
+        "__h": 27,
+        "origin": [
+          -3,
+          30
+        ],
+        "z": 0
+      },
+      "incPAD": 27,
+      "price": 20000,
+      "reqLevel": 10,
+      "slotMax": 800,
+      "unitPrice": 0.8
+    }
+  },
+  "02070007": {
+    "bullet": {
+      "mx_animation": "0207.img/animations/02070007__bullet.json"
+    },
+    "info": {
+      "icon": {
+        "__i": "0207.img/bitmap/15714.png",
+        "__w": 26,
+        "__h": 28,
+        "origin": [
+          -3,
+          28
+        ],
+        "z": 0
+      },
+      "iconRaw": {
+        "__i": "0207.img/bitmap/15715.png",
+        "__w": 25,
+        "__h": 25,
+        "origin": [
+          -3,
+          28
+        ],
+        "z": 0
+      },
+      "incPAD": 27,
+      "price": 25000,
+      "reqLevel": 70,
+      "slotMax": 1000,
+      "unitPrice": 1
+    }
+  },
+  "02070008": {
+    "bullet": {
+      "mx_animation": "0207.img/animations/02070008__bullet.json"
+    },
+    "info": {
+      "icon": {
+        "__i": "0207.img/bitmap/15718.png",
+        "__w": 28,
+        "__h": 25,
+        "origin": [
+          -3,
+          25
+        ],
+        "z": 0
+      },
+      "iconRaw": {
+        "__i": "0207.img/bitmap/15719.png",
+        "__w": 28,
+        "__h": 21,
+        "origin": [
+          -3,
+          25
+        ],
+        "z": 0
+      },
+      "incPAD": 17,
+      "price": 500,
+      "reqLevel": 10,
+      "slotMax": 800,
+      "unitPrice": 1
+    }
+  },
+  "02070009": {
+    "bullet": {
+      "mx_animation": "0207.img/animations/02070009__bullet.json"
+    },
+    "info": {
+      "icon": {
+        "__i": "0207.img/bitmap/15689.png",
+        "__w": 27,
+        "__h": 31,
+        "origin": [
+          -4,
+          31
+        ],
+        "z": 0
+      },
+      "iconRaw": {
+        "__i": "0207.img/bitmap/15690.png",
+        "__w": 27,
+        "__h": 28,
+        "origin": [
+          -4,
+          31
+        ],
+        "z": 0
+      },
+      "incPAD": 19,
+      "price": 500,
+      "reqLevel": 10,
+      "slotMax": 800,
+      "unitPrice": 1
+    }
+  },
+  "02070010": {
+    "bullet": {
+      "mx_animation": "0207.img/animations/02070010__bullet.json"
+    },
+    "info": {
+      "icon": {
+        "__i": "0207.img/bitmap/15694.png",
+        "__w": 26,
+        "__h": 28,
+        "origin": [
+          -4,
+          28
+        ],
+        "z": 0
+      },
+      "iconRaw": {
+        "__i": "0207.img/bitmap/15695.png",
+        "__w": 26,
+        "__h": 26,
+        "origin": [
+          -4,
+          28
+        ],
+        "z": 0
+      },
+      "incPAD": 21,
+      "price": 500,
+      "reqLevel": 10,
+      "slotMax": 800,
+      "unitPrice": 1
+    }
+  },
+  "02070011": {
+    "bullet": {
+      "mx_animation": "0207.img/animations/02070011__bullet.json"
+    },
+    "info": {
+      "icon": {
+        "__i": "0207.img/bitmap/15699.png",
+        "__w": 29,
+        "__h": 30,
+        "origin": [
+          -2,
+          30
+        ],
+        "z": 0
+      },
+      "iconRaw": {
+        "__i": "0207.img/bitmap/15700.png",
+        "__w": 29,
+        "__h": 27,
+        "origin": [
+          -2,
+          30
+        ],
+        "z": 0
+      },
+      "incPAD": 21,
+      "price": 500,
+      "reqLevel": 10,
+      "slotMax": 800,
+      "unitPrice": 1
+    }
+  },
+  "02070012": {
+    "bullet": {
+      "mx_animation": "0207.img/animations/02070012__bullet.json"
+    },
+    "info": {
+      "icon": {
+        "__i": "0207.img/bitmap/15704.png",
+        "__w": 29,
+        "__h": 29,
+        "origin": [
+          -3,
+          29
+        ],
+        "z": 0
+      },
+      "iconRaw": {
+        "__i": "0207.img/bitmap/15705.png",
+        "__w": 29,
+        "__h": 27,
+        "origin": [
+          -3,
+          29
+        ],
+        "z": 0
+      },
+      "incPAD": 20,
+      "price": 2500,
+      "slotMax": 1000,
+      "unitPrice": 1
+    }
+  },
+  "02070013": {
+    "bullet": {
+      "mx_animation": "0207.img/animations/02070013__bullet.json"
+    },
+    "info": {
+      "icon": {
+        "__i": "0207.img/bitmap/15709.png",
+        "__w": 26,
+        "__h": 18,
+        "origin": [
+          -4,
+          18
+        ],
+        "z": 0
+      },
+      "iconRaw": {
+        "__i": "0207.img/bitmap/15710.png",
+        "__w": 17,
+        "__h": 17,
+        "origin": [
+          -10,
+          18
+        ],
+        "z": 0
+      },
+      "incPAD": 20,
+      "price": 2500,
+      "slotMax": 1000,
+      "unitPrice": 1
+    }
+  },
+  "02070015": {
+    "bullet": {
+      "mx_animation": "0207.img/animations/02070015__bullet.json"
+    },
+    "info": {
+      "icon": {
+        "__i": "0207.img/bitmap/15723.png",
+        "__w": 26,
+        "__h": 28,
+        "origin": [
+          -3,
+          28
+        ],
+        "z": 0
+      },
+      "iconRaw": {
+        "__i": "0207.img/bitmap/15724.png",
+        "__w": 25,
+        "__h": 26,
+        "origin": [
+          -3,
+          28
+        ],
+        "z": 0
+      },
+      "incPAD": 15,
+      "notSale": 1,
+      "price": 1,
+      "reqLevel": 10,
+      "slotMax": 1000,
+      "tradeBlock": 1
+    }
+  },
+  "02070016": {
+    "bullet": {
+      "mx_animation": "0207.img/animations/02070016__bullet.json"
+    },
+    "info": {
+      "icon": {
+        "__i": "0207.img/bitmap/15727.png",
+        "__w": 31,
+        "__h": 32,
+        "origin": [
+          -3,
+          30
+        ],
+        "z": 0
+      },
+      "iconRaw": {
+        "__i": "0207.img/bitmap/15728.png",
+        "__w": 31,
+        "__h": 31,
+        "origin": [
+          -3,
+          30
+        ],
+        "z": 0
+      },
+      "incPAD": 29,
+      "reqLevel": 50,
+      "slotMax": 800,
+      "unitPrice": 1
+    }
+  },
+  "02070018": {
+    "bullet": {
+      "mx_animation": "0207.img/animations/02070018__bullet.json"
+    },
+    "info": {
+      "icon": {
+        "__i": "0207.img/bitmap/15731.png",
+        "__w": 31,
+        "__h": 30,
+        "origin": [
+          -3,
+          30
+        ],
+        "z": 0
+      },
+      "iconRaw": {
+        "__i": "0207.img/bitmap/15732.png",
+        "__w": 31,
+        "__h": 28,
+        "origin": [
+          -3,
+          30
+        ],
+        "z": 0
+      },
+      "incPAD": 30,
+      "reqLevel": 70,
+      "slotMax": 800,
+      "unitPrice": 1
+    }
+  }
+}

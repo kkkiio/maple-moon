@@ -112,36 +112,25 @@ fn render_draw_state(
 
 ///|
 fn load_test_look(host : @entity.Entity) -> @char_look.CharLook raise {
-  let bodynode = @fs.read_file_to_string(
-      "assets/Character/Body/00002000.img.json",
-    )
-    |> @json.parse
+  let bodynode = @res.load_json("res://Character/Body/00002000.img.json")
   let stance_bodys_map : @char_look.NxStanceLooks[@types.NxStanceBody] = @json.from_json(
     bodynode,
   )
-  let headnode = @fs.read_file_to_string(
-      "assets/Character/Body/00012000.img.json",
-    )
-    |> @json.parse
+  let headnode = @res.load_json("res://Character/Body/00012000.img.json")
   let stance_heads_map : @char_look.NxStanceLooks[@types.NxMultiPartFrame] = @json.from_json(
     headnode,
   )
   let draw_info = @cb.BodyDrawInfo(stance_bodys_map.0, stance_heads_map.0)
-  let hair_node : @char_look.NxStanceLooks[@types.NxMultiPartFrame] = @fs.read_file_to_string(
-      "assets/Character/Hair/00030000.img.json",
+  let hair_node : @char_look.NxStanceLooks[@types.NxMultiPartFrame] = @res.load_json(
+      "res://Character/Hair/00030000.img.json",
     )
-    |> @json.parse
     |> @json.from_json
   @cp.CharLook(
     host,
     Map([]),
     @cp.FullBody(0, draw_info, stance_bodys_map.0, stance_heads_map.0),
     @char_look.Hair::parse(0, hair_node, draw_info),
-    @cp.Face(
-      20000,
-      @fs.read_file_to_string("assets/Character/Face/00020000.img.json")
-      |> @json.parse,
-    ),
+    @cp.Face(20000, @res.load_json("res://Character/Face/00020000.img.json")),
     draw_info,
   )
 }
@@ -149,10 +138,9 @@ fn load_test_look(host : @entity.Entity) -> @char_look.CharLook raise {
 ///|
 fn load_weapon_item(item_id : Int) -> @item.ItemData raise {
   let weapon_file = weapon_file_id(item_id)
-  let weapon_node = @fs.read_file_to_string(
-      "assets/Character/Weapon/\{weapon_file}.img.json",
-    )
-    |> @json.parse
+  let weapon_node = @res.load_json(
+    "res://Character/Weapon/\{weapon_file}.img.json",
+  )
   let weapon_info = match weapon_node {
     { "info": Object(info), .. } => info
     _ => Map([])

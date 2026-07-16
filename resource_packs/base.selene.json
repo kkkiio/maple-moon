@@ -1,0 +1,40 @@
+{
+  "schema": 1,
+  "id": "base",
+  "runtime_root": "../assets/base",
+  "source_root": "../source_assets/base",
+  "sources": [
+    {
+      "nx": "Character.nx",
+      "entries": ["Character"]
+    },
+    {
+      "nx": "Effect.nx",
+      "entries": ["Effect"]
+    },
+    {
+      "nx": "Item.nx",
+      "entries": ["Item"]
+    },
+    {
+      "nx": "Map.nx",
+      "entries": ["Map/Map1"]
+    },
+    {
+      "nx": "Mob.nx",
+      "entries": ["Mob"]
+    },
+    {
+      "nx": "Npc.nx",
+      "entries": ["Npc"]
+    },
+    {
+      "nx": "Skill.nx",
+      "entries": ["Skill"]
+    },
+    {
+      "nx": "UI.nx",
+      "entries": ["UI"]
+    }
+  ]
+}

@@ -1,6 +1,8 @@
 # maple-moon
 
-A from-scratch game client for MapleStory. Built with [MoonBit](https://www.moonbitlang.com/) and [Selene](https://github.com/Yoorkin/selene), a small 2D game engine.
+![Maple Moon gameplay](src/graphics_test/__snapshot__/map_background/map_100000000_bg.png)
+
+A from-scratch game client for MapleStory. Built with [MoonBit](https://www.moonbitlang.com/) and [Selene](https://github.com/kkkiio/selene), a small 2D game engine.
 
 Reimplementing every feature of the original game is not a goal.
 
@@ -45,3 +47,8 @@ just build-native
 ```
 
 Produces an executable with the `assets/` directory alongside it. Place both in the same folder and run the executable.
+
+The runtime directory must contain `assets/base/`. Optional DLC and patch packs
+are additional siblings under `assets/`; each pack uses the same internal
+layout. `source_assets/` contains editable project sources and is not part of a
+player distribution.

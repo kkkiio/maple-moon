@@ -23,16 +23,16 @@ pub fn summarize_cdp_event(message : String, time : Double) -> Json {
       "params": { "type": String(level), "args": Array(args), .. },
       ..
     } => {
-      let parts : Array[String] = []
-      for arg in args {
-        let part = match arg {
-          { "value": value, .. } => value.stringify()
-          { "description": String(description), .. } => description
-          { "type": String(type_), .. } => type_
-          _ => ""
+      let parts = [
+        for arg in args => {
+          match arg {
+            { "value": value, .. } => value.stringify()
+            { "description": String(description), .. } => description
+            { "type": String(type_), .. } => type_
+            _ => ""
+          }
         }
-        parts.push(part)
-      }
+      ]
       {
         "kind": "log",
         "time": time,

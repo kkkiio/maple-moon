@@ -1,4 +1,14 @@
 ///|
+fn init {
+  @asset.set_io(fn(path) {
+    Some(@fs.read_file_to_bytes(path)) catch {
+      _ => None
+    }
+  })
+  try! @res.configure_packs([("base", "assets/base")])
+}
+
+///|
 let rope_hold_map_id = 105040000
 
 ///|
@@ -20,31 +30,31 @@ let rope_exit_platform_top = -1993
 let rope_exit_platform_bottom = -1768
 
 ///|
-fn parse_json_file(path : String) -> Json raise {
-  @json.parse(@fs.read_file_to_string(path))
+fn parse_json_file(path : String) -> Json {
+  @res.require_json(path)
 }
 
 ///|
 fn make_test_look() -> @char_look.CharLook raise {
   let entity = @entity.Entity()
-  let bodynode = parse_json_file("assets/Character/Body/00002000.img.json")
+  let bodynode = parse_json_file("res://Character/Body/00002000.img.json")
   let stance_bodys_map : @char_look.NxStanceLooks[@types.NxStanceBody] = @json.from_json(
     bodynode,
   )
-  let headnode = parse_json_file("assets/Character/Body/00012000.img.json")
+  let headnode = parse_json_file("res://Character/Body/00012000.img.json")
   let stance_heads_map : @char_look.NxStanceLooks[@types.NxMultiPartFrame] = @json.from_json(
     headnode,
   )
   let draw_info = @cb.BodyDrawInfo(stance_bodys_map.0, stance_heads_map.0)
   let hair_node : @char_look.NxStanceLooks[@types.NxMultiPartFrame] = @json.from_json(
-    parse_json_file("assets/Character/Hair/00030000.img.json"),
+    parse_json_file("res://Character/Hair/00030000.img.json"),
   )
   @cp.CharLook(
     entity,
     Map([]),
     @cp.FullBody(0, draw_info, stance_bodys_map.0, stance_heads_map.0),
     @char_look.Hair::parse(0, hair_node, draw_info),
-    @cp.Face(20000, parse_json_file("assets/Character/Face/00020000.img.json")),
+    @cp.Face(20000, parse_json_file("res://Character/Face/00020000.img.json")),
     draw_info,
   )
 }
@@ -73,10 +83,8 @@ fn make_test_player(oid : Int) -> @player.Player raise {
 ///|
 fn load_map_runtime(map_id : Int) -> (@map.MapInfo, @physics.Physics) raise {
   let prefix = map_id / 100000000
-  let (_, tiled_map) = @resource.load_tiled_map_from_mx([
-    "Map\{prefix}",
-    "\{map_id}.img.mx.json",
-  ])
+  let mx_address = "res://Map/Map\{prefix}/\{map_id}.img.mx.json"
+  let (_, tiled_map) = @res.load_tiled_map_from_mx(mx_address)
   let foothold_tree = @map.from_tiled_foothold_tree(tiled_map)
   let physics = @physics.Physics::from_resource(foothold_tree)
   let map_info = @map.MapInfo::from_tiled_map(

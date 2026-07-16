@@ -2,7 +2,7 @@
 
 After-image VFX runtime and exported resource loading.
 
-- Loads `assets/Character/Afterimage/<name>.img/mx.json` bundles that reference
+- Loads `res://Character/Afterimage/<name>.img/mx.json` bundles that reference
   Aseprite `animation.json`/`animation.png` tags.
 - Keeps legacy NX after-image JSON parsing for skill data that still embeds the
   old shape.

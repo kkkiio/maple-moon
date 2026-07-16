@@ -2,10 +2,10 @@
 package "KKKIIO/maple-moon/engine/ui"
 
 import {
-  "KKKIIO/maple-moon/engine/resource",
+  "KKKIIO/maple-moon/engine/res",
   "KKKIIO/maple-moon/game/animation",
   "KKKIIO/maple-moon/game/res_types",
-  "Milky2018/selene/ecs",
+  "KKKIIO/selene/ecs",
   "moonbitlang/core/debug",
   "moonbitlang/core/json",
 }
@@ -98,10 +98,10 @@ pub(all) enum NumberType {
 }
 
 pub(all) struct NxMapleButton {
-  normal : @resource.NxAnimation
-  mouse_over : @resource.NxAnimation
-  pressed : @resource.NxAnimation
-  disabled : @resource.NxAnimation
+  normal : @res.NxAnimation
+  mouse_over : @res.NxAnimation
+  pressed : @res.NxAnimation
+  disabled : @res.NxAnimation
 } derive(@json.FromJson)
 
 pub(all) struct Skins {
@@ -132,7 +132,7 @@ pub(all) enum UiSliceKind {
 } derive(Eq, @debug.Debug)
 
 pub struct UiSliceResource {
-  material : @Milky2018/selene/ui.UiMaterialHandle
+  material : @KKKIIO/selene/ui.UiMaterialHandle
   kind : UiSliceKind
   width : Int
   height : Int

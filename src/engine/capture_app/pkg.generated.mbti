@@ -3,9 +3,9 @@ package "KKKIIO/maple-moon/engine/capture_app"
 
 import {
   "KKKIIO/maple-moon/game/server_proto",
-  "Milky2018/selene/app",
-  "Milky2018/selene/ecs",
-  "Milky2018/selene/runtime_debug",
+  "KKKIIO/selene/app",
+  "KKKIIO/selene/ecs",
+  "KKKIIO/selene/runtime_debug",
   "moonbitlang/core/json",
 }
 

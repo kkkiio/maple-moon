@@ -43,7 +43,7 @@ pub impl @json.FromJson for MxNpcInfo with fn from_json(json, path) -> MxNpcInfo
   }
   let speak_keys = match info_obj.get("speak") {
     Some(speak_json) =>
-      @resource.parse_map_based_array(speak_json, path=path.add_key("speak"))
+      @res.parse_map_based_array(speak_json, path=path.add_key("speak"))
     None => []
   }
   { link, scripted: has_script || is_shop, speak_keys }

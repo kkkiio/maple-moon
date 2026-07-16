@@ -440,17 +440,17 @@ async fn main {
     match parsed.subcommand {
       Some(("start", child)) => {
         let cdp_port = match child.values.get("cdp-port") {
-          Some(values) | None with values = ["9333"] => values[0]
+          Some(values) | (None with values = ["9333"]) => values[0]
         }
         run_maple_cli("start", cdp_port, "", "", [], "", "", false, "", "")
       }
       Some(("open", child)) => {
         let game_url = match child.values.get("url") {
-          Some(values) | None with values = ["http://localhost:8080"] =>
+          Some(values) | (None with values = ["http://localhost:8080"]) =>
             values[0]
         }
         let wait = match child.flags.get("wait") {
-          Some(value) | None with value = false => value
+          Some(value) | (None with value = false) => value
         }
         run_maple_cli(
           if wait {
@@ -471,31 +471,31 @@ async fn main {
       }
       Some(("cmd", child)) => {
         let name = match child.values.get("name") {
-          Some(values) | None with values = [""] => values[0]
+          Some(values) | (None with values = [""]) => values[0]
         }
         let values = match child.values.get("args") {
-          Some(values) | None with values = [] => values
+          Some(values) | (None with values = []) => values
         }
         run_maple_cli("cmd", "", "", name, values, "", "", false, "", "")
       }
       Some(("eval", child)) => {
         let expression = match child.values.get("expression") {
-          Some(values) | None with values = [""] => values[0]
+          Some(values) | (None with values = [""]) => values[0]
         }
         run_maple_cli("eval", "", "", "", [], expression, "", false, "", "")
       }
       Some(("logs", child)) => {
         let level = match child.values.get("level") {
-          Some(values) | None with values = [""] => values[0]
+          Some(values) | (None with values = [""]) => values[0]
         }
         let out = match child.values.get("out") {
-          Some(values) | None with values = ["logs/browser.log"] => values[0]
+          Some(values) | (None with values = ["logs/browser.log"]) => values[0]
         }
         let clear = match child.flags.get("clear") {
-          Some(value) | None with value = false => value
+          Some(value) | (None with value = false) => value
         }
         let follow = match child.flags.get("follow") {
-          Some(value) | None with value = false => value
+          Some(value) | (None with value = false) => value
         }
         let action = if clear {
           "logs-clear"
@@ -508,13 +508,13 @@ async fn main {
       }
       Some(("network", child)) => {
         let failed = match child.flags.get("failed") {
-          Some(value) | None with value = false => value
+          Some(value) | (None with value = false) => value
         }
         run_maple_cli("network", "", "", "", [], "", "", failed, "", "")
       }
       Some(("screenshot", child)) => {
         let out = match child.values.get("out") {
-          Some(values) | None with values = ["screenshot.png"] => values[0]
+          Some(values) | (None with values = ["screenshot.png"]) => values[0]
         }
         run_maple_cli("screenshot", "", "", "", [], "", "", false, out, "")
       }
@@ -524,18 +524,18 @@ async fn main {
         match child.subcommand {
           Some(("run", run_child)) => {
             let script = match run_child.values.get("script") {
-              Some(values) | None with values = [""] => values[0]
+              Some(values) | (None with values = [""]) => values[0]
             }
             let cdp_port = match run_child.values.get("cdp-port") {
-              Some(values) | None with values = ["9333"] => values[0]
+              Some(values) | (None with values = ["9333"]) => values[0]
             }
             let game_url = match run_child.values.get("url") {
               Some(values)
-              | None with values = ["http://localhost:8080/game_debug.html"] =>
+              | (None with values = ["http://localhost:8080/game_debug.html"]) =>
                 values[0]
             }
             let timeout_ms = match run_child.values.get("timeout-ms") {
-              Some(values) | None with values = ["120000"] => values[0]
+              Some(values) | (None with values = ["120000"]) => values[0]
             }
             run_maple_cli(
               "bot-run",
@@ -559,7 +559,7 @@ async fn main {
         run_maple_cli("reload", "", "", "", [], "", "", false, "", "")
       Some(("status", child)) => {
         let wait = match child.flags.get("wait") {
-          Some(value) | None with value = false => value
+          Some(value) | (None with value = false) => value
         }
         run_maple_cli(
           if wait {

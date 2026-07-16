@@ -3,14 +3,14 @@ package "KKKIIO/maple-moon/game/monster"
 
 import {
   "KKKIIO/maple-moon/engine/graphics",
-  "KKKIIO/maple-moon/engine/resource",
+  "KKKIIO/maple-moon/engine/res",
   "KKKIIO/maple-moon/engine/utils",
   "KKKIIO/maple-moon/game/animation",
   "KKKIIO/maple-moon/game/combat_proto",
   "KKKIIO/maple-moon/game/physics",
   "KKKIIO/maple-moon/game/res_types",
-  "Milky2018/selene/ecs",
-  "Milky2018/selene/entity",
+  "KKKIIO/selene/ecs",
+  "KKKIIO/selene/entity",
   "moonbitlang/core/debug",
   "moonbitlang/core/json",
   "moonbitlang/core/queue",
@@ -146,7 +146,7 @@ pub fn Mob::give_buff(Self, MobBuff) -> Unit
 pub fn Mob::is_alive(Self) -> Bool
 pub fn Mob::is_in_range(Self, @res_types.Rectangle[Int]) -> Bool
 pub fn Mob::kill(Self, Int) -> Unit
-pub fn Mob::load(Int, Int, Int, Int, Int, Bool, @res_types.Point[Int], @random.Rand) -> Self
+pub fn Mob::load(Int, Int, Int, Int, Int, Bool, @res_types.Point[Int], @random.Rand) -> Self raise
 pub fn Mob::send_movement(Self, @res_types.Point[Int], Array[@physics.Movement]) -> Unit
 pub fn Mob::set_control(Self, Int) -> Unit
 pub fn Mob::set_stance(Self, Stance) -> Unit
@@ -171,17 +171,17 @@ pub(all) struct MobAnimationMeta {
 }
 
 pub(all) struct MobAnimations {
-  fly : @resource.NxAnimation?
-  stand : @resource.NxAnimation?
-  move_ : @resource.NxAnimation?
-  jump : @resource.NxAnimation?
-  hit1 : @resource.NxAnimation
-  die1 : @resource.NxAnimation
+  fly : @res.NxAnimation?
+  stand : @res.NxAnimation?
+  move_ : @res.NxAnimation?
+  jump : @res.NxAnimation?
+  hit1 : @res.NxAnimation
+  die1 : @res.NxAnimation
 } derive(@debug.Debug, @json.FromJson)
 
 pub(all) struct MobBuff {
   time : Int
-  anim : @resource.NxAnimation
+  anim : @res.NxAnimation
 }
 
 type MobCombat
@@ -251,7 +251,7 @@ pub(all) struct MobSpawn {
   team : Int
   position : @res_types.Point[Int]
 }
-pub fn MobSpawn::instantiate(Self, @random.Rand) -> Mob
+pub fn MobSpawn::instantiate(Self, @random.Rand) -> Mob raise
 
 type MobSpecialAttack
 pub fn MobSpecialAttack::MobSpecialAttack(MxMobAttackNode) -> Self

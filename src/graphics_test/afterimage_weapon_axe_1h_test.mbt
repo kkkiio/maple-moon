@@ -33,7 +33,7 @@ test "weapon afterimage coverage: axe_1h" {
         content=(
           #|[
           #|  {
-          #|    image_path: Some("assets/Character/Body/00002000.img_stabO1_body.png"),
+          #|    image_path: Some("assets/base/Character/Body/00002000.img_stabO1_body.png"),
           #|    source_rect: Some({ x: 39, y: 0, width: 39, height: 29 }),
           #|    destination_size: Some({ x: 39, y: 29 }),
           #|    anchor: { x: -0.2692307692307693, y: -0.5 },
@@ -43,7 +43,7 @@ test "weapon afterimage coverage: axe_1h" {
           #|    world_translation: Some({ x: 110, y: 110, z: 70005 }),
           #|  },
           #|  {
-          #|    image_path: Some("assets/Character/Face/00020000.img_default_face.png"),
+          #|    image_path: Some("assets/base/Character/Face/00020000.img_default_face.png"),
           #|    source_rect: Some({ x: 0, y: 0, width: 26, height: 16 }),
           #|    destination_size: Some({ x: 26, y: 16 }),
           #|    anchor: { x: -1, y: -2.125 },
@@ -53,7 +53,7 @@ test "weapon afterimage coverage: axe_1h" {
           #|    world_translation: Some({ x: 110, y: 110, z: 70021 }),
           #|  },
           #|  {
-          #|    image_path: Some("assets/Character/Hair/00030000.img.png"),
+          #|    image_path: Some("assets/base/Character/Hair/00030000.img.png"),
           #|    source_rect: Some({ x: 0, y: 0, width: 35, height: 20 }),
           #|    destination_size: Some({ x: 35, y: 20 }),
           #|    anchor: { x: -0.6714285714285715, y: -2.4 },
@@ -63,7 +63,7 @@ test "weapon afterimage coverage: axe_1h" {
           #|    world_translation: Some({ x: 110, y: 110, z: 70016 }),
           #|  },
           #|  {
-          #|    image_path: Some("assets/Character/Hair/00030000.img.png"),
+          #|    image_path: Some("assets/base/Character/Hair/00030000.img.png"),
           #|    source_rect: Some({ x: 73, y: 0, width: 33, height: 17 }),
           #|    destination_size: Some({ x: 33, y: 17 }),
           #|    anchor: { x: -0.7121212121212122, y: -2.676470588235294 },
@@ -73,7 +73,7 @@ test "weapon afterimage coverage: axe_1h" {
           #|    world_translation: Some({ x: 110, y: 110, z: 70020 }),
           #|  },
           #|  {
-          #|    image_path: Some("assets/Character/Hair/00030000.img.png"),
+          #|    image_path: Some("assets/base/Character/Hair/00030000.img.png"),
           #|    source_rect: Some({ x: 35, y: 0, width: 38, height: 22 }),
           #|    destination_size: Some({ x: 38, y: 22 }),
           #|    anchor: { x: -0.605263157894737, y: -2.227272727272727 },
@@ -83,7 +83,7 @@ test "weapon afterimage coverage: axe_1h" {
           #|    world_translation: Some({ x: 110, y: 110, z: 70025 }),
           #|  },
           #|  {
-          #|    image_path: Some("assets/Character/Body/00002000.img_stabO1_arm.png"),
+          #|    image_path: Some("assets/base/Character/Body/00002000.img_stabO1_arm.png"),
           #|    source_rect: Some({ x: 26, y: 0, width: 26, height: 18 }),
           #|    destination_size: Some({ x: 26, y: 18 }),
           #|    anchor: { x: -1.1923076923076923, y: -1 },
@@ -93,7 +93,7 @@ test "weapon afterimage coverage: axe_1h" {
           #|    world_translation: Some({ x: 110, y: 110, z: 70044 }),
           #|  },
           #|  {
-          #|    image_path: Some("assets/Character/Body/00012000.img_stabO1_head.png"),
+          #|    image_path: Some("assets/base/Character/Body/00012000.img_stabO1_head.png"),
           #|    source_rect: Some({ x: 39, y: 0, width: 39, height: 35 }),
           #|    destination_size: Some({ x: 39, y: 35 }),
           #|    anchor: { x: -0.5769230769230769, y: -1.1571428571428573 },
@@ -103,7 +103,7 @@ test "weapon afterimage coverage: axe_1h" {
           #|    world_translation: Some({ x: 110, y: 110, z: 70019 }),
           #|  },
           #|  {
-          #|    image_path: Some("assets/Character/Weapon/spritesheets/01312001.img.png"),
+          #|    image_path: Some("assets/base/Character/Weapon/spritesheets/01312001.img.png"),
           #|    source_rect: Some({ x: 68, y: 43, width: 47, height: 5 }),
           #|    destination_size: Some({ x: 47, y: 5 }),
           #|    anchor: { x: -1.1808510638297873, y: -4.3 },
@@ -113,7 +113,7 @@ test "weapon afterimage coverage: axe_1h" {
           #|    world_translation: Some({ x: 110, y: 110, z: 70036 }),
           #|  },
           #|  {
-          #|    image_path: Some("assets/Character/Afterimage/swordOL.img/animation.png"),
+          #|    image_path: Some("assets/base/Character/Afterimage/swordOL.img/animation.png"),
           #|    source_rect: Some({ x: 808, y: 224, width: 49, height: 28 }),
           #|    destination_size: Some({ x: 49, y: 28 }),
           #|    anchor: { x: -1.2142857142857142, y: -0.8214285714285714 },

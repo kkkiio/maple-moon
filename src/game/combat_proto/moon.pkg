@@ -3,8 +3,8 @@ import {
   "KKKIIO/maple-moon/game/res_types" @struct,
   "KKKIIO/maple-moon/engine/graphics",
   "KKKIIO/maple-moon/game/physics",
-  "Milky2018/selene/sprite",
-  "Milky2018/selene/math" @selene_math,
+  "KKKIIO/selene/sprite",
+  "KKKIIO/selene/math" @selene_math,
   "KKKIIO/maple-moon/game/transform2d",
-  "Milky2018/selene/entity",
+  "KKKIIO/selene/entity",
 }

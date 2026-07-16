@@ -1,0 +1,1613 @@
+{
+  "Equip": {
+    "AlienStone": {
+      "Empty": {
+        "__h": 7,
+        "__w": 7,
+        "_hash": "830091c9f5e31a660ec1572d13f5fe3386b053f4200ba3464ccbe1c91af6a536",
+        "origin": [
+          0,
+          0
+        ],
+        "z": 0,
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#72082"
+      },
+      "Epic": {
+        "__h": 7,
+        "__w": 7,
+        "_hash": "70d3b0def5b3792d2e338c72fd8047aeb9e4ddf8da3014c4851bcb246bb23bcb",
+        "origin": [
+          0,
+          0
+        ],
+        "z": 0,
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#72085"
+      },
+      "Legendary": {
+        "__h": 7,
+        "__w": 7,
+        "_hash": "fd6facd9a545497785f3e1ae4aa909a77aeb251772cace01efb90807932ee814",
+        "origin": [
+          0,
+          0
+        ],
+        "z": 0,
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#72087"
+      },
+      "Normal": {
+        "__h": 7,
+        "__w": 7,
+        "_hash": "f3aa5ee0b5fcd5c560f0d054669d8d8d50cc3d919a17c4268878e813fe00f791",
+        "origin": [
+          0,
+          0
+        ],
+        "z": 0,
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#72083"
+      },
+      "Rare": {
+        "__h": 7,
+        "__w": 7,
+        "_hash": "71d6a103e818b1b60d10115895366e64d5e332cef4a327f3dd1dfb5494297b23",
+        "origin": [
+          0,
+          0
+        ],
+        "z": 0,
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#72084"
+      },
+      "Unique": {
+        "__h": 7,
+        "__w": 7,
+        "_hash": "b28ee63624f6713b3f58780965a39d51026c7199002c30c142913f644448f626",
+        "origin": [
+          0,
+          0
+        ],
+        "z": 0,
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#72086"
+      }
+    },
+    "Can": {
+      "0": {
+        "__h": 7,
+        "__w": 5,
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#71946"
+      },
+      "1": {
+        "__h": 7,
+        "__w": 3,
+        "origin": [
+          -1,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#71947"
+      },
+      "2": {
+        "__h": 7,
+        "__w": 5,
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#71948"
+      },
+      "3": {
+        "__h": 7,
+        "__w": 5,
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#71949"
+      },
+      "4": {
+        "__h": 7,
+        "__w": 5,
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#71950"
+      },
+      "5": {
+        "__h": 7,
+        "__w": 5,
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#71951"
+      },
+      "6": {
+        "__h": 7,
+        "__w": 5,
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#71952"
+      },
+      "7": {
+        "__h": 7,
+        "__w": 5,
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#71953"
+      },
+      "8": {
+        "__h": 7,
+        "__w": 5,
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#71954"
+      },
+      "9": {
+        "__h": 7,
+        "__w": 5,
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#71955"
+      },
+      "beginner": {
+        "__h": 13,
+        "__w": 40,
+        "_hash": "e3f351ee0d6f3ed8ef7432756f5b584a2bf4237c68e73d6ea279ba95650ec0f0",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/Can/beginner",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94203"
+      },
+      "bowman": {
+        "__h": 13,
+        "__w": 37,
+        "_hash": "88abcfe0a45772e9e056e702557e75b9517389611290b4f2cab637ec8eb27631",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/Can/bowman",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94206"
+      },
+      "durability": {
+        "__h": 7,
+        "__w": 62,
+        "_hash": "6edc21c6ce366a489867ef6ad44fd7b885f68ac46e30fec7a46ed929cd8c80f1",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/Can/durability",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94211"
+      },
+      "magician": {
+        "__h": 13,
+        "__w": 38,
+        "_hash": "9b704ecb0f4ba6e4be58125bcb225b4a644098651fb16bc2af54d7f01ea0b287",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/Can/magician",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94205"
+      },
+      "max": {
+        "__h": 7,
+        "__w": 17,
+        "_hash": "dc945cb040882256946b4f8013cc8b4c6a493cd7ffcc4f3f77feb0bc047e5b58",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/Can/max",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94210"
+      },
+      "none": {
+        "__h": 5,
+        "__w": 1,
+        "origin": [
+          0,
+          -3
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#71956"
+      },
+      "percent": {
+        "__h": 7,
+        "__w": 5,
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#71963"
+      },
+      "pirate": {
+        "__h": 13,
+        "__w": 29,
+        "_hash": "91c0d635fafe2fffcb0cf3f53f958815012fc39ed61338bba15892e41a55593f",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/Can/pirate",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94208"
+      },
+      "reqDEX": {
+        "__h": 7,
+        "__w": 45,
+        "_hash": "85b11039e0e925a1f958be50107af12e6eb0f12caac16fe406aec5d5c8379fc6",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/Can/reqDEX",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94187"
+      },
+      "reqGrade": {
+        "__h": 7,
+        "__w": 57,
+        "_hash": "dc9f40027066ae06a5979fb6c87904ee94c0f74a49da9e4b2d43e3ba3069a9f4",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/Can/reqGrade",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94191"
+      },
+      "reqINT": {
+        "__h": 7,
+        "__w": 45,
+        "_hash": "053bb2d61c5aadc15caee96ad053e84e59bd675fda586fd80a97aab0eaa2bdda",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/Can/reqINT",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94188"
+      },
+      "reqLEV": {
+        "__h": 7,
+        "__w": 45,
+        "_hash": "dee4e793355a478132a96db1ef4a6e683bdbb1d3dfc526219636386bf4fabda1",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/Can/reqLEV",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94185"
+      },
+      "reqLUK": {
+        "__h": 7,
+        "__w": 45,
+        "_hash": "0cee8150197ac8c9471afbf566d7baf708e1a5d3ea317d2636e698e8040c1689",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/Can/reqLUK",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94189"
+      },
+      "reqPOP": {
+        "__h": 7,
+        "__w": 45,
+        "_hash": "48ea75090d3bcb89722b46c735e68a0ae813e0081ec8b7446fc32229400ed873",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/Can/reqPOP",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94190"
+      },
+      "reqSTR": {
+        "__h": 7,
+        "__w": 45,
+        "_hash": "80c0f6f9b06d33222a8b57bf51db0cdc195a26ff7d34b94397ebf6a80bf30c9e",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/Can/reqSTR",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94186"
+      },
+      "thief": {
+        "__h": 13,
+        "__w": 24,
+        "_hash": "9d5c36c0ea29f070452f1f374e1f8a438eee455da7f47cbba9d742805d2593dd",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/Can/thief",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94207"
+      },
+      "warrior": {
+        "__h": 13,
+        "__w": 38,
+        "_hash": "9f7f3b8f4adfa90f627474368d9e5baae17e1adfd3cb93e025141d7e6ccaf096",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/Can/warrior",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94204"
+      }
+    },
+    "Cannot": {
+      "0": {
+        "__h": 7,
+        "__w": 5,
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#71973"
+      },
+      "1": {
+        "__h": 7,
+        "__w": 3,
+        "origin": [
+          -1,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#71974"
+      },
+      "2": {
+        "__h": 7,
+        "__w": 5,
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#71975"
+      },
+      "3": {
+        "__h": 7,
+        "__w": 5,
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#71976"
+      },
+      "4": {
+        "__h": 7,
+        "__w": 5,
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#71977"
+      },
+      "5": {
+        "__h": 7,
+        "__w": 5,
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#71978"
+      },
+      "6": {
+        "__h": 7,
+        "__w": 5,
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#71979"
+      },
+      "7": {
+        "__h": 7,
+        "__w": 5,
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#71980"
+      },
+      "8": {
+        "__h": 7,
+        "__w": 5,
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#71981"
+      },
+      "9": {
+        "__h": 7,
+        "__w": 5,
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#71982"
+      },
+      "beginner": {
+        "__h": 13,
+        "__w": 40,
+        "_hash": "87ec2ab04c39c59684c34ba00eba0b17c96aee7c670f3d34f7d2bd58d78f7be2",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/Cannot/beginner",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94230"
+      },
+      "bowman": {
+        "__h": 13,
+        "__w": 37,
+        "_hash": "4e8abbbddd6dd83c64edcab7bd4914585607aeeeab1d077fc3f21ba08b2dce51",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/Cannot/bowman",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94233"
+      },
+      "durability": {
+        "__h": 7,
+        "__w": 62,
+        "_hash": "9a80cacf8e8523b939a0fd7e4eba1c42a41c4ee8e0553bd8e447fd7e0de3a996",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/Cannot/durability",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94236"
+      },
+      "magician": {
+        "__h": 13,
+        "__w": 38,
+        "_hash": "e648dc2120a7162f5fc0b513d0afaf1c9a7bce81b475ae10bee5af7a0bee82f4",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/Cannot/magician",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94232"
+      },
+      "none": {
+        "__h": 1,
+        "__w": 5,
+        "origin": [
+          0,
+          -3
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#71983"
+      },
+      "percent": {
+        "__h": 7,
+        "__w": 5,
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#71991"
+      },
+      "pirate": {
+        "__h": 13,
+        "__w": 29,
+        "_hash": "cfc5bef21f8dac1879ebc22640bdd6fd16a9918f57b28ef8a31c93c7f9d536ce",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/Cannot/pirate",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94235"
+      },
+      "reqDEX": {
+        "__h": 7,
+        "__w": 45,
+        "_hash": "814b81eeb12b2f8b3740ac0917b10e1d4fb20c56d84524eefab7041e8ac17e8c",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/Cannot/reqDEX",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94214"
+      },
+      "reqGrade": {
+        "__h": 7,
+        "__w": 57,
+        "_hash": "ea564fe7e493bd86687472d59257203f0866c0815375cdad31fbf2eddb99b2ad",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/Cannot/reqGrade",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94218"
+      },
+      "reqINT": {
+        "__h": 7,
+        "__w": 45,
+        "_hash": "a6a8eeb7a177b9f0aa360a99d06616e70e8ab90a8e1be0c223cf88b2562887d7",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/Cannot/reqINT",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94215"
+      },
+      "reqLEV": {
+        "__h": 7,
+        "__w": 45,
+        "_hash": "f778e3f399d032aa7c3b09771e665d3bba7843a0f4f635d01522e7579443d350",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/Cannot/reqLEV",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94212"
+      },
+      "reqLUK": {
+        "__h": 7,
+        "__w": 45,
+        "_hash": "4e8c066c782c011a9718b37c0788ba7b0d29f4d3aad2f9d6ec288e1ed4d24e2d",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/Cannot/reqLUK",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94216"
+      },
+      "reqPOP": {
+        "__h": 7,
+        "__w": 45,
+        "_hash": "cf19dc77c4c046bd4309d7e17154a79999c1389f0a355fb6c81486b53ae1dc43",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/Cannot/reqPOP",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94217"
+      },
+      "reqSTR": {
+        "__h": 7,
+        "__w": 45,
+        "_hash": "907d74df3874557f68e5fb2a78cab8ff495f158d0dc566eb8c4d5aacba32d45f",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/Cannot/reqSTR",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94213"
+      },
+      "thief": {
+        "__h": 13,
+        "__w": 24,
+        "_hash": "095b57cd7c2ec587f100b89e679186c418cdede85e9fc3c7bb065287d6f15888",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/Cannot/thief",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94234"
+      },
+      "warrior": {
+        "__h": 13,
+        "__w": 38,
+        "_hash": "29b69fcb130240fa70156dce34bf26f6d451f5de3b9bf0a7426ee9a2a8214d2d",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/Cannot/warrior",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94231"
+      }
+    },
+    "Dot": {
+      "0": {
+        "__h": 5,
+        "__w": 5,
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#71992"
+      },
+      "1": {
+        "__h": 3,
+        "__w": 3,
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#71993"
+      },
+      "2": {
+        "__h": 7,
+        "__w": 2,
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#71994"
+      }
+    },
+    "GrowthDisabled": {
+      "0": {
+        "__h": 7,
+        "__w": 5,
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#72066"
+      },
+      "1": {
+        "__h": 7,
+        "__w": 3,
+        "origin": [
+          -1,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#72067"
+      },
+      "2": {
+        "__h": 7,
+        "__w": 5,
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#72068"
+      },
+      "3": {
+        "__h": 7,
+        "__w": 5,
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#72069"
+      },
+      "4": {
+        "__h": 7,
+        "__w": 5,
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#72070"
+      },
+      "5": {
+        "__h": 7,
+        "__w": 5,
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#72071"
+      },
+      "6": {
+        "__h": 7,
+        "__w": 5,
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#72072"
+      },
+      "7": {
+        "__h": 7,
+        "__w": 5,
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#72073"
+      },
+      "8": {
+        "__h": 7,
+        "__w": 5,
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#72074"
+      },
+      "9": {
+        "__h": 7,
+        "__w": 5,
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#72075"
+      },
+      "durability": {
+        "__h": 7,
+        "__w": 62,
+        "_hash": "917ff19f5eb93155c39227d1929571cdb1fd90fadd77c8ef7e61684c5ac914d9",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/GrowthDisabled/durability",
+        "origin": [
+          0,
+          0
+        ],
+        "z": 0,
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94325"
+      },
+      "itemEXP": {
+        "__h": 7,
+        "__w": 49,
+        "_hash": "9c2dc222fe429a09f1a851f5ad19a749b85ba1d8ec8f38ee3ea0f3c70ae43410",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/GrowthDisabled/itemEXP",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94311"
+      },
+      "itemLEV": {
+        "__h": 7,
+        "__w": 49,
+        "_hash": "5b94b6986951abb5d3bf789c651daa89a8e1db253f9aa90d6d5fc1a4d968be0e",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/GrowthDisabled/itemLEV",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94310"
+      },
+      "max": {
+        "__h": 7,
+        "__w": 17,
+        "_hash": "f2af16500d47cf30a0ecf8af77ae12899dc012d4d541c7079f6ce102914fa4af",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/GrowthDisabled/max",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94323"
+      },
+      "none": {
+        "__h": 1,
+        "__w": 5,
+        "origin": [
+          0,
+          -3
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#72078"
+      },
+      "percent": {
+        "__h": 7,
+        "__w": 5,
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#72076"
+      }
+    },
+    "GrowthEnabled": {
+      "0": {
+        "__h": 7,
+        "__w": 5,
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#72051"
+      },
+      "1": {
+        "__h": 7,
+        "__w": 3,
+        "origin": [
+          -1,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#72052"
+      },
+      "2": {
+        "__h": 7,
+        "__w": 5,
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#72053"
+      },
+      "3": {
+        "__h": 7,
+        "__w": 5,
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#72054"
+      },
+      "4": {
+        "__h": 7,
+        "__w": 5,
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#72055"
+      },
+      "5": {
+        "__h": 7,
+        "__w": 5,
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#72056"
+      },
+      "6": {
+        "__h": 7,
+        "__w": 5,
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#72057"
+      },
+      "7": {
+        "__h": 7,
+        "__w": 5,
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#72058"
+      },
+      "8": {
+        "__h": 7,
+        "__w": 5,
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#72059"
+      },
+      "9": {
+        "__h": 7,
+        "__w": 5,
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#72060"
+      },
+      "itemEXP": {
+        "__h": 7,
+        "__w": 49,
+        "_hash": "221f52490c494e8c542910c1b4c0ea7ad77b26e6b9699a831223408ba33e515b",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/GrowthEnabled/itemEXP",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94296"
+      },
+      "itemLEV": {
+        "__h": 7,
+        "__w": 49,
+        "_hash": "a645e9ab97e292eeb1b3e91dd2765d6a4308cf768a7265c23239a94fecca06a7",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/GrowthEnabled/itemLEV",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94295"
+      },
+      "max": {
+        "__h": 7,
+        "__w": 17,
+        "_hash": "78162f1e9a566825fa12d392aef8aceca6f9a1869d324fc92ee19e8e6b94efbc",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/GrowthEnabled/max",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94308"
+      },
+      "none": {
+        "__h": 1,
+        "__w": 5,
+        "origin": [
+          0,
+          -3
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#72063"
+      },
+      "percent": {
+        "__h": 7,
+        "__w": 5,
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#72061"
+      }
+    },
+    "ItemCategory": {
+      "1": {
+        "__h": 7,
+        "__w": 17,
+        "_hash": "2ab42bedad7938793ec3dc74f08efde533200a7999daba671fe8917658c59d63",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/ItemCategory/1",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94255"
+      },
+      "2": {
+        "__h": 7,
+        "__w": 80,
+        "_hash": "0d71a6441d549a50802b0eaa8958e55058c65bee7368ed5cdd7db6a2503bd536",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/ItemCategory/2",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94256"
+      },
+      "3": {
+        "__h": 7,
+        "__w": 74,
+        "_hash": "dd900b57dcd7050c6b276e6fde9031b76c6acc096ce3f872920135daa345c2c4",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/ItemCategory/3",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94257"
+      },
+      "4": {
+        "__h": 7,
+        "__w": 37,
+        "_hash": "19fdc48a2980be223ec5f4e2f7034320d2aece77c2747a3d8b4bd33b9c0c3629",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/ItemCategory/4",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94258"
+      },
+      "5": {
+        "__h": 7,
+        "__w": 17,
+        "_hash": "9beb89b7b1a5d3ed30675a1b4b5c8d4a538aed968e332fd1f9aecbbb83685a24",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/ItemCategory/5",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94259"
+      },
+      "6": {
+        "__h": 7,
+        "__w": 37,
+        "_hash": "fb04d195c5eff0b365338788287472fbbbdfae6aa813eea51ee58daa6a5e2700",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/ItemCategory/6",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94260"
+      },
+      "7": {
+        "__h": 7,
+        "__w": 29,
+        "_hash": "cc80a5eec3745845a4f43d903e0d99304f661cc704aaad72d579234000fd9364",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/ItemCategory/7",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94261"
+      },
+      "8": {
+        "__h": 7,
+        "__w": 28,
+        "_hash": "0bc1baf56d13e71d069f1d716551cf301a87558679f2a01442fda8304e124329",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/ItemCategory/8",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94262"
+      },
+      "9": {
+        "__h": 7,
+        "__w": 23,
+        "_hash": "99c8faa33275be3412ed4123b33e94b530789276afc9a14eed4c037415592b89",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/ItemCategory/9",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94263"
+      },
+      "10": {
+        "__h": 7,
+        "__w": 30,
+        "_hash": "deb0fe59f25165189ead2927a61062ff81237d739ec08c33526337d1097a7044",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/ItemCategory/10",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94264"
+      },
+      "12": {
+        "__h": 7,
+        "__w": 19,
+        "_hash": "7fe3643d3549893e2d5e7ed344dae4112dead55f13883f60561757eb1b52d20b",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/ItemCategory/12",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94265"
+      },
+      "21": {
+        "__h": 7,
+        "__w": 46,
+        "_hash": "b9211471529a04c6a658afe1319c31363ddfc2dbd5647d559b841ca84ee69836",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/ItemCategory/21",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94266"
+      }
+    },
+    "Property": {
+      "0": {
+        "__h": 9,
+        "__w": 82,
+        "_hash": "34fcdb46bc84c4b92b44069abe41432fb7f8930792942f09dc3055301387e439",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/Property/0",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94274"
+      },
+      "1": {
+        "__h": 9,
+        "__w": 80,
+        "_hash": "168def5931e8c4a7236eb0dc0a1c7ae0288552d67575efd785186a2d0dac5af0",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/Property/1",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94275"
+      },
+      "2": {
+        "__h": 9,
+        "__w": 68,
+        "_hash": "b9c9689fe859ff19900ec1fd35f35ca8a3b3a4f9ea306b8acdfc377d9a3a831b",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/Property/2",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94276"
+      },
+      "3": {
+        "__h": 9,
+        "__w": 53,
+        "_hash": "209ecb99b0608126029b2a9b43efe088d4372cfacc3b9fb88b9883e645229756",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/Property/3",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94277"
+      },
+      "4": {
+        "__h": 9,
+        "__w": 74,
+        "_hash": "e99bb734e75eb0cc11fc967db43c7845b21d14a1afe4232a49c1affd2056d946",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/Property/4",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94278"
+      },
+      "5": {
+        "__h": 9,
+        "__w": 53,
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/Property/3",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94277"
+      },
+      "6": {
+        "__h": 9,
+        "__w": 82,
+        "_hash": "0676cb7f852b6067d522f77d08f5ce346c6e10cbb7637f5719bad0a6f1eac2b1",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/Property/6",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94280"
+      },
+      "7": {
+        "__h": 9,
+        "__w": 72,
+        "_hash": "5dfd6b5d3a5fe1c0bacf822415656c74348da0f14f27207ef208958db6fb3f25",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/Property/7",
+        "origin": [
+          -1,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94281"
+      },
+      "8": {
+        "__h": 9,
+        "__w": 66,
+        "_hash": "6f530ad90a11fb15399b1973e54e421893b68615fe089f0ea318b1a7d3f2db3f",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/Property/8",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94282"
+      },
+      "9": {
+        "__h": 9,
+        "__w": 56,
+        "_hash": "389eabf499ca03ab4d7a71e6aacfa6d168029e0abe5c47c4bd0e7ab3b1bba62b",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/Property/9",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94283"
+      },
+      "10": {
+        "__h": 9,
+        "__w": 53,
+        "_hash": "01d98029cd8e25052250068ed754e0cd8bff8d524ef0e44b4478cb59e0f83184",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/Property/10",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94284"
+      },
+      "11": {
+        "__h": 9,
+        "__w": 64,
+        "_hash": "0c3bdd1a9bdadeb6c0a0ddad2847f3ed37181b99ef219ce67188289c7b0629fa",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/Property/11",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94285"
+      },
+      "12": {
+        "__h": 9,
+        "__w": 35,
+        "_hash": "ac82115b9432edf6a86d60e1d021a6c02ee065a2ad21c0414aca5bcd3e6356b7",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/Property/12",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94286"
+      },
+      "13": {
+        "__h": 9,
+        "__w": 35,
+        "_hash": "48025ea9ea32c8e9e204897fe6974d6c52232613e61e407a6967ce137b348688",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/Property/13",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94287"
+      },
+      "14": {
+        "__h": 9,
+        "__w": 31,
+        "_hash": "0c5f750d96172f1eb6012568e175cb4d71bd88021aeb49a49c1a98e9c78d4658",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/Property/14",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94288"
+      },
+      "15": {
+        "__h": 9,
+        "__w": 127,
+        "_hash": "3925bcdbd301455540febd7daa8650649e79046f6318303e9e02abb98c68425d",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/Property/15",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94289"
+      },
+      "16": {
+        "__h": 9,
+        "__w": 160,
+        "_hash": "befb0592bb0fe829ee42b6325944f07be19406dce2bc5f64c535d75da77d19b1",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/Property/16",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94290"
+      },
+      "17": {
+        "__h": 9,
+        "__w": 63,
+        "_hash": "9fd14415e971527a8a0fc09b5c8d433e37e4cb1dfa5ba5759e86557d3be5824a",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/Property/17",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94291"
+      },
+      "18": {
+        "__h": 9,
+        "__w": 99,
+        "_hash": "cc9af25391ef760743b56fc991313211900ab0e2121359d5f90178a9077f4bae",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/Property/18",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94292"
+      }
+    },
+    "Speed": {
+      "0": {
+        "__h": 7,
+        "__w": 41,
+        "_hash": "1c129d311f21f7589b5dcdaafbeb3937ad753b0389d21f4001dc3946c74c9191",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/Speed/0",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94267"
+      },
+      "1": {
+        "__h": 7,
+        "__w": 35,
+        "_hash": "5c64d043fdb11c7e3d07355685577c0940a1254e39b1a3384ee848a45fc47070",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/Speed/1",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94268"
+      },
+      "2": {
+        "__h": 7,
+        "__w": 23,
+        "_hash": "40748635b81dd578cb022fc0643dbb99b5b3861dda5727c493df399931e65e4e",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/Speed/2",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94269"
+      },
+      "3": {
+        "__h": 7,
+        "__w": 36,
+        "_hash": "ec24c807aad2359d1ff70d387a9351809c314e4b4c6b6afe0ed7f66e3b159517",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/Speed/3",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94270"
+      },
+      "4": {
+        "__h": 7,
+        "__w": 24,
+        "_hash": "19c54914cf068042f39a437b650fed88049e15853e22862f2e360c479f6decdb",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/Speed/4",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94271"
+      },
+      "5": {
+        "__h": 7,
+        "__w": 36,
+        "_hash": "21907874b612386fdf476b78bddfc09da565a0856332ac4e2ddc5b59acfe38c3",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/Speed/5",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94272"
+      },
+      "6": {
+        "__h": 7,
+        "__w": 42,
+        "_hash": "9dd48e92b2bd27a1c7f771d3841fc89908ec35fd602c8136418bb6096761f5b2",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/Speed/6",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94273"
+      }
+    },
+    "Star": {
+      "Star": {
+        "__h": 13,
+        "__w": 13,
+        "_hash": "2e8c0504e13f5bb81e19b3def806906a8caf72d1a8ea8ac30887e73d989de756",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/Star/Star",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94326"
+      },
+      "Star2": {
+        "__h": 23,
+        "__w": 26,
+        "_hash": "19c397f6e3a3973b39574c93a3f4a1b0350ae7c82ddd5d46d1c4f68ea976df5d",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/Star/Star2",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94327"
+      }
+    },
+    "WeaponCategory": {
+      "30": {
+        "__h": 7,
+        "__w": 93,
+        "_hash": "68bedff89a9dd21c05ca81e28720b79873ffbda6217e50117d055f6cd08ee2c9",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/WeaponCategory/30",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94241"
+      },
+      "31": {
+        "__h": 7,
+        "__w": 79,
+        "_hash": "879034fb1824bf549c2c301c60e8505f0697e35318b1b9001ea06a39bb7c296e",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/WeaponCategory/31",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94242"
+      },
+      "32": {
+        "__h": 7,
+        "__w": 131,
+        "_hash": "1176ac9aefd27b854a68e827121657d28fdabf20d0fbbdc7c1ae75b9fff398c7",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/WeaponCategory/32",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94243"
+      },
+      "33": {
+        "__h": 7,
+        "__w": 35,
+        "_hash": "cf409172bc60f05a1d8f7808ac2205a4e8863e5a944eded5c94735e5fa141429",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/WeaponCategory/33",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94244"
+      },
+      "37": {
+        "__h": 7,
+        "__w": 25,
+        "_hash": "311384883d69568c7aebd5d59281d97d5926b52bc837dbc6bfd0afd928bd90de",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/WeaponCategory/37",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94245"
+      },
+      "38": {
+        "__h": 7,
+        "__w": 29,
+        "_hash": "318fa5a9489f466d36f15b10f14a1a5ac4d14f8a4586aeb1861b9c7ecdf32885",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/WeaponCategory/38",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94246"
+      },
+      "40": {
+        "__h": 7,
+        "__w": 95,
+        "_hash": "f4e23207b4504039c7764ebe5a1de2eed6ed2efcd897a3461418aeb4dcb4c9e3",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/WeaponCategory/40",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94247"
+      },
+      "41": {
+        "__h": 7,
+        "__w": 81,
+        "_hash": "0e758d7421c53568a1c0b4c2bdcd13428e855033367d92f7e7011d5d0d478fd2",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/WeaponCategory/41",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94248"
+      },
+      "42": {
+        "__h": 7,
+        "__w": 133,
+        "_hash": "5f4ac8935621ebb228862230de9ae8828f42b3f203cb230402a1c41da4e1147a",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/WeaponCategory/42",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94249"
+      },
+      "43": {
+        "__h": 7,
+        "__w": 29,
+        "_hash": "2c7aafea1ded3261c884bf112c651961c3a46fcbe515339a4c4e6ee2ce11cd54",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/WeaponCategory/43",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94250"
+      },
+      "44": {
+        "__h": 7,
+        "__w": 45,
+        "_hash": "e12a66ace3f55b68a03a07b7a48eb97339cbbbb7879dd0e741ca84691fdddf91",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/WeaponCategory/44",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94251"
+      },
+      "45": {
+        "__h": 7,
+        "__w": 19,
+        "_hash": "25347952a210aba5f9dd244b313afdb628d429f47245736adbb161cc71b4ce55",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/WeaponCategory/45",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94252"
+      },
+      "46": {
+        "__h": 7,
+        "__w": 49,
+        "_hash": "ebd7d1324384e1b6e20ea31d2222cd898d6f2315da7688d0ebf74d4b5f2d5fe8",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/WeaponCategory/46",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94253"
+      },
+      "47": {
+        "__h": 7,
+        "__w": 24,
+        "_hash": "a09beee5e8b29bb7944e2647d69c0c7b3f613bec1458e05af83d8f0317df7de6",
+        "_outlink": "UI/UIWindow.img/ToolTip/Equip/WeaponCategory/47",
+        "origin": [
+          0,
+          0
+        ],
+        "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94254"
+      }
+    },
+    "cash": {
+      "__h": 5,
+      "__w": 23,
+      "_hash": "a866324686be2305f8b6339a9f86549954c2eb871c353ce503eef81c9e34476d",
+      "_outlink": "UI/UIWindow.img/ToolTip/Equip/cash",
+      "origin": [
+        0,
+        0
+      ],
+      "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94294"
+    },
+    "mesos": {
+      "__h": 5,
+      "__w": 30,
+      "_hash": "885d979002d85a1e46d9c1fc1ec2d42ad3101209e23bfac77339490cc09dab23",
+      "_outlink": "UI/UIWindow.img/ToolTip/Equip/mesos",
+      "origin": [
+        0,
+        0
+      ],
+      "__i": "../spritesheets/UIWindow2.img/ToolTip/Equip#94293"
+    }
+  },
+  "WorldMap": {
+    "Line": {
+      "__h": 1,
+      "__w": 251,
+      "_hash": "79e81e55069c7b4f17fd465af7f0715c05f4eb0f67ac0293fdefe7b6649c3b65",
+      "_outlink": "UI/UIWindow.img/ToolTip/WorldMap/Line",
+      "origin": [
+        0,
+        0
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/ToolTip/WorldMap#94328"
+    },
+    "Mob": {
+      "__h": 9,
+      "__w": 9,
+      "_hash": "2db3c821ddb2130a3b143b4398ec37924ff8ee1e1f429f93a2c26cb1453c6ef0",
+      "_outlink": "UI/UIWindow.img/ToolTip/WorldMap/Mob",
+      "origin": [
+        0,
+        0
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/ToolTip/WorldMap#94329"
+    },
+    "Npc": {
+      "__h": 9,
+      "__w": 9,
+      "_hash": "475474d96984a1e62f3a452b08270b4099f9c6a02035c634e6cfbe5c6c9aba98",
+      "_outlink": "UI/UIWindow.img/ToolTip/WorldMap/Npc",
+      "origin": [
+        0,
+        0
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/ToolTip/WorldMap#94330"
+    },
+    "Party": {
+      "__h": 9,
+      "__w": 9,
+      "_hash": "3af256edf425db06112f2f94f84963e783c09b5bb1516766a809dfa3afffbd95",
+      "_outlink": "UI/UIWindow.img/ToolTip/WorldMap/Party",
+      "origin": [
+        0,
+        0
+      ],
+      "z": 0,
+      "__i": "../spritesheets/UIWindow2.img/ToolTip/WorldMap#94331"
+    }
+  }
+}

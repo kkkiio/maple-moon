@@ -192,8 +192,9 @@ moon run --target native cmd/main -- \
 1. 从 `entries` 生成底层 exporter 的 include 范围，并导出到空 staging；
 2. JSON/PNG/TMJ/TSJ 等运行输出复制到 `runtime_root`；
 3. `.aseprite` 移入镜像的 `source_root`；
-4. 扫描最终运行目录并重建按路径排序的 `pack.json`；
-5. 现有 pack 中不属于本次 entries 的手写资源保持不变；删除资源时显式删除文件，
+4. 校验最终运行目录中所有 NX JSON 的 `__i` 都是合法且存在的 pack 内文件；
+5. 扫描最终运行目录并重建按路径排序的 `pack.json`；
+6. 现有 pack 中不属于本次 entries 的手写资源保持不变；删除资源时显式删除文件，
    由 Git 展示变更，下一次导出同步刷新 manifest。
 
 导出定义、运行产物、编辑源文件与 `pack.json` 一起提交。不生成 lock 文件。

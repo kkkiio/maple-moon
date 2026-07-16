@@ -272,7 +272,7 @@ impl @json.FromJson for NxWorldMapSpot with fn from_json(json, path) -> NxWorldM
 
 ///|
 priv struct NxWorldMapInfo {
-  parent_map : String
+  parent_map : String?
 } derive(@json.FromJson(fields(parent_map(rename="parentMap"))))
 
 ///|
@@ -289,10 +289,7 @@ impl @json.FromJson for NxWorldMapPage with fn from_json(json, path) -> NxWorldM
     { "BaseImg": base_img, "MapList": map_list, "info": info, .. } => {
       let map_links = match json {
         { "MapLink": map_link, .. } =>
-          @res.parse_map_based_array(
-            map_link,
-            path=path.add_key("MapLink"),
-          )
+          @res.parse_map_based_array(map_link, path=path.add_key("MapLink"))
         _ => []
       }
       {
@@ -314,6 +311,7 @@ priv struct UiResources {
   ui : WorldMapUIResource
   marker : WorldMapMarkerResource
   tooltip : WorldMapTooltipResource
+  root_page_by_map_id : Map[Int, String]
 }
 
 ///|
@@ -380,7 +378,7 @@ let world_map_pages_for_test_ref : Ref[Map[String, Json]] = Ref(Map([]))
 let cleanup_registered_ref : Ref[Bool] = Ref(false)
 
 ///|
-const PANEL_BORDER_Z : Int = @graphics.UI_ZINDEX
+const PANEL_BORDER_Z : Int = @graphics.MODAL_UI_ZINDEX
 
 ///|
 const PAGE_Z : Int = PANEL_BORDER_Z + 1
@@ -427,6 +425,7 @@ fn clear_entities(entities : Array[@entity.Entity]) -> Unit {
 ///|
 fn clear_scene(reason_is_change_map : Bool) -> Unit {
   let state = state_ref.val
+  @mini_map_ui.set_modal_suppressed("world_map", false)
   clear_entities(state.render_entities)
   state.hovered_spot_index = None
   state.hovered_link_index = None
@@ -458,6 +457,7 @@ fn register_scene_cleanup_once() -> Unit {
     return
   }
   cleanup_registered_ref.val = true
+  @console.register_state_section("world_map", debug_state)
 }
 
 ///|
@@ -620,7 +620,12 @@ fn parse_world_map_page_resource(
       map_ids: spot.map_ids,
     })
   }
-  { base_img_texture, parent_map: src.info.parent_map, map_links, map_spots }
+  {
+    base_img_texture,
+    parent_map: src.info.parent_map.unwrap_or(""),
+    map_links,
+    map_spots,
+  }
 }
 
 ///|
@@ -631,21 +636,35 @@ fn load_ui_resources(
 ) -> UiResources {
   let ui_json = match ui_json {
     Some(json) => json
-    None => @res.require_json("res://UI/UIWindow2.img/WorldMap.json")
+    None => @res.require_json("res://UI/UIWindow2.img/WorldMap/nx.json")
   }
   let tooltip_json = match tooltip_json {
     Some(json) => json
     None =>
-      @res.require_json_node("res://UI/UIWindow2.img/ToolTip.json", [
+      @res.require_json_node("res://UI/UIWindow2.img/ToolTip/nx.json", [
         "WorldMap",
       ])
   }
   let map_helper_json = match map_helper_json {
     Some(json) => json
-    None =>
-      @res.require_json(
-        "res://Map/MapHelper.img/worldMap.json",
-      )
+    None => @res.require_json("res://Map/MapHelper.img/worldMap/nx.json")
+  }
+  let index_json = @res.require_json("res://Map/WorldMap/index.json")
+  guard index_json is { "rootPageByMapId": Object(index_entries), .. } else {
+    abort("invalid WorldMap index resource")
+  }
+  let root_page_by_map_id : Map[Int, String] = Map([])
+  for map_id_text, page_json in index_entries {
+    let map_id = @string.parse_int(map_id_text) catch {
+      _ => abort("invalid map id in WorldMap index: \{map_id_text}")
+    }
+    guard page_json is String(page_name) else {
+      abort("invalid page name in WorldMap index: map_id=\{map_id_text}")
+    }
+    root_page_by_map_id[map_id] = page_name
+  }
+  if root_page_by_map_id.is_empty() {
+    abort("WorldMap index has no map routes")
   }
   let ui = parse_world_map_ui_resource(ui_json) catch {
     _ => abort("invalid WorldMap ui resource")
@@ -656,7 +675,7 @@ fn load_ui_resources(
   let tooltip = parse_world_map_tooltip_resource(tooltip_json) catch {
     _ => abort("invalid WorldMap tooltip resource")
   }
-  { ui, marker, tooltip }
+  { ui, marker, tooltip, root_page_by_map_id }
 }
 
 ///|
@@ -667,7 +686,7 @@ fn load_world_map_page(
 ) -> (String, WorldMapPageResource) {
   let json = match injected_json {
     Some(json) => json
-    None => @res.require_json("res://Map/WorldMap/" + name + ".img.json")
+    None => @res.require_json("res://Map/WorldMap/" + name + ".img/nx.json")
   }
   let page = parse_world_map_page_resource(json, marker) catch {
     _ => abort("invalid world map page resource: \{name}")
@@ -719,8 +738,14 @@ fn search_offset(ui : WorldMapUIResource) -> Int {
 }
 
 ///|
-fn current_root_world_name(map_id : Int) -> String {
-  "WorldMap0\{map_id / 10000000}"
+fn current_root_world_name(resources : UiResources, map_id : Int) -> String {
+  match resources.root_page_by_map_id.get(map_id) {
+    Some(page_name) => page_name
+    None =>
+      @log.fatal("current map is absent from WorldMap index", data={
+        "map_id": map_id,
+      })
+  }
 }
 
 ///|
@@ -770,13 +795,11 @@ fn poll_ui_resources(state : State) -> Bool {
   if ui_json_for_test_ref.val is Some(ui_json) &&
     tooltip_json_for_test_ref.val is Some(tooltip_json) &&
     map_helper_json_for_test_ref.val is Some(map_helper_json) {
-    let resources = {
-      ui: parse_world_map_ui_resource(ui_json),
-      marker: parse_world_map_marker_resource(map_helper_json),
-      tooltip: parse_world_map_tooltip_resource(tooltip_json),
-    } catch {
-      err => abort("error loading world map ui resources, err=\{err}")
-    }
+    let resources = load_ui_resources(
+      Some(ui_json),
+      Some(tooltip_json),
+      Some(map_helper_json),
+    )
     state.ui_resources = Some(resources)
     state.ui_loading = None
     return true
@@ -936,11 +959,26 @@ fn spawn_sprite(
   sprite : @sprite.Sprite,
   x : Int,
   y : Int,
+  z : Int,
 ) -> Unit {
   let entity = @entity.Entity()
   state.render_entities.push(entity)
   @sprite.sprites().set(entity, sprite)
-  @transform2d.set_xy(entity, @selene_math.Vec2(x.to_double(), y.to_double()))
+  let world_position = @camera.viewport_to_world(
+    @selene_math.Vec2(x.to_double(), y.to_double()),
+  )
+  @transform.transforms().set(
+    entity,
+    @transform.Transform::from_xyz(
+      world_position[@selene_math.X],
+      world_position[@selene_math.Y],
+      z.to_double(),
+    ),
+  )
+  match @camera.camera_entity() {
+    Some(camera_entity) => @transform.set_parent_in_place(entity, camera_entity)
+    None => ()
+  }
 }
 
 ///|
@@ -962,10 +1000,21 @@ fn spawn_rect(
       @selene_math.Vec2(width.to_double(), height.to_double()),
     ),
   )
+  let world_position = @camera.viewport_to_world(
+    @selene_math.Vec2(x.to_double(), y.to_double()),
+  )
   @transform.transforms().set(
     entity,
-    @transform.Transform::from_xyz(x.to_double(), y.to_double(), z.to_double()),
+    @transform.Transform::from_xyz(
+      world_position[@selene_math.X],
+      world_position[@selene_math.Y],
+      z.to_double(),
+    ),
   )
+  match @camera.camera_entity() {
+    Some(camera_entity) => @transform.set_parent_in_place(entity, camera_entity)
+    None => ()
+  }
 }
 
 ///|
@@ -988,7 +1037,13 @@ fn spawn_texture(
       texture.origin.y.to_double(),
     ),
   )
-  spawn_sprite(state, @ms_animation.sprite_from_animation(animation, z), x, y)
+  spawn_sprite(
+    state,
+    @ms_animation.sprite_from_animation(animation, z),
+    x,
+    y,
+    z,
+  )
 }
 
 ///|
@@ -999,7 +1054,13 @@ fn spawn_animation(
   y : Int,
   z : Int,
 ) -> Unit {
-  spawn_sprite(state, @ms_animation.sprite_from_animation(animation, z), x, y)
+  spawn_sprite(
+    state,
+    @ms_animation.sprite_from_animation(animation, z),
+    x,
+    y,
+    z,
+  )
 }
 
 ///|
@@ -1236,9 +1297,9 @@ fn render_world_map(state : State) -> Unit {
 }
 
 ///|
-fn ensure_root_page(state : State) -> Unit {
+fn ensure_root_page(state : State, resources : UiResources) -> Unit {
   if state.current_user_root_world_name == "" {
-    let root = current_root_world_name(state.current_map_id)
+    let root = current_root_world_name(resources, state.current_map_id)
     state.current_user_root_world_name = root
     state.current_world_name = root
   }
@@ -1261,9 +1322,17 @@ pub fn set_current_map(
   ignore(street_name)
   // state.current_map_name = map_name
   // state.current_street_name = street_name
-  let root = current_root_world_name(map_id)
-  state.current_user_root_world_name = root
-  state.current_world_name = root
+  match state.ui_resources {
+    Some(resources) => {
+      let root = current_root_world_name(resources, map_id)
+      state.current_user_root_world_name = root
+      state.current_world_name = root
+    }
+    None => {
+      state.current_user_root_world_name = ""
+      state.current_world_name = ""
+    }
+  }
   state.current_page = None
   state.page_loading = None
   state.hovered_spot_index = None
@@ -1280,13 +1349,24 @@ pub fn set_world_map_visible(visible : Bool) -> Unit {
     return
   }
   state.visible = visible
+  @mini_map_ui.set_modal_suppressed("world_map", visible)
   state.hovered_spot_index = None
   state.hovered_link_index = None
   state.pressed_button = None
   if visible {
-    let root = current_root_world_name(state.current_map_id)
-    state.current_user_root_world_name = root
-    open_world_name(state, root)
+    match state.ui_resources {
+      Some(resources) => {
+        let root = current_root_world_name(resources, state.current_map_id)
+        state.current_user_root_world_name = root
+        open_world_name(state, root)
+      }
+      None => {
+        state.current_user_root_world_name = ""
+        state.current_world_name = ""
+        state.current_page = None
+        state.page_loading = None
+      }
+    }
   } else {
     clear_entities(state.render_entities)
     state.search_visible = false
@@ -1302,7 +1382,7 @@ pub fn toggle_world_map() -> Unit {
 }
 
 ///|
-/// Injects `UIWindow2.img/WorldMap.json` for tests.
+/// Injects `UIWindow2.img/WorldMap/nx.json` for tests.
 pub fn set_world_map_ui_json_for_test(json : Json) -> Unit {
   ui_json_for_test_ref.val = Some(json)
   let state = state_ref.val
@@ -1312,7 +1392,7 @@ pub fn set_world_map_ui_json_for_test(json : Json) -> Unit {
 }
 
 ///|
-/// Injects `UIWindow2.img/ToolTip.json` for tests.
+/// Injects `UIWindow2.img/ToolTip/nx.json` for tests.
 pub fn set_world_map_tooltip_json_for_test(json : Json) -> Unit {
   tooltip_json_for_test_ref.val = Some(json)
   let state = state_ref.val
@@ -1332,7 +1412,7 @@ pub fn set_map_helper_world_map_json_for_test(json : Json) -> Unit {
 }
 
 ///|
-/// Injects a `Map/WorldMap/<name>.img.json` page for tests.
+/// Injects a `Map/WorldMap/<name>.img/nx.json` page for tests.
 pub fn set_world_map_json_for_test(name : String, json : Json) -> Unit {
   world_map_pages_for_test_ref.val[name] = json
   let state = state_ref.val
@@ -1379,8 +1459,13 @@ pub fn open_world_map_page_for_test(name : String) -> Unit {
 }
 
 ///|
-/// Exposes compact debug state for blackbox tests.
-pub fn get_world_map_debug_state_for_test() -> Json {
+/// Return compact, stable World Map state for debug tools and blackbox tests.
+///
+/// # Example
+/// ```moonbit nocheck
+/// ignore(debug_state())
+/// ```
+pub fn debug_state() -> Json {
   let state = state_ref.val
   {
     "visible": state.visible,
@@ -1390,6 +1475,8 @@ pub fn get_world_map_debug_state_for_test() -> Json {
     "hovered_spot_index": state.hovered_spot_index.to_json(),
     "hovered_link_index": state.hovered_link_index.to_json(),
     "has_page": state.current_page is Some(_),
+    "resources_ready": state.ui_resources is Some(_),
+    "render_entity_count": state.render_entities.length(),
     "page_parent_map": state.current_page.map_or("", fn(page) {
       page.parent_map
     }),
@@ -1413,6 +1500,7 @@ pub fn handle_world_map_escape_for_test() -> Unit {
 ///|
 /// Resets singleton state and injected resources for tests.
 pub fn reset_world_map_ui_for_test() -> Unit {
+  @mini_map_ui.set_modal_suppressed("world_map", false)
   let state = state_ref.val
   clear_entities(state.render_entities)
   state.visible = false
@@ -1459,7 +1547,7 @@ pub fn world_map_ui_system(_world : @ecs.World) -> Unit {
     dirty = true
   }
   guard state.ui_resources is Some(resources) else { return }
-  ensure_root_page(state)
+  ensure_root_page(state, resources)
   ensure_page_loading(state, resources)
   if poll_page_loading(state) {
     dirty = true

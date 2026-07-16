@@ -2,9 +2,9 @@
 
 Shared Maple Moon game runtime package.
 
-This package wires resources, game-state transitions, local-server handlers, and
-runtime systems into a Selene `App`. Platform-specific main packages select the
-actual backend and opt into debug-only plugins such as `engine/console`:
+This package wires resources, game-state transitions, server handlers, and
+runtime systems into a Selene `App`. Platform-specific main packages construct
+the `GameServer` passed to `game_systems` and select the rendering backend:
 
 - `apps/game_web` uses the WebGPU backend for browser runtime checks and
   debugging, and registers the JS-only console plugin.

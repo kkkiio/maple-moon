@@ -21,6 +21,8 @@ pub fn set_map_helper_minimap_json_for_test(Json) -> Unit
 
 pub fn set_minimap_json_for_test(Json) -> Unit
 
+pub fn set_modal_suppressed(String, Bool) -> Unit
+
 // Errors
 
 // Types and methods

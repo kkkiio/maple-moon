@@ -7,11 +7,15 @@ import {
   "moonbitlang/core/json",
   "KKKIIO/maple-moon/engine/game_server",
   "KKKIIO/maple-moon/engine/game_state",
+  "KKKIIO/maple-moon/game/camera",
   "KKKIIO/maple-moon/game/map",
   "KKKIIO/maple-moon/game/maple_stat",
   "KKKIIO/maple-moon/game/monster",
+  "KKKIIO/maple-moon/game/npc",
   "KKKIIO/maple-moon/game/player",
   "KKKIIO/maple-moon/game/server_proto",
+  "KKKIIO/selene/math" @selene_math,
+  "KKKIIO/selene/physics2d",
 }
 
 supported_targets = "js"

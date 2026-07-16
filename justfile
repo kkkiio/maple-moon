@@ -5,9 +5,11 @@ fmt:
     moon fmt moon.mod src/engine src/game src/apps src/graphics_test src/cmd
     moon info
 test:
-    moon test --target native --no-parallelize --deny-warn --warn-list=-28-79-82 --diagnostic-limit 200
+    moon test --target native --deny-warn --warn-list=-28-79-82 --diagnostic-limit 200 $(rg -l '^[[:space:]]*test([[:space:]]|\{)' src -g '*.mbt' | sed 's#/[^/]*$##' | sort -u | rg -v '^src/graphics_test$')
+test-graphics:
+    moon test --target native --no-parallelize --deny-warn --warn-list=-28-79-82 --diagnostic-limit 200 src/graphics_test
 update-graphics-snaps:
-    UPDATE_GRAPHICS_SNAPS=true moon test --target native --no-parallelize --deny-warn --warn-list=-28-79-82 --diagnostic-limit 200 src/graphics_test
+    UPDATE_GRAPHICS_SNAPS=true just test-graphics
 build:
     moon build --target js --release src/apps/game_web
 

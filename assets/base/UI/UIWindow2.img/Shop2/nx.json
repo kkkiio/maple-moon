@@ -1,0 +1,1517 @@
+{
+  "BtBuy": {
+    "disabled": {
+      "0": {
+        "__i": "bitmap/77621.png",
+        "__w": 64,
+        "__h": 16,
+        "_hash": "544581fba4805fd62a0b12a6478b2bbf25ab23c2fb15c4b7d4b20f2f2db4498e",
+        "origin": [
+          -201,
+          -73
+        ]
+      }
+    },
+    "mouseOver": {
+      "0": {
+        "__i": "bitmap/77622.png",
+        "__w": 64,
+        "__h": 16,
+        "_hash": "a88c280c8a83cba7ce10fea12a70852048a15372f7c0d03484db1ec4824faf80",
+        "origin": [
+          -201,
+          -73
+        ]
+      }
+    },
+    "normal": {
+      "0": {
+        "__i": "bitmap/77619.png",
+        "__w": 64,
+        "__h": 16,
+        "_hash": "9b399ed038ccebe062918b50c34ed8828a72392c235ae030f2abb6e457752b70",
+        "origin": [
+          -201,
+          -73
+        ]
+      }
+    },
+    "pressed": {
+      "0": {
+        "__i": "bitmap/77620.png",
+        "__w": 64,
+        "__h": 16,
+        "_hash": "fcebd8a301c8ff25c781e056a359088b5ba39d08b954302c1bee819ebcc5251c",
+        "origin": [
+          -201,
+          -73
+        ]
+      }
+    }
+  },
+  "BtExit": {
+    "disabled": {
+      "0": {
+        "__i": "bitmap/77629.png",
+        "__w": 64,
+        "__h": 16,
+        "_hash": "a00abdb657d37f063a4121fa7bb526da3b0373f8de390eb58f1d91e70710fcc8",
+        "origin": [
+          -201,
+          -53
+        ]
+      }
+    },
+    "mouseOver": {
+      "0": {
+        "__i": "bitmap/77630.png",
+        "__w": 64,
+        "__h": 16,
+        "_hash": "64b9f5ccf7c0ceda81edca5e74229ab11b0c3f05784bf383ace528eea03e0dd3",
+        "origin": [
+          -201,
+          -53
+        ]
+      }
+    },
+    "normal": {
+      "0": {
+        "__i": "bitmap/77627.png",
+        "__w": 64,
+        "__h": 16,
+        "_hash": "62d32c731badf6020029090773d73072ae330f78f05315ab80c7025835cad140",
+        "origin": [
+          -201,
+          -53
+        ]
+      }
+    },
+    "pressed": {
+      "0": {
+        "__i": "bitmap/77628.png",
+        "__w": 64,
+        "__h": 16,
+        "_hash": "ce26b82b23f543f53e0706a63a269f49f169bc8a6f59be7f7910afa995835d9b",
+        "origin": [
+          -201,
+          -53
+        ]
+      }
+    }
+  },
+  "BtRecharge": {
+    "disabled": {
+      "0": {
+        "__i": "bitmap/77633.png",
+        "__w": 40,
+        "__h": 16,
+        "_hash": "3b44d6da7aeb5b8386b3f966672c29e117791947c62ef229dbe78ae07700bae8",
+        "origin": [
+          0,
+          0
+        ]
+      }
+    },
+    "mouseOver": {
+      "0": {
+        "__i": "bitmap/77634.png",
+        "__w": 40,
+        "__h": 16,
+        "_hash": "18a7512f55861b4f5802865d5937c44d0f675959d528ad91ae92ac91fd6af03a",
+        "origin": [
+          0,
+          0
+        ]
+      }
+    },
+    "normal": {
+      "0": {
+        "__i": "bitmap/77631.png",
+        "__w": 40,
+        "__h": 16,
+        "_hash": "b93b5c09d81478ef908ebad16f92b11527281cafc686e4109af075fd7616e943",
+        "origin": [
+          0,
+          0
+        ]
+      }
+    },
+    "pressed": {
+      "0": {
+        "__i": "bitmap/77632.png",
+        "__w": 40,
+        "__h": 16,
+        "_hash": "40e59419c1dd984ee61e9d6a3cb19809224e58aad487eba07f6cfe5e245ea433",
+        "origin": [
+          0,
+          0
+        ]
+      }
+    }
+  },
+  "BtSell": {
+    "disabled": {
+      "0": {
+        "__i": "bitmap/77625.png",
+        "__w": 64,
+        "__h": 16,
+        "_hash": "8c9d03efef822dd4cd3e02cbc52582ef009e50d3d28db7aa9f8b48171dbbdc71",
+        "origin": [
+          -433,
+          -73
+        ]
+      }
+    },
+    "mouseOver": {
+      "0": {
+        "__i": "bitmap/77626.png",
+        "__w": 64,
+        "__h": 16,
+        "_hash": "32f6962430c6904fc655356c5a17a62caf64cd227f279cdced719bb9bedc5b99",
+        "origin": [
+          -433,
+          -73
+        ]
+      }
+    },
+    "normal": {
+      "0": {
+        "__i": "bitmap/77623.png",
+        "__w": 64,
+        "__h": 16,
+        "_hash": "74d38fb5d00c45dde27e62229b7ee372ddd769928b38bc80152eafbe67161697",
+        "origin": [
+          -433,
+          -73
+        ]
+      }
+    },
+    "pressed": {
+      "0": {
+        "__i": "bitmap/77624.png",
+        "__w": 64,
+        "__h": 16,
+        "_hash": "dcc18689718b26f8d2777beb1ce436c9b04b0e61930c2e3bb7d596586cba2184",
+        "origin": [
+          -433,
+          -73
+        ]
+      }
+    }
+  },
+  "MesoWorthCoin": {
+    "1": {
+      "__i": "bitmap/77639.png",
+      "__w": 155,
+      "__h": 91,
+      "_hash": "a132a523f9c2d33d6b1f589cc1d1021a359bc5edf73e9099a97bf3d0bafe6e10",
+      "origin": [
+        93,
+        51
+      ],
+      "z": 0
+    },
+    "2": {
+      "__i": "bitmap/77640.png",
+      "__w": 155,
+      "__h": 91,
+      "_hash": "eb7ec87e394230fef336880171c98b26ac2f7c2fc168595671f6f04ebe9931b0",
+      "origin": [
+        93,
+        51
+      ],
+      "z": 0
+    },
+    "canSellNpc": 9001212,
+    "pos_balloon": [
+      -80,
+      -75
+    ],
+    "pos_number1": [
+      28,
+      42
+    ],
+    "pos_number2": [
+      28,
+      42
+    ]
+  },
+  "TabBuy": {
+    "disabled": {
+      "0": {
+        "__i": "bitmap/77522.png",
+        "__w": 42,
+        "__h": 17,
+        "_inlink": "Shop2/TabSell/disabled/5",
+        "origin": [
+          -10,
+          -102
+        ]
+      },
+      "1": {
+        "__i": "bitmap/77523.png",
+        "__w": 42,
+        "__h": 17,
+        "_inlink": "Shop2/TabSell/disabled/6",
+        "origin": [
+          -53,
+          -102
+        ]
+      },
+      "2": {
+        "__i": "bitmap/77524.png",
+        "__w": 42,
+        "__h": 17,
+        "_inlink": "Shop2/TabSell/disabled/7",
+        "origin": [
+          -10,
+          -102
+        ]
+      },
+      "3": {
+        "__i": "bitmap/77525.png",
+        "__w": 42,
+        "__h": 17,
+        "_inlink": "Shop2/TabSell/disabled/8",
+        "origin": [
+          -53,
+          -102
+        ]
+      },
+      "4": {
+        "__i": "bitmap/77535.png",
+        "__w": 42,
+        "__h": 17,
+        "_hash": "e4d4239288fdab35f2c9a906245f679f051fc34519d4bd1e135cb1a17bd20f5c",
+        "origin": [
+          -53,
+          -102
+        ]
+      }
+    },
+    "enabled": {
+      "0": {
+        "__i": "bitmap/77513.png",
+        "__w": 42,
+        "__h": 19,
+        "_inlink": "Shop2/TabSell/enabled/5",
+        "origin": [
+          -10,
+          -100
+        ]
+      },
+      "1": {
+        "__i": "bitmap/77514.png",
+        "__w": 42,
+        "__h": 19,
+        "_inlink": "Shop2/TabSell/enabled/6",
+        "origin": [
+          -53,
+          -100
+        ]
+      },
+      "2": {
+        "__i": "bitmap/77515.png",
+        "__w": 42,
+        "__h": 19,
+        "_inlink": "Shop2/TabSell/enabled/7",
+        "origin": [
+          -10,
+          -100
+        ]
+      },
+      "3": {
+        "__i": "bitmap/77516.png",
+        "__w": 42,
+        "__h": 19,
+        "_inlink": "Shop2/TabSell/enabled/8",
+        "origin": [
+          -53,
+          -100
+        ]
+      },
+      "4": {
+        "__i": "bitmap/77530.png",
+        "__w": 42,
+        "__h": 19,
+        "_hash": "32340990d0d7d21635bd2b472634ab8bf77d045db32c7eba270b3edab6e02d16",
+        "origin": [
+          -53,
+          -100
+        ]
+      }
+    }
+  },
+  "TabSell": {
+    "disabled": {
+      "0": {
+        "__i": "bitmap/77517.png",
+        "__w": 42,
+        "__h": 17,
+        "_hash": "78242250825df518784a1f4b9cd02791547d2bcb78142eae896d53538edd5075",
+        "origin": [
+          -284,
+          -102
+        ]
+      },
+      "1": {
+        "__i": "bitmap/77518.png",
+        "__w": 42,
+        "__h": 17,
+        "_hash": "d0a932c0b3e65a327f4a037760c413522efaec11d3513c65e95af50cf332c834",
+        "origin": [
+          -327,
+          -102
+        ]
+      },
+      "2": {
+        "__i": "bitmap/77519.png",
+        "__w": 42,
+        "__h": 17,
+        "_hash": "0ef74aeb29f5f2b155f0797c578710570639ff76e43c92aec12692b6bc20399f",
+        "origin": [
+          -370,
+          -102
+        ]
+      },
+      "3": {
+        "__i": "bitmap/77520.png",
+        "__w": 42,
+        "__h": 17,
+        "_hash": "7db213d881786d019db9790140bc0ace4b40ad3352088e9700b19444a8330dca",
+        "origin": [
+          -413,
+          -102
+        ]
+      },
+      "4": {
+        "__i": "bitmap/77521.png",
+        "__w": 42,
+        "__h": 17,
+        "_hash": "184da3c85e97d456ee0234c2bed26115297d04dd5c5be32d10ac2697ab679afe",
+        "origin": [
+          -456,
+          -102
+        ]
+      },
+      "5": {
+        "__i": "bitmap/77522.png",
+        "__w": 42,
+        "__h": 17,
+        "_hash": "c2d9c059ff013ce476000e114639e67d48a43a59a973d15ff78eef5b1caab5cd",
+        "origin": [
+          -10,
+          -102
+        ]
+      },
+      "6": {
+        "__i": "bitmap/77523.png",
+        "__w": 42,
+        "__h": 17,
+        "_hash": "51c598bcba35840bd0c420d37ab184758b6d9e645eb4101634d472e7f34476df",
+        "origin": [
+          -53,
+          -102
+        ]
+      },
+      "7": {
+        "__i": "bitmap/77524.png",
+        "__w": 42,
+        "__h": 17,
+        "_hash": "4770fb55d365448cb15c12cfaf835e3139d1f014b421a54b00fc62405d4c1f2e",
+        "origin": [
+          -10,
+          -102
+        ]
+      },
+      "8": {
+        "__i": "bitmap/77525.png",
+        "__w": 42,
+        "__h": 17,
+        "_hash": "2ce74b66a320c2a5ff35d8c814d54fb66ab27f27d11638595a8797c8a6f6038b",
+        "origin": [
+          -53,
+          -102
+        ]
+      }
+    },
+    "enabled": {
+      "0": {
+        "__i": "bitmap/77508.png",
+        "__w": 42,
+        "__h": 19,
+        "_hash": "7b37cfae29b6950e65fff00663e2d55b3d4fb2a8fa68affb5419a2b3f84c2cd6",
+        "origin": [
+          -284,
+          -100
+        ]
+      },
+      "1": {
+        "__i": "bitmap/77509.png",
+        "__w": 42,
+        "__h": 19,
+        "_hash": "1f554bf928f84d2bf5b254ca6229cf1c53ff8560f276283d2eb9e4addfb7d693",
+        "origin": [
+          -327,
+          -100
+        ]
+      },
+      "2": {
+        "__i": "bitmap/77510.png",
+        "__w": 42,
+        "__h": 19,
+        "_hash": "194f3a7e0191667a1d615f9303ebbfb22aab7e3691c7bc63927ffd8a57f830e6",
+        "origin": [
+          -370,
+          -100
+        ]
+      },
+      "3": {
+        "__i": "bitmap/77511.png",
+        "__w": 42,
+        "__h": 19,
+        "_hash": "b4455425abc8e825afca77896fac2ec4251cd6820b6af6771c652cf859a2af1b",
+        "origin": [
+          -413,
+          -100
+        ]
+      },
+      "4": {
+        "__i": "bitmap/77512.png",
+        "__w": 42,
+        "__h": 19,
+        "_hash": "1352a4ed80cf63076d5b6e30158bb665ff336c2f9a93f5052c0ca11013f70635",
+        "origin": [
+          -456,
+          -100
+        ]
+      },
+      "5": {
+        "__i": "bitmap/77513.png",
+        "__w": 42,
+        "__h": 19,
+        "_hash": "7a1c2a1580969ad9e5167f4cf629a5a198db345b20eca8e8038f8abbd78bf009",
+        "origin": [
+          -10,
+          -100
+        ]
+      },
+      "6": {
+        "__i": "bitmap/77514.png",
+        "__w": 42,
+        "__h": 19,
+        "_hash": "578fd010822d584b873d55d482f1794dd37936e3125f5fbf924e2386eab5f483",
+        "origin": [
+          -53,
+          -100
+        ]
+      },
+      "7": {
+        "__i": "bitmap/77515.png",
+        "__w": 42,
+        "__h": 19,
+        "_hash": "25bc892602b54298367f12dd1a978495c6a4a874fa96d4b6b6ffcfafb3dea65a",
+        "origin": [
+          -10,
+          -100
+        ]
+      },
+      "8": {
+        "__i": "bitmap/77516.png",
+        "__w": 42,
+        "__h": 19,
+        "_hash": "985782c0fad90ab6fc8f9810b427a84403796e079c09af636174c4a99cd3cc52",
+        "origin": [
+          -53,
+          -100
+        ]
+      }
+    }
+  },
+  "TabShop": {
+    "disabled": {
+      "0": {
+        "__i": "bitmap/77460.png",
+        "__w": 42,
+        "__h": 17,
+        "_inlink": "Shop/TabShop/disabled/0",
+        "origin": [
+          0,
+          -2
+        ]
+      },
+      "1": {
+        "__i": "bitmap/77517.png",
+        "__w": 42,
+        "__h": 17,
+        "_inlink": "Shop2/TabSell/disabled/0",
+        "origin": [
+          0,
+          -2
+        ]
+      },
+      "10": {
+        "__i": "bitmap/77587.png",
+        "__w": 42,
+        "__h": 17,
+        "_hash": "2cb85cd7bf63c1f298494bd85d1c8b6d91f8b3c2a761dc34d8fa5cb0d0e36f67",
+        "origin": [
+          0,
+          -2
+        ]
+      },
+      "11": {
+        "__i": "bitmap/77588.png",
+        "__w": 42,
+        "__h": 17,
+        "_hash": "3eaac8ecc605da5ae4ffa4d4bcb19ade8116a2b7769e4f023c4271ad35a8d663",
+        "origin": [
+          0,
+          -2
+        ]
+      },
+      "12": {
+        "__i": "bitmap/77589.png",
+        "__w": 42,
+        "__h": 17,
+        "_hash": "c7aa3467ca40f901c3973a422f36f9c4a57cc84ef8c072b133e03fc19f462a9d",
+        "origin": [
+          0,
+          -2
+        ],
+        "z": 0
+      },
+      "13": {
+        "__i": "bitmap/77590.png",
+        "__w": 42,
+        "__h": 17,
+        "_hash": "1fd8591c75ce39bda22ecd314605dee63a505ce49ab7dd8ee5a9282f4b528624",
+        "origin": [
+          0,
+          -2
+        ]
+      },
+      "14": {
+        "__i": "bitmap/77591.png",
+        "__w": 42,
+        "__h": 17,
+        "_hash": "4a0be05c9775b092e297f399e2bd81fc6de6b10b732b9a5d4608dc382360541b",
+        "origin": [
+          0,
+          -2
+        ]
+      },
+      "15": {
+        "__i": "bitmap/77591.png",
+        "__w": 42,
+        "__h": 17,
+        "_inlink": "Shop2/TabShop/disabled/14",
+        "origin": [
+          0,
+          -2
+        ]
+      },
+      "2": {
+        "__i": "bitmap/77518.png",
+        "__w": 42,
+        "__h": 17,
+        "_inlink": "Shop2/TabSell/disabled/1",
+        "origin": [
+          0,
+          -2
+        ]
+      },
+      "20": {
+        "__i": "bitmap/77593.png",
+        "__w": 42,
+        "__h": 17,
+        "_hash": "f1669e2ea4eb7b0ff0a03552b2aa4fa8353cd21f6c56296e2187c9b79eb7613b",
+        "origin": [
+          0,
+          -2
+        ]
+      },
+      "21": {
+        "__i": "bitmap/77594.png",
+        "__w": 42,
+        "__h": 17,
+        "_hash": "4780f15a53506fdc47d9ae3ffdd406d2da6d1fcdc8842ccf9f983cb40da775af",
+        "origin": [
+          0,
+          -2
+        ]
+      },
+      "22": {
+        "__i": "bitmap/77595.png",
+        "__w": 42,
+        "__h": 17,
+        "_hash": "5f512ee0187975bc10e0c54709de8f387713fdf7099a6d3499ab8784ed6584d6",
+        "origin": [
+          0,
+          -2
+        ]
+      },
+      "23": {
+        "__i": "bitmap/77596.png",
+        "__w": 42,
+        "__h": 17,
+        "_hash": "0b18cfde1469a5cd1c598c5b9eef604ab1b705b9fc4c4fb0a5cabd4c032ff7a5",
+        "origin": [
+          0,
+          -2
+        ]
+      },
+      "24": {
+        "__i": "bitmap/77597.png",
+        "__w": 42,
+        "__h": 17,
+        "_hash": "18e5aade9f926b21d7878671ee2a82904aef5fde561af1e6eadc2282fe2d83fa",
+        "origin": [
+          0,
+          -2
+        ]
+      },
+      "25": {
+        "__i": "bitmap/77604.png",
+        "__w": 42,
+        "__h": 17,
+        "_hash": "22e7aa3fdc67b37bc4016e992c07ff5af66264fa786d96f5d3b169febd0753b9",
+        "origin": [
+          0,
+          0
+        ]
+      },
+      "26": {
+        "__i": "bitmap/77605.png",
+        "__w": 42,
+        "__h": 17,
+        "_hash": "14f6378ed0e68c9e88a5aa8ab5b058e86f4132186f0b10d736c20599dd7017b3",
+        "origin": [
+          0,
+          0
+        ]
+      },
+      "27": {
+        "__i": "bitmap/77606.png",
+        "__w": 42,
+        "__h": 17,
+        "_hash": "e6586b770a31f67f5c3773c5943ea24f686c3243c24bcb9750f3bb152363f7a8",
+        "origin": [
+          0,
+          0
+        ]
+      },
+      "28": {
+        "__i": "bitmap/77607.png",
+        "__w": 42,
+        "__h": 17,
+        "_hash": "04edccf3b0c030927d5aec37b46fbc04d85f9d1939a79abbd93433bc2bc7b86d",
+        "origin": [
+          0,
+          0
+        ]
+      },
+      "29": {
+        "__i": "bitmap/77608.png",
+        "__w": 43,
+        "__h": 17,
+        "_hash": "1676dc09c0f63c252ba190e1e06789983191e0e83fddaa49a5d9ba14570a1d52",
+        "origin": [
+          0,
+          0
+        ]
+      },
+      "3": {
+        "__i": "bitmap/77520.png",
+        "__w": 42,
+        "__h": 17,
+        "_inlink": "Shop2/TabSell/disabled/3",
+        "origin": [
+          0,
+          -2
+        ]
+      },
+      "30": {
+        "__i": "bitmap/77609.png",
+        "__w": 43,
+        "__h": 17,
+        "_hash": "f97780741520c9db76784ecd91236b08f203cb240707c7590c42cf70cef3bdc9",
+        "origin": [
+          0,
+          0
+        ]
+      },
+      "31": {
+        "__i": "bitmap/77610.png",
+        "__w": 43,
+        "__h": 17,
+        "_hash": "7510ced2a1384bf1c06ebbc19f742cec508110ede062a6e440aa753e72432cb5",
+        "origin": [
+          0,
+          0
+        ]
+      },
+      "32": {
+        "__i": "bitmap/77611.png",
+        "__w": 43,
+        "__h": 17,
+        "_hash": "9683110c800dba511f8c5989bf895b620610e38f9169df582f3ac0fb2ae6b8cc",
+        "origin": [
+          0,
+          0
+        ]
+      },
+      "33": {
+        "__i": "bitmap/77612.png",
+        "__w": 43,
+        "__h": 17,
+        "_hash": "a531664071ea811c59f3ca03bf1e2a2f3d51c32ce2e2565615d655e7a35ad80b",
+        "origin": [
+          0,
+          0
+        ]
+      },
+      "34": {
+        "__i": "bitmap/77613.png",
+        "__w": 43,
+        "__h": 17,
+        "_hash": "e2558ad161834dc1ee2f89ef257a21f3e55fff5064805766cb279308f0dda596",
+        "origin": [
+          0,
+          0
+        ]
+      },
+      "35": {
+        "__i": "bitmap/77614.png",
+        "__w": 43,
+        "__h": 17,
+        "_hash": "a2f9a9a1dacb51fa979b6d6a0e50a5636708a2d403d47363a1b97bf0a8df9399",
+        "origin": [
+          0,
+          0
+        ]
+      },
+      "36": {
+        "__i": "bitmap/77615.png",
+        "__w": 43,
+        "__h": 17,
+        "_hash": "48f7b59545bb1a29544efd6124c7f432bb34ff8ec5798037d532038562c73e5a",
+        "origin": [
+          0,
+          0
+        ]
+      },
+      "37": {
+        "__i": "bitmap/77616.png",
+        "__w": 43,
+        "__h": 17,
+        "_hash": "27880f5939c2078e1c4055c53cf672790c686b4afd51c6708a2c14bd9be787f8",
+        "origin": [
+          0,
+          0
+        ]
+      },
+      "38": {
+        "__i": "bitmap/77617.png",
+        "__w": 43,
+        "__h": 17,
+        "_hash": "0021e6eeb73ea863cbff8b03cc925c741750121b7513c5462f4d8b8876aee3a5",
+        "origin": [
+          0,
+          0
+        ]
+      },
+      "4": {
+        "__i": "bitmap/77519.png",
+        "__w": 42,
+        "__h": 17,
+        "_inlink": "Shop2/TabSell/disabled/2",
+        "origin": [
+          0,
+          -2
+        ]
+      },
+      "5": {
+        "__i": "bitmap/77582.png",
+        "__w": 42,
+        "__h": 17,
+        "_hash": "055cfd3db461b19b191f945c85535bbe54d01c62549c6ea1e57aa55bacdd8be0",
+        "origin": [
+          0,
+          -2
+        ]
+      },
+      "6": {
+        "__i": "bitmap/77583.png",
+        "__w": 42,
+        "__h": 17,
+        "_hash": "ea4e59b8b7dc2afbbc23721fb6d4d7fccf300982badb81e40960e165dbadcd82",
+        "origin": [
+          0,
+          -2
+        ]
+      },
+      "7": {
+        "__i": "bitmap/77584.png",
+        "__w": 42,
+        "__h": 17,
+        "_hash": "b8aff23980677b7863e8792b8490b1c84bfce92f52b4c51ecd88c826fe2cc053",
+        "origin": [
+          0,
+          -2
+        ]
+      },
+      "8": {
+        "__i": "bitmap/77585.png",
+        "__w": 42,
+        "__h": 17,
+        "_hash": "b1ba38abeee8f0eb5e438c3f6d66cd122c6b48cdda3ee0cbc8d675e9230397b2",
+        "origin": [
+          0,
+          -2
+        ]
+      },
+      "80": {
+        "__i": "bitmap/77473.png",
+        "__w": 42,
+        "__h": 17,
+        "_inlink": "Shop/TabShop/disabled/80",
+        "origin": [
+          0,
+          0
+        ],
+        "z": 0
+      },
+      "81": {
+        "__i": "bitmap/77474.png",
+        "__w": 42,
+        "__h": 17,
+        "_inlink": "Shop/TabShop/disabled/81",
+        "origin": [
+          0,
+          0
+        ],
+        "z": 0
+      },
+      "82": {
+        "__i": "bitmap/77475.png",
+        "__w": 42,
+        "__h": 17,
+        "_inlink": "Shop/TabShop/disabled/82",
+        "origin": [
+          0,
+          0
+        ],
+        "z": 0
+      },
+      "83": {
+        "__i": "bitmap/77476.png",
+        "__w": 42,
+        "__h": 17,
+        "_inlink": "Shop/TabShop/disabled/83",
+        "origin": [
+          0,
+          0
+        ],
+        "z": 0
+      },
+      "86": {
+        "__i": "bitmap/77477.png",
+        "__w": 42,
+        "__h": 17,
+        "_inlink": "Shop/TabShop/disabled/86",
+        "origin": [
+          0,
+          0
+        ],
+        "z": 0
+      },
+      "87": {
+        "__i": "bitmap/77517.png",
+        "__w": 42,
+        "__h": 17,
+        "_inlink": "Shop2/TabSell/disabled/0",
+        "origin": [
+          0,
+          -2
+        ]
+      },
+      "9": {
+        "__i": "bitmap/77586.png",
+        "__w": 42,
+        "__h": 17,
+        "_hash": "eac19e177b21e2346877cbf1cadfa16616bcbedbdda3ce2935b0184beb18d9fe",
+        "origin": [
+          0,
+          -2
+        ]
+      }
+    },
+    "enabled": {
+      "0": {
+        "__i": "bitmap/77440.png",
+        "__w": 42,
+        "__h": 19,
+        "_inlink": "Shop/TabShop/enabled/0",
+        "origin": [
+          0,
+          0
+        ]
+      },
+      "1": {
+        "__i": "bitmap/77508.png",
+        "__w": 42,
+        "__h": 19,
+        "_inlink": "Shop2/TabSell/enabled/0",
+        "origin": [
+          0,
+          0
+        ]
+      },
+      "10": {
+        "__i": "bitmap/77546.png",
+        "__w": 42,
+        "__h": 19,
+        "_hash": "ecca38bd0466fe2d15b875c0ab807a046626387df61a046c5471768e9b988b30",
+        "origin": [
+          0,
+          0
+        ]
+      },
+      "11": {
+        "__i": "bitmap/77547.png",
+        "__w": 42,
+        "__h": 19,
+        "_hash": "390d77b3003713ac28ebdc2d147c561b1dc2b3ab771aee1ff336df821f9567b5",
+        "origin": [
+          0,
+          0
+        ]
+      },
+      "12": {
+        "__i": "bitmap/77548.png",
+        "__w": 42,
+        "__h": 19,
+        "_hash": "9bfa6ed71f18961f1bcefdc2772e2476be4d3bb2d90e005cb12ecd531b1367f2",
+        "origin": [
+          0,
+          0
+        ],
+        "z": 0
+      },
+      "13": {
+        "__i": "bitmap/77549.png",
+        "__w": 42,
+        "__h": 19,
+        "_hash": "22f6aac0c229562c75088f6734376239d279ad7a4971c87feb3c019dc41bf97c",
+        "origin": [
+          0,
+          0
+        ]
+      },
+      "14": {
+        "__i": "bitmap/77550.png",
+        "__w": 42,
+        "__h": 19,
+        "_hash": "84eb63366c38d5dd001a9c7aff2384291b07f1110351f5558eab2e7f98b07bea",
+        "origin": [
+          0,
+          0
+        ]
+      },
+      "15": {
+        "__i": "bitmap/77550.png",
+        "__w": 42,
+        "__h": 19,
+        "_inlink": "Shop2/TabShop/enabled/14",
+        "origin": [
+          0,
+          0
+        ]
+      },
+      "2": {
+        "__i": "bitmap/77509.png",
+        "__w": 42,
+        "__h": 19,
+        "_inlink": "Shop2/TabSell/enabled/1",
+        "origin": [
+          0,
+          0
+        ]
+      },
+      "20": {
+        "__i": "bitmap/77552.png",
+        "__w": 42,
+        "__h": 19,
+        "_hash": "8d3d0fb4b3c3c4c17a1b1073175f6e6f89e21d148924fbf22e1f203c096b1dbc",
+        "origin": [
+          0,
+          0
+        ]
+      },
+      "21": {
+        "__i": "bitmap/77553.png",
+        "__w": 42,
+        "__h": 19,
+        "_hash": "fe79e623d9eed2a9a1c205e5acdeb99d803a8847a785a19e035d1c7ebaa52b65",
+        "origin": [
+          0,
+          0
+        ]
+      },
+      "22": {
+        "__i": "bitmap/77554.png",
+        "__w": 42,
+        "__h": 19,
+        "_hash": "25f450628c4a9a19d7129f64c68ff26a8fc4a8bdd310b444ea58a5ecfb5f30d5",
+        "origin": [
+          0,
+          0
+        ]
+      },
+      "23": {
+        "__i": "bitmap/77555.png",
+        "__w": 42,
+        "__h": 19,
+        "_hash": "0689ad4bde8bdd6eee86c94c166730d0fd2e6509eb9697123b8ec65520beaf3f",
+        "origin": [
+          0,
+          0
+        ]
+      },
+      "24": {
+        "__i": "bitmap/77556.png",
+        "__w": 42,
+        "__h": 19,
+        "_hash": "b76839f3abcf4d9861a54287521c0e584f36bc95fd392169430c70c4ffa05ee9",
+        "origin": [
+          0,
+          0
+        ]
+      },
+      "25": {
+        "__i": "bitmap/77563.png",
+        "__w": 42,
+        "__h": 19,
+        "_hash": "fda43dffa0e2d6a9ce91333c04d6ee7e6641d1d6aca8aff848a80a14523d5e97",
+        "origin": [
+          0,
+          0
+        ]
+      },
+      "26": {
+        "__i": "bitmap/77564.png",
+        "__w": 42,
+        "__h": 19,
+        "_hash": "2375508225bb8d7007a1dbeafb9eee03c8bc2f67fbee587e31bca975823a5129",
+        "origin": [
+          0,
+          0
+        ]
+      },
+      "27": {
+        "__i": "bitmap/77565.png",
+        "__w": 42,
+        "__h": 19,
+        "_hash": "44634e740ad2abe239a20a35ef706395b71d929110af6c7769eb6a5decc749d9",
+        "origin": [
+          0,
+          0
+        ]
+      },
+      "28": {
+        "__i": "bitmap/77566.png",
+        "__w": 42,
+        "__h": 19,
+        "_hash": "6879390abad65e0e9b5daeaaa2e6d052eeb7cb702b0a85e2bff01eddbea68927",
+        "origin": [
+          0,
+          0
+        ]
+      },
+      "29": {
+        "__i": "bitmap/77567.png",
+        "__w": 43,
+        "__h": 19,
+        "_hash": "2612607d2f5f773bfdb8aedda2a7a87e14ffee03ae344b4025b2ef17e5c6716e",
+        "origin": [
+          0,
+          0
+        ]
+      },
+      "3": {
+        "__i": "bitmap/77511.png",
+        "__w": 42,
+        "__h": 19,
+        "_inlink": "Shop2/TabSell/enabled/3",
+        "origin": [
+          0,
+          0
+        ]
+      },
+      "30": {
+        "__i": "bitmap/77568.png",
+        "__w": 43,
+        "__h": 19,
+        "_hash": "0d6100f4a35f3602ead8d39efe1e23b5fa75d6f5ba26797481939fcc2f8e5ee7",
+        "origin": [
+          0,
+          0
+        ]
+      },
+      "31": {
+        "__i": "bitmap/77569.png",
+        "__w": 43,
+        "__h": 19,
+        "_hash": "489ba0050047af203000b5a82508dedbb1cd07f3c5c0fde63348e82109c2653b",
+        "origin": [
+          0,
+          0
+        ]
+      },
+      "32": {
+        "__i": "bitmap/77570.png",
+        "__w": 43,
+        "__h": 19,
+        "_hash": "512ec0becef453fa48edb0dfe63b19a2dbd2ec73790436a7d86f77c023f6fa3d",
+        "origin": [
+          0,
+          0
+        ]
+      },
+      "33": {
+        "__i": "bitmap/77571.png",
+        "__w": 43,
+        "__h": 19,
+        "_hash": "705f212cc96cb76ffdf293ef2ce7d56d1ceed09435a728c244c83e8f5fc2e9ab",
+        "origin": [
+          0,
+          0
+        ]
+      },
+      "34": {
+        "__i": "bitmap/77572.png",
+        "__w": 43,
+        "__h": 19,
+        "_hash": "4ff19ec00831d1d7c5ce5617f35bc4b4f48f897486df6f6656211a8c53c1a35a",
+        "origin": [
+          0,
+          0
+        ]
+      },
+      "35": {
+        "__i": "bitmap/77573.png",
+        "__w": 43,
+        "__h": 19,
+        "_hash": "86a1708341bd3bc6dbb3728f983795cbf9c823d6432c3dbb648538fa70c48de1",
+        "origin": [
+          0,
+          0
+        ]
+      },
+      "36": {
+        "__i": "bitmap/77574.png",
+        "__w": 43,
+        "__h": 19,
+        "_hash": "ae065edb46ec8eb5de78ede178518088d8dc9b011b1be301a9228a254650f096",
+        "origin": [
+          0,
+          0
+        ]
+      },
+      "37": {
+        "__i": "bitmap/77575.png",
+        "__w": 43,
+        "__h": 19,
+        "_hash": "6e568e930089cf6b28fe1d9e9354fbd9d6f8b6ed90670d72b5485f574de68ad0",
+        "origin": [
+          0,
+          0
+        ]
+      },
+      "38": {
+        "__i": "bitmap/77576.png",
+        "__w": 43,
+        "__h": 19,
+        "_hash": "17562e8c90ec78b8c603c460091f70204422f25595e317e8a269ab173bcf4e4f",
+        "origin": [
+          0,
+          0
+        ]
+      },
+      "4": {
+        "__i": "bitmap/77510.png",
+        "__w": 42,
+        "__h": 19,
+        "_inlink": "Shop2/TabSell/enabled/2",
+        "origin": [
+          0,
+          0
+        ]
+      },
+      "5": {
+        "__i": "bitmap/77541.png",
+        "__w": 42,
+        "__h": 19,
+        "_hash": "e5bea9d0df3a431e7040affb8cc4c6327d0c4f59f7408827cad7762e8228a5b7",
+        "origin": [
+          0,
+          0
+        ]
+      },
+      "6": {
+        "__i": "bitmap/77542.png",
+        "__w": 42,
+        "__h": 19,
+        "_hash": "d65083f92e38da3879eb613cc1720a25e3e613815798eca74393481e442b177c",
+        "origin": [
+          0,
+          0
+        ]
+      },
+      "7": {
+        "__i": "bitmap/77543.png",
+        "__w": 42,
+        "__h": 19,
+        "_hash": "32426156ff64a1f0a76f591a3b0a9832babbe8c94e76bf3eda179b17de51183f",
+        "origin": [
+          0,
+          0
+        ]
+      },
+      "8": {
+        "__i": "bitmap/77544.png",
+        "__w": 42,
+        "__h": 19,
+        "_hash": "0251af90adf9043a2f476770e78f824fd83625dab9bc5774000862e219a17d2c",
+        "origin": [
+          0,
+          0
+        ]
+      },
+      "80": {
+        "__i": "bitmap/77453.png",
+        "__w": 42,
+        "__h": 19,
+        "_inlink": "Shop/TabShop/enabled/80",
+        "origin": [
+          0,
+          0
+        ],
+        "z": 0
+      },
+      "81": {
+        "__i": "bitmap/77454.png",
+        "__w": 42,
+        "__h": 19,
+        "_inlink": "Shop/TabShop/enabled/81",
+        "origin": [
+          0,
+          0
+        ],
+        "z": 0
+      },
+      "82": {
+        "__i": "bitmap/77455.png",
+        "__w": 42,
+        "__h": 19,
+        "_inlink": "Shop/TabShop/enabled/82",
+        "origin": [
+          0,
+          0
+        ],
+        "z": 0
+      },
+      "83": {
+        "__i": "bitmap/77456.png",
+        "__w": 42,
+        "__h": 19,
+        "_inlink": "Shop/TabShop/enabled/83",
+        "origin": [
+          0,
+          0
+        ],
+        "z": 0
+      },
+      "86": {
+        "__i": "bitmap/77457.png",
+        "__w": 42,
+        "__h": 19,
+        "_inlink": "Shop/TabShop/enabled/86",
+        "origin": [
+          0,
+          0
+        ],
+        "z": 0
+      },
+      "87": {
+        "__i": "bitmap/77508.png",
+        "__w": 42,
+        "__h": 19,
+        "_inlink": "Shop2/TabSell/enabled/0",
+        "origin": [
+          0,
+          0
+        ]
+      },
+      "9": {
+        "__i": "bitmap/77545.png",
+        "__w": 42,
+        "__h": 19,
+        "_hash": "372baa34ce7f0b0dce793eae568c5500f616a40d98f4159ceb8701df0c13ae17",
+        "origin": [
+          0,
+          0
+        ]
+      }
+    }
+  },
+  "backgrnd": {
+    "__i": "bitmap/77500.png",
+    "__w": 508,
+    "__h": 505,
+    "_hash": "225e4a2e294feb97c942c87b5d27979217550901e1cb771c692e39c96d0136d8",
+    "origin": [
+      0,
+      0
+    ],
+    "z": -5
+  },
+  "backgrnd2": {
+    "__i": "bitmap/77501.png",
+    "__w": 496,
+    "__h": 494,
+    "_hash": "9194b2acb9f1dc77f20dbd7b38f3a27618cb1c1055855976ab7c710385b95edc",
+    "origin": [
+      -6,
+      -5
+    ],
+    "z": -4
+  },
+  "backgrnd3": {
+    "__i": "bitmap/77502.png",
+    "__w": 494,
+    "__h": 441,
+    "_hash": "6c725f0d2c54354cf71856c62666228ac8dc68e3cbe4115122d3e39298034a19",
+    "origin": [
+      -7,
+      -54
+    ],
+    "z": -3
+  },
+  "backgrnd4": {
+    "__i": "bitmap/77503.png",
+    "__w": 140,
+    "__h": 22,
+    "_hash": "83eae3d3b65bccebec963a91598b617d09230acee73ab5cec532d07119fd46b3",
+    "origin": [
+      -126,
+      -13
+    ],
+    "z": 0
+  },
+  "checkBox": {
+    "0": {
+      "__i": "bitmap/65785.png",
+      "__w": 12,
+      "__h": 12,
+      "_hash": "861e629ab539bd32c76184aca3c95dd3c61ed081dec74891e5bce11dfbf291b7",
+      "_outlink": "UI/UIWindow6.img/allienceShop/checkBox/0",
+      "origin": [
+        -248,
+        -18
+      ],
+      "z": 0
+    },
+    "1": {
+      "__i": "bitmap/65786.png",
+      "__w": 12,
+      "__h": 12,
+      "_hash": "00ecc11143a279c7527a68d43b136b8a5e066688ec9c2bfe49d7fe64f9ecd581",
+      "_outlink": "UI/UIWindow6.img/allienceShop/checkBox/1",
+      "origin": [
+        -248,
+        -18
+      ],
+      "z": 0
+    }
+  },
+  "coin": {
+    "__i": "bitmap/3917.png",
+    "__w": 103,
+    "__h": 14,
+    "_hash": "c97f64e8c6540683045c5c8421a2fb48bd0871c4034844282ba063e2a3ba258a",
+    "_outlink": "UI/EventShop.img/adventureShop/coin",
+    "origin": [
+      0,
+      0
+    ],
+    "z": 0
+  },
+  "disabled": {
+    "__i": "bitmap/3918.png",
+    "__w": 245,
+    "__h": 35,
+    "_hash": "c57ea40f8a2e5bcf647511dd2cc759857022ff7829a43e57e73bb403b8b7bab7",
+    "_outlink": "UI/EventShop.img/adventureShop/disabled",
+    "origin": [
+      0,
+      0
+    ],
+    "z": 0
+  },
+  "meso": {
+    "__i": "bitmap/3887.png",
+    "__w": 12,
+    "__h": 12,
+    "_outlink": "UI/EventShop.img/adventureShop/meso",
+    "origin": [
+      0,
+      0
+    ]
+  },
+  "repurchaseInfo": {
+    "__i": "bitmap/3937.png",
+    "__w": 245,
+    "__h": 77,
+    "_hash": "0cc41b1b5b7bda56221456e8efe7f51389a13a0b4573fadc4f2fd95e50331d0d",
+    "_outlink": "UI/EventShop.img/adventureShop/repurchaseInfo",
+    "origin": [
+      -11,
+      -124
+    ],
+    "z": 0
+  },
+  "sale": {
+    "__i": "bitmap/3919.png",
+    "__w": 34,
+    "__h": 12,
+    "_hash": "dc39dad6adbbca46dcb7d07c8493d2a5e067a0f2c08a7fc28bf10922486c1789",
+    "_outlink": "UI/EventShop.img/adventureShop/sale",
+    "origin": [
+      17,
+      6
+    ],
+    "z": 0
+  },
+  "select": {
+    "__i": "bitmap/77505.png",
+    "__w": 208,
+    "__h": 35,
+    "_hash": "ea138016cf34e6b52154553f84e6a3ad02c4995380509570b1e0589877c6136f",
+    "origin": [
+      0,
+      0
+    ]
+  },
+  "select2": {
+    "__i": "bitmap/77411.png",
+    "__w": 165,
+    "__h": 35,
+    "_inlink": "Shop/select",
+    "origin": [
+      0,
+      0
+    ]
+  }
+}

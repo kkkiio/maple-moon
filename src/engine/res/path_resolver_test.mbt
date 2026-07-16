@@ -10,7 +10,7 @@ test "res VFS resolves priority and keeps relative references in one pack" {
     (
       "packs/patch/pack.json",
       @encoding/utf8.encode(
-        "{\"schema\":1,\"id\":\"patch\",\"files\":[\"Data/config.json\",\"Map/Map1/demo.mx.json\",\"Mob/demo/animation.json\"]}",
+        "{\"schema\":1,\"id\":\"patch\",\"files\":[\"Data/config.json\",\"Map/Map1/demo.mx.json\",\"Map/tiles/demo.tmj\",\"Mob/demo/animation.json\"]}",
       ),
     ),
     ("packs/base/Data/base.txt", @encoding/utf8.encode("base")),
@@ -33,6 +33,8 @@ test "res VFS resolves priority and keeps relative references in one pack" {
       @encoding/utf8.encode("{\"pack\":\"patch\"}"),
     ),
     ("packs/patch/Map/Map1/demo.mx.json", @encoding/utf8.encode("{}")),
+    ("packs/patch/Map/tiles/demo.tmj", @encoding/utf8.encode("{}")),
+    ("packs/patch/Mob/demo/animation.png", Bytes::from_array([0x89U.to_byte()])),
     (
       "packs/patch/Mob/demo/animation.json",
       @encoding/utf8.encode(
@@ -74,9 +76,12 @@ test "res VFS resolves priority and keeps relative references in one pack" {
   guard texture_json is { "texture": { "__i": String(image), .. }, .. } else {
     fail("expected resolved NX texture reference")
   }
-  @debug.debug_inspect(image, content=(
-    #|"packs/base/Data/icon.png"
-  ))
+  @debug.debug_inspect(
+    image,
+    content=(
+      #|"packs/base/Data/icon.png"
+    ),
+  )
 
   try ResourceKey::parse("res://../../outside.json") catch {
     ResourceLoadError::InvalidAddress(message) =>
@@ -106,7 +111,7 @@ test "res VFS resolves priority and keeps relative references in one pack" {
     ResourceLoadError::NotFound(message) =>
       inspect(
         message,
-        content="resource disappeared after resolution: address=packs/patch/Mob/demo/animation.png, physical=packs/patch/Mob/demo/animation.png",
+        content="resource reference is not declared by pack patch: reference=animation.png, base=packs/patch/Mob/demo/animation.json, physical=packs/patch/Mob/demo/animation.png",
       )
     _ => fail("expected same-pack image miss")
   } noraise {
@@ -130,6 +135,7 @@ test "res VFS resolves priority and keeps relative references in one pack" {
   @asset.set_io(fn(_path) { None })
 }
 
+///|
 test "res VFS rejects an invalid pack manifest atomically" {
   let files : Map[String, Bytes] = Map([
     (
@@ -153,15 +159,22 @@ test "res VFS rejects an invalid pack manifest atomically" {
   try! configure_packs([("base", "packs/base")])
   try configure_packs([("broken", "packs/broken")]) catch {
     ResourceLoadError::InvalidMount(message) =>
-      @debug.debug_inspect(message, content=(
-        #|"invalid resource path in pack broken: path=../outside.json, error=InvalidAddress(\"resource address escapes its root: res://../outside.json\")"
-      ))
+      @debug.debug_inspect(
+        message,
+        content=(
+          #|"invalid resource path in pack broken: path=../outside.json, error=InvalidAddress(\"resource address escapes its root: res://../outside.json\")"
+        ),
+      )
     _ => fail("expected invalid resource pack manifest")
   } noraise {
     _ => fail("expected invalid resource pack manifest")
   }
-  @debug.debug_inspect(try! resolve("res://Data/config.json"), content=(#|"packs/base/Data/config.json"
-  ))
+  @debug.debug_inspect(
+    try! resolve("res://Data/config.json"),
+    content=(
+      #|"packs/base/Data/config.json"
+    ),
+  )
   clear_mounts()
   @asset.set_io(fn(_path) { None })
 }

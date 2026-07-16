@@ -107,7 +107,7 @@ const SELL_LIST_WIDTH : Int = 200
 const LIST_Y : Int = 116
 
 ///|
-const UI_BASE_Z : Int = @graphics.UI_ZINDEX + 100
+const UI_BASE_Z : Int = @graphics.MODAL_UI_ZINDEX
 
 ///|
 const SHOP_TEXT_COLOR : String = "#2f2f2f"
@@ -174,11 +174,26 @@ fn spawn_ui_sprite(
   sprite : @sprite.Sprite,
   x : Int,
   y : Int,
+  z : Int,
 ) -> Unit {
   let entity = @entity.Entity()
   entities.push(entity)
   @sprite.sprites().set(entity, sprite)
-  @transform2d.set_xy(entity, @selene_math.Vec2(x.to_double(), y.to_double()))
+  let world_position = @camera.viewport_to_world(
+    @selene_math.Vec2(x.to_double(), y.to_double()),
+  )
+  @transform.transforms().set(
+    entity,
+    @transform.Transform::from_xyz(
+      world_position[@selene_math.X],
+      world_position[@selene_math.Y],
+      z.to_double(),
+    ),
+  )
+  match @camera.camera_entity() {
+    Some(camera_entity) => @transform.set_parent_in_place(entity, camera_entity)
+    None => ()
+  }
 }
 
 ///|
@@ -384,7 +399,7 @@ impl @json.FromJson for NxShopCheckBox with fn from_json(json, path) {
 
 ///|
 fn load_ui_resources() -> UiResources {
-  let shop2 = @res.require_json("res://UI/UIWindow2.img/Shop2.json")
+  let shop2 = @res.require_json("res://UI/UIWindow2.img/Shop2/nx.json")
   parse_ui_resources_from_shop2_json(shop2) catch {
     _ => abort("invalid Shop2 ui resource")
   }
@@ -489,6 +504,7 @@ fn open_shop_ready(state : State, shop : OpenNpcShopMessage) -> Unit {
   state.pending_open_shop_item_ids = []
   state.open_shop = Some(shop)
   state.visible = true
+  @mini_map_ui.set_modal_suppressed("shop", true)
   state.buy_offset = 0
   state.sell_offset = 0
   state.selected_buy_slot = None
@@ -767,24 +783,28 @@ fn render_shop_ui(state : State) -> Unit {
     @ms_animation.sprite_from_picture(resources.backgrnd, z),
     px,
     py,
+    z,
   )
   spawn_ui_sprite(
     state.render_entities,
     @ms_animation.sprite_from_picture(resources.backgrnd2, z + 1),
     px,
     py,
+    z + 1,
   )
   spawn_ui_sprite(
     state.render_entities,
     @ms_animation.sprite_from_picture(resources.backgrnd3, z + 2),
     px,
     py,
+    z + 2,
   )
   spawn_ui_sprite(
     state.render_entities,
     @ms_animation.sprite_from_picture(resources.backgrnd4, z + 3),
     px,
     py,
+    z + 3,
   )
 
   // OpenMapleClient: TabBuy overall button is kept in pressed/enabled state.
@@ -793,6 +813,7 @@ fn render_shop_ui(state : State) -> Unit {
     @ms_animation.sprite_from_animation(resources.buy_tab_enabled, z + 5),
     px,
     py,
+    z + 5,
   )
 
   for i in 0..<tabs.length() {
@@ -807,6 +828,7 @@ fn render_shop_ui(state : State) -> Unit {
       @ms_animation.sprite_from_animation(sprite, z + 5),
       px,
       py,
+      z + 5,
     )
   }
 
@@ -815,24 +837,28 @@ fn render_shop_ui(state : State) -> Unit {
     @ms_animation.sprite_from_animation(resources.buy_button_normal, z + 5),
     px,
     py,
+    z + 5,
   )
   spawn_ui_sprite(
     state.render_entities,
     @ms_animation.sprite_from_animation(resources.sell_button_normal, z + 5),
     px,
     py,
+    z + 5,
   )
   spawn_ui_sprite(
     state.render_entities,
     @ms_animation.sprite_from_animation(resources.exit_button_normal, z + 5),
     px,
     py,
+    z + 5,
   )
   spawn_ui_sprite(
     state.render_entities,
     @ms_animation.sprite_from_animation(resources.checkbox_off, z + 5),
     px,
     py,
+    z + 5,
   )
 
   make_text_sprite(
@@ -859,6 +885,7 @@ fn render_shop_ui(state : State) -> Unit {
             @ms_animation.sprite_from_picture(resources.select_buy, z + 7),
             px + BUY_SELECTION_X_OFFSET,
             py + SELECTION_Y_OFFSET + i * ROW_HEIGHT,
+            z + 7,
           )
         }
         match state.icon_by_item_id.get(item.id) {
@@ -868,6 +895,7 @@ fn render_shop_ui(state : State) -> Unit {
               @ms_animation.sprite_from_animation(icon, z + 6),
               px + 12,
               py + 116 + i * ROW_HEIGHT + 42,
+              z + 6,
             )
           None => ()
         }
@@ -886,6 +914,7 @@ fn render_shop_ui(state : State) -> Unit {
           @ms_animation.sprite_from_picture(resources.meso_icon, z + 6),
           px + 50,
           py + 145 + i * ROW_HEIGHT,
+          z + 6,
         )
         make_text_sprite(
           state.render_entities,
@@ -913,6 +942,7 @@ fn render_shop_ui(state : State) -> Unit {
         @ms_animation.sprite_from_picture(resources.select_sell, z + 7),
         px + SELL_SELECTION_X_OFFSET,
         py + SELECTION_Y_OFFSET + i * ROW_HEIGHT,
+        z + 7,
       )
     }
     match state.icon_by_item_id.get(item.item_id) {
@@ -922,6 +952,7 @@ fn render_shop_ui(state : State) -> Unit {
           @ms_animation.sprite_from_animation(icon, z + 6),
           px + 286,
           py + 116 + i * ROW_HEIGHT + 42,
+          z + 6,
         )
       None => ()
     }
@@ -952,6 +983,7 @@ fn close_shop(state : State) -> Unit {
     return
   }
   state.visible = false
+  @mini_map_ui.set_modal_suppressed("shop", false)
   state.pending_open_shop = None
   state.pending_open_shop_item_ids = []
   state.open_shop = None
@@ -967,6 +999,7 @@ fn close_shop(state : State) -> Unit {
 ///|
 fn clear_scene() -> Unit {
   let state = state_ref.val
+  @mini_map_ui.set_modal_suppressed("shop", false)
   state.visible = false
   state.pending_open_shop = None
   state.pending_open_shop_item_ids = []
@@ -992,6 +1025,38 @@ pub fn init_shop_ui() -> Unit {
     return
   }
   scene_cleanup_registered.val = true
+  @console.register_state_section("shop", debug_state)
+}
+
+///|
+/// Return compact, stable NPC shop state for debug tools and blackbox tests.
+///
+/// # Example
+/// ```moonbit nocheck
+/// ignore(debug_state())
+/// ```
+pub fn debug_state() -> Json {
+  let state = state_ref.val
+  let (npc_id, item_count) = match state.open_shop {
+    Some(shop) => (shop.npc_id, shop.items.length())
+    None =>
+      match state.pending_open_shop {
+        Some(shop) => (shop.npc_id, shop.items.length())
+        None => (-1, 0)
+      }
+  }
+  {
+    "visible": state.visible,
+    "pending": state.pending_open_shop is Some(_),
+    "open_shop_ready": state.open_shop is Some(_),
+    "resources_ready": state.ui_resources is Some(_),
+    "npc_id": npc_id,
+    "item_count": item_count,
+    "pending_item_count": state.pending_open_shop_item_ids.length(),
+    "render_entity_count": state.render_entities.length(),
+    "selected_buy_slot": state.selected_buy_slot.to_json(),
+    "selected_sell_slot": state.selected_sell_slot.to_json(),
+  }
 }
 
 ///|
@@ -1082,6 +1147,7 @@ pub fn set_open_shop_for_test(shop : OpenNpcShopMessage?) -> Unit {
   state.pending_open_shop_item_ids = []
   state.open_shop = shop
   state.visible = shop is Some(_)
+  @mini_map_ui.set_modal_suppressed("shop", state.visible)
   state.selected_buy_slot = None
   state.selected_sell_slot = None
   state.buy_offset = 0
@@ -1111,6 +1177,7 @@ pub fn set_inventory_entry_for_test(entry : InventoryEntry) -> Unit {
 pub fn set_shop_visible_for_test(visible : Bool) -> Unit {
   let state = state_ref.val
   state.visible = visible
+  @mini_map_ui.set_modal_suppressed("shop", visible)
   if !visible {
     state.pending_open_shop = None
     state.pending_open_shop_item_ids = []
@@ -1135,7 +1202,7 @@ pub fn set_sell_tab_index_for_test(tab_index : Int) -> Unit {
 }
 
 ///|
-/// Sets `UIWindow2.img/Shop2.json` resources directly for tests.
+/// Sets `UIWindow2.img/Shop2/nx.json` resources directly for tests.
 pub fn set_shop2_json_for_test(shop2_json : Json) -> Unit raise {
   let state = state_ref.val
   state.ui_loading = None

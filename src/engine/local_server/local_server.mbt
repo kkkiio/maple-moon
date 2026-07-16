@@ -3,7 +3,6 @@ using @server_proto {
   type ChangeStatsMesoMessage,
   type CharacterListEntry,
   type CharacterListMessage,
-  trait ClientMessage,
   type CreateCharacterResultMessage,
   trait ServerMessage,
   type ChangeMapMessage,
@@ -145,14 +144,14 @@ pub fn LocalServer::LocalServer(
 }
 
 ///|
-pub fn init_server(server : LocalServer) -> Unit {
-  server.init_routes()
-  server.init_quest_runtime()
-  server.register_debug_console_commands()
+fn LocalServer::initialize_runtime(self : LocalServer) -> Unit {
+  self.init_routes()
+  self.init_quest_runtime()
+  self.register_debug_console_commands()
   // 加载掉落数据库
-  server.load_drop_databases()
+  self.load_drop_databases()
   // 加载 NPC 商店数据库
-  server.load_npc_shop_database()
+  self.load_npc_shop_database()
 }
 
 ///|
@@ -368,16 +367,14 @@ fn LocalServer::on_create_char(self : LocalServer, json : Json) -> Unit raise {
 }
 
 ///|
-/// send client message to the server
-#callsite(autofill(loc))
-pub fn[T : ClientMessage] LocalServer::send_client_message(
+/// Enqueue an encoded client message for local processing.
+fn LocalServer::enqueue_client_message(
   self : LocalServer,
-  message : T,
-  log_level? : @log.Level = @log.Level::DEBUG,
-  loc~ : SourceLoc,
+  type_code : Int,
+  json : Json,
+  log_level : @log.Level,
+  loc : SourceLoc,
 ) -> Unit {
-  let type_code = T::type_code()
-  let json = ToJson::to_json(message)
   @log.log(
     log_level,
     "send_client_message",
@@ -1019,7 +1016,7 @@ fn[T : ServerMessage] LocalServer::send_server_message(
 }
 
 ///|
-pub fn LocalServer::add_server_message_handler(
+fn LocalServer::register_server_message_handler(
   self : LocalServer,
   name : String,
   type_code : Int,
@@ -1031,13 +1028,13 @@ pub fn LocalServer::add_server_message_handler(
 }
 
 ///|
-pub fn server_system(server : LocalServer) -> Unit {
-  while server.server_message_queue.pop() is Some((type_code, json)) {
+fn LocalServer::run_server_system(self : LocalServer) -> Unit {
+  while self.server_message_queue.pop() is Some((type_code, json)) {
     @log.debug("receive server message", data={
       "type_code": @log.HexInt(type_code),
       "json": @log.JsonValue(json),
     })
-    guard server.server_message_handlers_map.get(type_code) is Some(handlers) else {
+    guard self.server_message_handlers_map.get(type_code) is Some(handlers) else {
       continue
     }
     for handler in handlers {
@@ -1050,8 +1047,8 @@ pub fn server_system(server : LocalServer) -> Unit {
       }
     }
   }
-  while server.client_message_queue.pop() is Some((type_code, json)) {
-    guard server.client_message_handler_map.get(type_code) is Some(handler) else {
+  while self.client_message_queue.pop() is Some((type_code, json)) {
+    guard self.client_message_handler_map.get(type_code) is Some(handler) else {
       @log.debug("Missing client message handler", data={
         "type_code": @log.HexInt(type_code),
         "json": @log.JsonValue(json),
@@ -1062,6 +1059,38 @@ pub fn server_system(server : LocalServer) -> Unit {
       err => abort("Error handling client message: \{err.to_string()}")
     }
   }
+}
+
+///|
+/// Use `LocalServer` as the runtime implementation behind `engine/game_server`.
+pub impl @game_server.GameServer for LocalServer with fn initialize(self) {
+  self.initialize_runtime()
+}
+
+///|
+pub impl @game_server.GameServer for LocalServer with fn send_json(
+  self,
+  type_code,
+  json,
+  log_level,
+  loc,
+) {
+  self.enqueue_client_message(type_code, json, log_level, loc)
+}
+
+///|
+pub impl @game_server.GameServer for LocalServer with fn register_handler(
+  self,
+  name,
+  type_code,
+  handler,
+) {
+  self.register_server_message_handler(name, type_code, handler)
+}
+
+///|
+pub impl @game_server.GameServer for LocalServer with fn tick(self, _delta) {
+  self.run_server_system()
 }
 
 ///|

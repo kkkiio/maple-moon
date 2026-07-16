@@ -1,5 +1,7 @@
 import {
   "KKKIIO/maple-moon/engine/game_app",
+  "KKKIIO/maple-moon/engine/local_server",
+  "KKKIIO/maple-moon/engine/local_server/file_db",
   "KKKIIO/maple-moon/engine/game_state",
   "KKKIIO/selene/ecs",
   "KKKIIO/selene/plugins",
@@ -16,7 +18,6 @@ options(
     "KKKIIO/selene_raylib/platform_render",
     "KKKIIO/selene_raylib/platform_audio",
     "KKKIIO/selene_raylib/platform_asset_io",
-    "KKKIIO/maple-moon/engine/local_server/local_server_workaround",
   ],
   targets: { "main.mbt": [ "native" ] },
 )

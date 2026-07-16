@@ -44,9 +44,7 @@ fn mini_map_ui_resource_from_json(
 }
 
 ///|
-fn first_frame_texture(
-  animation : @res.NxAnimation,
-) -> @res.NxTexture {
+fn first_frame_texture(animation : @res.NxAnimation) -> @res.NxTexture {
   if animation.frames.is_empty() {
     abort("mini map ui resource not set")
   }
@@ -523,6 +521,37 @@ let mini_map_json_override : Ref[Json?] = Ref(None)
 let map_helper_minimap_json_override : Ref[Json?] = Ref(None)
 
 ///|
+let modal_suppressors : Set[String] = Set([])
+
+///|
+/// Suppress the MiniMap while a named modal UI is visible.
+///
+/// Suppression is owner-based, so closing one modal does not reveal the
+/// MiniMap while another modal still owns suppression.
+///
+/// # Example
+/// ```moonbit nocheck
+/// @mini_map_ui.set_modal_suppressed("world_map", true)
+/// @mini_map_ui.set_modal_suppressed("world_map", false)
+/// ```
+pub fn set_modal_suppressed(owner : String, suppressed : Bool) -> Unit {
+  if suppressed {
+    modal_suppressors.add(owner)
+  } else {
+    modal_suppressors.remove(owner)
+  }
+  let active = modal_suppressors.is_empty()
+  guard mini_map_ui_state.val is Some(state) else { return }
+  guard state.ui is Some(ui) else { return }
+  for entity in ui.entities {
+    match @selene_ui.nodes().get(entity) {
+      Some(node) => @selene_ui.nodes().set(entity, { ..node, active, })
+      None => ()
+    }
+  }
+}
+
+///|
 fn ensure_mini_map_ui_state() -> MiniMapUIState {
   if mini_map_ui_state.val is Some(state) {
     return state
@@ -592,5 +621,12 @@ pub fn mini_map_ui_system(_world : @ecs.World) -> Unit {
   if pending_map.val is Some((map_id, map_name, street_name, mini_map_res)) {
     ui.set_map(map_id, map_name, street_name, mini_map_res)
     pending_map.val = None
+    let active = modal_suppressors.is_empty()
+    for entity in ui.entities {
+      match @selene_ui.nodes().get(entity) {
+        Some(node) => @selene_ui.nodes().set(entity, { ..node, active, })
+        None => ()
+      }
+    }
   }
 }

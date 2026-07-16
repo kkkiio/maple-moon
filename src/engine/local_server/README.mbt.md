@@ -7,26 +7,27 @@ it is burdensome to implement full client features, so this package provides an 
 
 ## Persistence
 
-`LocalServer::new` requires a `db` dependency:
+The `LocalServer` constructor requires a `db` dependency:
 
 ```moonbit nocheck
 ///|
-let server = LocalServer(db=FileDB())
+let server = LocalServer(db=@file_db.FileDB())
 ```
 
 - Character snapshot data is persisted by local server through `save_character/load_character`.
 - The storage backend contract is `DB` in this package.
-- Native builds use `FileDB`; JS/WebGPU builds use `BrowserDB` through the `local_server_workaround` bridge package.
+- Native entrypoints construct `file_db.FileDB`.
+- JS/WebGPU entrypoints construct `BrowserDB`.
 - Client preference storage (UI layout/size etc.) should use a separate client-side DB package.
 
 ## Runtime Integration
 
 ```moonbit nocheck
-let server = LocalServer(db=FileDB())
-@local_server.init_server(server)
+///|
+let server = LocalServer(db=@file_db.FileDB())
 
-@system.App::new()
-.add_system(delta => @local_server.server_system(server), system_name="local_server_system")
+///|
+let app = @game_app.base_app().add_plugin(@game_app.game_systems(server))
 ```
 
 ## Map Resource Contract

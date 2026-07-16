@@ -25,9 +25,13 @@ Main package 使用 `README.md`, 避免 MoonBit main package 把 `README.mbt.md`
 
 ### Doc comments
 
-所有 public symbol 都要写 Doc comments, 包括:
+为所有 public symbol 写 Doc comments, 并根据符号类型组织内容:
 
-- `pub fn`. 写功能描述, 说明边缘情况, 并附带 `Example`.
+- `pub fn`: 描述功能和边缘情况, 并附带 `# Example`.
+- `pub const`: 说明业务含义; 数值具有量纲时说明单位.
+- `pub let`: 说明共享值或共享状态的用途、生命周期和所有权.
+- `pub enum`: 描述 enum 代表的领域概念. variant 的名称和载荷不能完整表达其领域语义时, 说明其行为、约束、协议含义以及与相近 variant 的区别.
+- `pub struct`: 描述 struct 的职责; 允许外部构造时 (`pub(all)`), 说明每个字段的语义.
 
 ````moonbit
 ///|
@@ -44,9 +48,6 @@ pub fn[T : Compare] my_maximum(xs : Array[T]) -> T {
   ...
 }
 ````
-
-- `pub enum`. 尽量给每个 variant 加注释.
-- `pub struct`. 如果允许外部构造时(`pub(all)`), 所有字段都要加注释.
 
 ### 禁止 fallback
 
@@ -99,9 +100,9 @@ MoonBit 允许 `test` 直接传播错误, 用 `fail` 函数抛出错误.
 │   ├── engine/                ← 引擎/框架层 (含测试基础设施)
 │   │   ├── game_app/          ← 共享运行时, 注册 systems
 │   │   ├── bot_controller/    ← Playtest Bot 运行时 (输入注入, action 管理, globalThis.__bot)
-│   │   ├── game_server/       ← 服务器通信 (正式实现)
-│   │   ├── mock_server/       ← game_server 的测试替身 (virtual package)
-│   │   ├── capture_app/       ← 快照断言与 mock server 状态管理
+│   │   ├── game_server/       ← 服务器通信门面与运行时 GameServer trait
+│   │   ├── mock_server/       ← 有状态的 GameServer 黑盒测试替身
+│   │   ├── capture_app/       ← native 图形捕获与 PNG 快照断言
 │   │   ├── game_scene/        ← 场景管理
 │   │   ├── game_state/        ← 状态管理
 │   │   ├── graphics/          ← 图形工具 (z_index)
@@ -180,7 +181,7 @@ source_assets/
 
 ### Testing & Automated Checks
 
-完整回归优先推送分支并通过面向 `main` 的 PR 使用远程 GitHub Actions `CI` 工作流执行，减少本地 CPU、GPU、内存和磁盘占用。仅在需要快速反馈或定位远程失败时按需执行本地检查；合入前以远程 CI 的全量回归结果为准。
+回归优先推送分支并通过面向 `main` 的 PR 使用远程 GitHub Actions `CI` 工作流执行，减少本地 CPU、GPU、内存和磁盘占用。CI 执行所有非图形自动化检查；native raylib 图形快照因 hosted runner 缺少等价渲染环境而暂不进入 CI。仅在需要快速反馈或定位远程失败时按需执行本地检查；合入前以远程 CI 结果为准。
 
 #### Snapshot Test Rules
 
@@ -192,7 +193,7 @@ source_assets/
 - 把工具生成的 baseline 当作待审查结果. 检查数据 diff 和 PNG 内容符合测试意图后再接受.
 - 仅在新增测试且没有 baseline PNG 时使用 `UPDATE_GRAPHICS_SNAPS=true`. 已有测试发生 pixel mismatch 时, 先检查 `.wrong.png`；仅在确认视觉变化符合预期后更新 baseline.
 
-需要在本地执行完整回归时, 使用与远程 CI 相同的命令:
+需要在本地执行与远程 CI 相同的回归时, 使用:
 
 ```bash
 just check
@@ -207,22 +208,27 @@ just build
 
 `moon info` 可能会更新 `pkg.generated.mbti` 的文件末尾空行. 这类纯空行 diff 是生成器输出, 不要回滚或清理; 只需要检查 public API 是否有语义变化.
 
-`just test` 运行所有 native target 测试，包括普通逻辑测试、数据测试和 native raylib 图形快照测试:
+`just test` 运行项目内的快速 native 测试，包括普通逻辑测试和数据测试；它排除 `src/graphics_test`，也不递归执行 `moon.work` 依赖仓库中的测试:
 
 ```bash
-moon test --target native --no-parallelize --deny-warn --warn-list=-28-79-82 --diagnostic-limit 200
+just test
 ```
 
-native raylib 图形测试共享进程级窗口与 OpenGL context，必须使用
-`--no-parallelize` 顺序执行，避免测试之间并发 clear/draw/capture.
+需要显式运行 native raylib 图形快照时执行:
+
+```bash
+just test-graphics
+```
+
+native raylib 图形测试共享进程级窗口与 OpenGL context，`just test-graphics` 必须通过 `--no-parallelize` 顺序执行，避免测试之间并发 clear/draw/capture.
 
 PNG 快照更新使用 `UPDATE_GRAPHICS_SNAPS=true`; MoonBit inspect 快照更新继续使用 `moon test --update`.
 
 `UPDATE_GRAPHICS_SNAPS=true` 只用于更新图形快照 PNG. Moon 的 path 参数不会递归父目录下的子 package；所有图形快照测试都在 `src/graphics_test/` 一个 package 内（迁移完成后），更新命令见 `just update-graphics-snaps`。
 
-目录重构时，`__snapshot__/` 下的 27 张 PNG baseline 必须原样移动到新路径对应的子目录，不得用 `UPDATE_GRAPHICS_SNAPS=true` 重新生成。迁移完成后必须在无该变量的情况下复跑确认全部通过。
+目录重构时，`__snapshot__/` 下的 27 张 PNG baseline 必须原样移动到新路径对应的子目录，不得用 `UPDATE_GRAPHICS_SNAPS=true` 重新生成。迁移完成后必须在无该变量的情况下执行 `just test-graphics` 确认全部通过。
 
-不要在日常开发中直接执行裸 `moon test`, 因为它会同时考虑不必要的 target/backend. 使用 `just test` 跑 native 测试全集；图形快照测试需要单独调试时，显式指定 native target 和测试 package path.
+不要在日常开发中直接执行裸 `moon test`, 因为它会同时考虑不必要的 target/backend，并可能执行 `moon.work` 依赖仓库的测试. 使用 `just test` 跑快速 native 测试；图形快照测试需要单独调试时使用 `just test-graphics`.
 
 不要把全仓 `moon test --target js` 当作默认流程. 画面测试使用 native raylib backend; JS target 用于 Web 入口，`src/cmd/maple` 与 `src/cmd/mapled` 使用 native target.
 

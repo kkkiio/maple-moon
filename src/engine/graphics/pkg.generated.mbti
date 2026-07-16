@@ -53,6 +53,8 @@ pub const MINI_MAP_ZINDEX_ : Int = 101000
 
 pub const MOB_HP_BAR_ZINDEX : Int = 74000
 
+pub const MODAL_UI_ZINDEX : Int = 110000
+
 pub const OBJECT_TILE_LAYER_ZINDEX : Int = 30000
 
 pub const PORTAL_ZINDEX : Int = 79000

@@ -113,6 +113,7 @@ pub fn ResourceKey::to_string(self : ResourceKey) -> String {
 priv struct ResourceMount {
   id : String
   root : String
+  files : Set[String]
 }
 
 ///|
@@ -173,7 +174,11 @@ pub fn configure_packs(
         "resource pack root must identify a dedicated directory: \{pack_id}",
       )
     }
-    let next : ResourceMount = { id: pack_id, root: normalized_root }
+    let next : ResourceMount = {
+      id: pack_id,
+      root: normalized_root,
+      files: Set([]),
+    }
     let mut replaced = false
     for index, mounted in next_mounts {
       if mounted.id == pack_id {
@@ -206,12 +211,8 @@ pub fn configure_packs(
           "resource pack manifest is not JSON: pack=\{mounted.id}, path=\{manifest_path}, error=\{to_repr(error)}",
         )
     }
-    guard manifest is {
-      "schema": 1,
-      "id": String(manifest_id),
-      "files": Array(files),
-      ..
-    } else {
+    guard manifest
+      is { "schema": 1, "id": String(manifest_id), "files": Array(files), .. } else {
       raise ResourceLoadError::InvalidMount(
         "resource pack manifest must contain schema=1, id, and files: \{manifest_path}",
       )
@@ -221,7 +222,6 @@ pub fn configure_packs(
         "resource pack id does not match manifest: mounted=\{mounted.id}, manifest=\{manifest_id}",
       )
     }
-    let seen : Set[String] = Set([])
     for file in files {
       guard file is String(path) else {
         raise ResourceLoadError::InvalidMount(
@@ -239,17 +239,14 @@ pub fn configure_packs(
           "resource pack file path must be normalized and cannot name pack.json: pack=\{mounted.id}, path=\{path}",
         )
       }
-      guard !seen.contains(path) else {
+      guard !mounted.files.contains(path) else {
         raise ResourceLoadError::InvalidMount(
           "duplicate resource path in pack \{mounted.id}: \{path}",
         )
       }
-      seen.add(path)
+      mounted.files.add(path)
       let mounted_root : @posix.Path = mounted.root
-      next_index.set(
-        path,
-        mounted_root.join(path).normalize().to_string(),
-      )
+      next_index.set(path, mounted_root.join(path).normalize().to_string())
     }
   }
   resource_mounts.clear()
@@ -260,6 +257,33 @@ pub fn configure_packs(
   for key, physical_path in next_index {
     resource_index.set(key, physical_path)
   }
+  @asset.set_directory_io(fn(directory) {
+    let directory_path : @posix.Path = directory.replace(old="\\", new="/")
+    let normalized_directory = directory_path.normalize().to_string()
+    let mut mounted_directory = false
+    for mounted in resource_mounts {
+      if normalized_directory == mounted.root ||
+        normalized_directory.has_prefix(mounted.root + "/") {
+        mounted_directory = true
+        break
+      }
+    }
+    if !mounted_directory {
+      return None
+    }
+    let prefix = normalized_directory
+      .strip_suffix("/")
+      .unwrap_or(normalized_directory) +
+      "/"
+    let files : Array[String] = []
+    for _, physical_path in resource_index {
+      if physical_path.strip_prefix(prefix) is Some(relative) &&
+        !relative.contains("/") {
+        files.push(relative.to_owned())
+      }
+    }
+    Some(files)
+  })
 }
 
 ///|
@@ -448,6 +472,12 @@ pub fn resolve_ref(
   guard resolved.has_prefix(mounted.root + "/") else {
     raise ResourceLoadError::InvalidAddress(
       "resource reference escapes pack \{mounted.id}: \{reference}, base=\{base_path}",
+    )
+  }
+  guard resolved.strip_prefix(mounted.root + "/") is Some(pack_path) &&
+    mounted.files.contains(pack_path.to_owned()) else {
+    raise ResourceLoadError::NotFound(
+      "resource reference is not declared by pack \{mounted.id}: reference=\{reference}, base=\{base_path}, physical=\{resolved}",
     )
   }
   resolved

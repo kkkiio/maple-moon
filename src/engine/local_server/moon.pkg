@@ -5,6 +5,7 @@ import {
   "moonbitlang/core/random",
   "moonbitlang/core/strconv",
   "KKKIIO/maple-moon/engine/log",
+  "KKKIIO/maple-moon/engine/game_server",
   "KKKIIO/maple-moon/game/server_proto",
   "KKKIIO/maple-moon/engine/res",
   "KKKIIO/maple-moon/engine/io_service",
@@ -17,12 +18,12 @@ import {
   "KKKIIO/maple-moon/engine/local_server/drop_sheet",
   "KKKIIO/maple-moon/engine/local_server/shop_sheet",
   "KKKIIO/selene/tiled",
-  "moonbitlang/x/fs",
   "moonbitlang/core/string",
 }
 
 import {
   "KKKIIO/selene/asset",
+  "moonbitlang/x/fs",
 } for "test"
 
 supported_targets = "native+js"

@@ -1,0 +1,650 @@
+{
+  "curPos": {
+    "0": {
+      "__i": "animations/curPos.png",
+      "__w": 17,
+      "__h": 42,
+      "delay": 180,
+      "origin": [
+        9,
+        42
+      ],
+      "__off": [
+        0,
+        0
+      ]
+    },
+    "1": {
+      "__i": "animations/curPos.png",
+      "__w": 17,
+      "__h": 42,
+      "delay": 180,
+      "origin": [
+        9,
+        42
+      ],
+      "__off": [
+        17,
+        0
+      ]
+    },
+    "2": {
+      "__i": "animations/curPos.png",
+      "__w": 17,
+      "__h": 42,
+      "delay": 180,
+      "origin": [
+        9,
+        42
+      ],
+      "__off": [
+        34,
+        0
+      ]
+    },
+    "3": {
+      "__i": "animations/curPos.png",
+      "__w": 17,
+      "__h": 42,
+      "delay": 180,
+      "origin": [
+        9,
+        42
+      ],
+      "__off": [
+        51,
+        0
+      ]
+    }
+  },
+  "lovePos": {
+    "0": {
+      "__i": "animations/lovePos.png",
+      "__w": 15,
+      "__h": 29,
+      "delay": 180,
+      "origin": [
+        7,
+        29
+      ],
+      "z": 0,
+      "__off": [
+        0,
+        0
+      ]
+    },
+    "1": {
+      "__i": "animations/lovePos.png",
+      "__w": 15,
+      "__h": 29,
+      "delay": 180,
+      "origin": [
+        7,
+        29
+      ],
+      "z": 0,
+      "__off": [
+        15,
+        0
+      ]
+    },
+    "2": {
+      "__i": "animations/lovePos.png",
+      "__w": 15,
+      "__h": 29,
+      "delay": 180,
+      "origin": [
+        7,
+        29
+      ],
+      "z": 0,
+      "__off": [
+        30,
+        0
+      ]
+    },
+    "3": {
+      "__i": "animations/lovePos.png",
+      "__w": 15,
+      "__h": 29,
+      "delay": 180,
+      "origin": [
+        7,
+        29
+      ],
+      "z": 0,
+      "__off": [
+        45,
+        0
+      ]
+    }
+  },
+  "mapImage": {
+    "0": {
+      "__i": "bitmap/1713.png",
+      "__w": 20,
+      "__h": 20,
+      "origin": [
+        9,
+        9
+      ],
+      "z": 2
+    },
+    "1": {
+      "__i": "bitmap/1714.png",
+      "__w": 14,
+      "__h": 14,
+      "origin": [
+        6,
+        6
+      ],
+      "z": 2
+    },
+    "2": {
+      "__i": "bitmap/1715.png",
+      "__w": 20,
+      "__h": 20,
+      "origin": [
+        9,
+        9
+      ],
+      "z": 2
+    },
+    "3": {
+      "__i": "bitmap/1716.png",
+      "__w": 13,
+      "__h": 13,
+      "origin": [
+        6,
+        6
+      ],
+      "z": 2
+    }
+  },
+  "npcPos0": {
+    "0": {
+      "__i": "animations/npcPos0.png",
+      "__w": 26,
+      "__h": 26,
+      "delay": 20,
+      "origin": [
+        13,
+        13
+      ],
+      "z": 0,
+      "__off": [
+        0,
+        0
+      ]
+    },
+    "1": {
+      "__i": "animations/npcPos0.png",
+      "__w": 26,
+      "__h": 26,
+      "delay": 20,
+      "origin": [
+        13,
+        13
+      ],
+      "z": 0,
+      "__off": [
+        26,
+        0
+      ]
+    },
+    "2": {
+      "__i": "animations/npcPos0.png",
+      "__w": 26,
+      "__h": 26,
+      "delay": 20,
+      "origin": [
+        13,
+        13
+      ],
+      "z": 0,
+      "__off": [
+        52,
+        0
+      ]
+    },
+    "3": {
+      "__i": "animations/npcPos0.png",
+      "__w": 26,
+      "__h": 26,
+      "delay": 20,
+      "origin": [
+        13,
+        13
+      ],
+      "z": 0,
+      "__off": [
+        78,
+        0
+      ]
+    },
+    "4": {
+      "__i": "animations/npcPos0.png",
+      "__w": 26,
+      "__h": 26,
+      "delay": 20,
+      "origin": [
+        13,
+        13
+      ],
+      "z": 0,
+      "__off": [
+        104,
+        0
+      ]
+    },
+    "5": {
+      "__i": "animations/npcPos0.png",
+      "__w": 26,
+      "__h": 26,
+      "delay": 20,
+      "origin": [
+        13,
+        13
+      ],
+      "z": 0,
+      "__off": [
+        130,
+        0
+      ]
+    },
+    "6": {
+      "__i": "animations/npcPos0.png",
+      "__w": 26,
+      "__h": 26,
+      "delay": 20,
+      "origin": [
+        13,
+        13
+      ],
+      "z": 0,
+      "__off": [
+        156,
+        0
+      ]
+    }
+  },
+  "npcPos1": {
+    "0": {
+      "__i": "animations/npcPos1.png",
+      "__w": 20,
+      "__h": 20,
+      "delay": 20,
+      "origin": [
+        10,
+        10
+      ],
+      "z": 0,
+      "__off": [
+        0,
+        0
+      ]
+    },
+    "1": {
+      "__i": "animations/npcPos1.png",
+      "__w": 20,
+      "__h": 20,
+      "delay": 20,
+      "origin": [
+        10,
+        10
+      ],
+      "z": 0,
+      "__off": [
+        20,
+        0
+      ]
+    },
+    "2": {
+      "__i": "animations/npcPos1.png",
+      "__w": 20,
+      "__h": 20,
+      "delay": 20,
+      "origin": [
+        10,
+        10
+      ],
+      "z": 0,
+      "__off": [
+        40,
+        0
+      ]
+    },
+    "3": {
+      "__i": "animations/npcPos1.png",
+      "__w": 20,
+      "__h": 20,
+      "delay": 20,
+      "origin": [
+        10,
+        10
+      ],
+      "z": 0,
+      "__off": [
+        60,
+        0
+      ]
+    },
+    "4": {
+      "__i": "animations/npcPos1.png",
+      "__w": 20,
+      "__h": 20,
+      "delay": 20,
+      "origin": [
+        10,
+        10
+      ],
+      "z": 0,
+      "__off": [
+        80,
+        0
+      ]
+    },
+    "5": {
+      "__i": "animations/npcPos1.png",
+      "__w": 20,
+      "__h": 20,
+      "delay": 20,
+      "origin": [
+        10,
+        10
+      ],
+      "z": 0,
+      "__off": [
+        100,
+        0
+      ]
+    },
+    "6": {
+      "__i": "animations/npcPos1.png",
+      "__w": 20,
+      "__h": 20,
+      "delay": 20,
+      "origin": [
+        10,
+        10
+      ],
+      "z": 0,
+      "__off": [
+        120,
+        0
+      ]
+    }
+  },
+  "npcPos2": {
+    "0": {
+      "__i": "animations/npcPos2.png",
+      "__w": 26,
+      "__h": 26,
+      "delay": 20,
+      "origin": [
+        13,
+        13
+      ],
+      "z": 0,
+      "__off": [
+        0,
+        0
+      ]
+    },
+    "1": {
+      "__i": "animations/npcPos2.png",
+      "__w": 26,
+      "__h": 26,
+      "delay": 20,
+      "origin": [
+        13,
+        13
+      ],
+      "z": 0,
+      "__off": [
+        26,
+        0
+      ]
+    },
+    "2": {
+      "__i": "animations/npcPos2.png",
+      "__w": 26,
+      "__h": 26,
+      "delay": 20,
+      "origin": [
+        13,
+        13
+      ],
+      "z": 0,
+      "__off": [
+        52,
+        0
+      ]
+    },
+    "3": {
+      "__i": "animations/npcPos2.png",
+      "__w": 26,
+      "__h": 26,
+      "delay": 20,
+      "origin": [
+        13,
+        13
+      ],
+      "z": 0,
+      "__off": [
+        78,
+        0
+      ]
+    },
+    "4": {
+      "__i": "animations/npcPos2.png",
+      "__w": 26,
+      "__h": 26,
+      "delay": 20,
+      "origin": [
+        13,
+        13
+      ],
+      "z": 0,
+      "__off": [
+        104,
+        0
+      ]
+    },
+    "5": {
+      "__i": "animations/npcPos2.png",
+      "__w": 26,
+      "__h": 26,
+      "delay": 20,
+      "origin": [
+        13,
+        13
+      ],
+      "z": 0,
+      "__off": [
+        130,
+        0
+      ]
+    },
+    "6": {
+      "__i": "animations/npcPos2.png",
+      "__w": 26,
+      "__h": 26,
+      "delay": 20,
+      "origin": [
+        13,
+        13
+      ],
+      "z": 0,
+      "__off": [
+        156,
+        0
+      ]
+    }
+  },
+  "npcPos3": {
+    "0": {
+      "__i": "animations/npcPos3.png",
+      "__w": 19,
+      "__h": 19,
+      "delay": 20,
+      "origin": [
+        10,
+        10
+      ],
+      "z": 0,
+      "__off": [
+        0,
+        0
+      ]
+    },
+    "1": {
+      "__i": "animations/npcPos3.png",
+      "__w": 19,
+      "__h": 19,
+      "delay": 20,
+      "origin": [
+        10,
+        10
+      ],
+      "z": 0,
+      "__off": [
+        19,
+        0
+      ]
+    },
+    "2": {
+      "__i": "animations/npcPos3.png",
+      "__w": 19,
+      "__h": 19,
+      "delay": 20,
+      "origin": [
+        10,
+        10
+      ],
+      "z": 0,
+      "__off": [
+        38,
+        0
+      ]
+    },
+    "3": {
+      "__i": "animations/npcPos3.png",
+      "__w": 19,
+      "__h": 19,
+      "delay": 20,
+      "origin": [
+        10,
+        10
+      ],
+      "z": 0,
+      "__off": [
+        57,
+        0
+      ]
+    },
+    "4": {
+      "__i": "animations/npcPos3.png",
+      "__w": 19,
+      "__h": 19,
+      "delay": 20,
+      "origin": [
+        10,
+        10
+      ],
+      "z": 0,
+      "__off": [
+        76,
+        0
+      ]
+    },
+    "5": {
+      "__i": "animations/npcPos3.png",
+      "__w": 19,
+      "__h": 19,
+      "delay": 20,
+      "origin": [
+        10,
+        10
+      ],
+      "z": 0,
+      "__off": [
+        95,
+        0
+      ]
+    },
+    "6": {
+      "__i": "animations/npcPos3.png",
+      "__w": 19,
+      "__h": 19,
+      "delay": 20,
+      "origin": [
+        10,
+        10
+      ],
+      "z": 0,
+      "__off": [
+        114,
+        0
+      ]
+    }
+  },
+  "partyPos": {
+    "0": {
+      "__i": "animations/partyPos.png",
+      "__w": 13,
+      "__h": 23,
+      "delay": 180,
+      "origin": [
+        6,
+        23
+      ],
+      "__off": [
+        0,
+        0
+      ]
+    },
+    "1": {
+      "__i": "animations/partyPos.png",
+      "__w": 13,
+      "__h": 23,
+      "delay": 180,
+      "origin": [
+        6,
+        23
+      ],
+      "__off": [
+        13,
+        0
+      ]
+    },
+    "2": {
+      "__i": "animations/partyPos.png",
+      "__w": 13,
+      "__h": 23,
+      "delay": 180,
+      "origin": [
+        6,
+        23
+      ],
+      "__off": [
+        26,
+        0
+      ]
+    },
+    "3": {
+      "__i": "animations/partyPos.png",
+      "__w": 13,
+      "__h": 23,
+      "delay": 180,
+      "origin": [
+        6,
+        23
+      ],
+      "__off": [
+        39,
+        0
+      ]
+    }
+  }
+}

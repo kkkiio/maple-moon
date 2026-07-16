@@ -18,7 +18,11 @@
     },
     {
       "nx": "Map.nx",
-      "entries": ["Map/Map1"]
+      "entries": [
+        "Map/Map1",
+        "Map/MapHelper.img/worldMap",
+        "Map/WorldMap"
+      ]
     },
     {
       "nx": "Mob.nx",
@@ -34,7 +38,11 @@
     },
     {
       "nx": "UI.nx",
-      "entries": ["UI"]
+      "entries": [
+        "UI/UIWindow2.img/Shop2",
+        "UI/UIWindow2.img/ToolTip",
+        "UI/UIWindow2.img/WorldMap"
+      ]
     }
   ]
 }

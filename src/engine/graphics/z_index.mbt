@@ -193,6 +193,15 @@ pub const UI_ZINDEX = 100000
 pub const MINI_MAP_ZINDEX_ = 101000
 
 ///|
+/// Base z index for modal panels that cover persistent HUD elements.
+///
+/// # Example
+/// ```moonbit
+/// inspect(MODAL_UI_ZINDEX, content="110000")
+/// ```
+pub const MODAL_UI_ZINDEX = 110000
+
+///|
 pub const CURSOR_ZINDEX : Int = 200000
 
 ///|

@@ -1,12 +1,15 @@
 import {
   "KKKIIO/maple-moon/game/animation" @ms_animation,
+  "KKKIIO/maple-moon/game/camera",
   "moonbitlang/core/json",
   "moonbitlang/core/strconv",
+  "KKKIIO/maple-moon/engine/console",
   "KKKIIO/maple-moon/engine/graphics",
   "KKKIIO/maple-moon/engine/io_service",
   "KKKIIO/maple-moon/engine/log",
   "KKKIIO/maple-moon/engine/res",
   "KKKIIO/maple-moon/game/res_types" @struct,
+  "KKKIIO/maple-moon/game/ui/mini_map_ui",
   "KKKIIO/maple-moon/engine/ui",
   "KKKIIO/maple-moon/engine/utils",
   "KKKIIO/selene/entity",
@@ -19,3 +22,5 @@ import {
   "KKKIIO/selene/ecs",
   "moonbitlang/core/string",
 }
+
+supported_targets = "native+js"

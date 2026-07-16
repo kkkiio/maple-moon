@@ -1,10 +1,8 @@
 import {
   "KKKIIO/selene/app",
   "KKKIIO/selene/ecs",
-  "KKKIIO/maple-moon/game/server_proto",
   "KKKIIO/selene/runtime_debug",
   "moonbitlang/core/env",
-  "moonbitlang/core/json",
   "moonbitlang/x/fs",
   "tonyfettes/raylib",
 }

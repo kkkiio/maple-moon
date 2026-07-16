@@ -43,14 +43,15 @@ pub fn base_app(
 ///
 /// # Example
 /// ```moonbit nocheck
+/// let server : &@game_server.GameServer = make_server()
 /// let app = @game_app.base_app()
 ///   .add_plugin(@plugins.default_plugin)
-///   .add_plugin(@game_app.game_systems())
+///   .add_plugin(@game_app.game_systems(server))
 /// @ecs.set_current_world(app.world())
 /// @game_state.init_state(@game_state.GamePhase::GameSetup)
 /// app.run()
 /// ```
-pub fn game_systems() -> @app.Plugin {
+pub fn game_systems(server : &@game_server.GameServer) -> @app.Plugin {
   fn(app : @app.App) -> @app.App {
     app
     .add_system(
@@ -83,6 +84,7 @@ pub fn game_systems() -> @app.Plugin {
       system_name="app_resource_setup_system",
     )
     .add_system(Startup, fn(_world) {
+      @game_server.install(server)
       @item.set_item_data_system(ItemDataSystem())
       @passive.set_passive_randomizer(@random.Rand::new())
       @game_server.init_server()

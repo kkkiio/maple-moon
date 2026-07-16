@@ -293,12 +293,13 @@ async fn Daemon::send_cdp(
   self : Daemon,
   command_method : String,
   params : Json,
+  timeout_ms? : Int = 30000,
 ) -> Json {
   let cdp = match self.cdp {
     Some(cdp) if cdp.open => cdp
     _ => fail("CDP WebSocket is not connected")
   }
-  cdp.send(command_method, params)
+  cdp.send(command_method, params, timeout_ms~)
 }
 
 ///|
@@ -306,13 +307,18 @@ async fn Daemon::evaluate(
   self : Daemon,
   expression : String,
   await_promise : Bool,
+  timeout_ms? : Int = 30000,
 ) -> Json {
-  let response = self.send_cdp("Runtime.evaluate", {
-    "expression": expression,
-    "awaitPromise": await_promise,
-    "returnByValue": true,
-    "userGesture": true,
-  })
+  let response = self.send_cdp(
+    "Runtime.evaluate",
+    {
+      "expression": expression,
+      "awaitPromise": await_promise,
+      "returnByValue": true,
+      "userGesture": true,
+    },
+    timeout_ms~,
+  )
   match response {
     {
       "exceptionDetails": {
@@ -398,10 +404,16 @@ async fn Daemon::run_bot(self : Daemon, request : Json) -> Json {
   guard console_ready else {
     fail("globalThis.$console was not installed before timeout")
   }
+  let before_logs = self.logs.length()
+  let before_requests = self.request_order.length()
   let entry = self.ensure_game_active()
   let timeout_ms = match request {
-    { "timeoutMs": Number(value, ..), .. } if value.to_int() > 0 =>
+    { "timeoutMs": Number(value, ..), .. } => {
+      guard value > 0.0 && value <= 2147000000.0 else {
+        fail("timeoutMs must be between 1 and 2147000000")
+      }
       value.to_int()
+    }
     _ => 120000
   }
   let script_path = match request {
@@ -429,8 +441,6 @@ async fn Daemon::run_bot(self : Daemon, request : Json) -> Json {
   guard bot_ready else {
     fail("globalThis.__bot was not installed before timeout")
   }
-  let before_logs = self.logs.length()
-  let before_requests = self.request_order.length()
   let source_url = script_path.replace_all(old="\\", new="/")
   let wrapped = "(async () => {\n\{script}\n})()\n//# sourceURL=\{source_url}"
   let group = match self.group {
@@ -438,23 +448,53 @@ async fn Daemon::run_bot(self : Daemon, request : Json) -> Json {
     None => fail("mapled task group is unavailable")
   }
   let observed = group.spawn(allow_failure=true, () => {
-    self.evaluate(wrapped, true)
+    self.evaluate(wrapped, true, timeout_ms=timeout_ms + 5000)
   })
   let deadline = now_ms() + timeout_ms.to_double()
   let mut observed_result : Json? = None
   let mut observed_error : String? = None
   while observed_result is None && observed_error is None && now_ms() < deadline {
+    for entry in self.logs.view(start=before_logs) {
+      if entry.level == "error" {
+        observed_error = Some("browser error: \{entry.text}")
+        break
+      }
+    }
+    if observed_error is Some(_) {
+      break
+    }
     try observed.try_wait() catch {
       error => observed_error = Some(error.to_string())
     } noraise {
       Some(value) => observed_result = Some(value)
-      None => ignore(self.evaluate("globalThis.$console.step(1)", true))
+      None => {
+        let remaining_ms = (deadline - now_ms()).to_int()
+        if remaining_ms > 0 {
+          try
+            self.evaluate(
+              "globalThis.$console.step(1)",
+              true,
+              timeout_ms=remaining_ms,
+            )
+          catch {
+            error =>
+              if now_ms() < deadline {
+                observed_error = Some(error.to_string())
+              }
+          } noraise {
+            _ => ()
+          }
+        }
+      }
     }
   }
   let mut run_error : String? = None
   let mut result = Json::null()
-  if observed_result is None && observed_error is None {
-    let message = "bot script timed out after \{timeout_ms}ms"
+  if observed_result is None {
+    let message = match observed_error {
+      Some(error) => error
+      None => "bot script timed out after \{timeout_ms}ms"
+    }
     run_error = Some(message)
     observed.cancel()
     let cancel_expression = "globalThis.__bot_cancel_pending?.(\{Json::string(message).stringify()})"
@@ -465,8 +505,6 @@ async fn Daemon::run_bot(self : Daemon, request : Json) -> Json {
     }
   } else if observed_result is Some(value) {
     result = value
-  } else if observed_error is Some(error) {
-    run_error = Some(error)
   }
   let state = try
     self.evaluate("globalThis.$console.render_game_to_text()", true)
@@ -515,11 +553,12 @@ async fn Daemon::run_bot(self : Daemon, request : Json) -> Json {
       },
     )
     .map(entry => ToJson::to_json(entry))
-  {
-    "ok": true,
-    "passed": run_error is None &&
+  let passed = run_error is None &&
     failures.is_empty() &&
-    recent_errors.is_empty(),
+    recent_errors.is_empty()
+  let response : Json = {
+    "ok": true,
+    "passed": passed,
     "scriptPath": script_path,
     "timeoutMs": timeout_ms,
     "entry": entry,
@@ -533,6 +572,16 @@ async fn Daemon::run_bot(self : Daemon, request : Json) -> Json {
     "playtestLogs": playtest_logs,
     "state": state,
   }
+  if !passed {
+    try
+      self.send_cdp("Page.reload", { "ignoreCache": true }, timeout_ms=5000)
+    catch {
+      _ => ()
+    } noraise {
+      _ => ()
+    }
+  }
+  response
 }
 
 ///|
@@ -964,7 +1013,12 @@ async fn Daemon::shutdown(self : Daemon) -> Unit {
   }
   self.subscribers.clear()
   self.group = None
-  remove_path(self.state_path)
+  if @fs.exists(self.state_path) {
+    let state = @fs.read_file(self.state_path).json()
+    if state is { "token": String(token), .. } && token == self.token {
+      @fs.remove(self.state_path)
+    }
+  }
 }
 
 ///|

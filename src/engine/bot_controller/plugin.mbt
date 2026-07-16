@@ -6,6 +6,8 @@ priv enum BotActionKind {
   WalkTo(x~ : Int, y~ : Int)
   JumpForward
   HoldUp
+  TapKey(code~ : @inputs.Code)
+  ClickNpc(npc_id~ : Int)
   Attack
   AttackTarget(oid~ : Int)
 }
@@ -77,6 +79,12 @@ extern "js" fn install_bot_bindings(
   #|     },
   #|     hold_up(options = {}) {
   #|       return enqueue("hold_up", {}, options);
+  #|     },
+  #|     tap_key(code, options = {}) {
+  #|       return enqueue("tap_key", { code: String(code) }, options);
+  #|     },
+  #|     click_npc(npcId, options = {}) {
+  #|       return enqueue("click_npc", { npcId: toInt(npcId) }, options);
   #|     },
   #|     attack(options = {}) {
   #|       return enqueue("attack", {}, options);
@@ -205,6 +213,8 @@ fn request_action_text(action_name : String, payload_text : String) -> String {
     "walk_to" => 900
     "jump_forward" => 300
     "hold_up" => 480
+    "tap_key" => 60
+    "click_npc" => 600
     "attack" => 240
     "attack_target" => 1800
     _ => 300
@@ -246,6 +256,31 @@ fn request_action_text(action_name : String, payload_text : String) -> String {
       }
     "jump_forward" => BotActionKind::JumpForward
     "hold_up" => BotActionKind::HoldUp
+    "tap_key" =>
+      match payload {
+        { "code": String(code), .. } =>
+          match @inputs.Code::from_string(code) {
+            Some(code) => BotActionKind::TapKey(code~)
+            None =>
+              return (
+                { "ok": false, "error": "tap_key received an unknown key code" } :
+                Json).stringify()
+          }
+        _ =>
+          return (
+            { "ok": false, "error": "tap_key requires a string code" } : Json).stringify()
+      }
+    "click_npc" =>
+      match payload {
+        { "npcId": Number(npc_id, ..), .. } if npc_id.to_int() > 0 =>
+          BotActionKind::ClickNpc(npc_id=npc_id.to_int())
+        _ =>
+          return (
+            {
+              "ok": false,
+              "error": "click_npc requires a positive numeric npcId",
+            } : Json).stringify()
+      }
     "attack" => BotActionKind::Attack
     "attack_target" =>
       match payload {
@@ -396,6 +431,10 @@ fn state_text() -> String {
           ("walk_to", ({ "x": x, "y": y } : Json))
         BotActionKind::JumpForward => ("jump_forward", Json::null())
         BotActionKind::HoldUp => ("hold_up", Json::null())
+        BotActionKind::TapKey(code~) =>
+          ("tap_key", ({ "code": Debug::to_repr(code).to_string() } : Json))
+        BotActionKind::ClickNpc(npc_id~) =>
+          ("click_npc", ({ "npcId": npc_id } : Json))
         BotActionKind::Attack => ("attack", Json::null())
         BotActionKind::AttackTarget(oid~) =>
           ("attack_target", ({ "oid": oid } : Json))
@@ -624,6 +663,58 @@ fn bot_action_system(_world : @ecs.World) -> Unit {
           }
         }
         _ => queue_keys([@inputs.Code::ArrowUp])
+      }
+    }
+    BotActionKind::TapKey(code~) =>
+      if action.elapsed_frames == 1 {
+        queue_keys([code])
+      } else {
+        queue_keys([])
+        finish(true, ({ "code": Debug::to_repr(code).to_string() } : Json))
+      }
+    BotActionKind::ClickNpc(npc_id~) => {
+      let mut found = false
+      for anchor in @npc.list_npc_anchors() {
+        guard anchor.npc_id == npc_id else { continue }
+        guard @physics2d.shapes().get(anchor.entity)
+          is Some(@physics2d.CollisionShape::Rect(size~, offset~)) else {
+          continue
+        }
+        found = true
+        let npc_position = anchor.npc_object.get_position()
+        let click_world = @selene_math.Vec2(
+          npc_position.x.to_double() +
+          offset[@selene_math.X] +
+          size[@selene_math.X] * 0.5,
+          npc_position.y.to_double() +
+          offset[@selene_math.Y] +
+          size[@selene_math.Y] * 0.5,
+        )
+        let click_viewport = @camera.world_to_viewport(click_world)
+        if !action.attack_pressed {
+          let snapshot = @inputs.empty_input_snapshot()
+          snapshot.mouse.pos = click_viewport
+          snapshot.mouse.left_button = true
+          @runtime_debug.clear_queued_inputs()
+          @runtime_debug.queue_input_snapshot(snapshot)
+          action.attack_pressed = true
+        } else {
+          queue_keys([])
+          finish(
+            true,
+            (
+              {
+                "npcId": npc_id,
+                "oid": anchor.oid,
+                "screenX": click_viewport[@selene_math.X],
+                "screenY": click_viewport[@selene_math.Y],
+              } : Json),
+          )
+        }
+        break
+      }
+      if !found {
+        queue_keys([])
       }
     }
     BotActionKind::Attack =>

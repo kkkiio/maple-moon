@@ -185,13 +185,6 @@ async fn ensure_daemon(
   }
   try request({ "action": "status" }, timeout_ms=1500) catch {
     _ => {
-      let temp_dir = @env.get_env_var("TMPDIR").unwrap_or("/tmp")
-      let state_path = @path.Path(temp_dir)
-        .join(@path.Path("maple-moon-mapled.state.json"))
-        .to_string()
-      if @fs.exists(state_path) {
-        @fs.remove(state_path)
-      }
       if !@fs.exists("logs") {
         @fs.mkdir("logs", permission=0o755, recursive=true)
       }
@@ -235,7 +228,27 @@ async fn ensure_daemon(
             @async.sleep(250)
           }
         } noraise {
-          status => return status
+          status => {
+            guard status is { "cdpPort": Number(actual_port, ..), .. } &&
+              actual_port.to_int().to_string() == expected_port else {
+              fail(
+                "mapled is already running with different config; run `maple close` first",
+              )
+            }
+            if require_url_match &&
+              status
+              is {
+                "browserConnected": True,
+                "url": String(actual_url),
+                ..
+              } &&
+              actual_url != expected_url {
+              fail(
+                "mapled is already running with different config; run `maple close` first",
+              )
+            }
+            return status
+          }
         }
       }
       fail(last_error)
@@ -292,7 +305,7 @@ async fn run_maple_cli(
     fail(last_error)
   }
   if action == "start" {
-    let status = ensure_daemon(cdp_port, "", false, false)
+    let status = ensure_daemon(cdp_port, "", false, true)
     return format_response("start", {
       "ok": true,
       "message": "mapled started or reused",
@@ -310,7 +323,12 @@ async fn run_maple_cli(
     guard exit_code == 0 else {
       fail("game_debug build failed\n\{stdout.text()}\{stderr.text()}")
     }
-    let timeout_ms = @string.parse_int(timeout_text) catch { _ => 120000 }
+    let timeout_ms = @string.parse_int(timeout_text) catch {
+      _ => fail("timeout-ms must be an integer between 1 and 2147000000")
+    }
+    guard timeout_ms > 0 && timeout_ms <= 2147000000 else {
+      fail("timeout-ms must be between 1 and 2147000000")
+    }
     ignore(ensure_daemon(cdp_port, game_url, true, true))
     ignore(
       request({ "action": "open-wait", "gameUrl": game_url }, timeout_ms=35000),

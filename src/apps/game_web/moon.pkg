@@ -1,5 +1,6 @@
 import {
   "KKKIIO/maple-moon/engine/game_app",
+  "KKKIIO/maple-moon/engine/local_server",
   "KKKIIO/maple-moon/engine/console",
   "KKKIIO/maple-moon/engine/game_state",
   "KKKIIO/selene/ecs",
@@ -17,7 +18,6 @@ options(
     "KKKIIO/selene_webgpu/platform_render",
     "KKKIIO/selene_webgpu/platform_audio",
     "KKKIIO/selene_webgpu/platform_asset_io",
-    "KKKIIO/maple-moon/engine/local_server/local_server_workaround",
   ],
   targets: { "main.mbt": [ "js" ] },
 )

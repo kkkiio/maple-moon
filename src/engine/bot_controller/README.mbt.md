@@ -4,7 +4,7 @@ Playtest Bot 的引擎侧运行时。仅在 `game_debug` 构建中注册，提�
 
 - **输入注入**：通过 Selene deterministic input queue 将 bot 按键写入游戏输入管道
 - **Action 管理**：接收 JS bot 脚本的 Promise-based action，在 Update 中检测完成
-- **globalThis.__bot API**：暴露 `walk_to`、`jump_forward`、`hold_up`、`warp` 等 Promise 方法
+- **globalThis.__bot API**：暴露 `walk_to`、`jump_forward`、`hold_up`、`tap_key`、`click_npc`、`warp` 等 Promise 方法
 
 ## Public API
 
@@ -27,5 +27,7 @@ Playtest Bot 的引擎侧运行时。仅在 `game_debug` 构建中注册，提�
 - `walk_to` → player 到达目标坐标
 - `jump_forward` → 起跳后落地
 - `hold_up` → 抓住绳索或触发传送
+- `tap_key` → 按住一个标准 `KeyboardEvent.code` 一帧后释放
+- `click_npc` → 根据 NPC 碰撞框与当前相机注入一次鼠标点击
 - `warp` → GamePhase 变为 GameActive
 - `attack_target` → 目标 mob 从当前 `MapMobs` 中消失

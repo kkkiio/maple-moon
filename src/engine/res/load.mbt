@@ -5,16 +5,24 @@ fn read_resolved_bytes(
 ) -> Bytes raise ResourceLoadError {
   let physical : @posix.Path = physical_path.replace(old="\\", new="/")
   let normalized = physical.normalize().to_string()
-  let mut is_mounted = false
+  let mut winning_mount : ResourceMount? = None
+  let mut winning_root_length = -1
   for mounted in resource_mounts {
-    if normalized.has_prefix(mounted.root + "/") {
-      is_mounted = true
-      break
+    if normalized.has_prefix(mounted.root + "/") &&
+      mounted.root.length() > winning_root_length {
+      winning_mount = Some(mounted)
+      winning_root_length = mounted.root.length()
     }
   }
-  guard is_mounted else {
+  guard winning_mount is Some(mounted) else {
     raise ResourceLoadError::InvalidAddress(
       "resolved resource path is outside mounted packs: \{physical_path}",
+    )
+  }
+  guard normalized.strip_prefix(mounted.root + "/") is Some(pack_path) &&
+    mounted.files.contains(pack_path.to_owned()) else {
+    raise ResourceLoadError::NotFound(
+      "resolved resource is not declared by pack \{mounted.id}: address=\{diagnostic_path}, physical=\{normalized}",
     )
   }
   guard @platform_asset_io.read_bytes(normalized) is Some(bytes) else {

@@ -270,6 +270,14 @@ pub(all) struct MoveMonsterMessage {
 } derive(ToJson, @debug.Debug, @json.FromJson)
 pub impl ClientMessage for MoveMonsterMessage
 
+pub(all) struct NpcDialogueMessage {
+  npcid : Int
+  talk_type : Int
+  speaker : Int
+  text : String
+} derive(ToJson, @debug.Debug, @json.FromJson)
+pub impl ServerMessage for NpcDialogueMessage
+
 pub(all) struct NpcShopActionMessage {
   mode : Int
   slot : Int

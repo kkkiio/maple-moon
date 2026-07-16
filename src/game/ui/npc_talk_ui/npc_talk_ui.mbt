@@ -143,16 +143,44 @@ priv struct ActionButton {
 }
 
 ///|
+priv struct NpcTalkSpeakerResource {
+  npc_id : Int
+  name : String
+  portrait_material : @selene_ui.UiMaterialHandle
+  image_path : String
+  source_x : Int
+  source_y : Int
+  width : Int
+  height : Int
+  pivot_x : Int
+  pivot_y : Int
+}
+
+///|
+priv struct NpcTalkSpeakerLayout {
+  portrait_x : Int
+  portrait_y : Int
+  portrait_width : Int
+  portrait_height : Int
+  bar_x : Int
+  bar_y : Int
+  bar_width : Int
+  bar_height : Int
+}
+
+///|
 priv struct UINpcTalk {
   resource : NpcTalkResource
   args : TalkArgs
   content : NPCTalkContent
+  speaker : NpcTalkSpeakerResource?
   entities : Array[@entity.Entity]
   buttons : Array[ActionButton]
   selection_buttons : Array[SelectionButton]
   click_reader : @event.EventReader[@selene_ui.UiClickEvent]
   mut window_pos : Point[Int]
   mut body_height : Int
+  mut speaker_layout : NpcTalkSpeakerLayout?
 }
 
 ///|
@@ -183,12 +211,95 @@ let npc_talk_ui_ref : Ref[UINpcTalk?] = Ref(None)
 let npc_talk_resource_ref : Ref[NpcTalkResource?] = Ref(None)
 
 ///|
+let npc_talk_speaker_cache : Map[Int, NpcTalkSpeakerResource] = Map([])
+
+///|
 let npc_talk_loading_ref : Ref[@utils.Future[Result[NpcTalkResource, Error]]?] = Ref(
   None,
 )
 
 ///|
 let npc_talk_pending_args_ref : Ref[TalkArgs?] = Ref(None)
+
+///|
+fn init {
+  @console.register_state_section("npc_talk", describe_npc_talk_ui)
+  @console.register_command("npc_talk_select", fn(args) {
+    guard !args.is_empty() else {
+      return { "ok": false, "code": "INVALID_ARGUMENTS" }
+    }
+    let option = @string.parse_int(args[0]) catch {
+      _ => return { "ok": false, "code": "INVALID_OPTION" }
+    }
+    guard npc_talk_ui_ref.val is Some(ui) else {
+      return { "ok": false, "code": "NPC_TALK_NOT_OPEN" }
+    }
+    match ui.args.talk_action {
+      SEND_SIMPLE(callback) => {
+        if option == -1 {
+          close_npc_talk_ui()
+          callback(None)
+          return { "ok": true, "code": "DIALOGUE_CLOSED" }
+        }
+        for button in ui.selection_buttons {
+          guard button.option == option else { continue }
+          close_npc_talk_ui()
+          callback(Some(option))
+          return { "ok": true, "code": "SELECTION_SENT", "option": option }
+        }
+        { "ok": false, "code": "OPTION_NOT_FOUND", "option": option }
+      }
+      SEND_YESNO(callback) => {
+        guard option == 1 || option == 0 || option == -1 else {
+          return { "ok": false, "code": "INVALID_DIALOGUE_RESPONSE" }
+        }
+        close_npc_talk_ui()
+        callback(
+          if option == 1 {
+            Some(true)
+          } else if option == 0 {
+            Some(false)
+          } else {
+            None
+          },
+        )
+        { "ok": true, "code": "DIALOGUE_RESPONSE_SENT", "option": option }
+      }
+      SEND_NEXT(callback) | SEND_OK(callback) => {
+        guard option == 1 || option == -1 else {
+          return { "ok": false, "code": "INVALID_DIALOGUE_RESPONSE" }
+        }
+        close_npc_talk_ui()
+        callback(if option == 1 { Some(()) } else { None })
+        { "ok": true, "code": "DIALOGUE_RESPONSE_SENT", "option": option }
+      }
+      SEND_NEXT_PREV(callback) => {
+        guard option == 1 || option == 0 || option == -1 else {
+          return { "ok": false, "code": "INVALID_DIALOGUE_RESPONSE" }
+        }
+        close_npc_talk_ui()
+        callback(
+          if option == 1 {
+            Some(true)
+          } else if option == 0 {
+            Some(false)
+          } else {
+            None
+          },
+        )
+        { "ok": true, "code": "DIALOGUE_RESPONSE_SENT", "option": option }
+      }
+      SEND_PREV(callback) => {
+        guard option == 0 || option == -1 else {
+          return { "ok": false, "code": "INVALID_DIALOGUE_RESPONSE" }
+        }
+        close_npc_talk_ui()
+        callback(if option == 0 { Some(()) } else { None })
+        { "ok": true, "code": "DIALOGUE_RESPONSE_SENT", "option": option }
+      }
+    }
+  })
+}
 
 ///|
 fn current_player_name() -> String {
@@ -203,15 +314,157 @@ fn current_player_name() -> String {
 
 ///|
 fn load_npc_talk_resource() -> NpcTalkResource {
-  let src : Json = @res.require_json(
-    "res://UI/UIWindow2.img/UtilDlgEx.json",
-  )
+  let src : Json = @res.require_json("res://UI/UIWindow2.img/UtilDlgEx.json")
   let window_slice = @ui.load_ui_slice_resource(
     "res://UI/UIWindow2.img/UtilDlgEx/slice.json",
   )
+  ignore(@game_ui_font.load())
   NpcTalkResource::from_resource(src, window_slice) catch {
     _ => abort("invalid UtilDlgEx NPC talk resource")
   }
+}
+
+///|
+fn load_npc_talk_speaker_resource(npc_id : Int) -> NpcTalkSpeakerResource raise {
+  if npc_talk_speaker_cache.get(npc_id) is Some(cached) {
+    return cached
+  }
+  let npc_key = npc_id.to_string()
+  let npc_path = @utils.stoi_left_pad0(npc_id, 7) + ".img"
+  let mut mx_path = "res://Npc/" + npc_path + "/mx.json"
+  let mut mx_source = @res.load_json(mx_path)
+  match mx_source {
+    { "info": { "link": String(link), .. }, .. } => {
+      mx_path = "res://Npc/" + link + ".img/mx.json"
+      mx_source = @res.load_json(mx_path)
+    }
+    _ => ()
+  }
+  guard mx_source is { "animations_path": String(animations_ref), .. } else {
+    fail("npc \{npc_id} resource has no animations_path")
+  }
+  let animations_path = @res.resolve_ref(mx_path, animations_ref)
+  let animations = @res.load_json(animations_path)
+  guard animations
+    is {
+      "frames": Array(frames),
+      "meta": {
+        "image": String(image_ref),
+        "frameTags": Array(tags),
+        "slices": Array(slices),
+        ..
+      },
+      ..
+    } else {
+    fail("npc \{npc_id} animation is missing frames or metadata")
+  }
+  let mut stand_frame_index : Int? = None
+  for tag in tags {
+    if tag
+      is {
+        "name": "stand",
+        "from": Number(first, ..),
+        "direction": "forward",
+        ..
+      } {
+      stand_frame_index = Some(first.to_int())
+      break
+    }
+  }
+  guard stand_frame_index is Some(frame_index) &&
+    frames.get(frame_index)
+    is Some(
+      {
+        "frame": {
+          "x": Number(source_x, ..),
+          "y": Number(source_y, ..),
+          "w": Number(width, ..),
+          "h": Number(height, ..),
+          ..
+        },
+        "spriteSourceSize": {
+          "x": Number(sprite_x, ..),
+          "y": Number(sprite_y, ..),
+          ..
+        },
+        ..
+      }
+    ) else {
+    fail("npc \{npc_id} animation has no valid stand frame")
+  }
+  let mut pivot : (Int, Int)? = None
+  for slice in slices {
+    if slice
+      is {
+        "name": "anchor_stand",
+        "keys": [
+          {
+            "bounds": {
+              "x": Number(bounds_x, ..),
+              "y": Number(bounds_y, ..),
+              ..
+            },
+            "pivot": { "x": Number(pivot_x, ..), "y": Number(pivot_y, ..), .. },
+            ..
+          },
+          ..,
+        ],
+        ..
+      } {
+      pivot = Some(
+        (
+          pivot_x.to_int() - (sprite_x.to_int() - bounds_x.to_int()),
+          pivot_y.to_int() - (sprite_y.to_int() - bounds_y.to_int()),
+        ),
+      )
+      break
+    }
+  }
+  guard pivot is Some((pivot_x, pivot_y)) else {
+    fail("npc \{npc_id} animation has no anchor_stand pivot")
+  }
+  let npc_strings = @res.load_json("res://String/Npc.img.json")
+  guard npc_strings is Object(entries) &&
+    entries.get(npc_key) is Some({ "name": String(name), .. }) else {
+    fail("npc \{npc_id} has no display name")
+  }
+  let image_path = @res.resolve_ref(animations_path, image_ref)
+  let image = @res.require_image(image_path)
+  let source : @render2d_types.ImageRegion2D = {
+    position: @selene_math.Vec2(source_x, source_y),
+    size: @selene_math.Vec2(width, height),
+  }
+  let portrait_material = @selene_ui.register_ui_material_asset(
+    @selene_ui.UiMaterialAsset::from_draw(fn(context) {
+      @render2d.push_ui_image_to_camera(context.target_camera_entity_id, {
+        image,
+        destination: context.rect,
+        source: Some(source),
+        transform: @selene_math.Transform::flip_x(
+          context.rect.size[@selene_math.X],
+        ),
+        uv_transform: @selene_math.Transform::identity(),
+        repeat: @selene_math.NoRepeat,
+        alpha_mode: @render.AlphaMode2D::Blend,
+        blend_mode: @render.BlendMode2D::Alpha,
+        color: @selene_ui.rgba(255, 255, 255, 1.0),
+      })
+    }),
+  )
+  let loaded = {
+    npc_id,
+    name,
+    portrait_material,
+    image_path,
+    source_x: source_x.to_int(),
+    source_y: source_y.to_int(),
+    width: width.to_int(),
+    height: height.to_int(),
+    pivot_x,
+    pivot_y,
+  }
+  npc_talk_speaker_cache.set(npc_id, loaded)
+  loaded
 }
 
 ///|
@@ -269,6 +522,14 @@ pub fn describe_npc_talk_ui() -> Json {
       let body_lines : Array[Json] = ui.content.body_lines.map(fn(line) {
         line.map(fn(run) { run.text }).join("").to_json()
       })
+      let action = match ui.args.talk_action {
+        SEND_YESNO(_) => "yes_no"
+        SEND_SIMPLE(_) => "simple"
+        SEND_OK(_) => "ok"
+        SEND_NEXT(_) => "next"
+        SEND_NEXT_PREV(_) => "next_previous"
+        SEND_PREV(_) => "previous"
+      }
       let selections : Array[Json] = ui.content.selections.map(fn(selection) {
         {
           "option": selection.option.to_json(),
@@ -278,10 +539,44 @@ pub fn describe_npc_talk_ui() -> Json {
           .to_json(),
         }
       })
+      let speaker_json : Json = match (ui.speaker, ui.speaker_layout) {
+        (Some(speaker), Some(layout)) =>
+          {
+            "npc_id": speaker.npc_id.to_json(),
+            "name": speaker.name.to_json(),
+            "portrait_source": {
+              "path": speaker.image_path.to_json(),
+              "x": speaker.source_x.to_json(),
+              "y": speaker.source_y.to_json(),
+              "w": speaker.width.to_json(),
+              "h": speaker.height.to_json(),
+            },
+            "portrait_rect": {
+              "left": layout.portrait_x.to_json(),
+              "top": layout.portrait_y.to_json(),
+              "right": (layout.portrait_x + layout.portrait_width).to_json(),
+              "bottom": (layout.portrait_y + layout.portrait_height).to_json(),
+            },
+            "bar_rect": {
+              "left": layout.bar_x.to_json(),
+              "top": layout.bar_y.to_json(),
+              "right": (layout.bar_x + layout.bar_width).to_json(),
+              "bottom": (layout.bar_y + layout.bar_height).to_json(),
+            },
+          }
+        _ => Json::null()
+      }
       {
         "open": true,
+        "action": action,
         "body_lines": body_lines,
         "selections": selections.to_json(),
+        "speaker": speaker_json,
+        "font": {
+          "address": @game_ui_font.ADDRESS,
+          "family": @game_ui_font.FAMILY,
+          "size": @game_ui_font.SIZE,
+        },
         "button_count": ui.buttons.length().to_json(),
         "choice_area_count": ui.selection_buttons.length().to_json(),
         "window_pos": {
@@ -365,6 +660,20 @@ fn poll_npc_talk_open_request() -> Unit {
   guard npc_talk_ui_ref.val is None else { return }
   guard npc_talk_pending_args_ref.val is Some(args) else { return }
   guard npc_talk_resource_ref.val is Some(resource) else { return }
+  let speaker = match args.speaker {
+    @npc.Speaker::NPC_LEFT =>
+      Some(load_npc_talk_speaker_resource(args.npc_id)) catch {
+        err => {
+          npc_talk_pending_args_ref.val = None
+          @log.error("failed to load npc talk speaker", data={
+            "npc_id": args.npc_id,
+            "error": err.to_string(),
+          })
+          return
+        }
+      }
+    _ => None
+  }
   let content = convert_npc_text(args.str) catch {
     err => {
       npc_talk_pending_args_ref.val = None
@@ -375,7 +684,7 @@ fn poll_npc_talk_open_request() -> Unit {
     }
   }
   npc_talk_pending_args_ref.val = None
-  let ui = UINpcTalk(resource, args, content)
+  let ui = UINpcTalk(resource, args, content, speaker)
   ui.rebuild_scene()
   npc_talk_ui_ref.val = Some(ui)
 }
@@ -385,17 +694,20 @@ fn UINpcTalk::UINpcTalk(
   resource : NpcTalkResource,
   args : TalkArgs,
   content : NPCTalkContent,
+  speaker : NpcTalkSpeakerResource?,
 ) -> UINpcTalk {
   {
     resource,
     args,
     content,
+    speaker,
     entities: [],
     buttons: [],
     selection_buttons: [],
     click_reader: @event.EventReader(),
     window_pos: Default::default(),
     body_height: FIXED_BODY_HEIGHT,
+    speaker_layout: None,
   }
 }
 
@@ -412,13 +724,14 @@ fn UINpcTalk::destroy(self : UINpcTalk) -> Unit {
 ///|
 fn UINpcTalk::rebuild_scene(self : UINpcTalk) -> Unit {
   self.destroy()
+  self.speaker_layout = None
   self.body_height = self.measure_body_height()
   self.window_pos = Point(
     400 - self.resource.window_slice.width / 2,
     240 - self.body_height / 2,
   )
   self.spawn_window()
-  self.spawn_nameplate()
+  self.spawn_speaker()
   self.spawn_body_text()
   self.spawn_action_buttons()
 }
@@ -465,21 +778,63 @@ fn UINpcTalk::spawn_window(self : UINpcTalk) -> Unit {
 }
 
 ///|
-fn UINpcTalk::spawn_nameplate(self : UINpcTalk) -> Unit {
-  let window_bottom = self.window_pos.y +
-    self.resource.window_slice.top +
+fn UINpcTalk::spawn_speaker(self : UINpcTalk) -> Unit {
+  guard self.speaker is Some(speaker) else { return }
+  let window_height = self.resource.window_slice.top +
     self.body_height +
     self.resource.window_slice.bottom
-  let speaker_y = window_bottom - self.resource.bar.h - 7
-  let speaker_pos = Point(self.window_pos.x + 100, speaker_y)
+  let bar_x = self.window_pos.x + 22
+  let bar_y = self.window_pos.y + 11 + window_height / 2
+  let portrait_center_x = bar_x + self.resource.bar.w / 2
+  let portrait_x = portrait_center_x - (speaker.width - speaker.pivot_x)
+  let portrait_y = bar_y - speaker.pivot_y
   ignore(
-    self.spawn_image_node(
-      self.resource.bar,
-      speaker_pos.x,
-      speaker_pos.y,
+    self.spawn_material_node(
+      speaker.portrait_material,
+      portrait_x,
+      portrait_y,
+      speaker.width,
+      speaker.height,
       NPC_TALK_Z + 2,
     ),
   )
+  ignore(self.spawn_image_node(self.resource.bar, bar_x, bar_y, NPC_TALK_Z + 3))
+  let name_entity = @entity.Entity()
+  self.entities.push(name_entity)
+  @selene_ui.nodes().set(
+    name_entity,
+    @selene_ui.Node::absolute(
+      @selene_math.Vec2(bar_x.to_double(), bar_y.to_double()),
+      size=@selene_math.Vec2(
+        self.resource.bar.w.to_double(),
+        self.resource.bar.h.to_double(),
+      ),
+    ),
+  )
+  @selene_ui.z_indexes().set(name_entity, @selene_ui.ZIndex(NPC_TALK_Z + 4))
+  @selene_ui.texts().set(name_entity, @selene_ui.Text(speaker.name))
+  @selene_ui.text_fonts().set(name_entity, @game_ui_font.text_font())
+  @selene_ui.text_colors().set(
+    name_entity,
+    @selene_ui.TextColor::from_css("white"),
+  )
+  @selene_ui.text_layouts().set(
+    name_entity,
+    @selene_ui.TextLayout(
+      align=@selene_math.Center,
+      baseline=@selene_math.Center,
+    ),
+  )
+  self.speaker_layout = Some({
+    portrait_x,
+    portrait_y,
+    portrait_width: speaker.width,
+    portrait_height: speaker.height,
+    bar_x,
+    bar_y,
+    bar_width: self.resource.bar.w,
+    bar_height: self.resource.bar.h,
+  })
 }
 
 ///|
@@ -795,10 +1150,7 @@ fn flatten_text_lines(lines : Array[Array[TextRun]]) -> Array[TextRun] {
 
 ///|
 fn set_text_style(entity : @entity.Entity, run : TextRun) -> Unit {
-  @selene_ui.text_fonts().set(
-    entity,
-    @selene_ui.TextFont(family="Menlo", size=13.0, bold=run.bold),
-  )
+  @selene_ui.text_fonts().set(entity, @game_ui_font.text_font(bold=run.bold))
   @selene_ui.text_colors().set(
     entity,
     @selene_ui.TextColor::from_css(run.color.css_name()),
@@ -844,7 +1196,7 @@ fn UINpcTalk::spawn_rich_text_block(
   let spans : Array[@selene_ui.TextSpan] = runs.map(fn(run) {
     @selene_ui.TextSpan(
       run.text,
-      font=Some(@selene_ui.TextFont(family="Menlo", size=13.0, bold=run.bold)),
+      font=Some(@game_ui_font.text_font(bold=run.bold)),
       color=Some(@selene_ui.TextColor::from_css(run.color.css_name())),
       bold=run.bold,
       underline=run.underline,

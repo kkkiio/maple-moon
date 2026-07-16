@@ -21,3 +21,6 @@ run-native:
 
 dev:
     npm run dev
+
+run-web:
+    npm run dev:vite

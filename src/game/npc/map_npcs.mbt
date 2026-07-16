@@ -30,6 +30,86 @@ pub(all) struct NpcAnchor {
 let map_npcs_ctx : Ref[MapNpcsContext?] = Ref(None)
 
 ///|
+fn init {
+  @console.register_state_section("npcs", fn() {
+    let entries : Array[Json] = []
+    for anchor in list_npc_anchors() {
+      let position = anchor.npc_object.get_position()
+      entries.push({
+        "oid": anchor.oid,
+        "npc_id": anchor.npc_id,
+        "x": position.x,
+        "y": position.y,
+      })
+    }
+    entries.sort_by(fn(lhs, rhs) {
+      let lhs_id = match lhs {
+        { "npc_id": Number(id, ..), .. } => id.to_int()
+        _ => 0
+      }
+      let rhs_id = match rhs {
+        { "npc_id": Number(id, ..), .. } => id.to_int()
+        _ => 0
+      }
+      lhs_id.compare(rhs_id)
+    })
+    { "entries": entries }
+  })
+  @console.register_command("teleport_to_npc", fn(args) {
+    guard !args.is_empty() else {
+      return {
+        "ok": false,
+        "code": "INVALID_ARGUMENTS",
+        "message": "teleport_to_npc requires npc id",
+      }
+    }
+    let npc_id = @string.parse_int(args[0]) catch {
+      _ => return { "ok": false, "code": "INVALID_NPC_ID" }
+    }
+    guard @player.get_player() is Some(player) else {
+      return { "ok": false, "code": "PLAYER_NOT_READY" }
+    }
+    for anchor in list_npc_anchors() {
+      guard anchor.npc_id == npc_id else { continue }
+      let position = anchor.npc_object.get_position()
+      player.set_position(position.x, position.y)
+      return {
+        "ok": true,
+        "code": "TELEPORTED_TO_NPC",
+        "npc_id": npc_id,
+        "oid": anchor.oid,
+        "x": position.x,
+        "y": position.y,
+      }
+    }
+    { "ok": false, "code": "NPC_NOT_FOUND", "npc_id": npc_id }
+  })
+  @console.register_command("talk_to_npc", fn(args) {
+    guard !args.is_empty() else {
+      return {
+        "ok": false,
+        "code": "INVALID_ARGUMENTS",
+        "message": "talk_to_npc requires npc id",
+      }
+    }
+    let npc_id = @string.parse_int(args[0]) catch {
+      _ => return { "ok": false, "code": "INVALID_NPC_ID" }
+    }
+    for anchor in list_npc_anchors() {
+      guard anchor.npc_id == npc_id else { continue }
+      @game_server.send(@server_proto.TalkToNpcMessage::{ oid: anchor.oid })
+      return {
+        "ok": true,
+        "code": "NPC_TALK_STARTED",
+        "npc_id": npc_id,
+        "oid": anchor.oid,
+      }
+    }
+    { "ok": false, "code": "NPC_NOT_FOUND", "npc_id": npc_id }
+  })
+}
+
+///|
 pub fn set_npcs(ctx : MapNpcsContext) -> Unit {
   map_npcs_ctx.val = Some(ctx)
 }
@@ -102,6 +182,26 @@ pub fn setup_game_server_handlers() -> Unit {
       guard map_npcs_ctx.val is Some({ map_npcs, .. }) else { return }
       let msg : @server_proto.NpcSpawnControllerMessage = @json.from_json(json)
       map_npcs.apply_spawn_npc_controller_message(msg)
+    },
+  )
+  @game_server.add_server_message_handler(
+    "npc_dialogue",
+    @server_proto.Opcode::NPC_DIALOGUE.int_value(),
+    fn(json) raise {
+      guard map_npcs_ctx.val is Some({ map_npcs, .. }) else { return }
+      let msg : @server_proto.NpcDialogueMessage = @json.from_json(json)
+      guard TalkType::from_value(msg.talk_type) is Some(talk_type) else {
+        fail("unknown local NPC talk type: {msg.talk_type}")
+      }
+      guard Speaker::from_int(msg.speaker) is Some(speaker) else {
+        fail("unknown local NPC speaker: {msg.speaker}")
+      }
+      handle_npc_dialogue(map_npcs.open_npc_talk_ui, {
+        npcid: msg.npcid,
+        t: talk_type,
+        speaker,
+        text: msg.text,
+      })
     },
   )
 }

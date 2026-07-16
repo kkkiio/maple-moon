@@ -1,6 +1,9 @@
 ///|
 fn main {
-  let server = @local_server.LocalServer(db=@local_server.BrowserDB())
+  let server = @local_server.LocalServer(
+    db=@local_server.BrowserDB(),
+    npc_scripts=@content_base.npc_scripts(),
+  )
   let app = @game_app.base_app()
     .add_plugin(@plugins.default_plugin)
     .add_plugin(@console.plugin())

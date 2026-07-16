@@ -1071,7 +1071,8 @@ fn spawn_text(
   y : Int,
   z : Int,
   color? : String = "#f3f6fb",
-  font? : String = "11px Menlo",
+  size? : Double = 11.0,
+  bold? : Bool = false,
 ) -> Unit {
   let entity = @entity.Entity()
   state.render_entities.push(entity)
@@ -1084,7 +1085,7 @@ fn spawn_text(
   )
   @selene_ui.z_indexes().set(entity, @selene_ui.ZIndex(z))
   @selene_ui.texts().set(entity, @selene_ui.Text(text))
-  @selene_ui.text_fonts().set(entity, @selene_ui.TextFont::from_css(font))
+  @selene_ui.text_fonts().set(entity, @game_ui_font.text_font(size~, bold~))
   @selene_ui.text_colors().set(entity, @selene_ui.TextColor::from_css(color))
   @selene_ui.text_layouts().set(
     entity,
@@ -1155,7 +1156,8 @@ fn render_tooltip(
     tooltip_x + 8,
     tooltip_y + 6,
     TOOLTIP_Z + 2,
-    font="bold 11px Menlo",
+    size=11.0,
+    bold=true,
   )
   let detail_text = if spot.description == "" {
     "Map ID: \{spot.map_ids[0]}"
@@ -1169,7 +1171,7 @@ fn render_tooltip(
     tooltip_y + 24,
     TOOLTIP_Z + 2,
     color="#d7e1ee",
-    font="10px Menlo",
+    size=10.0,
   )
   spawn_text(
     state,
@@ -1178,7 +1180,7 @@ fn render_tooltip(
     tooltip_y + 31,
     TOOLTIP_Z + 2,
     color="#9fc0df",
-    font="10px Menlo",
+    size=10.0,
   )
 }
 

@@ -78,17 +78,19 @@ AI 的输出是建议，不是判决。判决权在固定指标。
 `maple` CLI 是原子命令的集合，每个命令做一件事：
 
 ```
-maple start          — 启动或复用 daemon
-maple open           — 打开或重新连接浏览器
-maple status         — 查看 daemon/client 状态
-maple status --wait  — 等待 daemon socket 就绪
-maple cmd <...>      — 执行单个 console 命令
-maple logs           — 读取 console 日志
-maple network        — 读取网络请求
-maple screenshot     — 截图
-maple reload         — 刷新页面
-maple eval <js>      — 执行 JS
-maple close          — 关闭
+maple start                 — 启动或复用 daemon
+maple open                  — 默认打开 game_debug
+maple open --entry web      — 打开普通 Web 入口
+maple status                — 查看 daemon/client 状态与能力
+maple act <domain> <verb>   — 执行一个有副作用的原子动作
+maple observe [scope]       — 读取一个运行时状态快照
+maple lookup <domain> ...   — 查询 resource-pack 静态数据
+maple logs                  — 读取 console 日志
+maple network               — 读取网络请求
+maple screenshot            — 截图
+maple debug command <...>   — 原始 console 调试入口
+maple debug eval <js>       — 原始 JavaScript 调试入口
+maple close                 — 关闭
 ```
 
 不允许复合命令。验证流程由调用者组合原子操作完成，但调用者不得将组合
@@ -98,10 +100,10 @@ maple close          — 关闭
 ```bash
 maple start
 maple open --wait
-maple cmd new_character
-maple cmd select_char 0
-maple cmd temp_set_field_enter 100000000 0
-maple eval "await $console.step(300)"
+maple act character create
+maple act character select 0
+maple act world warp 100000000
+maple observe player
 maple network --failed
 maple logs --level error
 ```

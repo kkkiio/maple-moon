@@ -14,9 +14,6 @@ const STATUS_BAR_Z : Int = @graphics.UI_ZINDEX + 40
 const STATUS_TEXT_COLOR = "#F7F1D5"
 
 ///|
-const STATUS_FONT = "bold 12px Menlo"
-
-///|
 fn clear_entities(entities : Array[@entity.Entity]) -> Unit {
   for entity in entities {
     @text2d.text2ds().remove(entity) |> ignore
@@ -47,10 +44,7 @@ fn spawn_text(
   )
   @text2d.text2ds().set(entity, @text2d.Text2d())
   @selene_ui.texts().set(entity, @selene_ui.Text(text))
-  @selene_ui.text_fonts().set(
-    entity,
-    @selene_ui.TextFont::from_css(STATUS_FONT),
-  )
+  @selene_ui.text_fonts().set(entity, @game_ui_font.text_font(bold=true))
   @selene_ui.text_colors().set(
     entity,
     @selene_ui.TextColor::from_css(STATUS_TEXT_COLOR),

@@ -188,6 +188,41 @@ pub fn require_image(address : String) -> @asset.ImageHandle {
 }
 
 ///|
+/// Require a font from a public `res://` address or a resolved pack path and
+/// register it under `family` in Selene's shared font asset registry.
+///
+/// The returned handle should be stored by the owning UI resource and passed to
+/// `TextFont::from_font`, keeping WebGPU and raylib on the same font asset.
+///
+/// # Example
+/// ```moonbit nocheck
+/// try! configure_packs([("base", "assets/base")])
+/// let font = require_font(
+///   "res://UI/Fonts/FusionPixel/fusion-pixel-12px-proportional-zh_hans.ttf",
+///   "Fusion Pixel 12px Proportional",
+/// )
+/// ignore(font)
+/// ```
+///
+/// # Panics
+/// Panics when the required font is absent from the configured resource packs.
+pub fn require_font(address : String, family : String) -> @asset.FontHandle {
+  let physical_path = if address.has_prefix("res://") {
+    require_path(address)
+  } else {
+    ignore(read_resolved_bytes(address, address)) catch {
+      error =>
+        abort(
+          "failed to require resolved font: path=\{address}, error=\{to_repr(error)}",
+        )
+    }
+    let physical : @posix.Path = address.replace(old="\\", new="/")
+    physical.normalize().to_string()
+  }
+  @asset.load_font(physical_path, family~)
+}
+
+///|
 /// Require a JSON file and navigate through object keys.
 ///
 /// Empty `keys` returns the complete document. Missing keys and non-object

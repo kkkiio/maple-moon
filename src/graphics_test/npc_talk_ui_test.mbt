@@ -117,6 +117,7 @@ test "npc_talk_ui quest 2090 keeps cursor above ui and grows with content" {
   let desc = @npc_talk_ui.describe_npc_talk_ui()
   json_inspect(desc, content={
     "open": true,
+    "action": "simple",
     "body_lines": [
       "Which of these monsters will you NOT see near Kerning City? ", "\r\r",
     ],
@@ -127,6 +128,24 @@ test "npc_talk_ui quest 2090 keeps cursor above ui and grows with content" {
       { "option": 3, "text": "4. Ribbon Pig " },
       { "option": 4, "text": "5. Hector " },
     ],
+    "speaker": {
+      "npc_id": 1052106,
+      "name": "Icarus",
+      "portrait_source": {
+        "path": "res://Npc/1052106.img/animation.png",
+        "x": 0,
+        "y": 0,
+        "w": 45,
+        "h": 54,
+      },
+      "portrait_rect": { "left": 199, "top": 233, "right": 244, "bottom": 287 },
+      "bar_rect": { "left": 163, "top": 287, "right": 272, "bottom": 306 },
+    },
+    "font": {
+      "address": "res://UI/Fonts/FusionPixel/fusion-pixel-12px-proportional-zh_hans.ttf",
+      "family": "Fusion Pixel 12px Proportional",
+      "size": 12,
+    },
     "button_count": 1,
     "choice_area_count": 5,
     "window_pos": { "x": 141, "y": 166 },

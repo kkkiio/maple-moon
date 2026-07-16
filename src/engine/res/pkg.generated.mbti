@@ -30,6 +30,8 @@ pub fn[K : Eq + Hash + @json.FromJson, V : @json.FromJson] parse_enum_map(Json, 
 
 pub fn[T : @json.FromJson] parse_map_based_array(Json, path~ : @json.JsonPath) -> Array[T] raise @json.JsonDecodeError
 
+pub fn require_font(String, String) -> @asset_types.FontHandle
+
 pub fn require_image(String) -> @asset_types.ImageHandle
 
 pub fn require_json(String) -> Json

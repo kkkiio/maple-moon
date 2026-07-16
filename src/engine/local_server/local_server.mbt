@@ -61,6 +61,8 @@ struct LocalServer {
   pending_mob_spawns : Array[PendingMobSpawn]
   pending_npc_spawns : Array[NpcSpawnControllerMessage]
   mut active_shop : OpenNpcShopMessage?
+  npc_scripts : @content_runtime.NpcScriptRegistry
+  mut active_npc_script : ActiveNpcScriptSession?
   npc_id_by_oid : Map[Int, Int]
   mut npc_shop_db : NpcShopDatabase?
   db : &DB
@@ -88,8 +90,28 @@ priv struct PendingMobSpawn {
 }
 
 ///|
+priv struct ActiveNpcScriptSession {
+  npc_id : Int
+  script_name : String
+  state : Json
+}
+
+///|
+/// Create an offline authoritative server with explicit persistence and content dependencies.
+///
+/// The script registry is resolved by exact NX `info.script` name. Missing names surface as
+/// content errors when the corresponding NPC is used.
+///
+/// # Example
+/// ```moonbit nocheck
+/// let server = LocalServer(
+///   db=@file_db.FileDB(),
+///   npc_scripts=@content_runtime.NpcScriptRegistry(),
+/// )
+/// ```
 pub fn LocalServer::LocalServer(
   db~ : &DB,
+  npc_scripts~ : @content_runtime.NpcScriptRegistry,
   drop_rng? : @random.Rand = @random.Rand::chacha8(seed=default_rand_seed.val),
 ) -> LocalServer {
   {
@@ -131,6 +153,8 @@ pub fn LocalServer::LocalServer(
     pending_mob_spawns: Array::new(),
     pending_npc_spawns: Array::new(),
     active_shop: None,
+    npc_scripts,
+    active_npc_script: None,
     npc_id_by_oid: Map([]),
     npc_shop_db: None,
     db,
@@ -202,8 +226,8 @@ pub fn LocalServer::init_routes(self : LocalServer) -> Unit {
   self.client_message_handler_map[@server_proto.ClientOpcode::TALK_TO_NPC.int_value()] = json => {
     self.on_talk_to_npc(json)
   }
-  self.client_message_handler_map[@server_proto.ClientOpcode::NPC_TALK_MORE.int_value()] = _ => {
-    ()
+  self.client_message_handler_map[@server_proto.ClientOpcode::NPC_TALK_MORE.int_value()] = json => {
+    self.on_npc_talk_more(json)
   }
   self.client_message_handler_map[@server_proto.ClientOpcode::NPC_SHOP_ACTION.int_value()] = json => {
     self.on_npc_shop_action(json)
@@ -902,6 +926,7 @@ fn LocalServer::spawn_mobs_for_map(self : LocalServer, map_id : Int) -> Unit {
   self.pending_mob_spawns.clear()
   self.pending_npc_spawns.clear()
   self.active_shop = None
+  self.active_npc_script = None
   self.npc_id_by_oid.clear()
   @io_service.execute_background(fn() raise {
     guard load_tiled_map_by_map_id(map_id) is Some(map) else { return }

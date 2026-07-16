@@ -152,6 +152,7 @@ pub enum TalkType {
   SEND_PREV
 } derive(Eq, ToJson, @debug.Debug)
 pub fn TalkType::from_int(Int, Int, Int) -> Self?
+pub fn TalkType::from_value(Int) -> Self?
 pub fn TalkType::int_value(Self) -> Int
 pub impl Hash for TalkType
 

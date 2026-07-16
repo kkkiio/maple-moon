@@ -188,10 +188,7 @@ fn ui_image_source_from_texture(
 }
 
 ///|
-fn set_image_texture(
-  entity : @entity.Entity,
-  texture : @res.NxTexture,
-) -> Unit {
+fn set_image_texture(entity : @entity.Entity, texture : @res.NxTexture) -> Unit {
   @selene_ui.ui_images().set(entity, ui_image_from_texture(texture))
 }
 
@@ -251,19 +248,13 @@ fn spawn_text_node(
   )
   @selene_ui.texts().set(entity, @selene_ui.Text(text))
   @selene_ui.text_colors().set(entity, @selene_ui.TextColor::from_css(color))
-  @selene_ui.text_fonts().set(
-    entity,
-    @selene_ui.TextFont(family="Menlo", size~),
-  )
+  @selene_ui.text_fonts().set(entity, @game_ui_font.text_font(size~))
   entity
 }
 
 ///|
 fn set_text_style(entity : @entity.Entity, run : TextRun) -> Unit {
-  @selene_ui.text_fonts().set(
-    entity,
-    @selene_ui.TextFont(family="Menlo", size=12.0, bold=run.bold),
-  )
+  @selene_ui.text_fonts().set(entity, @game_ui_font.text_font(bold=run.bold))
   @selene_ui.text_colors().set(
     entity,
     @selene_ui.TextColor::from_css(run.color),
@@ -305,7 +296,7 @@ fn spawn_rich_text_block(
   let spans : Array[@selene_ui.TextSpan] = runs.map(fn(run) {
     @selene_ui.TextSpan(
       run.text,
-      font=Some(@selene_ui.TextFont(family="Menlo", size=12.0, bold=run.bold)),
+      font=Some(@game_ui_font.text_font(bold=run.bold)),
       color=Some(@selene_ui.TextColor::from_css(run.color)),
       bold=run.bold,
       underline=run.underline,

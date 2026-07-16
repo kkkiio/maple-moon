@@ -25,6 +25,24 @@ pub impl ClientMessage for NpcTalkMoreMessage with fn type_code() {
 }
 
 ///|
+/// Open or replace the current NPC dialogue view.
+pub(all) struct NpcDialogueMessage {
+  /// Template ID used for the speaker portrait and name.
+  npcid : Int
+  /// Stable `TalkType::int_value` understood by the Maple Moon client.
+  talk_type : Int
+  /// Numeric speaker placement and ownership value.
+  speaker : Int
+  /// MapleStory markup text rendered in the dialogue body.
+  text : String
+} derive(Debug, ToJson, FromJson)
+
+///|
+pub impl ServerMessage for NpcDialogueMessage with fn type_code() {
+  Opcode::NPC_DIALOGUE.int_value()
+}
+
+///|
 /// Spawn a NPC without controller ownership.
 pub(all) struct NpcSpawnMessage {
   oid : Int

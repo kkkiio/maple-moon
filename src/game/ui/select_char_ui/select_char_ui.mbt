@@ -393,10 +393,7 @@ fn spawn_character_name_entity(
     text_entity,
     @selene_ui.TextColor::from_css("white"),
   )
-  @selene_ui.text_fonts().set(
-    text_entity,
-    @selene_ui.TextFont::from_css("13px Arial"),
-  )
+  @selene_ui.text_fonts().set(text_entity, @game_ui_font.text_font(size=13.0))
   @selene_ui.text_layouts().set(
     text_entity,
     @selene_ui.TextLayout(

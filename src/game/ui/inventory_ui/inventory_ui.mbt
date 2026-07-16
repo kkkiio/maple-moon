@@ -181,15 +181,9 @@ fn parse_ui_resources_from_item_json(item_json : Json) -> UiResources raise {
       },
       ..
     } => {
-      let full_backgrnd : @res.NxTexture = @json.from_json(
-        full_backgrnd_json,
-      )
-      let full_backgrnd2 : @res.NxTexture = @json.from_json(
-        full_backgrnd2_json,
-      )
-      let full_backgrnd3 : @res.NxTexture = @json.from_json(
-        full_backgrnd3_json,
-      )
+      let full_backgrnd : @res.NxTexture = @json.from_json(full_backgrnd_json)
+      let full_backgrnd2 : @res.NxTexture = @json.from_json(full_backgrnd2_json)
+      let full_backgrnd3 : @res.NxTexture = @json.from_json(full_backgrnd3_json)
       let tab_btn_resources = []
       for i in 0..<tabs.length() {
         let key = i.to_string()
@@ -199,12 +193,8 @@ fn parse_ui_resources_from_item_json(item_json : Json) -> UiResources raise {
         guard enabled_tabs.get(key) is Some(enabled_tab_json) else {
           fail("missing Tab.enabled.\{key}")
         }
-        let disabled_tab : @res.NxTexture = @json.from_json(
-          disabled_tab_json,
-        )
-        let enabled_tab : @res.NxTexture = @json.from_json(
-          enabled_tab_json,
-        )
+        let disabled_tab : @res.NxTexture = @json.from_json(disabled_tab_json)
+        let enabled_tab : @res.NxTexture = @json.from_json(enabled_tab_json)
         tab_btn_resources.push((disabled_tab, enabled_tab))
       }
       { full_backgrnd, full_backgrnd2, full_backgrnd3, tab_btn_resources }
@@ -237,10 +227,7 @@ fn ui_image_source_from_texture(
 }
 
 ///|
-fn set_image_texture(
-  entity : @entity.Entity,
-  texture : @res.NxTexture,
-) -> Unit {
+fn set_image_texture(entity : @entity.Entity, texture : @res.NxTexture) -> Unit {
   @selene_ui.ui_images().set(entity, ui_image_from_texture(texture))
 }
 
@@ -304,10 +291,7 @@ fn spawn_text_node(
     entity,
     @selene_ui.TextColor::from_css("#0b1f2a"),
   )
-  @selene_ui.text_fonts().set(
-    entity,
-    @selene_ui.TextFont(family="Menlo", size=font_size),
-  )
+  @selene_ui.text_fonts().set(entity, @game_ui_font.text_font(size=font_size))
   entity
 }
 

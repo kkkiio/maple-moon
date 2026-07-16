@@ -6,6 +6,7 @@ import {
   "moonbitlang/core/strconv",
   "KKKIIO/maple-moon/engine/log",
   "KKKIIO/maple-moon/engine/game_server",
+  "KKKIIO/maple-moon/game/content_runtime",
   "KKKIIO/maple-moon/game/server_proto",
   "KKKIIO/maple-moon/engine/res",
   "KKKIIO/maple-moon/engine/io_service",

@@ -78,6 +78,18 @@ pub fn get_snapshot() -> QuestLogSnapshot {
 }
 
 ///|
+fn init {
+  @console.register_state_section("quest", fn() {
+    let snapshot = get_snapshot()
+    {
+      "revision": revision(),
+      "in_progress": snapshot.in_progress,
+      "completed": snapshot.completed,
+    }
+  })
+}
+
+///|
 fn Module::quest_log_snapshot_raw(self : Module) -> QuestLogSnapshotRaw {
   let in_progress : Array[QuestLogInProgressRaw] = self.player_quest_log.val.in_progress
     .iter()

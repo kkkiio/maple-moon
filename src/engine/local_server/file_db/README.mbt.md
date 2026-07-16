@@ -6,6 +6,9 @@ from entering Web builds.
 
 ```moonbit nocheck
 let db = FileDB(root_path=".local/maple-moon/local_server")
-let server = @local_server.LocalServer(db=db)
+let server = @local_server.LocalServer(
+  db=db,
+  npc_scripts=@content_runtime.NpcScriptRegistry(),
+)
 ignore(server)
 ```

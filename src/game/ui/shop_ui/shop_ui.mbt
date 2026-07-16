@@ -216,10 +216,7 @@ fn make_text_sprite(
   )
   @selene_ui.z_indexes().set(entity, @selene_ui.ZIndex(z))
   @selene_ui.texts().set(entity, @selene_ui.Text(text))
-  @selene_ui.text_fonts().set(
-    entity,
-    @selene_ui.TextFont::from_css("11px Menlo"),
-  )
+  @selene_ui.text_fonts().set(entity, @game_ui_font.text_font(size=11.0))
   @selene_ui.text_colors().set(
     entity,
     @selene_ui.TextColor::from_css(SHOP_TEXT_COLOR),

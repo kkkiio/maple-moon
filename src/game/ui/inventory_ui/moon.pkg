@@ -7,6 +7,7 @@ import {
   "KKKIIO/maple-moon/game/server_proto",
   "KKKIIO/maple-moon/game/inventory",
   "KKKIIO/maple-moon/game/item",
+  "KKKIIO/maple-moon/game/ui/game_ui_font",
   "KKKIIO/maple-moon/engine/res",
   "KKKIIO/maple-moon/engine/utils",
   "KKKIIO/selene/entity",

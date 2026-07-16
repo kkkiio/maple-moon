@@ -11,7 +11,10 @@ The `LocalServer` constructor requires a `db` dependency:
 
 ```moonbit nocheck
 ///|
-let server = LocalServer(db=@file_db.FileDB())
+let server = LocalServer(
+  db=@file_db.FileDB(),
+  npc_scripts=@content_runtime.NpcScriptRegistry(),
+)
 ```
 
 - Character snapshot data is persisted by local server through `save_character/load_character`.
@@ -24,7 +27,10 @@ let server = LocalServer(db=@file_db.FileDB())
 
 ```moonbit nocheck
 ///|
-let server = LocalServer(db=@file_db.FileDB())
+let server = LocalServer(
+  db=@file_db.FileDB(),
+  npc_scripts=@content_runtime.NpcScriptRegistry(),
+)
 
 ///|
 let app = @game_app.base_app().add_plugin(@game_app.game_systems(server))

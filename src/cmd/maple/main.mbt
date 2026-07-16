@@ -44,7 +44,8 @@ async fn request(message : Json, timeout_ms? : Int = 30000) -> Json {
       fail("mapled closed the connection without a response")
     }
     let response = @json.parse(line)
-    if response is { "ok": False, "error": String(error), .. } {
+    if response is { "ok": False, "error": String(error), .. } &&
+      !(response is { "status": String(_), .. }) {
       fail(error)
     }
     response
@@ -179,7 +180,7 @@ async fn ensure_daemon(
 ) -> Json {
   let expected_port = if cdp_port == "" { "9333" } else { cdp_port }
   let expected_url = if game_url == "" {
-    "http://localhost:8080"
+    "http://localhost:8080/game_debug.html"
   } else {
     game_url
   }
@@ -237,11 +238,7 @@ async fn ensure_daemon(
             }
             if require_url_match &&
               status
-              is {
-                "browserConnected": True,
-                "url": String(actual_url),
-                ..
-              } &&
+              is { "browserConnected": True, "url": String(actual_url), .. } &&
               actual_url != expected_url {
               fail(
                 "mapled is already running with different config; run `maple close` first",
@@ -305,7 +302,9 @@ async fn run_maple_cli(
     fail(last_error)
   }
   if action == "start" {
-    let status = ensure_daemon(cdp_port, "", false, true)
+    let status = ensure_daemon(
+      cdp_port, "http://localhost:8080/game_debug.html", false, true,
+    )
     return format_response("start", {
       "ok": true,
       "message": "mapled started or reused",
@@ -372,6 +371,108 @@ async fn run_maple_cli(
 }
 
 ///|
+async fn lookup_resource(domain : String, query : String) -> Json {
+  let paths = match domain {
+    "map" => ["assets/base/String/Map.img.json"]
+    "npc" => ["assets/base/String/Npc.img.json"]
+    "item" =>
+      [
+        "assets/base/String/Consume.img.json", "assets/base/String/Etc.img.json",
+        "assets/base/String/Eqp.img.json", "assets/base/String/Ins.img.json", "assets/base/String/Cash.img.json",
+      ]
+    _ => fail("unknown lookup domain: \{domain}")
+  }
+  let normalized_query = query.trim().to_owned().to_lower()
+  guard !normalized_query.is_empty() else { fail("lookup query is required") }
+  let numeric_query = @string.parse_int(normalized_query) catch { _ => -1 }
+  let matches : Array[Json] = []
+  for path in paths {
+    guard @fs.exists(path) else { continue }
+    let stack : Array[(String, Json)] = [("", @fs.read_file(path).json())]
+    for ;; {
+      guard stack.pop() is Some((key, value)) else { break }
+      match value {
+        Object(fields) => {
+          let candidate_id = @string.parse_int(key) catch { _ => -1 }
+          let name = match domain {
+            "map" =>
+              match fields.get("mapName") {
+                Some(String(text)) => text
+                _ => ""
+              }
+            _ =>
+              match fields.get("name") {
+                Some(String(text)) => text
+                _ => ""
+              }
+          }
+          let secondary = match domain {
+            "map" =>
+              match fields.get("streetName") {
+                Some(String(text)) => text
+                _ => ""
+              }
+            "npc" =>
+              match fields.get("func") {
+                Some(String(text)) => text
+                _ => ""
+              }
+            _ =>
+              match fields.get("desc") {
+                Some(String(text)) => text
+                _ => ""
+              }
+          }
+          if candidate_id >= 0 &&
+            !name.is_empty() &&
+            (
+              candidate_id == numeric_query ||
+              name.to_lower().contains(normalized_query) ||
+              secondary.to_lower().contains(normalized_query)
+            ) {
+            matches.push({
+              "id": candidate_id,
+              "name": name,
+              "description": secondary,
+              "source": path,
+            })
+          }
+          for child_key, child in fields {
+            stack.push((child_key, child))
+          }
+        }
+        Array(values) =>
+          for index, child in values {
+            stack.push((index.to_string(), child))
+          }
+        _ => ()
+      }
+    }
+  }
+  matches.sort_by(fn(lhs, rhs) {
+    let lhs_id = match lhs {
+      { "id": Number(id, ..), .. } => id.to_int()
+      _ => 0
+    }
+    let rhs_id = match rhs {
+      { "id": Number(id, ..), .. } => id.to_int()
+      _ => 0
+    }
+    lhs_id.compare(rhs_id)
+  })
+  let result_count = if matches.length() > 50 { 50 } else { matches.length() }
+  let results = [ for index in 0..<result_count => matches[index] ]
+  {
+    "ok": true,
+    "domain": domain,
+    "query": query,
+    "total": matches.length(),
+    "truncated": matches.length() > result_count,
+    "matches": results,
+  }
+}
+
+///|
 async fn main {
   @signal.set_global_cancellation_signals([SIGINT, SIGTERM, SIGHUP])
   let root = @argparse.Command(
@@ -386,17 +487,95 @@ async fn main {
         "open",
         about="Open or reconnect the controlled Chrome",
         options=[
-          @argparse.OptionArg("url", default_values=["http://localhost:8080"]),
+          @argparse.OptionArg("entry", default_values=["debug"]),
+          @argparse.OptionArg("url", default_values=[""]),
         ],
         flags=[@argparse.FlagArg("wait")],
       ),
-      @argparse.Command("cmd", about="Execute a registered $console command", positionals=[
-        @argparse.PositionArg("name"),
-        @argparse.PositionArg("args", num_args=@argparse.ValueRange(lower=0)),
+      @argparse.Command(
+        "act",
+        about="Execute one verified game action",
+        subcommand_required=true,
+        subcommands=[
+          @argparse.Command("character", subcommand_required=true, subcommands=[
+            @argparse.Command("create"),
+            @argparse.Command("select", positionals=[
+              @argparse.PositionArg("slot"),
+            ]),
+          ]),
+          @argparse.Command("world", subcommand_required=true, subcommands=[
+            @argparse.Command(
+              "warp",
+              options=[
+                @argparse.OptionArg("portal", default_values=["0"]),
+                @argparse.OptionArg("timeout-ms", default_values=["30000"]),
+              ],
+              positionals=[@argparse.PositionArg("map-id")],
+            ),
+          ]),
+          @argparse.Command("player", subcommand_required=true, subcommands=[
+            @argparse.Command("teleport", options=[
+              @argparse.OptionArg("x"),
+              @argparse.OptionArg("y"),
+            ]),
+            @argparse.Command("teleport-to-npc", positionals=[
+              @argparse.PositionArg("npc-id"),
+            ]),
+          ]),
+          @argparse.Command("npc", subcommand_required=true, subcommands=[
+            @argparse.Command("talk", positionals=[
+              @argparse.PositionArg("npc-id"),
+            ]),
+          ]),
+          @argparse.Command("inventory", subcommand_required=true, subcommands=[
+            @argparse.Command("set-meso", positionals=[
+              @argparse.PositionArg("amount"),
+            ]),
+            @argparse.Command(
+              "grant",
+              options=[@argparse.OptionArg("quantity", default_values=["1"])],
+              positionals=[@argparse.PositionArg("item-id")],
+            ),
+            @argparse.Command(
+              "ensure",
+              options=[@argparse.OptionArg("quantity", default_values=["1"])],
+              positionals=[@argparse.PositionArg("item-id")],
+            ),
+          ]),
+          @argparse.Command("ui", subcommand_required=true, subcommands=[
+            @argparse.Command("click", positionals=[
+              @argparse.PositionArg("package"),
+              @argparse.PositionArg("name"),
+            ]),
+            @argparse.Command("select", positionals=[
+              @argparse.PositionArg("option"),
+            ]),
+          ]),
+          @argparse.Command("input", subcommand_required=true, subcommands=[
+            @argparse.Command("tap", positionals=[@argparse.PositionArg("code")]),
+          ]),
+          @argparse.Command("combat", subcommand_required=true, subcommands=[
+            @argparse.Command("attack"),
+            @argparse.Command("kill"),
+          ]),
+        ],
+      ),
+      @argparse.Command("observe", about="Read current structured game state", positionals=[
+        @argparse.PositionArg(
+          "scope",
+          num_args=@argparse.ValueRange(lower=0, upper=1),
+        ),
       ]),
-      @argparse.Command("eval", about="Evaluate JavaScript in the game page", positionals=[
-        @argparse.PositionArg("expression"),
-      ]),
+      @argparse.Command(
+        "lookup",
+        about="Search resource-pack map, NPC, or item data",
+        subcommand_required=true,
+        subcommands=[
+          @argparse.Command("map", positionals=[@argparse.PositionArg("query")]),
+          @argparse.Command("npc", positionals=[@argparse.PositionArg("query")]),
+          @argparse.Command("item", positionals=[@argparse.PositionArg("query")]),
+        ],
+      ),
       @argparse.Command(
         "logs",
         about="Read or follow collected browser logs",
@@ -413,12 +592,14 @@ async fn main {
         @argparse.OptionArg("out", default_values=["screenshot.png"]),
       ]),
       @argparse.Command(
-        "wait-ready",
-        about="Wait for $console ready and GameActive phase",
+        "wait",
+        about="Wait for the requested game condition",
+        subcommand_required=true,
+        subcommands=[@argparse.Command("active")],
       ),
       @argparse.Command(
-        "bot",
-        about="Run Playtest Bot scripts in the game_debug entrypoint",
+        "playtest",
+        about="Run fixed Playtest Bot scenarios",
         subcommand_required=true,
         subcommands=[
           @argparse.Command(
@@ -433,6 +614,23 @@ async fn main {
             ],
             positionals=[@argparse.PositionArg("script")],
           ),
+        ],
+      ),
+      @argparse.Command(
+        "debug",
+        about="Use raw console and JavaScript escape hatches",
+        subcommand_required=true,
+        subcommands=[
+          @argparse.Command("command", positionals=[
+            @argparse.PositionArg("name"),
+            @argparse.PositionArg(
+              "args",
+              num_args=@argparse.ValueRange(lower=0),
+            ),
+          ]),
+          @argparse.Command("eval", positionals=[
+            @argparse.PositionArg("expression"),
+          ]),
         ],
       ),
       @argparse.Command("reload", about="Reload the game page"),
@@ -463,9 +661,20 @@ async fn main {
         run_maple_cli("start", cdp_port, "", "", [], "", "", false, "", "")
       }
       Some(("open", child)) => {
-        let game_url = match child.values.get("url") {
-          Some(values) | (None with values = ["http://localhost:8080"]) =>
-            values[0]
+        let entry = match child.values.get("entry") {
+          Some(values) | (None with values = ["debug"]) => values[0]
+        }
+        let custom_url = match child.values.get("url") {
+          Some(values) | (None with values = [""]) => values[0]
+        }
+        let game_url = if custom_url != "" {
+          custom_url
+        } else {
+          match entry {
+            "debug" => "http://localhost:8080/game_debug.html"
+            "web" => "http://localhost:8080"
+            _ => fail("entry must be `debug` or `web`")
+          }
         }
         let wait = match child.flags.get("wait") {
           Some(value) | (None with value = false) => value
@@ -487,21 +696,180 @@ async fn main {
           "",
         )
       }
-      Some(("cmd", child)) => {
-        let name = match child.values.get("name") {
-          Some(values) | (None with values = [""]) => values[0]
+      Some(("act", child)) => {
+        let (name, action_args, timeout_ms) : (String, Json, Int) = match
+          child.subcommand {
+          Some(("character", domain)) =>
+            match domain.subcommand {
+              Some(("create", _)) => ("character.create", ({} : Json), 30000)
+              Some(("select", command)) => {
+                let slot = match command.values.get("slot") {
+                  Some(values) | (None with values = ["0"]) =>
+                    @string.parse_int(values[0])
+                }
+                ("character.select", ({ "slot": slot } : Json), 30000)
+              }
+              _ => fail("character action is required")
+            }
+          Some(("world", domain)) =>
+            match domain.subcommand {
+              Some(("warp", command)) => {
+                let map_id = match command.values.get("map-id") {
+                  Some(values) | (None with values = ["0"]) =>
+                    @string.parse_int(values[0])
+                }
+                let portal_id = match command.values.get("portal") {
+                  Some(values) | (None with values = ["0"]) =>
+                    @string.parse_int(values[0])
+                }
+                let timeout = match command.values.get("timeout-ms") {
+                  Some(values) | (None with values = ["30000"]) =>
+                    @string.parse_int(values[0])
+                }
+                (
+                  "world.warp",
+                  ({ "map_id": map_id, "portal_id": portal_id } : Json),
+                  timeout,
+                )
+              }
+              _ => fail("world action is required")
+            }
+          Some(("player", domain)) =>
+            match domain.subcommand {
+              Some(("teleport", command)) => {
+                let x = match command.values.get("x") {
+                  Some(values) | (None with values = [""]) =>
+                    @string.parse_int(values[0])
+                }
+                let y = match command.values.get("y") {
+                  Some(values) | (None with values = [""]) =>
+                    @string.parse_int(values[0])
+                }
+                ("player.teleport", ({ "x": x, "y": y } : Json), 30000)
+              }
+              Some(("teleport-to-npc", command)) => {
+                let npc_id = match command.values.get("npc-id") {
+                  Some(values) | (None with values = ["0"]) =>
+                    @string.parse_int(values[0])
+                }
+                ("player.teleport_to_npc", ({ "npc_id": npc_id } : Json), 30000)
+              }
+              _ => fail("player action is required")
+            }
+          Some(("inventory", domain)) =>
+            match domain.subcommand {
+              Some(("set-meso", command)) => {
+                let amount = match command.values.get("amount") {
+                  Some(values) | (None with values = ["0"]) =>
+                    @string.parse_int(values[0])
+                }
+                ("inventory.set_meso", ({ "amount": amount } : Json), 30000)
+              }
+              Some((verb, command)) if verb == "grant" || verb == "ensure" => {
+                let item_id = match command.values.get("item-id") {
+                  Some(values) | (None with values = ["0"]) =>
+                    @string.parse_int(values[0])
+                }
+                let quantity = match command.values.get("quantity") {
+                  Some(values) | (None with values = ["1"]) =>
+                    @string.parse_int(values[0])
+                }
+                (
+                  "inventory.\{verb}",
+                  ({ "item_id": item_id, "quantity": quantity } : Json),
+                  30000,
+                )
+              }
+              _ => fail("inventory action is required")
+            }
+          Some(("npc", domain)) =>
+            match domain.subcommand {
+              Some(("talk", command)) => {
+                let npc_id = match command.values.get("npc-id") {
+                  Some(values) | (None with values = ["0"]) =>
+                    @string.parse_int(values[0])
+                }
+                ("npc.talk", ({ "npc_id": npc_id } : Json), 30000)
+              }
+              _ => fail("npc action is required")
+            }
+          Some(("ui", domain)) =>
+            match domain.subcommand {
+              Some(("click", command)) => {
+                let package_name = match command.values.get("package") {
+                  Some(values) | (None with values = [""]) => values[0]
+                }
+                let control_name = match command.values.get("name") {
+                  Some(values) | (None with values = [""]) => values[0]
+                }
+                (
+                  "ui.click",
+                  ({ "package": package_name, "name": control_name } : Json),
+                  30000,
+                )
+              }
+              Some(("select", command)) => {
+                let option = match command.values.get("option") {
+                  Some(values) | (None with values = ["0"]) =>
+                    @string.parse_int(values[0])
+                }
+                ("ui.select", ({ "option": option } : Json), 30000)
+              }
+              _ => fail("ui action is required")
+            }
+          Some(("input", domain)) =>
+            match domain.subcommand {
+              Some(("tap", command)) => {
+                let code = match command.values.get("code") {
+                  Some(values) | (None with values = [""]) => values[0]
+                }
+                ("input.tap", ({ "code": code } : Json), 30000)
+              }
+              _ => fail("input action is required")
+            }
+          Some(("combat", domain)) =>
+            match domain.subcommand {
+              Some(("attack", _)) => ("combat.attack", ({} : Json), 30000)
+              Some(("kill", _)) => ("combat.kill", ({} : Json), 120000)
+              _ => fail("combat action is required")
+            }
+          _ => fail("action domain is required")
         }
-        let values = match child.values.get("args") {
-          Some(values) | (None with values = []) => values
+        let response = request(
+          {
+            "action": "act",
+            "name": name,
+            "args": action_args,
+            "timeoutMs": timeout_ms,
+          },
+          timeout_ms=timeout_ms + 5000,
+        )
+        let formatted = format_response("act", response)
+        if response is { "ok": False, .. } {
+          fail(formatted)
         }
-        run_maple_cli("cmd", "", "", name, values, "", "", false, "", "")
+        formatted
       }
-      Some(("eval", child)) => {
-        let expression = match child.values.get("expression") {
-          Some(values) | (None with values = [""]) => values[0]
+      Some(("observe", child)) => {
+        let scope = match child.values.get("scope") {
+          Some(values) if !values.is_empty() => values[0]
+          _ => "summary"
         }
-        run_maple_cli("eval", "", "", "", [], expression, "", false, "", "")
+        format_response(
+          "observe",
+          request({ "action": "observe", "scope": scope }),
+        )
       }
+      Some(("lookup", child)) =>
+        match child.subcommand {
+          Some((domain, command)) => {
+            let query = match command.values.get("query") {
+              Some(values) | (None with values = [""]) => values[0]
+            }
+            lookup_resource(domain, query).stringify(indent=2)
+          }
+          _ => fail("lookup domain is required")
+        }
       Some(("logs", child)) => {
         let level = match child.values.get("level") {
           Some(values) | (None with values = [""]) => values[0]
@@ -536,9 +904,13 @@ async fn main {
         }
         run_maple_cli("screenshot", "", "", "", [], "", "", false, out, "")
       }
-      Some(("wait-ready", _)) =>
-        run_maple_cli("wait-ready", "", "", "", [], "", "", false, "", "")
-      Some(("bot", child)) =>
+      Some(("wait", child)) =>
+        match child.subcommand {
+          Some(("active", _)) =>
+            run_maple_cli("wait-ready", "", "", "", [], "", "", false, "", "")
+          _ => fail("wait condition is required")
+        }
+      Some(("playtest", child)) =>
         match child.subcommand {
           Some(("run", run_child)) => {
             let script = match run_child.values.get("script") {
@@ -572,6 +944,25 @@ async fn main {
             println(root.render_help())
             return
           }
+        }
+      Some(("debug", child)) =>
+        match child.subcommand {
+          Some(("command", command)) => {
+            let name = match command.values.get("name") {
+              Some(values) | (None with values = [""]) => values[0]
+            }
+            let values = match command.values.get("args") {
+              Some(values) | (None with values = []) => values
+            }
+            run_maple_cli("cmd", "", "", name, values, "", "", false, "", "")
+          }
+          Some(("eval", command)) => {
+            let expression = match command.values.get("expression") {
+              Some(values) | (None with values = [""]) => values[0]
+            }
+            run_maple_cli("eval", "", "", "", [], expression, "", false, "", "")
+          }
+          _ => fail("debug command is required")
         }
       Some(("reload", _)) =>
         run_maple_cli("reload", "", "", "", [], "", "", false, "", "")

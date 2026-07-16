@@ -10,6 +10,7 @@ import {
   "KKKIIO/maple-moon/game/char_stance",
   "KKKIIO/maple-moon/game/res_types" @struct,
   "KKKIIO/maple-moon/game/server_proto",
+  "KKKIIO/maple-moon/game/ui/game_ui_font",
   "KKKIIO/maple-moon/engine/res",
   "KKKIIO/maple-moon/engine/ui",
   "KKKIIO/maple-moon/engine/utils",

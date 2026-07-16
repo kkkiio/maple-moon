@@ -24,7 +24,7 @@ Playtest Bot 的设计目标：AI 编写 JS 场景脚本 → mapled 通过 CDP �
 src/apps/
 ├── game_web/          # WebGPU，日常浏览器开发
 ├── game_native/       # raylib，玩家本地游玩
-└── game_debug/        # WebGPU，bot 验证专用构建（新增）
+└── game_debug/        # WebGPU，CLI automation 与 bot 开发入口
 ```
 
 game_debug 复用 game_web 的平台 override（selene_webgpu），额外注册
@@ -46,7 +46,8 @@ fn main {
 ```
 
 `game_debug.html` 指向 `game_debug.js`；默认 `index.html` 仍然加载 `game_web.js`。
-game_web 和 game_native 不注册 BotController，保持干净。
+game_web 和 game_native 不注册 BotController。game_debug 在没有 pending
+action 时不注入输入，允许玩家正常操作，并作为 `maple open` 的默认入口。
 
 ### 核心架构
 
@@ -156,10 +157,10 @@ globalThis.__bot = {
 
 ### 集成 mapled
 
-mapled 新增 `maple bot` 子命令：
+mapled 提供 `maple playtest` 子命令：
 
 ```bash
-moon run --target native src/cmd/maple bot run playtests/henesys_traversal.js
+moon run --target native src/cmd/maple playtest run playtests/henesys_traversal.js
 
 # 流程：
 # 1. 构建 src/apps/game_debug

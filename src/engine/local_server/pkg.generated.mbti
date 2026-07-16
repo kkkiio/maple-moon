@@ -4,6 +4,7 @@ package "KKKIIO/maple-moon/engine/local_server"
 import {
   "KKKIIO/maple-moon/engine/game_server",
   "KKKIIO/maple-moon/engine/log",
+  "KKKIIO/maple-moon/game/content_runtime",
   "KKKIIO/maple-moon/game/server_proto",
   "moonbitlang/core/debug",
   "moonbitlang/core/json",
@@ -20,7 +21,7 @@ pub let default_rand_seed : @ref.Ref[Bytes]
 
 // Types and methods
 type LocalServer
-pub fn LocalServer::LocalServer(db~ : &DB, drop_rng? : @random.Rand) -> Self
+pub fn LocalServer::LocalServer(db~ : &DB, npc_scripts~ : @content_runtime.NpcScriptRegistry, drop_rng? : @random.Rand) -> Self
 pub fn LocalServer::init_routes(Self) -> Unit
 pub fn LocalServer::load_character(Self, Int) -> Bool
 pub fn LocalServer::load_character_inventory_tab_data(Self, Json) -> Unit

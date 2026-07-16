@@ -89,4 +89,13 @@ fn init {
   @console.register_state_section("phase", fn() {
     current_phase_name().to_json()
   })
+  @console.register_state_section("world", fn() {
+    match current_phase() {
+      GamePhase::GameStart(map_id~, portal_id~, ..)
+      | GamePhase::GameTransiting(map_id~, portal_id~)
+      | GamePhase::GameActive(map_id~, portal_id~) =>
+        { "map_id": map_id, "portal_id": portal_id }
+      _ => { "map_id": -1, "portal_id": -1 }
+    }
+  })
 }

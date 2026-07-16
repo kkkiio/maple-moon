@@ -257,33 +257,6 @@ pub fn configure_packs(
   for key, physical_path in next_index {
     resource_index.set(key, physical_path)
   }
-  @asset.set_directory_io(fn(directory) {
-    let directory_path : @posix.Path = directory.replace(old="\\", new="/")
-    let normalized_directory = directory_path.normalize().to_string()
-    let mut mounted_directory = false
-    for mounted in resource_mounts {
-      if normalized_directory == mounted.root ||
-        normalized_directory.has_prefix(mounted.root + "/") {
-        mounted_directory = true
-        break
-      }
-    }
-    if !mounted_directory {
-      return None
-    }
-    let prefix = normalized_directory
-      .strip_suffix("/")
-      .unwrap_or(normalized_directory) +
-      "/"
-    let files : Array[String] = []
-    for _, physical_path in resource_index {
-      if physical_path.strip_prefix(prefix) is Some(relative) &&
-        !relative.contains("/") {
-        files.push(relative.to_owned())
-      }
-    }
-    Some(files)
-  })
 }
 
 ///|

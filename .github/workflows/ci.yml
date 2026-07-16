@@ -1,0 +1,73 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  regression:
+    name: Full regression
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      LIBGL_ALWAYS_SOFTWARE: "1"
+      MOONBIT_INSTALL_VERSION: nightly
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Install just
+        uses: extractions/setup-just@v4
+        with:
+          just-version: "1.46.0"
+
+      - name: Install native graphics dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libasound2-dev \
+            libgl1-mesa-dev \
+            libglu1-mesa-dev \
+            libx11-dev \
+            libxcursor-dev \
+            libxinerama-dev \
+            libxi-dev \
+            libxrandr-dev \
+            xauth \
+            xvfb
+
+      - name: Install MoonBit
+        run: |
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
+          echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
+
+      - name: Install MoonBit dependencies
+        run: |
+          moon version --all
+          moon update
+
+      - name: Check all targets
+        run: just check
+
+      - name: Check formatting and generated interfaces
+        run: |
+          just fmt
+          git diff --exit-code
+
+      - name: Run full native test suite
+        run: xvfb-run -a -s "-screen 0 1280x1024x24" just test
+
+      - name: Build web release
+        run: just build

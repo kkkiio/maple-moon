@@ -18,10 +18,9 @@ concurrency:
 jobs:
   regression:
     name: Full regression
-    runs-on: ubuntu-24.04
+    runs-on: macos-latest
     timeout-minutes: 60
     env:
-      LIBGL_ALWAYS_SOFTWARE: "1"
       MOONBIT_INSTALL_VERSION: nightly
 
     steps:
@@ -32,21 +31,6 @@ jobs:
         uses: extractions/setup-just@v4
         with:
           just-version: "1.46.0"
-
-      - name: Install native graphics dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            libasound2-dev \
-            libgl1-mesa-dev \
-            libglu1-mesa-dev \
-            libx11-dev \
-            libxcursor-dev \
-            libxinerama-dev \
-            libxi-dev \
-            libxrandr-dev \
-            xauth \
-            xvfb
 
       - name: Install MoonBit
         run: |
@@ -67,7 +51,7 @@ jobs:
           git diff --exit-code
 
       - name: Run full native test suite
-        run: xvfb-run -a -s "-screen 0 1280x1024x24" just test
+        run: just test
 
       - name: Build web release
         run: just build

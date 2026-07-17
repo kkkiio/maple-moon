@@ -31,7 +31,7 @@ they do not provide an equivalent baseline environment.
 
 - `supported_targets = "native"`;
 - `KKKIIO/selene_raylib/*` platform overrides;
-- the repository `assets/base/` pack mounted as the base source in the same
+- the repository `assets/base/` and `assets/dlc-victoria/` packs mounted in the same
   `res://` VFS used by the game;
 - `@capture_app.capture_after_frames` to run a hidden raylib context and capture
   the selected frame;

@@ -1,0 +1,130 @@
+{
+  "schema": 2,
+  "id": "base",
+  "overrides": [],
+  "compatibility": {
+    "nx": [
+      {
+        "archive": "Character.nx",
+        "entries": [
+          "Character/Afterimage/bow.img",
+          "Character/Afterimage/crossBow.img",
+          "Character/Afterimage/swordOL.img"
+        ]
+      },
+      {
+        "archive": "Effect.nx",
+        "entries": [
+          "Effect/BasicEff.img/Teleport"
+        ]
+      },
+      {
+        "archive": "Map.nx",
+        "entries": [
+          "Map/MapHelper.img/worldMap"
+        ],
+        "patterns": [
+          "Map/WorldMap/*.img"
+        ]
+      },
+      {
+        "archive": "Skill.nx",
+        "entries": [
+          "Skill/000.img",
+          "Skill/100.img",
+          "Skill/1000.img",
+          "Skill/110.img",
+          "Skill/1100.img",
+          "Skill/111.img",
+          "Skill/1110.img",
+          "Skill/1111.img",
+          "Skill/1112.img",
+          "Skill/112.img",
+          "Skill/120.img",
+          "Skill/1200.img",
+          "Skill/121.img",
+          "Skill/1210.img",
+          "Skill/1211.img",
+          "Skill/1212.img",
+          "Skill/122.img",
+          "Skill/130.img",
+          "Skill/1300.img",
+          "Skill/131.img",
+          "Skill/1310.img",
+          "Skill/1311.img",
+          "Skill/1312.img",
+          "Skill/132.img",
+          "Skill/1400.img",
+          "Skill/1410.img",
+          "Skill/1411.img",
+          "Skill/1412.img",
+          "Skill/1500.img",
+          "Skill/1510.img",
+          "Skill/1511.img",
+          "Skill/1512.img",
+          "Skill/200.img",
+          "Skill/2000.img",
+          "Skill/210.img",
+          "Skill/2100.img",
+          "Skill/211.img",
+          "Skill/2110.img",
+          "Skill/2111.img",
+          "Skill/2112.img",
+          "Skill/212.img",
+          "Skill/220.img",
+          "Skill/221.img",
+          "Skill/222.img",
+          "Skill/230.img",
+          "Skill/231.img",
+          "Skill/232.img",
+          "Skill/300.img",
+          "Skill/310.img",
+          "Skill/311.img",
+          "Skill/312.img",
+          "Skill/320.img",
+          "Skill/321.img",
+          "Skill/322.img",
+          "Skill/400.img",
+          "Skill/410.img",
+          "Skill/411.img",
+          "Skill/412.img",
+          "Skill/420.img",
+          "Skill/421.img",
+          "Skill/422.img",
+          "Skill/500.img",
+          "Skill/510.img",
+          "Skill/511.img",
+          "Skill/512.img",
+          "Skill/520.img",
+          "Skill/521.img",
+          "Skill/522.img",
+          "Skill/800.img",
+          "Skill/900.img",
+          "Skill/910.img",
+          "Skill/ItemSkill.img",
+          "Skill/MobSkill.img"
+        ]
+      },
+      {
+        "archive": "Sound.nx",
+        "entries": [
+          "Sound/Skill.img/1001004/Use",
+          "Sound/Skill.img/2101002/Use",
+          "Sound/Skill.img/3101005/Hit",
+          "Sound/Skill.img/3101005/Use"
+        ]
+      },
+      {
+        "archive": "UI.nx",
+        "entries": [
+          "UI/Basic.img/Cursor",
+          "UI/UIWindow2.img/MiniMap/ListNpc",
+          "UI/UIWindow2.img/Shop2",
+          "UI/UIWindow2.img/ToolTip",
+          "UI/UIWindow2.img/UtilDlgEx",
+          "UI/UIWindow2.img/WorldMap"
+        ]
+      }
+    ]
+  }
+}

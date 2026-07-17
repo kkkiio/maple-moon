@@ -35,6 +35,8 @@ pub fn set_npcs(MapNpcsContext) -> Unit
 
 pub fn setup_game_server_handlers() -> Unit
 
+pub fn try_talk_near(@res_types.Point[Int]) -> Bool
+
 // Errors
 pub(all) suberror ParseTalkError {
   ParseTalkError(String)
@@ -85,6 +87,7 @@ pub(all) struct NpcAnchor {
   npc_id : Int
   entity : @entity.Entity
   npc_object : @physics.MovingObject
+  ambient_states : Array[String]
 }
 
 pub struct NpcDialogue {

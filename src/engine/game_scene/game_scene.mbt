@@ -8,7 +8,6 @@ using @server_proto {
 ///|
 pub(all) struct Stage {
   // camera : Camera
-  map_portals_animations : @map.MapPortalAnimations
   npcs : @npc.MapNpcs
   // quests : @quest.MapQuests
   mobs : @monster.MapMobs
@@ -26,7 +25,6 @@ pub(all) struct Stage {
 
 ///|
 pub fn Stage::Stage(
-  map_portals_animations : @map.MapPortalAnimations,
   npcs : @npc.MapNpcs,
   mobs : @monster.MapMobs,
   // drops : @drop.MapDrops,
@@ -41,7 +39,6 @@ pub fn Stage::Stage(
   // combat : @combat_system.Combat
 ) -> Stage {
   {
-    map_portals_animations,
     // camera: Camera::new(),
     npcs,
     // quests,
@@ -88,7 +85,7 @@ fn respawn_player(
   ignore(@ms_camera.ensure_camera_entity())
   @ms_camera.set_follow_target(
     player.entity,
-    offset=@selene_math.Vec2(16.0, 16.0),
+    offset=@selene_math.Vec2(16.0, -64.0),
   )
   let (left, right, top, bottom) = normalize_camera_limits(
     left, right, top, bottom,
@@ -119,33 +116,18 @@ fn normalize_camera_limits(
 }
 
 ///|
-fn default_keymap() -> @keymap.Keymap {
+fn default_quick_slots() -> @keymap.QuickSlots {
   Map([
     (
-      @inputs.Code::ArrowUp,
-      @keymap.Action::BASIC(@keymap.BasicActionId::MOVE_UP),
+      @keymap.QuickSlotId::SLOT_1,
+      @keymap.QuickSlotContent::Skill(
+        @skill.SkillId::ARROW_BOMB_BOW.int_value(),
+      ),
     ),
     (
-      @inputs.Code::ArrowDown,
-      @keymap.Action::BASIC(@keymap.BasicActionId::MOVE_DOWN),
+      @keymap.QuickSlotId::SLOT_4,
+      @keymap.QuickSlotContent::Skill(@skill.SkillId::TELEPORT_FP.int_value()),
     ),
-    (
-      @inputs.Code::ArrowLeft,
-      @keymap.Action::BASIC(@keymap.BasicActionId::MOVE_LEFT),
-    ),
-    (
-      @inputs.Code::ArrowRight,
-      @keymap.Action::BASIC(@keymap.BasicActionId::MOVE_RIGHT),
-    ),
-    (@inputs.Code::Space, @keymap.Action::BASIC(@keymap.BasicActionId::JUMP)),
-    (@inputs.Code::KeyX, @keymap.Action::BASIC(@keymap.BasicActionId::ATTACK)),
-    (@inputs.Code::KeyZ, @keymap.Action::BASIC(@keymap.BasicActionId::PICKUP)),
-    // (@inputs.Code::KeyA, @keymap.Action::SKILL(1001004)), // Power Strike
-    (
-      @inputs.Code::KeyA,
-      @keymap.Action::SKILL(@skill.SkillId::ARROW_BOMB_BOW.int_value()),
-    ), // 
-    (@inputs.Code::KeyF, @keymap.Action::SKILL(2101002)), // Teleport (F/P)
   ])
 }
 
@@ -223,7 +205,8 @@ pub fn scene_transition_system(world : @ecs.World) -> Unit {
         return
       }
       if get_loading_data() is None {
-        @keymap.set_keymap(default_keymap())
+        @keymap.set_keymap(@keymap.default_keymap())
+        @keymap.set_quick_slots(default_quick_slots())
       }
       let player_item_ids = collect_inventory_item_ids(inventory_entry.items)
       let item_data_system = @item.get_item_data_system()
@@ -428,7 +411,7 @@ pub fn scene_transition_system(world : @ecs.World) -> Unit {
         transiting_loading_ref.val = Some(
           @io_service.submit_background_task(fn() raise {
             let map_resources = @map.load_map_resources_by_id(map_id)
-            @map.create_scene_map(map_resources, stage.map_portals_animations) catch {
+            @map.create_scene_map(map_resources) catch {
               err => abort("failed to create scene map: \{map_id}, err=\{err}")
             }
           }),
@@ -450,6 +433,10 @@ pub fn scene_transition_system(world : @ecs.World) -> Unit {
         }
       }
       set_active_scene_map(sence_map)
+      let player = @player.get_player().unwrap()
+      @map.set_portals(sence_map.portals, get_player_position=fn() {
+        Some(player.character.get_position())
+      })
       @map.set_tiled_map(
         world,
         sence_map.tiled_map,
@@ -467,7 +454,6 @@ pub fn scene_transition_system(world : @ecs.World) -> Unit {
       @monster.set_mobs({ map_mobs: stage.mobs, physics: sence_map.physics })
       @drop.set_map_physics(sence_map.physics)
       @game_server.send(PlayerMapTransferMessage(()))
-      let player = @player.get_player().unwrap()
       let bullet_system = BulletSystem()
       let combat = Combat(stage.mobs)
       @combat_system.set_combat(Some(combat))
@@ -477,9 +463,6 @@ pub fn scene_transition_system(world : @ecs.World) -> Unit {
       @passive.register_passive_skill(@passive.sword_fa_fighter_passive)
       // let width = sence_map.map_info.get_walls().delta()
       // let height = sence_map.map_info.get_borders().delta()
-      @map.set_portals(sence_map.portals, get_touch_pos=fn() {
-        @player.get_player().map(fn(player) { player.character.get_position() })
-      })
       @bgm.sync_map_bgm(sence_map.map_info.get_bgm())
       respawn_player(
         player,
@@ -511,7 +494,6 @@ fn new_stage(
   char_look : @char_look.CharLook,
   stats_entry : StatsEntry,
 ) -> Stage {
-  let map_module = @map.Module::load()
   let stats : @char_stats.CharStats = CharStats(
     stats_entry,
     fn() {
@@ -542,11 +524,7 @@ fn new_stage(
     @npc_talk_ui.open_npc_talk_ui, @npc_talk_ui.is_npc_talk_ui_open,
   )
   let monster_module = Module()
-  let stage = Stage(
-    map_module.get_portals_animations(),
-    map_npcs,
-    monster_module.get_map_mobs(),
-  )
+  let stage = Stage(map_npcs, monster_module.get_map_mobs())
   stage_ref.val = Some(stage)
   stage
 }

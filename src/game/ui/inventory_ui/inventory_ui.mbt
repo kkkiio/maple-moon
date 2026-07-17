@@ -33,8 +33,10 @@ priv struct State {
   tab_buttons : Array[TabButton]
   slot_buttons : Array[SlotButton]
   click_reader : @event.EventReader[@selene_ui.UiClickEvent]
+  navigation_reader : @event.EventReader[@selene_ui.UiNavigationEvent]
   mut binding_version : Int
   mut active_slot : Int?
+  mut focus_pending : Bool
 }
 
 ///|
@@ -81,8 +83,10 @@ let state_ref : Ref[State] = Ref({
   tab_buttons: [],
   slot_buttons: [],
   click_reader: @event.EventReader(),
+  navigation_reader: @event.EventReader(),
   binding_version: 0,
   active_slot: None,
+  focus_pending: false,
 })
 
 ///|
@@ -93,6 +97,9 @@ const PANEL_X : Int = 536
 
 ///|
 const PANEL_Y : Int = 24
+
+///|
+const INVENTORY_INPUT_OWNER : String = "inventory"
 
 ///|
 const SLOT_COLUMNS : Int = 4
@@ -443,8 +450,20 @@ fn clear_render(state : State) -> Unit {
 
 ///|
 fn render_inventory(state : State) -> Unit {
+  let mut restore_focus = state.focus_pending
+  if @selene_ui.focused_entity() is Some(focused) {
+    for entity in state.ui_entities {
+      if entity == focused {
+        restore_focus = true
+        break
+      }
+    }
+  }
   clear_render(state)
-  guard state.ui_resources is Some(ui_resources) else { return }
+  guard state.ui_resources is Some(ui_resources) else {
+    state.focus_pending = restore_focus
+    return
+  }
 
   let panel_x = state.panel_x
   let panel_y = state.panel_y
@@ -600,13 +619,49 @@ fn render_inventory(state : State) -> Unit {
     @selene_ui.buttons().set(tab_entity, @selene_ui.Button())
     state.tab_buttons.push({ tab_index: i, entity: tab_entity })
   }
+  if restore_focus {
+    let mut focus_target : @entity.Entity? = None
+    if state.active_slot is Some(active_slot) {
+      for button in state.slot_buttons {
+        if button.slot_no == active_slot {
+          focus_target = Some(button.entity)
+          break
+        }
+      }
+    }
+    if focus_target is None {
+      for button in state.tab_buttons {
+        if button.tab_index == state.tab_index {
+          focus_target = Some(button.entity)
+          break
+        }
+      }
+    }
+    match focus_target {
+      Some(entity) => @selene_ui.focus(entity)
+      None => ()
+    }
+  }
+  state.focus_pending = false
 }
 
 ///|
 fn clear_scene(reason_is_change_map : Bool) -> Unit {
   let state = state_ref.val
+  let mut owned_focus = false
+  if @selene_ui.focused_entity() is Some(focused) {
+    for entity in state.ui_entities {
+      if entity == focused {
+        owned_focus = true
+        @selene_ui.blur()
+        break
+      }
+    }
+  }
   clear_render(state)
+  state.focus_pending = state.visible && reason_is_change_map && owned_focus
   if !reason_is_change_map {
+    @keymap.set_gameplay_input_suppressed(INVENTORY_INPUT_OWNER, false)
     state.visible = false
     state.tab_index = 0
     state.panel_x = PANEL_X
@@ -618,6 +673,7 @@ fn clear_scene(reason_is_change_map : Bool) -> Unit {
     state.icon_by_item_id.clear()
     state.binding_version += 1
     state.active_slot = None
+    state.focus_pending = false
   }
 }
 
@@ -721,16 +777,28 @@ pub fn set_inventory_entry(entry : InventoryEntry) -> Unit {
 /// Sets whether the display-only inventory UI should be visible.
 pub fn set_inventory_visible(visible : Bool) -> Unit {
   let state = state_ref.val
+  @keymap.set_gameplay_input_suppressed(INVENTORY_INPUT_OWNER, visible)
   if state.visible == visible {
     return
   }
   state.visible = visible
   if !visible {
+    if @selene_ui.focused_entity() is Some(focused) {
+      for entity in state.ui_entities {
+        if entity == focused {
+          @selene_ui.blur()
+          break
+        }
+      }
+    }
     state.active_slot = None
+    state.focus_pending = false
     clear_render(state)
     return
   }
   state.active_slot = None
+  state.focus_pending = @keymap.active_input_method()
+    is @keymap.InputMethod::Gamepad(_)
   render_inventory(state)
 }
 
@@ -862,12 +930,11 @@ pub fn inventory_ui_system(_world : @ecs.World) -> Unit {
   let state = state_ref.val
   let mut dirty = false
 
-  if @inputs.is_just_pressed(@inputs.KeyI) {
-    state.visible = !state.visible
-    if !state.visible {
-      state.active_slot = None
-    }
-    dirty = true
+  if @keymap.is_just_pressed(
+      @keymap.Action::UI(@keymap.UiActionId::TOGGLE_INVENTORY),
+    ) &&
+    (state.visible || @keymap.gameplay_input_enabled()) {
+    set_inventory_visible(!state.visible)
   }
 
   if poll_ui_resources(state) {
@@ -885,18 +952,123 @@ pub fn inventory_ui_system(_world : @ecs.World) -> Unit {
     return
   }
 
+  if @keymap.is_just_pressed(@keymap.Action::UI(@keymap.UiActionId::CANCEL)) {
+    set_inventory_visible(false)
+    return
+  }
+
+  for event in @selene_ui.navigation_event_bus.read(state.navigation_reader) {
+    guard event.direction is @selene_ui.UiNavigationDirection::Cancel else {
+      continue
+    }
+    guard event.entity is Some(focused) else { continue }
+    for entity in state.ui_entities {
+      if entity == focused {
+        set_inventory_visible(false)
+        return
+      }
+    }
+  }
+
+  if @keymap.is_just_pressed(
+      @keymap.Action::UI(@keymap.UiActionId::PREVIOUS_TAB),
+    ) {
+    state.tab_index = if state.tab_index == 0 {
+      tabs.length() - 1
+    } else {
+      state.tab_index - 1
+    }
+    state.active_slot = None
+    dirty = true
+  } else if @keymap.is_just_pressed(
+      @keymap.Action::UI(@keymap.UiActionId::NEXT_TAB),
+    ) {
+    state.tab_index = (state.tab_index + 1) % tabs.length()
+    state.active_slot = None
+    dirty = true
+  }
+
+  let (click_dirty, _) = process_click_events(state)
+  if click_dirty {
+    dirty = true
+  } else if @inputs.is_mouse_just_pressed(@inputs.MouseButton::Left) &&
+    state.active_slot is Some(_) {
+    let mut pressed_inventory_control = false
+    if @selene_ui.hovered_entity() is Some(hovered) {
+      for button in state.slot_buttons {
+        if button.entity == hovered {
+          pressed_inventory_control = true
+          break
+        }
+      }
+      if !pressed_inventory_control {
+        for button in state.tab_buttons {
+          if button.entity == hovered {
+            pressed_inventory_control = true
+            break
+          }
+        }
+      }
+    }
+    if !pressed_inventory_control {
+      state.active_slot = None
+      dirty = true
+    }
+  }
   if dirty || state.ui_entities.is_empty() {
     render_inventory(state)
   }
-  let (click_dirty, clicked_slot_or_tab) = process_click_events(state)
-  if click_dirty {
-    render_inventory(state)
-    return
+  let focused = @selene_ui.focused_entity()
+  match state.ui_resources {
+    Some(resources) =>
+      for button in state.tab_buttons {
+        let (disabled, enabled) = resources.tab_btn_resources[button.tab_index]
+        let has_focus = focused == Some(button.entity)
+        set_image_texture(
+          button.entity,
+          if state.tab_index == button.tab_index || has_focus {
+            enabled
+          } else {
+            disabled
+          },
+        )
+        if has_focus {
+          @selene_ui.outlines().set(
+            button.entity,
+            @selene_ui.Outline(
+              @selene_ui.Val::px(2.0),
+              @selene_ui.BorderColor::from_css("#fff4a8").color,
+            ),
+          )
+        } else {
+          @selene_ui.outlines().remove(button.entity)
+        }
+      }
+    None => ()
   }
-  if @inputs.is_mouse_just_pressed(@inputs.MouseButton::Left) &&
-    state.active_slot is Some(_) &&
-    !clicked_slot_or_tab {
-    state.active_slot = None
-    render_inventory(state)
+  for button in state.slot_buttons {
+    let has_focus = focused == Some(button.entity)
+    if has_focus || state.active_slot == Some(button.slot_no) {
+      @selene_ui.background_colors().set(
+        button.entity,
+        @selene_ui.BackgroundColor::from_css("rgba(255, 207, 74, 0.18)"),
+      )
+      @selene_ui.outlines().set(
+        button.entity,
+        @selene_ui.Outline(
+          @selene_ui.Val::px(2.0),
+          @selene_ui.BorderColor::from_css(
+            if has_focus {
+              "#fff4a8"
+            } else {
+              "#ffcf4a"
+            },
+          ).color,
+        ),
+      )
+    } else {
+      @selene_ui.background_colors().remove(button.entity)
+      @selene_ui.outlines().remove(button.entity)
+    }
   }
 }

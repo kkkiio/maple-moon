@@ -14,6 +14,7 @@ import {
   "KKKIIO/maple-moon/game/combat_system",
   "KKKIIO/maple-moon/game/passive",
   "KKKIIO/maple-moon/game/map",
+  "KKKIIO/maple-moon/game/keymap",
   "KKKIIO/maple-moon/game/ui/mini_map_ui",
   "KKKIIO/maple-moon/game/ui/world_map_ui",
   "KKKIIO/maple-moon/game/controller",

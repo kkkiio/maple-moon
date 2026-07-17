@@ -7,7 +7,8 @@ Tiled 入口 loader。游戏 package 不应知道 pack ID、安装位置或仓�
 
 ## 挂载与优先级
 
-pack 按从低到高的优先级配置；后面的 pack 覆盖前面的同名 key：
+pack 按从低到高的优先级配置；后面的 pack 只能覆盖其 manifest
+`overrides` 中显式声明的同名 key：
 
 ```moonbit nocheck
 try! @res.configure_packs([
@@ -17,18 +18,20 @@ try! @res.configure_packs([
 ])
 ```
 
-每个根目录必须包含 schema 1 的 `pack.json`。`files` 是 pack 提供的精确
+每个根目录必须包含 schema 2 的 `pack.json`。`files` 是 pack 提供的精确
 ResourceKey 列表；未列出的物理文件不会进入 VFS：
 
 ```json
 {
-  "schema": 1,
+  "schema": 2,
   "id": "base",
-  "files": ["Data/shops.tsv", "Mob/0100100.img/mx.json"]
+  "overrides": [],
+  "files": ["Data/shops.tsv", "UI/UIWindow2.img/Quest/quest_info.json"]
 }
 ```
 
-`@game_app.base_app()` 默认挂载仓库和发行包使用的 `assets/base`。自定义启动器把
+`@game_app.base_app()` 默认挂载仓库和发行包使用的 `assets/base` 与
+`assets/dlc-victoria`。自定义启动器把
 实际安装根目录传给 `base_app(resource_packs=...)`，业务资源地址无需变化。
 
 ## 加载边界
@@ -55,6 +58,22 @@ ignore(strings)
 
 `require_path`、`require_json` 和 `require_image` 是允许终止程序的边界。底层解析和
 加载函数继续传播 `ResourceLoadError`。
+
+## 动画资源边界
+
+`AnimationLoader` 与 `compile_nx_animation` 只把资源编译为 `SpriteClip`。它包含
+图片、atlas layout、clip handle、锚点和帧元数据，不创建播放 graph、node 或
+player。消费它的怪物、NPC、特效或 UI controller 决定 graph 拓扑、循环策略和
+状态切换；固定视觉直接调用 `SpriteClip::sprite()` 使用首帧。
+
+```moonbit nocheck
+let loaded = try! @res.AnimationLoader().load(
+  "res://Mob/0100101.img/animations/move.json",
+)
+let move_clip = try! loaded.clip("move")
+let initial_sprite = move_clip.sprite()
+ignore(initial_sprite)
+```
 
 ## Pack 内相对引用
 

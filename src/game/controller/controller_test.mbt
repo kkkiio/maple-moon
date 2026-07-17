@@ -5,7 +5,10 @@ fn init {
       _ => None
     }
   })
-  try! @res.configure_packs([("base", "assets/base")])
+  try! @res.configure_packs([
+    ("base", "assets/base"),
+    ("dlc-victoria", "assets/dlc-victoria"),
+  ])
 }
 
 ///|
@@ -97,22 +100,28 @@ fn load_map_runtime(map_id : Int) -> (@map.MapInfo, @physics.Physics) raise {
 
 ///|
 fn install_test_keymap() -> Unit {
-  let keymap : @keymap.Keymap = Map([])
-  keymap[@inputs.Code::ArrowUp] = @keymap.Action::BASIC(
-    @keymap.BasicActionId::MOVE_UP,
-  )
-  keymap[@inputs.Code::ArrowDown] = @keymap.Action::BASIC(
-    @keymap.BasicActionId::MOVE_DOWN,
-  )
-  keymap[@inputs.Code::ArrowLeft] = @keymap.Action::BASIC(
-    @keymap.BasicActionId::MOVE_LEFT,
-  )
-  keymap[@inputs.Code::ArrowRight] = @keymap.Action::BASIC(
-    @keymap.BasicActionId::MOVE_RIGHT,
-  )
-  keymap[@inputs.Code::Space] = @keymap.Action::BASIC(
-    @keymap.BasicActionId::JUMP,
-  )
+  let keymap : @keymap.Keymap = Map([
+    (
+      @keymap.Action::BASIC(@keymap.BasicActionId::MOVE_UP),
+      [@input_action.InputBinding::Key(@inputs.Code::ArrowUp)],
+    ),
+    (
+      @keymap.Action::BASIC(@keymap.BasicActionId::MOVE_DOWN),
+      [@input_action.InputBinding::Key(@inputs.Code::ArrowDown)],
+    ),
+    (
+      @keymap.Action::BASIC(@keymap.BasicActionId::MOVE_LEFT),
+      [@input_action.InputBinding::Key(@inputs.Code::ArrowLeft)],
+    ),
+    (
+      @keymap.Action::BASIC(@keymap.BasicActionId::MOVE_RIGHT),
+      [@input_action.InputBinding::Key(@inputs.Code::ArrowRight)],
+    ),
+    (
+      @keymap.Action::BASIC(@keymap.BasicActionId::JUMP),
+      [@input_action.InputBinding::Key(@inputs.Code::Space)],
+    ),
+  ])
   @keymap.set_keymap(keymap)
 }
 
@@ -151,6 +160,7 @@ fn apply_keyboard_snapshot(pressed : Array[@inputs.Code]) -> Unit {
   }
   @inputs.apply_input_snapshot(snapshot)
   @inputs.advanced_key_system(0.0)
+  @input_action.input_action_system(0.0)
 }
 
 ///|

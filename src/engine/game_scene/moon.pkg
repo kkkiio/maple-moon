@@ -41,7 +41,6 @@ import {
   "KKKIIO/maple-moon/game/equip/slot",
   "KKKIIO/maple-moon/game/skill",
   "KKKIIO/maple-moon/game/keymap",
-  "KKKIIO/selene/inputs",
   "KKKIIO/maple-moon/game/quest_log",
   "KKKIIO/maple-moon/game/ui/quest_icon",
   "KKKIIO/selene/ecs",

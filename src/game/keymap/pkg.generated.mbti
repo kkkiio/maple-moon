@@ -2,40 +2,61 @@
 package "KKKIIO/maple-moon/game/keymap"
 
 import {
+  "KKKIIO/selene/ecs",
+  "KKKIIO/selene/event",
+  "KKKIIO/selene/input_action",
   "KKKIIO/selene/inputs",
   "moonbitlang/core/debug",
 }
 
 // Values
-pub fn get_action(Map[@inputs.Code, Action], @inputs.Code) -> Action?
+pub fn active_gamepad() -> @inputs.Gamepad?
 
-pub fn get_keymap() -> Map[@inputs.Code, Action]?
+pub fn active_input_method() -> InputMethod
+
+pub fn default_keymap() -> Map[Action, Array[@input_action.InputBinding]]
+
+pub fn gameplay_input_enabled() -> Bool
+
+pub fn get_bindings(Map[Action, Array[@input_action.InputBinding]], Action) -> Array[@input_action.InputBinding]
+
+pub fn get_keymap() -> Map[Action, Array[@input_action.InputBinding]]?
+
+pub let input_method_changed_event_bus : @event.Events[InputMethodChangedEvent]
+
+pub fn input_method_system(@ecs.World) -> Unit
 
 pub fn is_just_pressed(Action) -> Bool
 
-pub fn is_just_pressed_in(Map[@inputs.Code, Action], Action) -> Bool
+pub fn is_just_pressed_in(Map[Action, Array[@input_action.InputBinding]], Action) -> Bool
 
 pub fn is_pressed(Action) -> Bool
 
-pub fn is_pressed_in(Map[@inputs.Code, Action], Action) -> Bool
+pub fn is_pressed_in(Map[Action, Array[@input_action.InputBinding]], Action) -> Bool
 
 pub fn just_pressed_actions() -> Array[Action]
 
-pub fn just_pressed_actions_in(Map[@inputs.Code, Action]) -> Array[Action]
+pub fn just_pressed_actions_in(Map[Action, Array[@input_action.InputBinding]]) -> Array[Action]
 
 pub fn pressed_actions() -> Array[Action]
 
-pub fn pressed_actions_in(Map[@inputs.Code, Action]) -> Array[Action]
+pub fn pressed_actions_in(Map[Action, Array[@input_action.InputBinding]]) -> Array[Action]
 
-pub fn set_keymap(Map[@inputs.Code, Action]) -> Unit
+pub fn quick_slot_content(QuickSlotId) -> QuickSlotContent?
+
+pub fn set_gameplay_input_suppressed(String, Bool) -> Unit
+
+pub fn set_keymap(Map[Action, Array[@input_action.InputBinding]]) -> Unit
+
+pub fn set_quick_slots(Map[QuickSlotId, QuickSlotContent]) -> Unit
 
 // Errors
 
 // Types and methods
 pub(all) enum Action {
   BASIC(BasicActionId)
-  SKILL(Int)
-  ITEM(Int)
+  QUICK_SLOT(QuickSlotId)
+  UI(UiActionId)
 } derive(Eq, Hash, @debug.Debug)
 
 pub(all) enum BasicActionId {
@@ -45,11 +66,45 @@ pub(all) enum BasicActionId {
   MOVE_RIGHT
   JUMP
   ATTACK
-  PICKUP
+  INTERACT
+} derive(Eq, Hash, @debug.Debug)
+
+pub(all) enum InputMethod {
+  KeyboardMouse
+  Gamepad(@inputs.Gamepad)
+  Touch
+} derive(Eq, @debug.Debug)
+
+pub(all) struct InputMethodChangedEvent {
+  previous : InputMethod
+  current : InputMethod
+} derive(Eq, @debug.Debug)
+
+pub(all) enum QuickSlotContent {
+  Skill(Int)
+  Item(Int)
+} derive(Eq, @debug.Debug)
+
+pub(all) enum QuickSlotId {
+  SLOT_1
+  SLOT_2
+  SLOT_3
+  SLOT_4
+} derive(Eq, Hash, @debug.Debug)
+
+pub(all) enum UiActionId {
+  CANCEL
+  PREVIOUS_TAB
+  NEXT_TAB
+  TOGGLE_INVENTORY
+  TOGGLE_WORLD_MAP
+  TOGGLE_QUEST_LOG
 } derive(Eq, Hash, @debug.Debug)
 
 // Type aliases
-pub type Keymap = Map[@inputs.Code, Action]
+pub type Keymap = Map[Action, Array[@input_action.InputBinding]]
+
+pub type QuickSlots = Map[QuickSlotId, QuickSlotContent]
 
 // Traits
 

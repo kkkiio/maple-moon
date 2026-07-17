@@ -221,12 +221,27 @@ pub fn player_controller_input_system(_world : @ecs.World) -> Unit {
     try_trigger_manual_portal(player, map_info, physics) |> ignore
   }
 
+  let moving_left = @keymap.is_pressed(
+    @keymap.Action::BASIC(@keymap.BasicActionId::MOVE_LEFT),
+  )
+  let moving_right = @keymap.is_pressed(
+    @keymap.Action::BASIC(@keymap.BasicActionId::MOVE_RIGHT),
+  )
+  if moving_left != moving_right {
+    handle_direction_action(
+      player,
+      if moving_left {
+        @keymap.BasicActionId::MOVE_LEFT
+      } else {
+        @keymap.BasicActionId::MOVE_RIGHT
+      },
+    )
+  }
+
   for
     action in [
       @keymap.BasicActionId::MOVE_UP,
       @keymap.BasicActionId::MOVE_DOWN,
-      @keymap.BasicActionId::MOVE_LEFT,
-      @keymap.BasicActionId::MOVE_RIGHT,
       @keymap.BasicActionId::JUMP,
     ] {
     if has_action(just_pressed_actions, @keymap.Action::BASIC(action)) {
@@ -236,13 +251,24 @@ pub fn player_controller_input_system(_world : @ecs.World) -> Unit {
 
   for action in just_pressed_actions {
     match action {
-      @keymap.Action::SKILL(skill_id) => @skill_cast.use_move(player, skill_id)
-      @keymap.Action::ITEM(_item_id) => ()
+      @keymap.Action::QUICK_SLOT(slot) =>
+        match @keymap.quick_slot_content(slot) {
+          Some(@keymap.QuickSlotContent::Skill(skill_id)) =>
+            @skill_cast.use_move(player, skill_id)
+          Some(@keymap.QuickSlotContent::Item(item_id)) =>
+            @inventory.inventory.val.use_item(item_id)
+          None => ()
+        }
       @keymap.Action::BASIC(@keymap.BasicActionId::ATTACK) =>
         @skill_cast.use_move(player, @combat_proto.REGULAR_ATTACK)
-      @keymap.Action::BASIC(@keymap.BasicActionId::PICKUP) =>
-        @drop.try_pickup_at(player.character.get_position()) |> ignore
+      @keymap.Action::BASIC(@keymap.BasicActionId::INTERACT) => {
+        let player_pos = player.character.get_position()
+        if !@drop.try_pickup_at(player_pos) {
+          @npc.try_talk_near(player_pos) |> ignore
+        }
+      }
       @keymap.Action::BASIC(_) => ()
+      @keymap.Action::UI(_) => ()
     }
   }
 

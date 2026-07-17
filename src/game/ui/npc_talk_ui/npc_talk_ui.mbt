@@ -178,6 +178,7 @@ priv struct UINpcTalk {
   buttons : Array[ActionButton]
   selection_buttons : Array[SelectionButton]
   click_reader : @event.EventReader[@selene_ui.UiClickEvent]
+  navigation_reader : @event.EventReader[@selene_ui.UiNavigationEvent]
   mut window_pos : Point[Int]
   mut body_height : Int
   mut speaker_layout : NpcTalkSpeakerLayout?
@@ -185,6 +186,9 @@ priv struct UINpcTalk {
 
 ///|
 const NPC_TALK_Z : Int = @graphics.UI_ZINDEX + 100
+
+///|
+const NPC_TALK_INPUT_OWNER : String = "npc_talk"
 
 ///|
 const CONTENT_X = 166
@@ -600,9 +604,18 @@ pub fn describe_npc_talk_ui() -> Json {
 
 ///|
 pub fn close_npc_talk_ui() -> Unit {
+  @keymap.set_gameplay_input_suppressed(NPC_TALK_INPUT_OWNER, false)
   npc_talk_pending_args_ref.val = None
   match npc_talk_ui_ref.val {
     Some(ui) => {
+      if @selene_ui.focused_entity() is Some(focused) {
+        for entity in ui.entities {
+          if entity == focused {
+            @selene_ui.blur()
+            break
+          }
+        }
+      }
       ui.destroy()
       npc_talk_ui_ref.val = None
     }
@@ -613,6 +626,7 @@ pub fn close_npc_talk_ui() -> Unit {
 ///|
 pub fn open_npc_talk_ui(args : TalkArgs) -> Unit {
   close_npc_talk_ui()
+  @keymap.set_gameplay_input_suppressed(NPC_TALK_INPUT_OWNER, true)
   if npc_talk_resource_ref.val is None && npc_talk_loading_ref.val is None {
     npc_talk_loading_ref.val = Some(
       @io_service.submit_background_task(fn() { load_npc_talk_resource() }),
@@ -622,10 +636,38 @@ pub fn open_npc_talk_ui(args : TalkArgs) -> Unit {
 }
 
 ///|
+fn cancel_npc_talk(args : TalkArgs) -> Unit {
+  close_npc_talk_ui()
+  match args.talk_action {
+    SEND_YESNO(callback) => callback(None)
+    SEND_SIMPLE(callback) => callback(None)
+    SEND_OK(callback) | SEND_NEXT(callback) | SEND_PREV(callback) =>
+      callback(None)
+    SEND_NEXT_PREV(callback) => callback(None)
+  }
+}
+
+///|
 pub fn npc_talk_ui_system(_world : @ecs.World) -> Unit {
   guard @game_state.current_phase() is @game_state.GamePhase::GameActive(..) else {
     close_npc_talk_ui()
     return
+  }
+  if @keymap.is_just_pressed(@keymap.Action::UI(@keymap.UiActionId::CANCEL)) {
+    match npc_talk_ui_ref.val {
+      Some(ui) => {
+        cancel_npc_talk(ui.args)
+        return
+      }
+      None =>
+        match npc_talk_pending_args_ref.val {
+          Some(args) => {
+            cancel_npc_talk(args)
+            return
+          }
+          None => ()
+        }
+    }
   }
   poll_npc_talk_resource()
   poll_npc_talk_open_request()
@@ -647,6 +689,7 @@ fn poll_npc_talk_resource() -> Unit {
     Some(Err(err)) => {
       npc_talk_loading_ref.val = None
       npc_talk_pending_args_ref.val = None
+      @keymap.set_gameplay_input_suppressed(NPC_TALK_INPUT_OWNER, false)
       @log.error("failed to load npc talk resource", data={
         "error": err.to_string(),
       })
@@ -665,6 +708,7 @@ fn poll_npc_talk_open_request() -> Unit {
       Some(load_npc_talk_speaker_resource(args.npc_id)) catch {
         err => {
           npc_talk_pending_args_ref.val = None
+          @keymap.set_gameplay_input_suppressed(NPC_TALK_INPUT_OWNER, false)
           @log.error("failed to load npc talk speaker", data={
             "npc_id": args.npc_id,
             "error": err.to_string(),
@@ -677,6 +721,7 @@ fn poll_npc_talk_open_request() -> Unit {
   let content = convert_npc_text(args.str) catch {
     err => {
       npc_talk_pending_args_ref.val = None
+      @keymap.set_gameplay_input_suppressed(NPC_TALK_INPUT_OWNER, false)
       @log.error("failed to parse npc talk text", data={
         "error": err.to_string(),
       })
@@ -686,6 +731,13 @@ fn poll_npc_talk_open_request() -> Unit {
   npc_talk_pending_args_ref.val = None
   let ui = UINpcTalk(resource, args, content, speaker)
   ui.rebuild_scene()
+  if @keymap.active_input_method() is @keymap.InputMethod::Gamepad(_) {
+    if !ui.selection_buttons.is_empty() {
+      @selene_ui.focus(ui.selection_buttons[0].entity)
+    } else if !ui.buttons.is_empty() {
+      @selene_ui.focus(ui.buttons[0].entity)
+    }
+  }
   npc_talk_ui_ref.val = Some(ui)
 }
 
@@ -705,6 +757,7 @@ fn UINpcTalk::UINpcTalk(
     buttons: [],
     selection_buttons: [],
     click_reader: @event.EventReader(),
+    navigation_reader: @event.EventReader(),
     window_pos: Default::default(),
     body_height: FIXED_BODY_HEIGHT,
     speaker_layout: None,
@@ -1071,9 +1124,12 @@ fn UINpcTalk::spawn_action_button(
 
 ///|
 fn UINpcTalk::update(self : UINpcTalk) -> Unit {
+  let focused = @selene_ui.focused_entity()
   for button in self.buttons {
     let texture = if !button.enabled {
       button.resource.disabled
+    } else if focused == Some(button.entity) {
+      button.resource.mouse_over
     } else {
       match @selene_ui.interactions().get(button.entity) {
         Some(@selene_ui.Interaction::Pressed) => button.resource.pressed
@@ -1082,6 +1138,46 @@ fn UINpcTalk::update(self : UINpcTalk) -> Unit {
       }
     }
     self.set_image_texture(button.entity, texture)
+    if focused == Some(button.entity) {
+      @selene_ui.outlines().set(
+        button.entity,
+        @selene_ui.Outline(
+          @selene_ui.Val::px(2.0),
+          @selene_ui.BorderColor::from_css("#fff4a8").color,
+        ),
+      )
+    } else {
+      @selene_ui.outlines().remove(button.entity)
+    }
+  }
+  for button in self.selection_buttons {
+    if focused == Some(button.entity) {
+      @selene_ui.outlines().set(
+        button.entity,
+        @selene_ui.Outline(
+          @selene_ui.Val::px(2.0),
+          @selene_ui.BorderColor::from_css("#fff4a8").color,
+        ),
+      )
+    } else {
+      @selene_ui.outlines().remove(button.entity)
+    }
+  }
+  for event in @selene_ui.navigation_event_bus.read(self.navigation_reader) {
+    guard event.direction is @selene_ui.UiNavigationDirection::Cancel else {
+      continue
+    }
+    guard event.entity is Some(focused) else { continue }
+    let mut owns_focus = false
+    for entity in self.entities {
+      if entity == focused {
+        owns_focus = true
+        break
+      }
+    }
+    guard owns_focus else { continue }
+    cancel_npc_talk(self.args)
+    return
   }
   let click_events = @selene_ui.click_event_bus.read(self.click_reader)
   for event in click_events {

@@ -1,5 +1,8 @@
 # npc_talk_ui
 
+NPC 对话打开及异步加载期间暂停 gameplay action。手柄方向键移动选项焦点，
+`South/A` 确认，`East/B` 走当前 `TalkAction` 的取消语义并向脚本回调 `None`。
+
 负责 NPC 对话框的资源缓存、文本解析、按钮布局和点击交互。
 
 ## 富文本对话

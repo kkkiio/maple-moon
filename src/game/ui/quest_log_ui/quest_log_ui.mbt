@@ -92,6 +92,8 @@ priv struct QuestLogUiState {
   action_buttons : Array[ActionButton]
   mut selected_forfeit_quest_id : Int?
   click_reader : @event.EventReader[@selene_ui.UiClickEvent]
+  navigation_reader : @event.EventReader[@selene_ui.UiNavigationEvent]
+  mut focus_pending : Bool
 }
 
 ///|
@@ -115,6 +117,8 @@ fn make_initial_state() -> QuestLogUiState {
     action_buttons: [],
     selected_forfeit_quest_id: None,
     click_reader: @event.EventReader(),
+    navigation_reader: @event.EventReader(),
+    focus_pending: false,
   }
 }
 
@@ -132,6 +136,9 @@ const QUEST_LOG_TAB_COUNT : Int = 2
 
 ///|
 const QUEST_LOG_DEBUG_PACKAGE : String = "quest_log"
+
+///|
+const QUEST_LOG_INPUT_OWNER : String = "quest_log"
 
 ///|
 const LEFT_PANEL_WIDTH : Int = 295
@@ -513,7 +520,7 @@ fn spawn_action_button(
   on_click : () -> Unit,
 ) -> Unit {
   let entity = spawn_image_node(state.render_entities, button.normal, x, y, z)
-  @selene_ui.buttons().set(entity, @selene_ui.Button())
+  @selene_ui.buttons().set(entity, @selene_ui.Button(enabled~))
   state.action_buttons.push({ resource: button, entity, enabled, on_click })
 }
 
@@ -1019,8 +1026,20 @@ fn render_detail_panel(
 
 ///|
 fn render_quest_log(state : QuestLogUiState) -> Unit {
+  let mut restore_focus = state.focus_pending
+  if @selene_ui.focused_entity() is Some(focused) {
+    for entity in state.render_entities {
+      if entity == focused {
+        restore_focus = true
+        break
+      }
+    }
+  }
   clear_render(state)
-  guard state.ui_resource is Some(res) else { return }
+  guard state.ui_resource is Some(res) else {
+    state.focus_pending = restore_focus
+    return
+  }
   let list_x = state.panel_x
   let list_y = state.panel_y
   ignore(
@@ -1145,6 +1164,30 @@ fn render_quest_log(state : QuestLogUiState) -> Unit {
   clamp_selected_indexes(state, snapshot)
   render_entries(state, snapshot, res.list)
   render_detail_panel(state, snapshot, res.info)
+  if restore_focus {
+    let selected_index = current_selected_index(state, state.selected_tab)
+    let mut focus_target : @entity.Entity? = None
+    for button in state.quest_entry_buttons {
+      if button.tab_index == state.selected_tab &&
+        button.entry_index == selected_index {
+        focus_target = Some(button.entity)
+        break
+      }
+    }
+    if focus_target is None {
+      for button in state.tab_buttons {
+        if button.tab_index == state.selected_tab {
+          focus_target = Some(button.entity)
+          break
+        }
+      }
+    }
+    match focus_target {
+      Some(entity) => @selene_ui.focus(entity)
+      None => ()
+    }
+  }
+  state.focus_pending = false
 }
 
 ///|
@@ -1227,9 +1270,12 @@ fn process_click_events(state : QuestLogUiState) -> Bool {
 
 ///|
 fn update_button_visuals(state : QuestLogUiState) -> Unit {
+  let focused = @selene_ui.focused_entity()
   for button in state.action_buttons {
     let texture = if !button.enabled {
       button.resource.disabled
+    } else if focused == Some(button.entity) {
+      button.resource.mouse_over
     } else {
       match @selene_ui.interactions().get(button.entity) {
         Some(@selene_ui.Interaction::Pressed) => button.resource.pressed
@@ -1238,6 +1284,43 @@ fn update_button_visuals(state : QuestLogUiState) -> Unit {
       }
     }
     set_image_texture(button.entity, texture)
+    if focused == Some(button.entity) {
+      @selene_ui.outlines().set(
+        button.entity,
+        @selene_ui.Outline(
+          @selene_ui.Val::px(2.0),
+          @selene_ui.BorderColor::from_css("#fff4a8").color,
+        ),
+      )
+    } else {
+      @selene_ui.outlines().remove(button.entity)
+    }
+  }
+  for button in state.tab_buttons {
+    if focused == Some(button.entity) {
+      @selene_ui.outlines().set(
+        button.entity,
+        @selene_ui.Outline(
+          @selene_ui.Val::px(2.0),
+          @selene_ui.BorderColor::from_css("#fff4a8").color,
+        ),
+      )
+    } else {
+      @selene_ui.outlines().remove(button.entity)
+    }
+  }
+  for button in state.quest_entry_buttons {
+    if focused == Some(button.entity) {
+      @selene_ui.outlines().set(
+        button.entity,
+        @selene_ui.Outline(
+          @selene_ui.Val::px(2.0),
+          @selene_ui.BorderColor::from_css("#fff4a8").color,
+        ),
+      )
+    } else {
+      @selene_ui.outlines().remove(button.entity)
+    }
   }
 }
 
@@ -1245,28 +1328,41 @@ fn update_button_visuals(state : QuestLogUiState) -> Unit {
 /// Opens the quest-log UI window.
 pub fn open_quest_log_ui() -> Unit {
   let state = state()
+  @keymap.set_gameplay_input_suppressed(QUEST_LOG_INPUT_OWNER, true)
   state.selected_tab = 0
   state.selected_in_progress_index = 0
   state.selected_completed_index = 0
   state.selected_forfeit_quest_id = None
   state.visible = true
+  state.focus_pending = @keymap.active_input_method()
+    is @keymap.InputMethod::Gamepad(_)
 }
 
 ///|
 /// Closes quest-log UI and clears its entities.
 pub fn close_quest_log_ui() -> Unit {
   let state = state()
+  @keymap.set_gameplay_input_suppressed(QUEST_LOG_INPUT_OWNER, false)
+  if @selene_ui.focused_entity() is Some(focused) {
+    for entity in state.render_entities {
+      if entity == focused {
+        @selene_ui.blur()
+        break
+      }
+    }
+  }
   state.visible = false
+  state.focus_pending = false
   clear_render(state)
 }
 
 ///|
 /// Toggles quest-log UI visibility.
 pub fn toggle_quest_log_ui() -> Unit {
-  let state = state()
-  state.visible = !state.visible
-  if !state.visible {
-    clear_render(state)
+  if state().visible {
+    close_quest_log_ui()
+  } else {
+    open_quest_log_ui()
   }
 }
 
@@ -1285,22 +1381,48 @@ pub fn quest_log_ui_system(_world : @ecs.World) -> Unit {
     return
   }
 
-  if @inputs.is_just_pressed(@inputs.Code::KeyQ) {
+  if @keymap.is_just_pressed(
+      @keymap.Action::UI(@keymap.UiActionId::TOGGLE_QUEST_LOG),
+    ) &&
+    (state.visible || @keymap.gameplay_input_enabled()) {
     toggle_quest_log_ui()
     return
   }
   if !state.visible {
     return
   }
-  if @inputs.is_just_pressed(@inputs.Code::Escape) {
+  if @keymap.is_just_pressed(@keymap.Action::UI(@keymap.UiActionId::CANCEL)) {
     close_quest_log_ui()
     return
+  }
+  for event in @selene_ui.navigation_event_bus.read(state.navigation_reader) {
+    guard event.direction is @selene_ui.UiNavigationDirection::Cancel else {
+      continue
+    }
+    guard event.entity is Some(focused) else { continue }
+    for entity in state.render_entities {
+      if entity == focused {
+        close_quest_log_ui()
+        return
+      }
+    }
   }
   if state.selected_tab < 0 || state.selected_tab >= QUEST_LOG_TAB_COUNT {
     state.selected_tab = 0
   }
   let mut dirty = false
-  if @inputs.is_just_pressed(@inputs.Code::Tab) {
+  if @keymap.is_just_pressed(
+      @keymap.Action::UI(@keymap.UiActionId::PREVIOUS_TAB),
+    ) {
+    state.selected_tab = if state.selected_tab == 0 {
+      QUEST_LOG_TAB_COUNT - 1
+    } else {
+      state.selected_tab - 1
+    }
+    dirty = true
+  } else if @keymap.is_just_pressed(
+      @keymap.Action::UI(@keymap.UiActionId::NEXT_TAB),
+    ) {
     state.selected_tab = (state.selected_tab + 1) % QUEST_LOG_TAB_COUNT
     dirty = true
   }

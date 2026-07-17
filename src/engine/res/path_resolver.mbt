@@ -192,7 +192,8 @@ pub fn configure_packs(
     }
   }
   let next_index : Map[String, String] = Map([])
-  for mounted in next_mounts {
+  let next_owners : Map[String, String] = Map([])
+  for _, mounted in next_mounts {
     let manifest_path = mounted.root + "/pack.json"
     guard @platform_asset_io.read_bytes(manifest_path) is Some(bytes) else {
       raise ResourceLoadError::InvalidMount(
@@ -212,15 +213,41 @@ pub fn configure_packs(
         )
     }
     guard manifest
-      is { "schema": 1, "id": String(manifest_id), "files": Array(files), .. } else {
+      is {
+        "schema": 2,
+        "id": String(manifest_id),
+        "overrides": Array(override_values),
+        "files": Array(files),
+        ..
+      } else {
       raise ResourceLoadError::InvalidMount(
-        "resource pack manifest must contain schema=1, id, and files: \{manifest_path}",
+        "resource pack manifest must contain schema=2, id, overrides, and files: \{manifest_path}",
       )
     }
     guard manifest_id == mounted.id else {
       raise ResourceLoadError::InvalidMount(
         "resource pack id does not match manifest: mounted=\{mounted.id}, manifest=\{manifest_id}",
       )
+    }
+    let overrides : Set[String] = Set([])
+    for value in override_values {
+      guard value is String(address) else {
+        raise ResourceLoadError::InvalidMount(
+          "resource pack overrides must contain strings: pack=\{mounted.id}",
+        )
+      }
+      let key = ResourceKey::parse(address) catch {
+        error =>
+          raise ResourceLoadError::InvalidMount(
+            "invalid override address in pack \{mounted.id}: address=\{address}, error=\{to_repr(error)}",
+          )
+      }
+      guard key.to_address() == address && !overrides.contains(key.to_string()) else {
+        raise ResourceLoadError::InvalidMount(
+          "resource pack override address must be normalized and unique: pack=\{mounted.id}, address=\{address}",
+        )
+      }
+      overrides.add(key.to_string())
     }
     for file in files {
       guard file is String(path) else {
@@ -245,8 +272,16 @@ pub fn configure_packs(
         )
       }
       mounted.files.add(path)
+      if next_owners.get(path) is Some(owner) {
+        guard overrides.contains(path) else {
+          raise ResourceLoadError::InvalidMount(
+            "resource pack path conflict requires an explicit override: pack=\{mounted.id}, previous=\{owner}, address=res://\{path}",
+          )
+        }
+      }
       let mounted_root : @posix.Path = mounted.root
       next_index.set(path, mounted_root.join(path).normalize().to_string())
+      next_owners.set(path, mounted.id)
     }
   }
   resource_mounts.clear()
@@ -383,9 +418,9 @@ pub fn require_path(address : String) -> String {
 /// ```moonbit nocheck
 /// let path = try! resolve_ref(
 ///   "res://Mob/0100100.img/mx.json",
-///   "animations/stand.json",
+///   "animation.json",
 /// )
-/// assert_eq(path, "res://Mob/0100100.img/animations/stand.json")
+/// assert_eq(path, "res://Mob/0100100.img/animation.json")
 /// ```
 pub fn resolve_ref(
   base_path : String,

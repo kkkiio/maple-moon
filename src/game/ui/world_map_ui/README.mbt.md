@@ -8,6 +8,8 @@
 - 加载 `MapHelper.img/worldMap` marker
 - 加载 `Map/WorldMap/*.img/nx.json`
 - 支持打开/关闭、`MapLink` 切页、`MapSpot` hover/path overlay
+- 键盘 `W` 或手柄 `Select` 打开，`Escape` / `East/B` 返回上一级或关闭
+- 大地图可见期间暂停 gameplay action，关闭及场景清理时释放输入上下文
 
 资源依赖：
 

@@ -4,13 +4,13 @@ test "res VFS resolves priority and keeps relative references in one pack" {
     (
       "packs/base/pack.json",
       @encoding/utf8.encode(
-        "{\"schema\":1,\"id\":\"base\",\"files\":[\"Data/base.txt\",\"Data/config.json\",\"Data/icon.png\",\"Data/texture.json\",\"Map/Map1/demo.mx.json\",\"Map/tiles/demo.tmj\",\"Mob/demo/animation.png\"]}",
+        "{\"schema\":2,\"id\":\"base\",\"overrides\":[],\"files\":[\"Data/base.txt\",\"Data/config.json\",\"Data/icon.png\",\"Data/texture.json\",\"Map/Map1/demo.mx.json\",\"Map/tiles/demo.tmj\",\"Mob/demo/animation.png\"]}",
       ),
     ),
     (
       "packs/patch/pack.json",
       @encoding/utf8.encode(
-        "{\"schema\":1,\"id\":\"patch\",\"files\":[\"Data/config.json\",\"Map/Map1/demo.mx.json\",\"Map/tiles/demo.tmj\",\"Mob/demo/animation.json\"]}",
+        "{\"schema\":2,\"id\":\"patch\",\"overrides\":[\"res://Data/config.json\",\"res://Map/Map1/demo.mx.json\",\"res://Map/tiles/demo.tmj\"],\"files\":[\"Data/config.json\",\"Map/Map1/demo.mx.json\",\"Map/tiles/demo.tmj\",\"Mob/demo/animation.json\"]}",
       ),
     ),
     ("packs/base/Data/base.txt", @encoding/utf8.encode("base")),
@@ -141,7 +141,7 @@ test "res VFS rejects an invalid pack manifest atomically" {
     (
       "packs/base/pack.json",
       @encoding/utf8.encode(
-        "{\"schema\":1,\"id\":\"base\",\"files\":[\"Data/config.json\"]}",
+        "{\"schema\":2,\"id\":\"base\",\"overrides\":[],\"files\":[\"Data/config.json\"]}",
       ),
     ),
     (
@@ -151,7 +151,7 @@ test "res VFS rejects an invalid pack manifest atomically" {
     (
       "packs/broken/pack.json",
       @encoding/utf8.encode(
-        "{\"schema\":1,\"id\":\"broken\",\"files\":[\"../outside.json\"]}",
+        "{\"schema\":2,\"id\":\"broken\",\"overrides\":[],\"files\":[\"../outside.json\"]}",
       ),
     ),
   ])
@@ -175,6 +175,39 @@ test "res VFS rejects an invalid pack manifest atomically" {
       #|"packs/base/Data/config.json"
     ),
   )
+  clear_mounts()
+  @asset.set_io(fn(_path) { None })
+}
+
+///|
+test "res VFS rejects undeclared cross-pack overrides" {
+  let files : Map[String, Bytes] = Map([
+    (
+      "packs/base/pack.json",
+      @encoding/utf8.encode(
+        "{\"schema\":2,\"id\":\"base\",\"overrides\":[],\"files\":[\"Data/config.json\"]}",
+      ),
+    ),
+    (
+      "packs/dlc/pack.json",
+      @encoding/utf8.encode(
+        "{\"schema\":2,\"id\":\"dlc\",\"overrides\":[],\"files\":[\"Data/config.json\"]}",
+      ),
+    ),
+    (
+      "packs/base/Data/config.json",
+      @encoding/utf8.encode("{\"pack\":\"base\"}"),
+    ),
+    ("packs/dlc/Data/config.json", @encoding/utf8.encode("{\"pack\":\"dlc\"}")),
+  ])
+  @asset.set_io(fn(path) { files.get(path) })
+  try configure_packs([("base", "packs/base"), ("dlc", "packs/dlc")]) catch {
+    ResourceLoadError::InvalidMount(message) =>
+      assert_true(message.contains("requires an explicit override"))
+    _ => fail("expected invalid resource mount")
+  } noraise {
+    _ => fail("expected undeclared override to be rejected")
+  }
   clear_mounts()
   @asset.set_io(fn(_path) { None })
 }

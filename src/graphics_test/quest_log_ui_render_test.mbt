@@ -162,11 +162,13 @@ test "quest_log_ui closes on escape" {
   @game_state.init_state(
     @game_state.GamePhase::GameActive(map_id=100000000, portal_id=0),
   )
+  @keymap.set_keymap(@keymap.default_keymap())
   @quest_log_ui.open_quest_log_ui()
   let pressed = @inputs.empty_input_snapshot()
   pressed.pressed_keys.add(@inputs.Code::Escape)
   @inputs.apply_input_snapshot(pressed)
   @inputs.advanced_key_system(0.0)
+  @input_action.input_action_system(0.0)
   @quest_log_ui.quest_log_ui_system(@ecs.require_current_world())
   assert_false(@quest_log_ui.is_quest_log_ui_open())
 }

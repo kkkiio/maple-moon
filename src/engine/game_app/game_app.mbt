@@ -2,10 +2,10 @@
 /// Create a base `App` and install its ordered resource packs.
 ///
 /// `resource_packs` is ordered from lowest to highest priority. The default
-/// layout mounts the distributed base pack relative to the process or web
-/// application root. Callers that launch from another installation layout can
-/// pass absolute or platform-relative physical roots without changing any
-/// `res://` address used by game code.
+/// layout mounts the distributed base and Victoria packs relative to the
+/// process or web application root. Callers that launch from another
+/// installation layout can pass absolute or platform-relative physical roots
+/// without changing any `res://` address used by game code.
 ///
 /// # Example
 /// ```moonbit nocheck
@@ -19,7 +19,10 @@
 /// # Panics
 /// Panics when a pack ID or physical root is invalid, or no packs are supplied.
 pub fn base_app(
-  resource_packs? : Array[(String, String)] = [("base", "assets/base")],
+  resource_packs? : Array[(String, String)] = [
+    ("base", "assets/base"),
+    ("dlc-victoria", "assets/dlc-victoria"),
+  ],
 ) -> @app.App {
   @res.configure_packs(resource_packs) catch {
     err => abort("failed to configure game resource packs: \{to_repr(err)}")
@@ -54,6 +57,7 @@ pub fn base_app(
 pub fn game_systems(server : &@game_server.GameServer) -> @app.Plugin {
   fn(app : @app.App) -> @app.App {
     app
+    .add_message(@keymap.input_method_changed_event_bus)
     .add_system(
       @system.OnEnter(
         @game_state.transition(
@@ -77,6 +81,11 @@ pub fn game_systems(server : &@game_server.GameServer) -> @app.Plugin {
       ),
       fn(_world) { cleanup_for_leave_world() },
       system_name="cleanup_for_leave_world",
+    )
+    .add_system(
+      Update,
+      fn(world) { @keymap.input_method_system(world) },
+      system_name="input_method_system",
     )
     .add_system(
       Update,
@@ -182,6 +191,16 @@ pub fn game_systems(server : &@game_server.GameServer) -> @app.Plugin {
     )
     .add_system(
       Update,
+      fn(world) { @world_map_ui.world_map_ui_system(world) },
+      system_name="world_map_ui_system",
+    )
+    .add_system(
+      Update,
+      fn(world) { @quest_log_ui.quest_log_ui_system(world) },
+      system_name="quest_log_ui_system",
+    )
+    .add_system(
+      Update,
       fn(world) { @controller.player_controller_input_system(world) },
       system_name="player_controller_input_system",
     )
@@ -212,18 +231,8 @@ pub fn game_systems(server : &@game_server.GameServer) -> @app.Plugin {
     )
     .add_system(
       Update,
-      fn(world) { @world_map_ui.world_map_ui_system(world) },
-      system_name="world_map_ui_system",
-    )
-    .add_system(
-      Update,
       fn(world) { @quest_icon.quest_icon_system(world) },
       system_name="quest_icon_system",
-    )
-    .add_system(
-      Update,
-      fn(world) { @quest_log_ui.quest_log_ui_system(world) },
-      system_name="quest_log_ui_system",
     )
     .add_system(
       Update,

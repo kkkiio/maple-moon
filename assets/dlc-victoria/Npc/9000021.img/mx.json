@@ -1,0 +1,10 @@
+{
+  "info": {
+    "script": {
+      "0": {
+        "script": "getRank"
+      }
+    }
+  },
+  "animations_path": "animation.json"
+}

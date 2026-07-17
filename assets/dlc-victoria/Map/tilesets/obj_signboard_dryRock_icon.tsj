@@ -1,0 +1,1 @@
+{"type":"tileset","name":"obj:signboard/dryRock/icon","objectalignment":"bottomleft","tilewidth":50,"tileheight":63,"tilecount":1,"tiles":[{"id":0,"image":"obj_signboard_dryRock_icon.atlas-0.png","imagewidth":52,"imageheight":65,"x":1,"y":1,"width":50,"height":63}]}

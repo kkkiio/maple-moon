@@ -1,0 +1,14 @@
+{
+  "info": {
+    "script": {
+      "0": {
+        "script": "change_swordman"
+      }
+    },
+    "speak": {
+      "0": "n0",
+      "1": "n1"
+    }
+  },
+  "animations_path": "animation.json"
+}

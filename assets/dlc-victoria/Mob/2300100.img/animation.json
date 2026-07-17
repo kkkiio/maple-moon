@@ -1,0 +1,87 @@
+{ "frames": [
+   {
+    "filename": "animation 0.aseprite",
+    "frame": { "x": 34, "y": 0, "w": 46, "h": 30 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 17, "w": 46, "h": 30 },
+    "sourceSize": { "w": 46, "h": 67 },
+    "duration": 150
+   },
+   {
+    "filename": "animation 1.aseprite",
+    "frame": { "x": 80, "y": 0, "w": 32, "h": 43 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 7, "y": 5, "w": 32, "h": 43 },
+    "sourceSize": { "w": 46, "h": 67 },
+    "duration": 150
+   },
+   {
+    "filename": "animation 2.aseprite",
+    "frame": { "x": 112, "y": 0, "w": 24, "h": 47 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 11, "y": 0, "w": 24, "h": 47 },
+    "sourceSize": { "w": 46, "h": 67 },
+    "duration": 130
+   },
+   {
+    "filename": "animation 3.aseprite",
+    "frame": { "x": 58, "y": 30, "w": 21, "h": 47 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 13, "y": 0, "w": 21, "h": 47 },
+    "sourceSize": { "w": 46, "h": 67 },
+    "duration": 130
+   },
+   {
+    "filename": "animation 4.aseprite",
+    "frame": { "x": 34, "y": 30, "w": 24, "h": 47 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 11, "y": 0, "w": 24, "h": 47 },
+    "sourceSize": { "w": 46, "h": 67 },
+    "duration": 130
+   },
+   {
+    "filename": "animation 5.aseprite",
+    "frame": { "x": 79, "y": 43, "w": 21, "h": 47 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 13, "y": 0, "w": 21, "h": 47 },
+    "sourceSize": { "w": 46, "h": 67 },
+    "duration": 300
+   },
+   {
+    "filename": "animation 6.aseprite",
+    "frame": { "x": 0, "y": 0, "w": 34, "h": 44 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 6, "y": 5, "w": 34, "h": 44 },
+    "sourceSize": { "w": 46, "h": 67 },
+    "duration": 600
+   }
+ ],
+ "meta": {
+  "app": "https://www.aseprite.org/",
+  "version": "1.3.14.4-arm64",
+  "image": "animation.png",
+  "format": "RGBA8888",
+  "size": { "w": 136, "h": 90 },
+  "scale": "1",
+  "frameTags": [
+   { "name": "fly", "from": 0, "to": 1, "direction": "forward", "color": "#000000ff" },
+   { "name": "die1", "from": 2, "to": 5, "direction": "forward", "color": "#000000ff" },
+   { "name": "hit1", "from": 6, "to": 6, "direction": "forward", "color": "#000000ff" }
+  ],
+  "layers": [
+   { "name": "main", "opacity": 255, "blendMode": "normal" }
+  ],
+  "slices": [
+   { "name": "anchor_fly", "keys": [{ "frame": 0, "bounds": {"x": 0, "y": 0, "w": 46, "h": 67 }, "pivot": {"x": 23, "y": 67 } }] },
+   { "name": "anchor_die1", "keys": [{ "frame": 0, "bounds": {"x": 0, "y": 0, "w": 46, "h": 67 }, "pivot": {"x": 23, "y": 67 } }] },
+   { "name": "anchor_hit1", "keys": [{ "frame": 0, "bounds": {"x": 0, "y": 0, "w": 46, "h": 67 }, "pivot": {"x": 23, "y": 67 } }] }
+  ]
+ }
+}

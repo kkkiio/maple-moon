@@ -1,0 +1,11 @@
+{
+  "info": {
+    "hideName": 1,
+    "script": {
+      "0": {
+        "script": "multipet_fail"
+      }
+    }
+  },
+  "animations_path": "animation.json"
+}

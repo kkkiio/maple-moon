@@ -1,0 +1,120 @@
+{
+  "info": {
+    "MADamage": 190,
+    "MDDamage": 220,
+    "PADamage": 200,
+    "PDDamage": 160,
+    "acc": 100,
+    "bodyAttack": 1,
+    "eva": 20,
+    "exp": 210,
+    "fs": 10,
+    "level": 59,
+    "maxHP": 6000,
+    "maxMP": 150,
+    "mobType": 8,
+    "pushed": 1100,
+    "skill": {
+      "0": {
+        "action": 1,
+        "effectAfter": 0,
+        "level": 1,
+        "skill": 100
+      },
+      "1": {
+        "action": 1,
+        "effectAfter": 0,
+        "level": 1,
+        "skill": 102
+      }
+    },
+    "speed": -70,
+    "summonType": 1,
+    "undead": 0
+  },
+  "stance_nodes": {
+    "die1": {
+      "path_key": "die1",
+      "total_duration_ms": 1800,
+      "loop_": false,
+      "first_head": {
+        "x": 25,
+        "y": -121
+      },
+      "first_bounds": null
+    },
+    "hit1": {
+      "path_key": "hit1",
+      "total_duration_ms": 600,
+      "loop_": false,
+      "first_head": {
+        "x": 2,
+        "y": -147
+      },
+      "first_bounds": {
+        "lt": {
+          "x": -113,
+          "y": -160
+        },
+        "rb": {
+          "x": 110,
+          "y": 0
+        }
+      }
+    },
+    "move": {
+      "path_key": "move",
+      "total_duration_ms": 1400,
+      "loop_": true,
+      "first_head": {
+        "x": -10,
+        "y": -155
+      },
+      "first_bounds": {
+        "lt": {
+          "x": -90,
+          "y": -151
+        },
+        "rb": {
+          "x": 85,
+          "y": 0
+        }
+      }
+    },
+    "stand": {
+      "path_key": "stand",
+      "total_duration_ms": 900,
+      "loop_": true,
+      "first_head": {
+        "x": -10,
+        "y": -153
+      },
+      "first_bounds": {
+        "lt": {
+          "x": -90,
+          "y": -148
+        },
+        "rb": {
+          "x": 85,
+          "y": 0
+        }
+      }
+    }
+  },
+  "attack_nodes": {},
+  "skill_nodes": {
+    "100": {
+      "skill_id": 100,
+      "action": 1,
+      "animation_path_key": "skill1",
+      "effects": []
+    },
+    "102": {
+      "skill_id": 102,
+      "action": 1,
+      "animation_path_key": "skill1",
+      "effects": []
+    }
+  },
+  "animations_path": "animation.json"
+}

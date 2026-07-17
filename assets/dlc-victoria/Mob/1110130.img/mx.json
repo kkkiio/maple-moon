@@ -1,0 +1,94 @@
+{
+  "info": {
+    "MADamage": 0,
+    "MDDamage": 40,
+    "PADamage": 82,
+    "PDDamage": 12,
+    "acc": 45,
+    "bodyAttack": 1,
+    "elemAttr": "S1",
+    "eva": 5,
+    "exp": 26,
+    "fs": 10,
+    "level": 15,
+    "maxHP": 250,
+    "maxMP": 25,
+    "mobType": 4,
+    "pushed": 1,
+    "speed": -20,
+    "summonType": 1,
+    "undead": 0
+  },
+  "stance_nodes": {
+    "die1": {
+      "path_key": "die1",
+      "total_duration_ms": 840,
+      "loop_": false,
+      "first_head": {
+        "x": -6,
+        "y": -35
+      },
+      "first_bounds": null
+    },
+    "hit1": {
+      "path_key": "hit1",
+      "total_duration_ms": 600,
+      "loop_": false,
+      "first_head": {
+        "x": -9,
+        "y": -45
+      },
+      "first_bounds": {
+        "lt": {
+          "x": -27,
+          "y": -56
+        },
+        "rb": {
+          "x": 29,
+          "y": 0
+        }
+      }
+    },
+    "move": {
+      "path_key": "move",
+      "total_duration_ms": 750,
+      "loop_": true,
+      "first_head": {
+        "x": -9,
+        "y": -45
+      },
+      "first_bounds": {
+        "lt": {
+          "x": -29,
+          "y": -52
+        },
+        "rb": {
+          "x": 27,
+          "y": 0
+        }
+      }
+    },
+    "stand": {
+      "path_key": "stand",
+      "total_duration_ms": 360,
+      "loop_": true,
+      "first_head": {
+        "x": -9,
+        "y": -45
+      },
+      "first_bounds": {
+        "lt": {
+          "x": -29,
+          "y": -52
+        },
+        "rb": {
+          "x": 27,
+          "y": 0
+        }
+      }
+    }
+  },
+  "attack_nodes": {},
+  "skill_nodes": {},
+  "animations_path": "animation.json"
+}

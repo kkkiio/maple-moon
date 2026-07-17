@@ -1,0 +1,15 @@
+{
+  "info": {
+    "dcBottom": 0,
+    "dcLeft": -75,
+    "dcMark": 1,
+    "dcRight": 85,
+    "dcTop": -92,
+    "script": {
+      "0": {
+        "script": "mTaxi"
+      }
+    }
+  },
+  "animations_path": "animation.json"
+}

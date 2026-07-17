@@ -1,0 +1,57 @@
+{
+  "info": {
+    "MADamage": 150,
+    "MDDamage": 170,
+    "PADamage": 140,
+    "PDDamage": 160,
+    "acc": 120,
+    "bodyAttack": 0,
+    "eva": 20,
+    "exp": 0,
+    "fs": 10,
+    "level": 42,
+    "maxHP": 1,
+    "maxMP": 220,
+    "pushed": 300,
+    "revive": {
+      "0": 4300005
+    },
+    "speed": -20,
+    "summonType": 1,
+    "undead": 0
+  },
+  "stance_nodes": {
+    "die1": {
+      "path_key": "die1",
+      "total_duration_ms": 2380,
+      "loop_": false,
+      "first_head": {
+        "x": -12,
+        "y": -18
+      },
+      "first_bounds": null
+    },
+    "stand": {
+      "path_key": "stand",
+      "total_duration_ms": 890,
+      "loop_": true,
+      "first_head": {
+        "x": -8,
+        "y": -13
+      },
+      "first_bounds": {
+        "lt": {
+          "x": -25,
+          "y": -20
+        },
+        "rb": {
+          "x": 19,
+          "y": 0
+        }
+      }
+    }
+  },
+  "attack_nodes": {},
+  "skill_nodes": {},
+  "animations_path": "animation.json"
+}

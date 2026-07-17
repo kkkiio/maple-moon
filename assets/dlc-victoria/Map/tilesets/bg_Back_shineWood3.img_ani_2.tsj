@@ -1,0 +1,1 @@
+{"type":"tileset","name":"bg:Back/shineWood3.img/ani/2","objectalignment":"bottomleft","tilewidth":248,"tileheight":268,"image":"bg_Back_shineWood3.img_ani_2.png","imagewidth":496,"imageheight":268,"columns":2,"tilecount":2,"tiles":[{"id":0,"animation":[{"tileid":0,"duration":2500},{"tileid":1,"duration":2500}]}]}

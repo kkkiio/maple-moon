@@ -1,0 +1,11 @@
+{
+  "info": {
+    "hideName": 1,
+    "script": {
+      "0": {
+        "script": "forself"
+      }
+    }
+  },
+  "animations_path": "animation.json"
+}

@@ -1,0 +1,1 @@
+{"type":"tileset","name":"obj:house/darkWood/chimney","objectalignment":"bottomleft","tilewidth":112,"tileheight":187,"tilecount":1,"tiles":[{"id":0,"image":"obj_house_darkWood_chimney.atlas-0.png","imagewidth":114,"imageheight":189,"x":1,"y":1,"width":112,"height":187}]}

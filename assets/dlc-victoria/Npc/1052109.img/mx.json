@@ -1,0 +1,21 @@
+{
+  "info": {
+    "default": {
+      "__b": 10975,
+      "__w": 79,
+      "__h": 77,
+      "origin": [
+        28,
+        77
+      ],
+      "z": 0
+    },
+    "hideName": 1,
+    "script": {
+      "0": {
+        "script": "givebubbleDoll1"
+      }
+    }
+  },
+  "animations_path": "animation.json"
+}

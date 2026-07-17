@@ -1,0 +1,164 @@
+{
+  "info": {
+    "MADamage": 390,
+    "MDDamage": 400,
+    "PADamage": 300,
+    "PDDamage": 550,
+    "acc": 130,
+    "bodyAttack": 1,
+    "elemAttr": "S1F2L2",
+    "eva": 30,
+    "exp": 350,
+    "fs": 10,
+    "hpRecovery": 50,
+    "level": 75,
+    "maxHP": 18000,
+    "maxMP": 220,
+    "mobType": 0,
+    "mpRecovery": 5,
+    "pushed": 1500,
+    "speed": 35,
+    "summonType": 1,
+    "undead": 0
+  },
+  "stance_nodes": {
+    "die1": {
+      "path_key": "die1",
+      "total_duration_ms": 1350,
+      "loop_": false,
+      "first_head": {
+        "x": 1,
+        "y": -118
+      },
+      "first_bounds": null
+    },
+    "hit1": {
+      "path_key": "hit1",
+      "total_duration_ms": 600,
+      "loop_": false,
+      "first_head": {
+        "x": 14,
+        "y": -111
+      },
+      "first_bounds": {
+        "lt": {
+          "x": -27,
+          "y": -116
+        },
+        "rb": {
+          "x": 80,
+          "y": 0
+        }
+      }
+    },
+    "move": {
+      "path_key": "move",
+      "total_duration_ms": 620,
+      "loop_": true,
+      "first_head": {
+        "x": -15,
+        "y": -106
+      },
+      "first_bounds": {
+        "lt": {
+          "x": -26,
+          "y": -112
+        },
+        "rb": {
+          "x": 73,
+          "y": 0
+        }
+      }
+    },
+    "stand": {
+      "path_key": "stand",
+      "total_duration_ms": 710,
+      "loop_": true,
+      "first_head": {
+        "x": 20,
+        "y": -116
+      },
+      "first_bounds": {
+        "lt": {
+          "x": -7,
+          "y": -121
+        },
+        "rb": {
+          "x": 72,
+          "y": 0
+        }
+      }
+    }
+  },
+  "attack_nodes": {
+    "1": {
+      "id": 1,
+      "info": {
+        "attackAfter": 420,
+        "conMP": 2,
+        "elemAttr": "L",
+        "hit": {
+          "0": {
+            "__b": 44545,
+            "__w": 1,
+            "__h": 1,
+            "origin": [
+              0,
+              0
+            ],
+            "z": 0
+          }
+        },
+        "magic": 1,
+        "range": {
+          "lt": [
+            -209,
+            -225
+          ],
+          "rb": [
+            0,
+            0
+          ]
+        },
+        "type": 0
+      },
+      "animation_path_key": "attack1",
+      "effects": []
+    },
+    "2": {
+      "id": 2,
+      "info": {
+        "attackAfter": 420,
+        "conMP": 2,
+        "hit": {
+          "0": {
+            "__b": 44551,
+            "__w": 1,
+            "__h": 1,
+            "origin": [
+              0,
+              0
+            ],
+            "z": 0
+          }
+        },
+        "magic": 1,
+        "range": {
+          "lt": [
+            -250,
+            -60
+          ],
+          "rb": [
+            0,
+            0
+          ]
+        },
+        "type": 0
+      },
+      "animation_path_key": "attack2",
+      "effects": []
+    }
+  },
+  "skill_nodes": {},
+  "animations_path": "animation.json"
+}

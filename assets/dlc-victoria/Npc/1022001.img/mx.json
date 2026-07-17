@@ -1,0 +1,14 @@
+{
+  "info": {
+    "dcBottom": 0,
+    "dcLeft": -60,
+    "dcRight": 60,
+    "dcTop": -90,
+    "script": {
+      "0": {
+        "script": "taxi1"
+      }
+    }
+  },
+  "animations_path": "animation.json"
+}

@@ -1,0 +1,15 @@
+{
+  "info": {
+    "default": {
+      "__b": 6218,
+      "__w": 52,
+      "__h": 44,
+      "origin": [
+        21,
+        44
+      ]
+    },
+    "hideName": 1
+  },
+  "animations_path": "animation.json"
+}

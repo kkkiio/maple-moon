@@ -1,0 +1,1 @@
+{"type":"tileset","name":"obj:dungeon/metroSubway/foot","objectalignment":"bottomleft","tilewidth":348,"tileheight":132,"tilecount":1,"tiles":[{"id":0,"image":"obj_dungeon_metroSubway_foot.atlas-0.png","imagewidth":350,"imageheight":134,"x":1,"y":1,"width":348,"height":132}]}

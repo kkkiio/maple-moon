@@ -1,0 +1,12 @@
+{
+  "info": {
+    "hideName": 1,
+    "script": {
+      "0": {
+        "script": "nautil_letter"
+      }
+    },
+    "talkMouseOnly": 1
+  },
+  "animations_path": "animation.json"
+}

@@ -1,0 +1,1 @@
+{"type":"tileset","name":"obj:prop/grassySoil/lamp","objectalignment":"bottomleft","tilewidth":34,"tileheight":60,"tilecount":1,"tiles":[{"id":0,"image":"obj_prop_grassySoil_lamp.atlas-0.png","imagewidth":36,"imageheight":62,"x":1,"y":1,"width":34,"height":60}]}

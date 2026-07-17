@@ -1,0 +1,1 @@
+{"type":"tileset","name":"obj:connect/ladder/1","objectalignment":"bottomleft","tilewidth":68,"tileheight":206,"tilecount":1,"tiles":[{"id":0,"image":"obj_connect_ladder_1.atlas-0.png","imagewidth":70,"imageheight":208,"x":1,"y":1,"width":68,"height":206}]}

@@ -1,0 +1,1 @@
+{"type":"tileset","name":"obj:dungeon/blueCave/boss","objectalignment":"bottomleft","tilewidth":71,"tileheight":82,"tilecount":1,"tiles":[{"id":0,"image":"obj_dungeon_blueCave_boss.atlas-0.png","imagewidth":73,"imageheight":84,"x":1,"y":1,"width":71,"height":82}]}

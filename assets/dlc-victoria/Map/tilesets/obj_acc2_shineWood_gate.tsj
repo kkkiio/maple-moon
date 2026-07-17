@@ -1,0 +1,1 @@
+{"type":"tileset","name":"obj:acc2/shineWood/gate","objectalignment":"bottomleft","tilewidth":344,"tileheight":321,"tilecount":1,"tiles":[{"id":0,"image":"obj_acc2_shineWood_gate.atlas-0.png","imagewidth":346,"imageheight":323,"x":1,"y":1,"width":344,"height":321}]}

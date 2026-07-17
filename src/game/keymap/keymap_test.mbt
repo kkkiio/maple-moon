@@ -426,6 +426,7 @@ test "input method switches by meaningful last input without stick stealing" {
   let touch_started = @inputs.empty_input_snapshot()
   touch_started.touches.set(touch_id, {
     id: touch_id,
+    source: @inputs.PointerSource::PointerTouch,
     position: @selene_math.Vec2(30.0, 40.0),
     previous_position: @selene_math.Vec2(30.0, 40.0),
     delta: @selene_math.Vec2::zero(),
@@ -433,6 +434,7 @@ test "input method switches by meaningful last input without stick stealing" {
   })
   touch_started.touch_changes.push({
     id: touch_id,
+    source: @inputs.PointerSource::PointerTouch,
     phase: @inputs.TouchPhase::Started,
     position: @selene_math.Vec2(30.0, 40.0),
     previous_position: @selene_math.Vec2(30.0, 40.0),
@@ -449,6 +451,7 @@ test "input method switches by meaningful last input without stick stealing" {
   let static_touch_with_gamepad = @inputs.empty_input_snapshot()
   static_touch_with_gamepad.touches.set(touch_id, {
     id: touch_id,
+    source: @inputs.PointerSource::PointerTouch,
     position: @selene_math.Vec2(30.0, 40.0),
     previous_position: @selene_math.Vec2(30.0, 40.0),
     delta: @selene_math.Vec2::zero(),
@@ -471,6 +474,7 @@ test "input method switches by meaningful last input without stick stealing" {
   let touch_moved = @inputs.empty_input_snapshot()
   touch_moved.touches.set(touch_id, {
     id: touch_id,
+    source: @inputs.PointerSource::PointerTouch,
     position: @selene_math.Vec2(34.0, 40.0),
     previous_position: @selene_math.Vec2(30.0, 40.0),
     delta: @selene_math.Vec2(4.0, 0.0),
@@ -478,6 +482,7 @@ test "input method switches by meaningful last input without stick stealing" {
   })
   touch_moved.touch_changes.push({
     id: touch_id,
+    source: @inputs.PointerSource::PointerTouch,
     phase: @inputs.TouchPhase::Moved,
     position: @selene_math.Vec2(34.0, 40.0),
     previous_position: @selene_math.Vec2(30.0, 40.0),
@@ -494,6 +499,7 @@ test "input method switches by meaningful last input without stick stealing" {
   let touch_ended = @inputs.empty_input_snapshot()
   touch_ended.touch_changes.push({
     id: touch_id,
+    source: @inputs.PointerSource::PointerTouch,
     phase: @inputs.TouchPhase::Ended,
     position: @selene_math.Vec2(34.0, 40.0),
     previous_position: @selene_math.Vec2(34.0, 40.0),

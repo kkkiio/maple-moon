@@ -97,10 +97,7 @@ fn setup_shop_scene_npcs() -> @app.App raise {
   @system.configure_display(800.0, 600.0, 1.0)
 
   let raw = @map.load_map_resources_by_id(102000001)
-  let scene_map = @map.create_scene_map(
-    raw,
-    @map.Module::load().get_portals_animations(),
-  )
+  let scene_map = @map.create_scene_map(raw)
   let npc_lives = []
   for life in scene_map.life_spawns {
     if life.type_ == "n" {
@@ -108,6 +105,7 @@ fn setup_shop_scene_npcs() -> @app.App raise {
     }
   }
   assert_true(npc_lives.length() > 0)
+  @map.set_portals(scene_map.portals, get_player_position=fn() { None })
   @map.set_tiled_map(
     @ecs.require_current_world(),
     scene_map.tiled_map,

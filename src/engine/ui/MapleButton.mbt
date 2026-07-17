@@ -14,14 +14,16 @@ pub(all) struct NxMapleButton {
 ///|
 /// Parsed MapleStory button visuals for selene-based UIs.
 pub(all) struct MapleButtonResource {
-  selene_animations : Map[ButtonState, @ms_animation.Animation]
+  /// Static sprite for each input state.
+  sprites : Map[ButtonState, @sprite.Sprite]
+  /// Pointer hitbox dimensions in pixels.
   dimensions : Point[Int]
 }
 
 ///|
 /// Build a runtime button resource from parsed nx button data.
 pub fn MapleButtonResource::from_nx(src : NxMapleButton) -> MapleButtonResource {
-  let selene_animations : Map[ButtonState, @ms_animation.Animation] = Map([])
+  let sprites : Map[ButtonState, @sprite.Sprite] = Map([])
   let states : Array[(ButtonState, @res.NxAnimation)] = [
     (ButtonState::NORMAL, src.normal),
     (ButtonState::PRESSED, src.pressed),
@@ -29,11 +31,14 @@ pub fn MapleButtonResource::from_nx(src : NxMapleButton) -> MapleButtonResource 
     (ButtonState::DISABLED, src.disabled),
   ]
   for item in states {
-    let (state, animation) = item
-    selene_animations[state] = @ms_animation.from_nx_animation(animation)
+    let (state, visual) = item
+    guard visual.frames is [frame, ..] else {
+      abort("MapleButton state must contain a texture frame")
+    }
+    sprites[state] = frame.texture.require_sprite()
   }
   let (width, height) = src.normal.get_size()
-  { selene_animations, dimensions: { x: width, y: height } }
+  { sprites, dimensions: { x: width, y: height } }
 }
 
 ///|
@@ -138,9 +143,13 @@ pub fn MapleButton::update_pointer(
 }
 
 ///|
-/// Returns the selene animation for the current visual state.
-pub fn MapleButton::current_selene_animation(
-  self : MapleButton,
-) -> @ms_animation.Animation {
-  self.resource.selene_animations.get(self.current_state()).unwrap()
+/// Returns the sprite for the current visual state.
+///
+/// # Example
+/// ```moonbit nocheck
+/// let sprite = button.current_sprite()
+/// ignore(sprite)
+/// ```
+pub fn MapleButton::current_sprite(self : MapleButton) -> @sprite.Sprite {
+  self.resource.sprites.get(self.current_state()).unwrap()
 }

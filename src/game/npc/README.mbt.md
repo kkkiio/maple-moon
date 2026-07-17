@@ -23,6 +23,17 @@ test {
 }
 ```
 
+## 地图 NPC 动画
+
+NPC 初始播放 `stand`。当前 clip 完整播放一轮后，客户端从资源的全部 animation
+tag 中均匀随机选择下一状态，也允许再次选中当前状态。每个状态使用
+`RepeatAnimation::Never`，由 AnimationPlayer 的完成状态触发下一轮选择，保证
+状态机与实际画面进度一致。
+
+这个规则与 OpenMapleClient 的 ambient NPC 行为一致。`say`、`blink`、`action`
+等名称只是资源状态名，不在 controller 中形成硬编码白名单；不应进入候选集的
+编辑态动画应在资源导出边界排除。
+
 ## NPC Talk
 
 NPC 任务对话案例。

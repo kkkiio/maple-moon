@@ -1,6 +1,6 @@
 ///|
 priv struct Ball {
-  animation : @ms_animation.Animation
+  animation : @combat_proto.BulletAnimation
 }
 
 ///|
@@ -8,7 +8,7 @@ fn load_ball_animation(
   src : Json,
   tag : String,
   base_path : String,
-) -> @ms_animation.Animation raise {
+) -> @combat_proto.BulletAnimation raise {
   let ref_path = match src {
     { "mx_animation": String(path), .. } => path
     _ => fail("missing mx_animation in skill ball")
@@ -22,7 +22,7 @@ fn load_ball_animation(
         "missing skill ball animation tag '\{tag}': \{resolved}, error=\{error}",
       )
   }
-  @ms_animation.from_selene_clip(clip, loop_=true)
+  @combat_proto.BulletAnimation(clip)
 }
 
 ///|
@@ -44,7 +44,7 @@ fn SkillRegularBullet::get(
   _self : SkillRegularBullet,
   _ : @character.Character,
   bulletid : Int,
-) -> @ms_animation.Animation {
+) -> @combat_proto.BulletAnimation {
   let data = @bullet.get_bullet_data(bulletid)
   data.bullet
 }
@@ -71,7 +71,7 @@ fn SingleBullet::get(
   self : SingleBullet,
   _ : @character.Character,
   _ : Int,
-) -> @ms_animation.Animation {
+) -> @combat_proto.BulletAnimation {
   self.ball.animation
 }
 
@@ -109,7 +109,7 @@ fn BySkillLevelBullet::get(
   self : BySkillLevelBullet,
   user : @character.Character,
   _ : Int,
-) -> @ms_animation.Animation {
+) -> @combat_proto.BulletAnimation {
   let level = (user.get_skilllevel)(self.skill_id)
   match self.bullets.get(level) {
     Some(ball) => ball.animation

@@ -10,6 +10,7 @@ import {
   "KKKIIO/selene/tiled",
   "KKKIIO/selene/animation" @selene_animation,
   "KKKIIO/selene/math",
+  "KKKIIO/selene/render",
   "KKKIIO/selene/sprite",
   "moonbitlang/core/string",
   "moonbitlang/core/debug",

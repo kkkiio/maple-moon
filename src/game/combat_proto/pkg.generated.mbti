@@ -2,8 +2,9 @@
 package "KKKIIO/maple-moon/game/combat_proto"
 
 import {
-  "KKKIIO/maple-moon/game/animation",
+  "KKKIIO/maple-moon/engine/res",
   "KKKIIO/maple-moon/game/res_types",
+  "KKKIIO/selene/animation",
   "KKKIIO/selene/entity",
   "moonbitlang/core/debug",
 }
@@ -73,9 +74,16 @@ pub(all) struct AttackUser {
 }
 
 type Bullet
-pub fn Bullet::Bullet(@entity.Entity, @animation.Animation, @res_types.Point[Int], Bool) -> Self
+pub fn Bullet::Bullet(@entity.Entity, BulletAnimation, @res_types.Point[Int], Bool) -> Self
 pub fn Bullet::set_target(Self, @res_types.Point[Int]) -> Bool
 pub fn Bullet::update(Self, @res_types.Point[Int]) -> Bool
+
+pub struct BulletAnimation {
+  clip : @res.SpriteClip
+  graph : @animation.AnimationGraphHandle
+  node : @animation.AnimationNodeIndex
+}
+pub fn BulletAnimation::BulletAnimation(@res.SpriteClip) -> Self
 
 pub struct MobAttack {
   t : AttackType

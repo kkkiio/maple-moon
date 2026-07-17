@@ -1,7 +1,7 @@
 ///|
 struct Skill {
   action : &SkillAction
-  bullet : (@character.Character, Int) -> @ms_animation.Animation
+  bullet : (@character.Character, Int) -> @combat_proto.BulletAnimation
   sound : SkillSound
   use_effect : UseEffect
   hit_effect : (@combat_proto.AttackUser, @monster.Mob) -> Unit
@@ -334,7 +334,7 @@ pub fn Skill::get_bullet(
   self : Skill,
   user : @character.Character,
   bulletid : Int,
-) -> @ms_animation.Animation {
+) -> @combat_proto.BulletAnimation {
   (self.bullet)(user, bulletid)
 }
 

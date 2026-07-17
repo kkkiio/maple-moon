@@ -41,10 +41,7 @@ pub fn load_teleport_use_effect() -> ((@character.Character) -> Unit) raise {
   let clip = loaded.clip("main") catch {
     error => fail("missing animation tag 'main': \{resolved}, error=\{error}")
   }
-  let effect : @graphics.EffectAnimation = {
-    animation: @ms_animation.from_selene_clip(clip, loop_=false),
-    duration_ms: clip.duration_ms,
-  }
+  let effect = @graphics.EffectAnimation(clip)
   let z = read_basic_effect_z(teleport_node)
   fn(character : @character.Character) -> Unit {
     character.show_attack_effect(effect, z)

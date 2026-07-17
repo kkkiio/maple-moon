@@ -3,9 +3,9 @@ package "KKKIIO/maple-moon/engine/ui"
 
 import {
   "KKKIIO/maple-moon/engine/res",
-  "KKKIIO/maple-moon/game/animation",
   "KKKIIO/maple-moon/game/res_types",
   "KKKIIO/selene/ecs",
+  "KKKIIO/selene/sprite",
   "moonbitlang/core/debug",
   "moonbitlang/core/json",
 }
@@ -66,12 +66,12 @@ pub(all) struct MapleButton {
 }
 pub fn MapleButton::MapleButton(MapleButtonResource, pos? : @res_types.Point[Int], on_click? : () -> Unit) -> Self
 pub fn MapleButton::contains(Self, Int, Int) -> Bool
-pub fn MapleButton::current_selene_animation(Self) -> @animation.Animation
+pub fn MapleButton::current_sprite(Self) -> @sprite.Sprite
 pub fn MapleButton::set_enabled(Self, Bool) -> Unit
 pub fn MapleButton::update_pointer(Self, Int, Int, Bool, Bool, Bool) -> Unit
 
 pub(all) struct MapleButtonResource {
-  selene_animations : Map[ButtonState, @animation.Animation]
+  sprites : Map[ButtonState, @sprite.Sprite]
   dimensions : @res_types.Point[Int]
 }
 pub fn MapleButtonResource::from_nx(NxMapleButton) -> Self

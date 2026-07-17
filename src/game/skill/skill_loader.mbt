@@ -55,9 +55,7 @@ pub fn load_skill(id : Int) -> SkillData {
   }
 
   // 5. Load text data (skill name, description)
-  let text_json = @res.require_json_node("res://String/Skill.img.json", [
-    strid,
-  ])
+  let text_json = @res.require_json_node("res://String/Skill.img.json", [strid])
 
   // 6. Parse and cache
   let data = parse_skill_data(id, skill_json, text_json)

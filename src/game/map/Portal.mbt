@@ -146,17 +146,14 @@ fn PortalWarpInfo::PortalWarpInfo(
 
 ///|
 struct Portal {
-  animation : @ms_animation.Animation?
   t : PortalType
   name : String
   position : Point[Int]
   warp_info : PortalWarpInfo
-  mut touched : Bool
 }
 
 ///|
 pub fn Portal::Portal(
-  animation : @ms_animation.Animation?,
   t : PortalType,
   name : String,
   intramap : Bool,
@@ -165,33 +162,11 @@ pub fn Portal::Portal(
   toname : String,
 ) -> Portal {
   {
-    animation,
     t,
     name,
     position,
     warp_info: PortalWarpInfo(tomap, intramap, toname, name),
-    touched: false,
   }
-}
-
-///|
-/// Update the portal's touched state based on the touch position.
-pub fn Portal::update_touched(
-  self : Portal,
-  entity : @entity.Entity,
-  touch_pos : Point[Int]?,
-) -> Unit {
-  self.touched = touch_pos is Some(touch_pos) &&
-    self.bounds().contains(touch_pos)
-  let visible = self.t != PortalType::HIDDEN || self.touched
-  @visibility.visibilities().set(
-    entity,
-    if visible {
-      @visibility.Visibility::Visible
-    } else {
-      @visibility.Visibility::Hidden
-    },
-  )
 }
 
 ///|

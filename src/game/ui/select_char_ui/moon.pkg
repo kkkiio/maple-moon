@@ -1,5 +1,4 @@
 import {
-  "KKKIIO/maple-moon/game/animation" @ms_animation,
   "moonbitlang/core/json",
   "moonbitlang/core/string",
   "KKKIIO/maple-moon/engine/console",
@@ -12,9 +11,11 @@ import {
   "KKKIIO/maple-moon/game/server_proto",
   "KKKIIO/maple-moon/game/ui/game_ui_font",
   "KKKIIO/maple-moon/engine/res",
+  "KKKIIO/maple-moon/engine/graphics",
   "KKKIIO/maple-moon/engine/ui",
   "KKKIIO/maple-moon/engine/utils",
   "KKKIIO/selene/entity",
+  "KKKIIO/selene/animation" @selene_animation,
   "KKKIIO/selene/event",
   "KKKIIO/selene/inputs",
   "KKKIIO/selene/math" @selene_math,
@@ -24,6 +25,7 @@ import {
   "KKKIIO/selene/sprite",
   "KKKIIO/selene/ui" @selene_ui,
   "KKKIIO/selene/ecs",
+  "KKKIIO/selene/time",
 }
 
 supported_targets = "native+js"

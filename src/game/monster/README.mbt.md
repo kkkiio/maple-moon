@@ -4,9 +4,13 @@
 
 ## 资源加载
 
-- `NxMob`：保留碰撞框、head 点、攻击范围等运行时元数据。
-- `MxMob`：从 `Mob/<id>.img/mx.json` 读取 Aseprite 动画引用。
-- 运行时会把 `MxMob` 引用编译成 Selene native clip，并覆盖 `NxMob` 中的可播放动画后端。
+- `MxMob` 从 `Mob/<id>.img/mx.json` 读取属性、碰撞框、head 点、攻击范围和
+  Aseprite 动画引用。
+- `@res.AnimationLoader` 把引用编译为不带播放策略的 `SpriteClip`。
+- monster package 按获胜 resource pack 中的物理 `mx.json` 缓存一份包含全部
+  stance/effect clip 的 AnimationGraph，同资源的怪物实例共享 graph；渲染 system
+  为每个实例维护 player，根据 stance 启动对应 node，并由资源中的 `loop` 元数据
+  决定是否循环。
 
 ## link
 

@@ -1,9 +1,7 @@
 import {
   "moonbitlang/core/cmp",
-  "KKKIIO/maple-moon/game/animation" @ms_animation,
   "KKKIIO/maple-moon/game/res_types" @struct,
   "moonbitlang/core/json",
-  "KKKIIO/maple-moon/engine/graphics",
   "KKKIIO/maple-moon/engine/res",
   "KKKIIO/maple-moon/engine/utils",
   "KKKIIO/maple-moon/engine/io_service",

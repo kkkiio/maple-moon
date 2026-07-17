@@ -929,6 +929,10 @@ fn LocalServer::spawn_mobs_for_map(self : LocalServer, map_id : Int) -> Unit {
   self.active_npc_script = None
   self.npc_id_by_oid.clear()
   @io_service.execute_background(fn() raise {
+    let inactive_npc_ids = [
+      9010002, 9010000, 9200000, 9010010, 9201001, 9201022, 9010009, 9000020, 9250042,
+      9201088, 9010022,
+    ]
     guard load_tiled_map_by_map_id(map_id) is Some(map) else { return }
     let life_layer = require_life_layer(map)
     for entity in life_layer.objects {
@@ -971,6 +975,17 @@ fn LocalServer::spawn_mobs_for_map(self : LocalServer, map_id : Int) -> Unit {
         }
         "n" => {
           let npc_id = tiled_object_int_like_required(entity, "id")
+          let has_limited_name = match entity.property("limitedname") {
+            Some(@tiled.TiledPropertyValue::String(name)) if name != "" => true
+            Some(_) =>
+              fail(
+                "NPC limitedname must be a non-empty string: map_id=\{map_id}, npc_id=\{npc_id}",
+              )
+            None => false
+          }
+          if has_limited_name || inactive_npc_ids.contains(npc_id) {
+            continue
+          }
           let x = tiled_object_int_required(entity, "x")
           let y = tiled_object_int_required(entity, "y")
           let f = tiled_object_int_or_default(entity, "f", 0)

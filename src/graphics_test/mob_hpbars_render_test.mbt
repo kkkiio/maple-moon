@@ -14,12 +14,10 @@ fn mob_hpbars_load_test_mob() -> @monster.Mob raise {
 
 ///|
 fn attach_visible_mob_sprite(entity : @entity.Entity) -> Unit {
-  let stand = @ms_animation.Animation::single_frame(
-    "res://Mob/0100101.img/animations/stand.png",
-    @math.Vec2(35.0, 34.0),
-    pivot=@math.Vec2(16.0, 34.0),
+  let animations = try! @res.AnimationLoader::AnimationLoader().load(
+    "res://Mob/0100101.img/animation.json",
   )
-  @sprite.sprites().set(entity, @ms_animation.sprite_from_animation(stand, 0))
+  @sprite.sprites().set(entity, (try! animations.clip("stand")).sprite())
 }
 
 ///|
@@ -85,8 +83,8 @@ test "mob hpbar render snapshot" {
       #|    {
       #|      layer: "world",
       #|      kind: "Image",
-      #|      texture_path: Some("assets/base/Mob/0100101.img/animations/stand.png"),
-      #|      source_rect: Some({ x: 0, y: 0, width: 35, height: 34 }),
+      #|      texture_path: Some("assets/dlc-victoria/Mob/0100101.img/animation.png"),
+      #|      source_rect: Some({ x: 39, y: 56, width: 35, height: 34 }),
       #|      destination_rect: Some({ x: 80, y: 84, width: 35, height: 34 }),
       #|      color: Some({ r: 255, g: 255, b: 255, a: 1 }),
       #|    },

@@ -5,6 +5,7 @@ import {
   "KKKIIO/maple-moon/game/res_types",
   "KKKIIO/selene/animation",
   "KKKIIO/selene/asset_types",
+  "KKKIIO/selene/math",
   "KKKIIO/selene/sprite",
   "KKKIIO/selene/tiled",
   "moonbitlang/core/debug",
@@ -13,6 +14,8 @@ import {
 
 // Values
 pub fn clear_mounts() -> Unit
+
+pub fn compile_nx_animation(NxAnimation, name? : String) -> SpriteClip raise
 
 pub fn configure_packs(Array[(String, String)]) -> Unit raise ResourceLoadError
 
@@ -67,10 +70,10 @@ pub struct IntMap[T](Map[Int, T]) derive(@debug.Debug)
 pub impl[T : @json.FromJson] @json.FromJson for IntMap[T]
 
 pub(all) struct LoadedAnimations {
-  clips : Map[String, SeleneClip]
+  clips : Map[String, SpriteClip]
   tags : Array[String]
 }
-pub fn LoadedAnimations::clip(Self, String) -> SeleneClip raise
+pub fn LoadedAnimations::clip(Self, String) -> SpriteClip raise
 pub fn LoadedAnimations::list_tags(Self) -> Array[String]
 
 pub struct MapBasedArray[T](Array[T]) derive(@debug.Debug)
@@ -103,6 +106,7 @@ pub(all) struct NxTexture {
   origin : @res_types.Point[Int]
 } derive(@debug.Debug)
 pub fn NxTexture::get_size(Self) -> (Int, Int)
+pub fn NxTexture::require_sprite(Self, size? : @math.Vec2, repeat? : @math.RepeatMode, flip_x? : Bool, alpha? : Double) -> @sprite.Sprite
 pub impl @json.FromJson for NxTexture
 
 pub struct ResourceKey(String) derive(Eq, @debug.Debug)
@@ -110,17 +114,18 @@ pub fn ResourceKey::parse(String) -> Self raise ResourceLoadError
 pub fn ResourceKey::to_address(Self) -> String
 pub fn ResourceKey::to_string(Self) -> String
 
-pub(all) struct SeleneClip {
+pub(all) struct SpriteClip {
   image : @asset_types.ImageHandle
   layout : @sprite.TextureAtlasLayoutHandle
-  graph : @animation.AnimationGraphHandle
-  node : @animation.AnimationNodeIndex
+  clip : @animation.AnimationClipHandle
+  first_frame_index : Int
   anchor : @sprite.Anchor
   duration_ms : Int
   dimensions : @res_types.Point[Int]
   frame_durations_ms : Array[Int]
   frame_alphas : Array[Double]
 }
+pub fn SpriteClip::sprite(Self, flip_x? : Bool, alpha? : Double) -> @sprite.Sprite
 
 // Type aliases
 

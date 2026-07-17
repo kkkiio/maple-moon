@@ -42,13 +42,7 @@ fn load_skill_use_effect(
         "missing skill use effect animation tag '\{tag}': \{resolved}, error=\{error}",
       )
   }
-  {
-    effect: {
-      animation: @ms_animation.from_selene_clip(clip, loop_=false),
-      duration_ms: clip.duration_ms,
-    },
-    z: read_effect_z(src),
-  }
+  { effect: @graphics.EffectAnimation(clip), z: read_effect_z(src) }
 }
 
 ///|

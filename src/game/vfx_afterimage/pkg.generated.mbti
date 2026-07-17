@@ -2,9 +2,10 @@
 package "KKKIIO/maple-moon/game/vfx_afterimage"
 
 import {
-  "KKKIIO/maple-moon/game/animation",
+  "KKKIIO/maple-moon/engine/res",
   "KKKIIO/maple-moon/game/character_presentation",
   "KKKIIO/maple-moon/game/res_types",
+  "KKKIIO/selene/animation",
   "KKKIIO/selene/ecs",
   "KKKIIO/selene/entity",
   "moonbitlang/core/json",
@@ -27,7 +28,7 @@ pub fn update_after_image_system(@ecs.World) -> Unit
 
 // Types and methods
 pub struct AfterImage {
-  animation : @animation.Animation
+  animation : AfterImageAnimation
   range : @res_types.Rectangle[Int]
   first_frame : Int
   facing_right : Bool
@@ -41,11 +42,18 @@ pub fn AfterImage::get_first_frame(Self) -> Int
 pub fn AfterImage::get_range(Self) -> @res_types.Rectangle[Int]
 pub fn AfterImage::update(Self, Int, Int) -> Unit
 
-pub(all) struct NxAfterImage {
-  animation : @animation.Animation
+pub struct AfterImageAnimation {
+  clip : @res.SpriteClip
+  graph : @animation.AnimationGraphHandle
+  node : @animation.AnimationNodeIndex
+}
+
+pub struct NxAfterImage {
+  animation : AfterImageAnimation
   range : @res_types.Rectangle[Int]
   first_frame : Int
 }
+pub fn NxAfterImage::NxAfterImage(@res.SpriteClip, @res_types.Rectangle[Int], Int) -> Self
 pub impl @json.FromJson for NxAfterImage
 
 type NxAfterImages

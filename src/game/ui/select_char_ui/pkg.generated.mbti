@@ -2,8 +2,8 @@
 package "KKKIIO/maple-moon/game/ui/select_char_ui"
 
 import {
+  "KKKIIO/maple-moon/engine/res",
   "KKKIIO/maple-moon/engine/ui",
-  "KKKIIO/maple-moon/game/animation",
   "KKKIIO/maple-moon/game/character_presentation",
   "KKKIIO/maple-moon/game/server_proto",
   "KKKIIO/selene/ecs",
@@ -28,7 +28,9 @@ type SelectCharUI
 pub fn SelectCharUI::SelectCharUI(SelectCharUIResource, Array[SelectableCharacter], @character_presentation.CharacterPresentationResource, on_select_character? : (Int) -> Unit, on_new_character? : () -> Unit) -> Self
 
 pub(all) struct SelectCharUIResource {
-  ani18 : @animation.Animation
+  ani17 : @res.SpriteClip
+  ani18 : @res.SpriteClip
+  ani19 : @res.SpriteClip
   bt_new : @ui.MapleButtonResource
   bt_select : @ui.MapleButtonResource
 }

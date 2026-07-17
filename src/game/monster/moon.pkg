@@ -1,5 +1,4 @@
 import {
-  "KKKIIO/maple-moon/game/animation" @ms_animation,
   "moonbitlang/core/random",
   "moonbitlang/core/json",
   "moonbitlang/core/immut/hashmap",
@@ -16,6 +15,7 @@ import {
   "KKKIIO/maple-moon/engine/log",
   "KKKIIO/maple-moon/engine/io_service",
   "KKKIIO/selene/transform",
+  "KKKIIO/selene/animation" @selene_animation,
   "KKKIIO/maple-moon/game/transform2d",
   "KKKIIO/selene/entity",
   "KKKIIO/maple-moon/engine/game_server",
@@ -30,5 +30,6 @@ import {
 
 import {
   "KKKIIO/selene/asset",
+  "moonbitlang/core/debug",
   "moonbitlang/x/fs",
 } for "test"

@@ -2,7 +2,8 @@
 package "KKKIIO/maple-moon/engine/graphics"
 
 import {
-  "KKKIIO/maple-moon/game/animation",
+  "KKKIIO/maple-moon/engine/res",
+  "KKKIIO/selene/animation",
   "KKKIIO/selene/ecs",
   "KKKIIO/selene/entity",
   "KKKIIO/selene/math",
@@ -67,6 +68,8 @@ pub fn clamp_map_local(Int) -> Int
 
 pub fn clamp_map_y_bias(Int) -> Int
 
+pub fn clear_sprite_animation(@entity.Entity) -> Unit
+
 pub fn compose_map_z(Int, Int, Int, Int) -> Int
 
 pub fn effect_layer_system(@ecs.World) -> Unit
@@ -93,15 +96,20 @@ pub fn map_tile_z(Int, Int) -> Int
 
 pub fn map_y_bias_from_world_y(Int) -> Int
 
+pub fn sprite_clip_graph(@res.SpriteClip) -> (@animation.AnimationGraphHandle, @animation.AnimationNodeIndex)
+
 pub let view_size : (Int, Int)
 
 // Errors
 
 // Types and methods
-pub(all) struct EffectAnimation {
-  animation : @animation.Animation
-  duration_ms : Int
+pub struct EffectAnimation {
+  clip : @res.SpriteClip
+  graph : @animation.AnimationGraphHandle
+  node : @animation.AnimationNodeIndex
 }
+pub fn EffectAnimation::EffectAnimation(@res.SpriteClip) -> Self
+pub fn EffectAnimation::from_graph(@res.SpriteClip, @animation.AnimationGraphHandle, @animation.AnimationNodeIndex) -> Self
 
 // Type aliases
 

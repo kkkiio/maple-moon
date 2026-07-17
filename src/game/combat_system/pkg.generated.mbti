@@ -4,7 +4,6 @@ package "KKKIIO/maple-moon/game/combat_system"
 import {
   "KKKIIO/maple-moon/engine/legacy_types",
   "KKKIIO/maple-moon/engine/utils",
-  "KKKIIO/maple-moon/game/animation",
   "KKKIIO/maple-moon/game/char_stats",
   "KKKIIO/maple-moon/game/character",
   "KKKIIO/maple-moon/game/combat_proto",
@@ -28,7 +27,7 @@ pub fn combat_system(@ecs.World) -> Unit
 
 pub fn get_combat() -> Combat?
 
-pub fn get_regular_attack_bullet(Int) -> @animation.Animation
+pub fn get_regular_attack_bullet(Int) -> @combat_proto.BulletAnimation
 
 pub let hit_event_bus : @event.Events[HitEvent]
 
@@ -99,7 +98,7 @@ pub(all) struct CombatAction {
   apply_use_sfx : (@character.Character) -> Unit
   apply_actions : (@character.Character, @combat_proto.AttackType) -> Unit
   make_attack : (@character.Character, &@legacy_types.Inventory, @combat_proto.AttackType, Bool) -> @combat_proto.Attack
-  get_bullet : (@character.Character, Int) -> @animation.Animation
+  get_bullet : (@character.Character, Int) -> @combat_proto.BulletAnimation
   can_use : (Int, @weapon.Type, @job.Job, Int, Int, Int) -> ForbidReason
   apply_hit_effects : (@combat_proto.AttackUser, @monster.Mob) -> Unit
   apply_hit_sfx : (@combat_proto.AttackUser, @monster.Mob) -> Unit
@@ -112,7 +111,7 @@ pub fn CombatAction::apply_use_sfx(Self, @character.Character) -> Unit
 pub fn CombatAction::apply_useeffects(Self, @character.Character) -> Unit
 pub fn CombatAction::can_use(Self, Int, @weapon.Type, @job.Job, Int, Int, Int) -> ForbidReason
 pub fn CombatAction::get_afterimage(Self) -> Map[String, @vfx_afterimage.NxAfterImage]
-pub fn CombatAction::get_bullet(Self, @character.Character, Int) -> @animation.Animation
+pub fn CombatAction::get_bullet(Self, @character.Character, Int) -> @combat_proto.BulletAnimation
 pub fn CombatAction::get_id(Self) -> Int
 pub fn CombatAction::is_attack(Self) -> Bool
 pub fn CombatAction::is_skill(Self) -> Bool
@@ -193,7 +192,7 @@ pub fn Skill::apply_use_sfx(Self, @character.Character) -> Unit
 pub fn Skill::apply_useeffects(Self, @character.Character) -> Unit
 pub fn Skill::can_use(Self, Int, @weapon.Type, @job.Job, Int, Int, Int) -> ForbidReason
 pub fn Skill::get_afterimage(Self) -> Map[String, @vfx_afterimage.NxAfterImage]
-pub fn Skill::get_bullet(Self, @character.Character, Int) -> @animation.Animation
+pub fn Skill::get_bullet(Self, @character.Character, Int) -> @combat_proto.BulletAnimation
 pub fn Skill::get_id(Self) -> Int
 pub fn Skill::is_attack(Self) -> Bool
 pub fn Skill::load(Int) -> Self raise

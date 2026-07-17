@@ -1,19 +1,23 @@
 ///|
-/// A compiled Selene clip for one NPC stance/tag.
-pub(all) struct SeleneClip {
+/// A compiled 2D sprite clip ready to be inserted into a Selene animation graph.
+///
+/// The clip owns render-resource metadata and one registered clip asset. Entity
+/// playback policy, graph topology, and node identity belong to the consuming
+/// gameplay or UI controller.
+pub(all) struct SpriteClip {
   /// Shared atlas image handle.
   image : @asset.ImageHandle
   /// Shared texture atlas layout handle.
   layout : @sprite.TextureAtlasLayoutHandle
-  /// Shared animation graph handle.
-  graph : @selene_animation.AnimationGraphHandle
-  /// Node index for this tag's clip in `graph`.
-  node : @selene_animation.AnimationNodeIndex
-  /// Sprite anchor derived from `anchor_<tag>` slice pivot.
+  /// Registered Selene animation clip asset.
+  clip : @selene_animation.AnimationClipHandle
+  /// Atlas index displayed before playback advances this clip.
+  first_frame_index : Int
+  /// First-frame world-pivot anchor derived from an Aseprite slice or NX origin.
   anchor : @sprite.Anchor
   /// Total clip duration in milliseconds.
   duration_ms : Int
-  /// Frame dimensions used by gameplay picking bounds.
+  /// Stable logical bounds enclosing every frame around its world pivot.
   dimensions : @struct.Point[Int]
   /// Per-frame durations in milliseconds for this tag range.
   frame_durations_ms : Array[Int]
@@ -25,7 +29,7 @@ pub(all) struct SeleneClip {
 /// Loaded and compiled animation set keyed by Aseprite frame tags.
 pub(all) struct LoadedAnimations {
   /// Compiled clips indexed by Aseprite frame-tag name.
-  clips : Map[String, SeleneClip]
+  clips : Map[String, SpriteClip]
   /// Frame-tag names in deterministic export order.
   tags : Array[String]
 }
@@ -36,7 +40,7 @@ pub(all) struct LoadedAnimations {
 /// # Example
 /// ```moonbit nocheck
 /// let animations = try! AnimationLoader().load(
-///   "res://Mob/0100100.img/animations/stand.json",
+///   "res://Mob/0100100.img/animation.json",
 /// )
 /// let stand = try! animations.clip("stand")
 /// ignore(stand)
@@ -47,7 +51,7 @@ pub(all) struct LoadedAnimations {
 pub fn LoadedAnimations::clip(
   self : LoadedAnimations,
   tag : String,
-) -> SeleneClip raise {
+) -> SpriteClip raise {
   match self.clips.get(tag) {
     Some(clip) => clip
     None => fail("missing animation tag: \{tag}")
@@ -62,7 +66,7 @@ pub fn LoadedAnimations::clip(
 /// # Example
 /// ```moonbit nocheck
 /// let animations = try! AnimationLoader().load(
-///   "res://Mob/0100100.img/animations/stand.json",
+///   "res://Mob/0100100.img/animation.json",
 /// )
 /// let tags = animations.list_tags()
 /// ignore(tags)
@@ -77,7 +81,7 @@ pub fn LoadedAnimations::list_tags(self : LoadedAnimations) -> Array[String] {
 /// # Example
 /// ```moonbit nocheck
 /// let loader = AnimationLoader()
-/// let clips = try! loader.load("res://Mob/0100100.img/animations/stand.json")
+/// let clips = try! loader.load("res://Mob/0100100.img/animation.json")
 /// ignore(clips)
 /// ```
 pub(all) struct AnimationLoader {} derive(Default)
@@ -268,12 +272,7 @@ fn compile_loaded_animations(
     tag_frame_alphas.push(frame_alphas)
   }
 
-  let (graph, nodes) = @selene_animation.AnimationGraph::from_clips(
-    clip_handles,
-  )
-  let graph_handle = @selene_animation.register_animation_graph_asset(graph)
-
-  let clips : Map[String, SeleneClip] = Map([], capacity=tag_names.length())
+  let clips : Map[String, SpriteClip] = Map([], capacity=tag_names.length())
   for idx = 0; idx < tag_names.length(); idx = idx + 1 {
     let tag = tag_names[idx]
     let anchor_info = match anchor_by_tag.get(tag) {
@@ -284,8 +283,8 @@ fn compile_loaded_animations(
     clips.set(tag, {
       image,
       layout: atlas_layout,
-      graph: graph_handle,
-      node: nodes[idx],
+      clip: clip_handles[idx],
+      first_frame_index: ranges[idx].from,
       anchor: frame_anchor(frames[ranges[idx].from], anchor_info),
       duration_ms: durations_ms[idx],
       dimensions: tag_size,

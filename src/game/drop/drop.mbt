@@ -152,11 +152,20 @@ fn DropBase::expire(
 ///|
 struct MesoDrop {
   base : DropBase
-  icon : @ms_animation.Animation
+  clip : @res.SpriteClip
+  graph : @selene_animation.AnimationGraphHandle
+  node : @selene_animation.AnimationNodeIndex
 }
 
 ///|
-pub fn MesoDrop::MesoDrop(
+priv struct MesoDropAnimation {
+  clip : @res.SpriteClip
+  graph : @selene_animation.AnimationGraphHandle
+  node : @selene_animation.AnimationNodeIndex
+}
+
+///|
+fn MesoDrop::MesoDrop(
   oid : Int,
   owner : Int,
   start : @struct.Point[Int],
@@ -164,33 +173,11 @@ pub fn MesoDrop::MesoDrop(
   t : Int,
   mode : Int,
   player_drop : Bool,
-  icon : @res.NxAnimation,
+  animation : MesoDropAnimation,
 ) -> MesoDrop {
   let base = DropBase(oid, owner, start, dest, t, mode, player_drop)
-  let selene_anim = @ms_animation.from_nx_animation(icon, loop_=true)
-  { base, icon: selene_anim }
+  { base, clip: animation.clip, graph: animation.graph, node: animation.node }
 }
-
-///|
-// pub impl Drop for MesoDrop with draw(
-//   self : MesoDrop,
-//   viewx : Double,
-//   viewy : Double,
-//   alpha : Double,
-// ) -> Unit {
-//   if !(self.base.entity.is_alive()) {
-//     return
-//   }
-//   let absp = self.base.phobj.get_absolute(viewx, viewy, alpha)
-//   self.icon.draw(
-//     @graphics.DrawArgument::new(
-//       pos=absp,
-//       angle=self.base.angle.get(alpha~),
-//       opacity=self.base.opacity.get(alpha~),
-//     ),
-//     alpha,
-//   )
-// }
 
 ///|
 pub impl Drop for MesoDrop with fn get_oid(self : MesoDrop) -> Int {
@@ -208,25 +195,56 @@ pub impl Drop for MesoDrop with fn update(
   let z = @graphics.map_drop_z(layer, y)
   let angle = self.base.angle.get()
   let opacity = self.base.opacity.get()
-  // Check if sprite already exists
   match @sprite.sprites().get(entity) {
-    Some(sprite) => {
-      // Update existing sprite: alpha and transform
+    Some(sprite) =>
       sprite.color = @sprite.color_from_css("rgba(255, 255, 255, \{opacity})")
-      @ms_animation.set_animation_transform(
+    None => {
+      @sprite.sprites().set(entity, self.clip.sprite(alpha=opacity))
+      @selene_animation.animation_target_ids().set(
         entity,
-        @selene_math.Transform::from_rotation_rad(angle),
+        @selene_animation.AnimationTargetId("self"),
+      )
+      @selene_animation.animated_bys().set(
+        entity,
+        @selene_animation.AnimatedBy(entity),
+      )
+      @selene_animation.animation_graph_handles().set(entity, self.graph)
+      let player = @selene_animation.animation_players().get_or_init(entity, fn() {
+        @selene_animation.AnimationPlayer()
+      })
+      ignore(
+        player.play(
+          self.node,
+          repeat=@selene_animation.RepeatAnimation::Forever,
+        ),
       )
     }
+  }
+  let rotation = @selene_math.Quat::from_axis_angle(
+    @selene_math.Vec3::z_axis(),
+    angle,
+  )
+  match @transform.transforms().get(entity) {
+    Some(current) =>
+      @transform.transforms().set(entity, {
+        ..current,
+        translation: @selene_math.Vec3(
+          current.translation.x,
+          current.translation.y,
+          z.to_double(),
+        ),
+        rotation,
+      })
     None => {
-      // Create new sprite with initial transform
-      let sprite = @ms_animation.sprite_from_animation(
-        self.icon,
-        z,
-        alpha=opacity,
-        transform=@selene_math.Transform::from_rotation_rad(angle),
-      )
-      @sprite.sprites().set(entity, sprite)
+      let position = self.base.phobj.get_position()
+      @transform.transforms().set(entity, {
+        ..@transform.Transform::from_xyz(
+          position.x.to_double(),
+          position.y.to_double(),
+          z.to_double(),
+        ),
+        rotation,
+      })
     }
   }
   layer
@@ -234,8 +252,11 @@ pub impl Drop for MesoDrop with fn update(
 
 ///|
 pub impl Drop for MesoDrop with fn destroy(self : MesoDrop) -> Unit {
-  @sprite.sprites().remove(self.base.entity)
-  self.base.entity.destroy()
+  @graphics.clear_sprite_animation(self.base.entity)
+  @transform.transforms().remove(self.base.entity) |> ignore
+  if self.base.entity.is_alive() {
+    self.base.entity.destroy()
+  }
 }
 
 ///|
@@ -264,7 +285,7 @@ pub impl Drop for MesoDrop with fn expire(
 ///|
 struct ItemDrop {
   base : DropBase
-  icon : @ms_animation.Picture
+  icon : @sprite.Sprite
 }
 
 ///|
@@ -280,30 +301,8 @@ pub fn ItemDrop::ItemDrop(
   icon : @res.NxTexture,
 ) -> ItemDrop {
   let base = DropBase(oid, owner, start, dest, t, mode, player_drop)
-  let selene_picture = @ms_animation.from_nx_texture(icon)
-  { base, icon: selene_picture }
+  { base, icon: icon.require_sprite() }
 }
-
-///|
-// pub impl Drop for ItemDrop with draw(
-//   self : ItemDrop,
-//   viewx : Double,
-//   viewy : Double,
-//   alpha : Double,
-// ) -> Unit {
-//   if !(self.base.entity.is_alive()) {
-//     return
-//   }
-//   let absp = self.base.phobj.get_absolute(viewx, viewy, alpha)
-//   // self.icon.draw(
-//   //   @graphics.DrawArgument::new(
-//   //     pos=absp,
-//   //     angle=self.base.angle.get(alpha~),
-//   //     opacity=self.base.opacity.get(alpha~),
-//   //   ),
-//   // )
-//   ...
-// }
 
 ///|
 pub impl Drop for ItemDrop with fn get_oid(self : ItemDrop) -> Int {
@@ -320,20 +319,35 @@ pub impl Drop for ItemDrop with fn update(
   let y = self.base.phobj.get_position().y
   let z = @graphics.map_drop_z(layer, y)
   let opacity = self.base.opacity.get()
-  // For ItemDrop, we use Picture which doesn't support rotation transform
-  // We only update alpha for PICKED_UP fade effect
   match @sprite.sprites().get(entity) {
     Some(sprite) =>
-      // Update existing sprite: alpha only
       sprite.color = @sprite.color_from_css("rgba(255, 255, 255, \{opacity})")
+    None =>
+      @sprite.sprites().set(entity, {
+        ..self.icon,
+        color: @sprite.color_from_css("rgba(255, 255, 255, \{opacity})"),
+      })
+  }
+  match @transform.transforms().get(entity) {
+    Some(current) =>
+      @transform.transforms().set(entity, {
+        ..current,
+        translation: @selene_math.Vec3(
+          current.translation.x,
+          current.translation.y,
+          z.to_double(),
+        ),
+      })
     None => {
-      // Create new sprite with initial alpha
-      let sprite = @ms_animation.sprite_from_picture(
-        self.icon,
-        z,
-        alpha=opacity,
+      let position = self.base.phobj.get_position()
+      @transform.transforms().set(
+        entity,
+        @transform.Transform::from_xyz(
+          position.x.to_double(),
+          position.y.to_double(),
+          z.to_double(),
+        ),
       )
-      @sprite.sprites().set(entity, sprite)
     }
   }
   layer
@@ -344,7 +358,10 @@ pub impl Drop for ItemDrop with fn update(
 ///|
 pub impl Drop for ItemDrop with fn destroy(self : ItemDrop) -> Unit {
   @sprite.sprites().remove(self.base.entity)
-  self.base.entity.destroy()
+  @transform.transforms().remove(self.base.entity) |> ignore
+  if self.base.entity.is_alive() {
+    self.base.entity.destroy()
+  }
 }
 
 ///|

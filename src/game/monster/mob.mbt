@@ -25,7 +25,8 @@ pub(all) struct MobAnimationMeta {
 ///|
 pub(all) struct MobAnimation {
   meta : MobAnimationMeta
-  selene : @ms_animation.Animation
+  clip : @res.SpriteClip
+  node : @selene_animation.AnimationNodeIndex
 }
 
 ///|
@@ -78,6 +79,7 @@ pub struct Mob {
   skill_stands : Map[Int, MobAnimation]
   attack_stands : Map[Int, MobAnimation]
   effect_animations : Map[String, MobAnimation]
+  animation_graph : @selene_animation.AnimationGraphHandle
   buffs : Array[MobBuff]
   level : Int
   speed : Double
@@ -156,7 +158,7 @@ pub fn Mob::load(
   let mx_mob : MxMob = @json.from_json(mx_src) catch {
     error => fail("failed to decode mob mx: \{mid}, error=\{error}")
   }
-  let runtime = load_mx_runtime(mx_mob, mx_path)
+  let runtime = load_mx_runtime(mx_mob, @res.resolve(mx_path))
   Mob(
     mx_mob,
     runtime,
@@ -177,16 +179,28 @@ priv struct MxMobRuntime {
   attack_stands : Map[Int, MobAnimation]
   skill_stands : Map[Int, MobAnimation]
   effect_animations : Map[String, MobAnimation]
+  animation_graph : @selene_animation.AnimationGraphHandle
 }
 
 ///|
+let mx_runtime_cache : Map[String, MxMobRuntime] = Map([])
+
+///|
 fn load_mx_runtime(mx_mob : MxMob, base_path : String) -> MxMobRuntime raise {
+  match mx_runtime_cache.get(base_path) {
+    Some(runtime) => return runtime
+    None => ()
+  }
   let animation_loader = AnimationLoader()
+  let loaded_animations = animation_loader.load(
+    @res.resolve_ref(base_path, mx_mob.animations_path),
+  )
+  let graph = @selene_animation.AnimationGraph()
   let effect_animations : Map[String, MobAnimation] = Map([])
-  for path_key, animation_path in mx_mob.mx_animations {
-    let clip = load_mx_clip(
-      animation_loader, animation_path, path_key, base_path,
-    )
+  for path_key in loaded_animations.list_tags() {
+    let clip = loaded_animations.clip(path_key) catch {
+      err => fail("missing mob animation tag: \{path_key}, error=\{err}")
+    }
     let mut found_stance_node : MxMobAnimNode? = None
     for _, node in mx_mob.stance_nodes {
       if node.path_key == path_key {
@@ -212,7 +226,8 @@ fn load_mx_runtime(mx_mob : MxMob, base_path : String) -> MxMobRuntime raise {
     }
     effect_animations[path_key] = {
       meta,
-      selene: @ms_animation.from_selene_clip(clip, loop_=meta.loop_),
+      clip,
+      node: graph.add_clip(clip.clip),
     }
   }
 
@@ -232,8 +247,7 @@ fn load_mx_runtime(mx_mob : MxMob, base_path : String) -> MxMobRuntime raise {
           "die1" => animations[StanceType::DIE] = anim
           _ => ()
         }
-      None =>
-        fail("missing mx_animations ref for stance node: \{node.path_key}")
+      None => fail("missing animation tag for stance node: \{node.path_key}")
     }
   }
 
@@ -243,7 +257,7 @@ fn load_mx_runtime(mx_mob : MxMob, base_path : String) -> MxMobRuntime raise {
       Some(anim) => attack_stands[attack_id] = anim
       None =>
         fail(
-          "missing mx_animations ref for attack animation: \{attack_node.animation_path_key}",
+          "missing animation tag for attack: \{attack_node.animation_path_key}",
         )
     }
   }
@@ -253,27 +267,20 @@ fn load_mx_runtime(mx_mob : MxMob, base_path : String) -> MxMobRuntime raise {
       Some(anim) => skill_stands[skill_id] = anim
       None =>
         fail(
-          "missing mx_animations ref for skill animation: \{skill_node.animation_path_key}",
+          "missing animation tag for skill: \{skill_node.animation_path_key}",
         )
     }
   }
 
-  { animations, attack_stands, skill_stands, effect_animations }
-}
-
-///|
-fn load_mx_clip(
-  animation_loader : @res.AnimationLoader,
-  animation_path : String,
-  tag : String,
-  base_path : String,
-) -> @res.SeleneClip raise {
-  let loaded = animation_loader.load(
-    @res.resolve_ref(base_path, animation_path),
-  )
-  loaded.clip(tag) catch {
-    err => fail("missing mob animation tag: \{tag}, error=\{err}")
+  let runtime = {
+    animations,
+    attack_stands,
+    skill_stands,
+    effect_animations,
+    animation_graph: @selene_animation.register_animation_graph_asset(graph),
   }
+  mx_runtime_cache[base_path] = runtime
+  runtime
 }
 
 ///|
@@ -426,7 +433,7 @@ fn Mob::Mob(
 
   let skill_stands = runtime.skill_stands
   let attack_stands = runtime.attack_stands
-  let animations = runtime.animations
+  let animations = runtime.animations.copy()
 
   // init or risk crash
   match animations.get(StanceType::STAND) {
@@ -473,6 +480,7 @@ fn Mob::Mob(
     skill_stands,
     attack_stands,
     effect_animations: runtime.effect_animations,
+    animation_graph: runtime.animation_graph,
     buffs: [],
     level,
     speed,
@@ -698,8 +706,11 @@ pub fn Mob::set_stance(self : Mob, newstance : Stance) -> Unit {
 
 ///|
 pub fn Mob::destroy(self : Mob) -> Unit {
-  @sprite.sprites().remove(self.entity)
-  self.entity.destroy()
+  @graphics.clear_sprite_animation(self.entity)
+  @transform.transforms().remove(self.entity) |> ignore
+  if self.entity.is_alive() {
+    self.entity.destroy()
+  }
 }
 
 ///|
@@ -999,10 +1010,11 @@ pub fn Mob::show_effect_path(
   }
   @graphics.add_effect(
     self.entity,
-    {
-      animation: animation.selene,
-      duration_ms: animation.meta.total_duration_ms,
-    },
+    @graphics.EffectAnimation::from_graph(
+      animation.clip,
+      self.animation_graph,
+      animation.node,
+    ),
     z=@graphics.EFFECT_ZINDEX + z,
     flip~,
   )

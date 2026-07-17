@@ -29,6 +29,7 @@ test "portal tile object uses resource anchor properties for logic position" {
               { "name": "pt", "type": "int", "value": 2 },
               { "name": "tm", "type": "int", "value": 100010000 },
               { "name": "tn", "type": "string", "value": "west00" },
+              { "name": "portal_id", "type": "int", "value": 0 },
             ],
           },
         ],
@@ -36,11 +37,7 @@ test "portal tile object uses resource anchor properties for logic position" {
     ],
     "tilesets": [],
   })
-  let portals = MapPortals::from_tiled_map(
-    map,
-    100000000,
-    MapPortalAnimations::load(),
-  )
+  let portals = MapPortals::from_tiled_map(map, 100000000)
   guard portals.get_portal_pos_by_id(0) is Some(spawn) else {
     fail("missing portal id 0")
   }

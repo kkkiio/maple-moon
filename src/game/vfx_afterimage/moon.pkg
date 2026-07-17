@@ -1,16 +1,16 @@
 import {
-  "KKKIIO/maple-moon/game/animation" @ms_animation,
   "KKKIIO/maple-moon/game/character_presentation" @cp,
   "moonbitlang/core/json",
   "moonbitlang/core/strconv",
   "KKKIIO/maple-moon/game/res_types" @struct,
   "KKKIIO/maple-moon/engine/res",
-  "KKKIIO/selene/entity",
-  "KKKIIO/selene/sprite",
-  "KKKIIO/selene/math" @selene_math,
   "KKKIIO/maple-moon/engine/graphics",
+  "KKKIIO/selene/entity",
+  "KKKIIO/selene/animation",
+  "KKKIIO/selene/sprite",
   "KKKIIO/selene/ecs",
   "KKKIIO/selene/time",
+  "KKKIIO/selene/transform",
   "moonbitlang/core/string",
 }
 

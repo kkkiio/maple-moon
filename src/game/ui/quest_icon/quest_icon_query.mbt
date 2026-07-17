@@ -33,6 +33,17 @@ let quest_icon_query_revision_ref : Ref[Int] = Ref(0)
 let selected_demo_quest : Ref[DemoQuestSelection?] = Ref(None)
 
 ///|
+priv struct DemoQuestSelectionCacheKey {
+  revision : Int
+  npc_ids : Array[Int]
+}
+
+///|
+let demo_quest_selection_cache_key : Ref[DemoQuestSelectionCacheKey?] = Ref(
+  None,
+)
+
+///|
 /// Returns monotonic revision used by quest-icon query caches.
 pub fn quest_icon_query_revision() -> Int {
   quest_icon_query_revision_ref.val
@@ -62,11 +73,25 @@ pub fn get_demo_quest_selection() -> DemoQuestSelection? {
 
 ///|
 /// Selects one low-restriction quest from current map NPC ids for icon validation.
+///
+/// The result, including an empty result, is cached until the query revision or
+/// NPC list changes.
 pub fn select_demo_quest_by_npcs(npc_ids : Array[Int]) -> DemoQuestSelection? {
+  let revision = quest_icon_query_revision_ref.val
+  if demo_quest_selection_cache_key.val
+    is Some({ revision: cached_revision, npc_ids: cached_npc_ids }) &&
+    cached_revision == revision &&
+    cached_npc_ids == npc_ids {
+    return selected_demo_quest.val
+  }
   let selection = active_module.val.bind(fn(m) {
     m.select_demo_quest_by_npcs(npc_ids)
   })
   selected_demo_quest.val = selection
+  demo_quest_selection_cache_key.val = Some({
+    revision,
+    npc_ids: npc_ids.copy(),
+  })
   selection
 }
 
@@ -97,6 +122,7 @@ pub fn refresh_quest(quest_id : Int) -> Unit {
 ///|
 fn bump_quest_icon_query_revision() -> Unit {
   quest_icon_query_revision_ref.val = quest_icon_query_revision_ref.val + 1
+  selected_demo_quest.val = None
 }
 
 ///|
@@ -180,7 +206,7 @@ fn Module::select_demo_quest_by_npcs(
       self.log_low_restriction_rejection(quest_id, npc_id)
     }
   }
-  @log.warn("no low restriction quest icon is currently visible", data={
+  @log.debug("no low restriction quest icon is currently visible", data={
     "npc_count": npc_ids.length(),
     "candidate_count": candidate_count,
   })
@@ -209,7 +235,7 @@ fn Module::log_low_restriction_rejection(
   }
   let status = @quest_log.current_player_quest_log().get_quest(quest_id)
   if !is_quest_status_can_start(status, check0.repeatable) {
-    @log.warn("low restriction quest rejected: status cannot start", data={
+    @log.debug("low restriction quest rejected: status cannot start", data={
       "quest_id": quest_id,
       "npc_id": npc_id,
       "status": status,
@@ -230,7 +256,7 @@ fn Module::log_low_restriction_rejection(
       0,
     ) {
     Ok(_) =>
-      @log.warn("low restriction quest rejected: icon conflict or priority", data={
+      @log.debug("low restriction quest rejected: icon conflict or priority", data={
         "quest_id": quest_id,
         "npc_id": npc_id,
       })

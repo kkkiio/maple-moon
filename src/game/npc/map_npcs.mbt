@@ -3,7 +3,6 @@ struct MapNpcs {
   open_npc_talk_ui : (TalkArgs) -> Unit
   is_npc_talk_ui_open : () -> Bool
   npcs : Map[Int, Npc]
-  loading_npcs : Array[@utils.Future[Result[Npc, Error]]]
   spawns : @queue.Queue[NpcSpawn]
   pointer_reader : @event.EventReader[@physics2d.PointerEvent]
 }
@@ -24,10 +23,15 @@ pub(all) struct NpcAnchor {
   entity : @entity.Entity
   /// NPC physics object for world position query.
   npc_object : @physics.MovingObject
+  /// Animation tags eligible for ordinary ambient random playback.
+  ambient_states : Array[String]
 }
 
 ///|
 let map_npcs_ctx : Ref[MapNpcsContext?] = Ref(None)
+
+///|
+const NPC_INTERACTION_RANGE : Int = 120
 
 ///|
 fn init {
@@ -40,6 +44,7 @@ fn init {
         "npc_id": anchor.npc_id,
         "x": position.x,
         "y": position.y,
+        "ambient_states": anchor.ambient_states,
       })
     }
     entries.sort_by(fn(lhs, rhs) {
@@ -159,9 +164,51 @@ pub fn list_npc_anchors() -> Array[NpcAnchor] {
       npc_id: npc.get_npc_id(),
       entity: npc.entity,
       npc_object: npc.get_npc_object(),
+      ambient_states: npc.states.copy(),
     })
   }
   anchors
+}
+
+///|
+/// Starts a conversation with the nearest loaded NPC within 120 world pixels.
+/// Ties are resolved by object ID so the same player position always selects
+/// the same NPC. Returns `false` when no NPC is in range or a conversation is
+/// already open.
+///
+/// # Example
+/// ```moonbit nocheck
+/// let opened = try_talk_near(@struct.Point(100, 200))
+/// ```
+pub fn try_talk_near(player_pos : @struct.Point[Int]) -> Bool {
+  guard map_npcs_ctx.val is Some({ map_npcs, .. }) else { return false }
+  if (map_npcs.is_npc_talk_ui_open)() {
+    return false
+  }
+  let mut nearest_oid : Int? = None
+  let mut nearest_distance = NPC_INTERACTION_RANGE + 1
+  for oid, npc in map_npcs.npcs {
+    if !npc.entity.is_alive() {
+      continue
+    }
+    let distance = npc.get_npc_object().get_position().distance(player_pos)
+    if distance > NPC_INTERACTION_RANGE {
+      continue
+    }
+    let wins_tie = match nearest_oid {
+      Some(current_oid) => oid < current_oid
+      None => true
+    }
+    if distance < nearest_distance || (distance == nearest_distance && wins_tie) {
+      nearest_distance = distance
+      nearest_oid = Some(oid)
+    }
+  }
+  guard nearest_oid is Some(oid) else { return false }
+  guard map_npcs.npcs.get(oid) is Some(npc) else { return false }
+  map_npcs.open_talk_if_idle(npc)
+  @game_server.send(@server_proto.TalkToNpcMessage::{ oid, })
+  true
 }
 
 ///|
@@ -249,7 +296,6 @@ pub fn MapNpcs::MapNpcs(
     open_npc_talk_ui,
     is_npc_talk_ui_open,
     npcs: Map([]),
-    loading_npcs: Array::new(),
     spawns: @queue.Queue([]),
     pointer_reader: @event.EventReader(),
   }
@@ -272,32 +318,23 @@ pub fn MapNpcs::update(self : MapNpcs, physics : @physics.Physics) -> Unit {
   for ;; {
     guard self.spawns.pop() is Some(spawn) else { break }
     let oid = spawn.get_oid()
-    if !self.npcs.contains(oid) {
-      self.loading_npcs.push(
-        @io_service.submit_background_task(fn() raise {
-          spawn.instantiate(physics) catch {
-            error =>
-              fail(
-                "npc resource load failed: oid=\{spawn.oid}, npc_id=\{spawn.id}, error=\{error}",
-              )
-          }
-        }),
-      )
+    if self.npcs.contains(oid) {
+      continue
     }
-  }
-  self.loading_npcs.retain(fn(future) {
-    guard future.poll() is Some(rs) else { return true }
-    match rs {
-      Ok(npc) => self.npcs.set(npc.get_oid(), npc)
-      Err(error) => {
+    let npc = spawn.instantiate(physics) catch {
+      error => {
         @log.error("failed to load required npc resources", data={
+          "oid": spawn.oid,
+          "npc_id": spawn.id,
           "error": error,
         })
-        abort("failed to load required npc resources: \{error}")
+        abort(
+          "npc resource load failed: oid=\{spawn.oid}, npc_id=\{spawn.id}, error=\{error}",
+        )
       }
     }
-    false
-  })
+    self.npcs[oid] = npc
+  }
   for _, npc in self.npcs {
     npc.update(physics)
   }
@@ -321,7 +358,6 @@ pub fn MapNpcs::remove(self : MapNpcs, oid : Int) -> Unit {
 
 ///|
 pub fn MapNpcs::clear(self : MapNpcs) -> Unit {
-  self.loading_npcs.clear()
   while self.spawns.pop() is Some(_) {
 
   }
@@ -405,6 +441,7 @@ struct Npc {
   oid : Int
   phobj : @physics.PhysicsObject
   animations : Map[String, NpcAnimation]
+  animation_graph : @selene_animation.AnimationGraphHandle
   dialogue : Map[String, Array[String]]
   // talk_state : String
   states : Array[String]
@@ -415,16 +452,25 @@ struct Npc {
   npc_id : Int
   flip : Bool
   mut stance : String
-  mut stance_elapsed_ms : Int
   mut last_synced_stance : String?
   // control : Bool
   random : @random.Rand
 }
 
 ///|
+priv struct NpcVisualResource {
+  animations : Map[String, NpcAnimation]
+  animation_graph : @selene_animation.AnimationGraphHandle
+  states : Array[String]
+}
+
+///|
+let npc_visual_cache : Map[String, NpcVisualResource] = Map([])
+
+///|
 priv struct NpcAnimation {
-  clip : @res.SeleneClip
-  duration_ms : Int
+  clip : @res.SpriteClip
+  node : @selene_animation.AnimationNodeIndex
   dimensions : @struct.Point[Int]
 }
 
@@ -492,9 +538,9 @@ pub fn Npc::load(
     src = @res.require_json(mx_path)
     mx_npc = @json.from_json(src)
   }
-  let animation_loader = AnimationLoader()
-  let loaded_aseprite = animation_loader.load(
-    @res.resolve_ref(mx_path, mx_npc.animations_path),
+  let animation_path = @res.resolve_ref(
+    @res.resolve(mx_path),
+    mx_npc.animations_path,
   )
   let scripted = mx_npc.info.scripted
   let dialogue = Map([])
@@ -515,16 +561,34 @@ pub fn Npc::load(
     dialogue.get_or_init(key, fn() { Array::new() }).push(str)
     i += 1
   }
-  let animations : Map[String, NpcAnimation] = Map([])
-  let states : Array[String] = []
-  for state in loaded_aseprite.list_tags() {
-    let clip = loaded_aseprite.clip(state)
-    animations[state] = {
-      clip,
-      duration_ms: clip.duration_ms,
-      dimensions: clip.dimensions,
+  let visual = match npc_visual_cache.get(animation_path) {
+    Some(visual) => visual
+    None => {
+      let loaded_aseprite = AnimationLoader().load(animation_path)
+      let animations : Map[String, NpcAnimation] = Map([])
+      let animation_graph = @selene_animation.AnimationGraph()
+      let states : Array[String] = []
+      for state in loaded_aseprite.list_tags() {
+        let clip = loaded_aseprite.clip(state)
+        animations[state] = {
+          clip,
+          node: animation_graph.add_clip(clip.clip),
+          dimensions: clip.dimensions,
+        }
+        if state != "shop" {
+          states.push(state)
+        }
+      }
+      let visual = {
+        animations,
+        animation_graph: @selene_animation.register_animation_graph_asset(
+          animation_graph,
+        ),
+        states,
+      }
+      npc_visual_cache[animation_path] = visual
+      visual
     }
-    states.push(state)
   }
   let name = match strsrc {
     { "name": String(s), .. } => s
@@ -537,12 +601,8 @@ pub fn Npc::load(
   let npc_id = id
   let flip = !fl
   // let control = cnt
-  let stance = if states.contains("stand") {
-    "stand"
-  } else if !states.is_empty() {
-    states[0]
-  } else {
-    fail("npc \{id} has no animation states")
+  guard visual.animations.contains("stand") else {
+    fail("npc \{id} has no stand animation")
   }
   phobj.set_fhid(f)
   phobj.set_position(
@@ -552,19 +612,19 @@ pub fn Npc::load(
     entity,
     oid: o,
     phobj,
-    animations,
+    animations: visual.animations,
+    animation_graph: visual.animation_graph,
     // lines,
     dialogue,
     // talk_state: "d0",
-    states,
+    states: visual.states,
     name,
     func,
     scripted,
     // mouse_only,
     npc_id,
     flip,
-    stance,
-    stance_elapsed_ms: 0,
+    stance: "stand",
     last_synced_stance: None,
     // control,
     random: @random.Rand::new(),
@@ -595,20 +655,21 @@ pub fn Npc::update(self : Npc, physics : @physics.Physics) -> Unit {
     return
   }
   physics.move_object(self.phobj)
-  match self.animations.get(self.stance) {
-    Some(animation) => {
-      self.stance_elapsed_ms += @logic_fps.STEP_TIME_MS
-      if animation.duration_ms > 0 &&
-        self.stance_elapsed_ms >= animation.duration_ms &&
-        self.states.length() > 0 {
-        let next_stance = @randx.next_int(self.random, self.states.length())
-        let new_stance = self.states[next_stance]
-        self.set_stance(new_stance)
-      }
-    }
-    None => ()
-  }
   self.sync_sprite()
+  if self.animations.get(self.stance) is Some(animation) &&
+    @selene_animation.animation_players().get(self.entity) is Some(player) &&
+    player.animation(animation.node) is Some(active) &&
+    active.is_finished() &&
+    !self.states.is_empty() {
+    let next_stance = @randx.next_int(self.random, self.states.length())
+    let new_stance = self.states[next_stance]
+    if new_stance == self.stance {
+      ignore(active.replay())
+    } else {
+      self.set_stance(new_stance)
+      self.sync_sprite()
+    }
+  }
   self.sync_pickable()
 }
 
@@ -616,7 +677,6 @@ pub fn Npc::update(self : Npc, physics : @physics.Physics) -> Unit {
 pub fn Npc::set_stance(self : Npc, st : String) -> Unit {
   if self.stance != st {
     self.stance = st
-    self.stance_elapsed_ms = 0
     self.last_synced_stance = None
   }
 }
@@ -627,16 +687,45 @@ fn Npc::sync_sprite(self : Npc) -> Unit {
   guard self.animations.get(self.stance) is Some(animation) else { return }
   let pos = self.phobj.get_position()
   let z = @graphics.map_npc_z(self.phobj.fhlayer, pos.y)
-  let transform = if self.flip {
-    @selene_math.Transform::from_scale(-1.0, 1.0)
-  } else {
-    @selene_math.Transform()
-  }
   if @sprite.sprites().get(self.entity) is None ||
     self.last_synced_stance != Some(self.stance) {
-    ignore(transform)
-    ignore(z)
-    play_aseprite_clip(self.entity, animation.clip, self.flip)
+    @sprite.sprites().set(self.entity, animation.clip.sprite(flip_x=self.flip))
+    @selene_animation.animation_target_ids().set(
+      self.entity,
+      @selene_animation.AnimationTargetId("self"),
+    )
+    @selene_animation.animated_bys().set(
+      self.entity,
+      @selene_animation.AnimatedBy(self.entity),
+    )
+    @selene_animation.animation_graph_handles().set(
+      self.entity,
+      self.animation_graph,
+    )
+    let player = @selene_animation.animation_players().get_or_init(
+      self.entity,
+      fn() { @selene_animation.AnimationPlayer() },
+    )
+    let transitions = @selene_animation.animation_transitions().get_or_init(
+      self.entity,
+      fn() { @selene_animation.AnimationTransitions() },
+    )
+    ignore(
+      transitions.play(
+        player,
+        animation.node,
+        0.0,
+        repeat=@selene_animation.RepeatAnimation::Never,
+      ),
+    )
+    @transform.transforms().set(
+      self.entity,
+      @transform.Transform::from_xyz(
+        pos.x.to_double(),
+        pos.y.to_double(),
+        z.to_double(),
+      ),
+    )
     self.last_synced_stance = Some(self.stance)
   } else {
     match @transform.transforms().get(self.entity) {
@@ -656,57 +745,6 @@ fn Npc::sync_sprite(self : Npc) -> Unit {
         )
     }
   }
-}
-
-///|
-fn play_aseprite_clip(
-  entity : @entity.Entity,
-  clip : @res.SeleneClip,
-  flip_x : Bool,
-) -> Unit {
-  @selene_animation.animation_target_ids().set(
-    entity,
-    @selene_animation.AnimationTargetId("self"),
-  )
-  @selene_animation.animated_bys().set(
-    entity,
-    @selene_animation.AnimatedBy(entity),
-  )
-  @selene_animation.animation_graph_handles().set(entity, clip.graph)
-  let player = @selene_animation.animation_players().get_or_init(entity, fn() {
-    @selene_animation.AnimationPlayer()
-  })
-  ignore(
-    player.play(clip.node, repeat=@selene_animation.RepeatAnimation::Forever),
-  )
-
-  let anchor = if flip_x { mirror_anchor_x(clip.anchor) } else { clip.anchor }
-  match @sprite.sprites().get(entity) {
-    Some(sprite) =>
-      @sprite.sprites().set(entity, {
-        ..sprite,
-        image: Some(clip.image),
-        texture_atlas: Some(@sprite.TextureAtlas(clip.layout)),
-        anchor,
-        flip_x,
-      })
-    None =>
-      @sprite.sprites().set(
-        entity,
-        @sprite.Sprite(
-          image=Some(clip.image),
-          texture_atlas=Some(@sprite.TextureAtlas(clip.layout)),
-          anchor~,
-          flip_x~,
-        ),
-      )
-  }
-}
-
-///|
-fn mirror_anchor_x(anchor : @sprite.Anchor) -> @sprite.Anchor {
-  let @sprite.Anchor(v) = anchor
-  @sprite.Anchor(@selene_math.Vec2(-v.0, v.1))
 }
 
 ///|
@@ -760,16 +798,13 @@ pub fn Npc::get_oid(self : Npc) -> Int {
 
 ///|
 pub fn Npc::destroy(self : Npc) -> Unit {
-  if @selene_animation.animation_players().get(self.entity) is Some(player) {
-    ignore(player.stop_all())
-  }
-  @selene_animation.animation_graph_handles().remove(self.entity)
-  @selene_animation.animation_target_ids().remove(self.entity)
-  @selene_animation.animated_bys().remove(self.entity)
-  @sprite.sprites().remove(self.entity)
+  @graphics.clear_sprite_animation(self.entity)
+  @transform.transforms().remove(self.entity) |> ignore
   @physics2d.pickables().remove(self.entity)
   @physics2d.shapes().remove(self.entity)
-  self.entity.destroy()
+  if self.entity.is_alive() {
+    self.entity.destroy()
+  }
 }
 
 ///|

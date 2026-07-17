@@ -1,6 +1,5 @@
 ///|
 pub struct MapPortals {
-  map_portals_animations : MapPortalAnimations
   id_portal_map : Map[Int, Portal]
   name_portal_id_map : Map[String, Int]
   mut manual_cooldown : Int
@@ -11,16 +10,7 @@ pub struct MapPortals {
 let warpcd : Int = 48
 
 ///|
-struct MapPortalAnimations {
-  animations : Map[PortalType, @ms_animation.Animation]
-}
-
-///|
-pub fn MapPortals::MapPortals(
-  src : Array[NxPortal],
-  mapid : Int,
-  map_portals_animations : MapPortalAnimations,
-) -> MapPortals {
+pub fn MapPortals::MapPortals(src : Array[NxPortal], mapid : Int) -> MapPortals {
   let portals_by_id = Map([])
   let name_portal_id_map = Map([])
   for portal_id, res in src {
@@ -29,13 +19,10 @@ pub fn MapPortals::MapPortals(
     let target_name = res.tn
     let target_id = res.tm
     let position = Point(res.x, res.y)
-    let animation = map_portals_animations.animations.get(portal_type)
     let intramap = target_id == mapid
     portals_by_id.set(
       portal_id,
-      Portal(
-        animation, portal_type, name, intramap, position, target_id, target_name,
-      ),
+      Portal(portal_type, name, intramap, position, target_id, target_name),
     )
     name_portal_id_map.set(name, portal_id)
   }
@@ -44,7 +31,6 @@ pub fn MapPortals::MapPortals(
     name_portal_id_map,
     manual_cooldown: 0,
     auto_cooldown: 0,
-    map_portals_animations,
   }
 }
 
@@ -52,16 +38,35 @@ pub fn MapPortals::MapPortals(
 pub fn MapPortals::from_tiled_map(
   map : @tiled.TiledMap,
   mapid : Int,
-  map_portals_animations : MapPortalAnimations,
 ) -> MapPortals raise {
   guard map.object_layer("portal") is Some(portal_layer) else {
     fail("missing `portal` layer in map.tmj")
   }
-  let src = []
+  let portals_by_id : Map[Int, Portal] = Map([])
+  let name_portal_id_map : Map[String, Int] = Map([])
   for obj in portal_layer.objects {
-    src.push(nx_portal_from_tiled_object(obj))
+    let portal_id = tiled_object_int_required(obj, "portal_id")
+    guard !portals_by_id.contains(portal_id) else {
+      fail("duplicate portal_id=\{portal_id}, object_id=\{obj.id}")
+    }
+    let res = nx_portal_from_tiled_object(obj)
+    let intramap = res.tm == mapid
+    portals_by_id[portal_id] = Portal(
+      res.pt,
+      res.pn,
+      intramap,
+      Point(res.x, res.y),
+      res.tm,
+      res.tn,
+    )
+    name_portal_id_map[res.pn] = portal_id
   }
-  MapPortals(src, mapid, map_portals_animations)
+  {
+    id_portal_map: portals_by_id,
+    name_portal_id_map,
+    manual_cooldown: 0,
+    auto_cooldown: 0,
+  }
 }
 
 ///|
@@ -189,35 +194,70 @@ pub fn MapPortals::find_warp_at(
 }
 
 ///|
-pub fn MapPortalAnimations::load() -> MapPortalAnimations {
-  { animations: Map([]) }
-}
-
-///|
 priv struct PortalsContext {
   portals : MapPortals
-  portal_entities : Map[Int, @entity.Entity]
-  get_touch_pos : () -> Point[Int]?
-  mut dirty : Bool
+  visual_entities : Map[Int, @entity.Entity]
+  get_player_position : () -> Point[Int]?
 }
 
 ///|
 let portals_context : Ref[PortalsContext?] = Ref(None)
 
 ///|
+/// Install the current map's portal domain state before spawning its Tiled tree.
+///
+/// Tiled owns portal visual entities. The portal system uses
+/// `get_player_position` to reveal hidden visuals while the player is inside
+/// the portal bounds.
+///
+/// # Example
+/// ```moonbit nocheck
+/// @map.set_portals(portals, get_player_position=fn() { Some(Point(0, 0)) })
+/// ```
 pub fn set_portals(
   portals : MapPortals,
-  get_touch_pos? : () -> Point[Int]? = fn() { None },
+  get_player_position~ : () -> Point[Int]?,
 ) -> Unit {
-  if portals_context.val is Some(ctx) {
-    destroy_entities_iter(ctx.portal_entities.values())
-  }
   portals_context.val = Some({
     portals,
-    portal_entities: Map([]),
-    get_touch_pos,
-    dirty: true,
+    visual_entities: Map([]),
+    get_player_position,
   })
+}
+
+///|
+fn bind_tiled_portal_visual(
+  object : @tiled.TiledObject,
+  entity : @entity.Entity,
+) -> Unit raise {
+  guard object.gid is Some(_) else { return }
+  guard portals_context.val is Some(ctx) else {
+    fail(
+      "portal context must be installed before spawning Tiled portal visuals",
+    )
+  }
+  let portal_id = tiled_object_int_required(object, "portal_id")
+  guard ctx.portals.id_portal_map.get(portal_id) is Some(portal) else {
+    fail("unknown portal_id=\{portal_id}, object_id=\{object.id}")
+  }
+  ctx.visual_entities[portal_id] = entity
+  let visible = match portal.get_type() {
+    PortalType::HIDDEN | PortalType::SCRIPTED_HIDDEN => false
+    _ => true
+  }
+  @visibility.visibilities().set(
+    entity,
+    if visible {
+      @visibility.Visible
+    } else {
+      @visibility.Hidden
+    },
+  )
+}
+
+///|
+fn clear_portals() -> Unit {
+  portals_context.val = None
 }
 
 ///|
@@ -305,17 +345,24 @@ pub fn current_portals_json() -> Json {
 ///|
 pub fn portal_system(_world : @ecs.World) -> Unit {
   guard portals_context.val is Some(ctx) else { return }
-  if ctx.dirty {
-    ensure_portal_entities(ctx)
-    ctx.dirty = false
-  }
-  let touch_pos = (ctx.get_touch_pos)()
-  for id, portal in ctx.portals.id_portal_map {
+  let player_position = (ctx.get_player_position)()
+  for portal_id, entity in ctx.visual_entities {
+    guard ctx.portals.id_portal_map.get(portal_id) is Some(portal) else {
+      continue
+    }
     match portal.get_type() {
-      PortalType::HIDDEN | PortalType::COLLISION => {
-        let entity = ctx.portal_entities.get(id)
-        guard entity is Some(entity) else { abort("portal entity not found") }
-        portal.update_touched(entity, touch_pos)
+      PortalType::HIDDEN | PortalType::SCRIPTED_HIDDEN => {
+        let visible = player_position.map_or(false, fn(position) {
+          portal.bounds().contains(position)
+        })
+        @visibility.visibilities().set(
+          entity,
+          if visible {
+            @visibility.Visible
+          } else {
+            @visibility.Hidden
+          },
+        )
       }
       _ => ()
     }
@@ -326,34 +373,6 @@ pub fn portal_system(_world : @ecs.World) -> Unit {
   if ctx.portals.auto_cooldown > 0 {
     ctx.portals.auto_cooldown -= 1
   }
-}
-
-///|
-fn ensure_portal_entities(ctx : PortalsContext) -> Unit {
-  for id, portal in ctx.portals.id_portal_map {
-    if ctx.portal_entities.contains(id) {
-      continue
-    }
-    let entity = @entity.Entity()
-    let position = portal.get_position()
-    @transform2d.set_xy(
-      entity,
-      @selene_math.Vec2(position.x.to_double(), position.y.to_double()),
-    )
-    if portal.animation is Some(animation) {
-      let sprite = @ms_animation.sprite_from_animation(
-        animation,
-        @graphics.PORTAL_ZINDEX,
-      )
-      @sprite.sprites().set(entity, sprite)
-    }
-    ctx.portal_entities.set(id, entity)
-  }
-}
-
-///|
-fn destroy_entities_iter(entities : Iter[@entity.Entity]) -> Unit {
-  entities.each(fn(e) { e.destroy() })
 }
 
 ///|
@@ -412,7 +431,7 @@ test "parse portals" {
 
 ///|
 fn make_test_portals(src : Array[NxPortal]) -> MapPortals {
-  MapPortals(src, 101010103, { animations: Map([]) })
+  MapPortals(src, 101010103)
 }
 
 ///|

@@ -1,0 +1,115 @@
+{
+  "info": {
+    "MADamage": 180,
+    "MDDamage": 180,
+    "PADamage": 165,
+    "PDDamage": 150,
+    "acc": 130,
+    "ban": {
+      "banMap": {
+        "0": {
+          "field": 103000100,
+          "portal": "sp"
+        }
+      },
+      "banMsg": "As the Pentacle swayed in the shadows, you were brought to the Subway Ticketing Booth."
+    },
+    "bodyAttack": 1,
+    "boss": 1,
+    "eva": 999,
+    "exp": 180,
+    "fs": 10,
+    "level": 56,
+    "maxHP": 4800,
+    "maxMP": 200,
+    "pushed": 400,
+    "removeAfter": 1800,
+    "skill": {
+      "0": {
+        "action": 1,
+        "effectAfter": 0,
+        "level": 5,
+        "skill": 129
+      }
+    },
+    "speed": 0,
+    "summonType": 0,
+    "undead": 1
+  },
+  "stance_nodes": {
+    "die1": {
+      "path_key": "die1",
+      "total_duration_ms": 1200,
+      "loop_": false,
+      "first_head": null,
+      "first_bounds": null
+    },
+    "hit1": {
+      "path_key": "hit1",
+      "total_duration_ms": 600,
+      "loop_": false,
+      "first_head": {
+        "x": -4,
+        "y": -92
+      },
+      "first_bounds": {
+        "lt": {
+          "x": -33,
+          "y": -125
+        },
+        "rb": {
+          "x": 52,
+          "y": -3
+        }
+      }
+    },
+    "move": {
+      "path_key": "move",
+      "total_duration_ms": 1080,
+      "loop_": true,
+      "first_head": {
+        "x": -14,
+        "y": -85
+      },
+      "first_bounds": {
+        "lt": {
+          "x": -39,
+          "y": -106
+        },
+        "rb": {
+          "x": 63,
+          "y": -7
+        }
+      }
+    },
+    "stand": {
+      "path_key": "stand",
+      "total_duration_ms": 1080,
+      "loop_": true,
+      "first_head": {
+        "x": -14,
+        "y": -84
+      },
+      "first_bounds": {
+        "lt": {
+          "x": -38,
+          "y": -105
+        },
+        "rb": {
+          "x": 63,
+          "y": -7
+        }
+      }
+    }
+  },
+  "attack_nodes": {},
+  "skill_nodes": {
+    "129": {
+      "skill_id": 129,
+      "action": 1,
+      "animation_path_key": "skill1",
+      "effects": []
+    }
+  },
+  "animations_path": "animation.json"
+}

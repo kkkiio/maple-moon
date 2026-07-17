@@ -1,0 +1,133 @@
+{
+  "info": {
+    "MADamage": 165,
+    "MDDamage": 160,
+    "PADamage": 165,
+    "PDDamage": 160,
+    "acc": 135,
+    "bodyAttack": 1,
+    "elemAttr": "H3",
+    "eva": 25,
+    "exp": 190,
+    "fs": 10,
+    "level": 57,
+    "maxHP": 4600,
+    "maxMP": 100,
+    "mobType": 7,
+    "pushed": 500,
+    "speed": -45,
+    "summonType": 1,
+    "undead": 1
+  },
+  "stance_nodes": {
+    "die1": {
+      "path_key": "die1",
+      "total_duration_ms": 1050,
+      "loop_": false,
+      "first_head": {
+        "x": -35,
+        "y": -72
+      },
+      "first_bounds": null
+    },
+    "hit1": {
+      "path_key": "hit1",
+      "total_duration_ms": 600,
+      "loop_": false,
+      "first_head": {
+        "x": 3,
+        "y": -74
+      },
+      "first_bounds": {
+        "lt": {
+          "x": -41,
+          "y": -90
+        },
+        "rb": {
+          "x": 49,
+          "y": 0
+        }
+      }
+    },
+    "move": {
+      "path_key": "move",
+      "total_duration_ms": 1120,
+      "loop_": true,
+      "first_head": {
+        "x": -35,
+        "y": -72
+      },
+      "first_bounds": {
+        "lt": {
+          "x": -62,
+          "y": -87
+        },
+        "rb": {
+          "x": 21,
+          "y": 0
+        }
+      }
+    },
+    "stand": {
+      "path_key": "stand",
+      "total_duration_ms": 1120,
+      "loop_": true,
+      "first_head": {
+        "x": -35,
+        "y": -72
+      },
+      "first_bounds": {
+        "lt": {
+          "x": -61,
+          "y": -86
+        },
+        "rb": {
+          "x": 21,
+          "y": 0
+        }
+      }
+    }
+  },
+  "attack_nodes": {
+    "1": {
+      "id": 1,
+      "info": {
+        "PADamage": 180,
+        "attackAfter": 300,
+        "hit": {
+          "0": {
+            "__b": 24878,
+            "__w": 99,
+            "__h": 107,
+            "origin": [
+              52,
+              93
+            ]
+          },
+          "1": {
+            "__b": 24879,
+            "__w": 80,
+            "__h": 77,
+            "origin": [
+              43,
+              79
+            ]
+          },
+          "attach": 1
+        },
+        "range": {
+          "r": 60,
+          "sp": [
+            0,
+            -40
+          ]
+        },
+        "type": 1
+      },
+      "animation_path_key": "attack1",
+      "effects": []
+    }
+  },
+  "skill_nodes": {},
+  "animations_path": "animation.json"
+}

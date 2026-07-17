@@ -73,7 +73,9 @@ pub fn make_regular_attack(
 }
 
 ///|
-pub fn get_regular_attack_bullet(bulletid : Int) -> @ms_animation.Animation {
+pub fn get_regular_attack_bullet(
+  bulletid : Int,
+) -> @combat_proto.BulletAnimation {
   let data = @bullet.get_bullet_data(bulletid)
   data.bullet
 }

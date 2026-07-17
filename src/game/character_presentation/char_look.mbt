@@ -537,11 +537,7 @@ pub fn CharLook::play_animations(self : CharLook) -> Unit {
           "frames.length() != layers.length() for stance: \{stance}, action: \{name}",
         )
       }
-      let nx_anim = @res.NxAnimation::{
-        frames,
-        blend: false,
-        zigzag: false,
-      } // Reconstruct approximate NxAnimation container
+      let nx_anim = @res.NxAnimation::{ frames, blend: false, zigzag: false } // Reconstruct approximate NxAnimation container
       let transform = facing_transform(self.flip)
 
       // Calculate frame mapping for this animation (needed for correct Z-index lookup)
@@ -1283,11 +1279,7 @@ fn CharLook::play_climbing_animations(
         })
         abort("frames.length() != layers.length() for body action: \{name}")
       }
-      let nx_anim = @res.NxAnimation::{
-        frames,
-        blend: false,
-        zigzag: false,
-      }
+      let nx_anim = @res.NxAnimation::{ frames, blend: false, zigzag: false }
       let transform = facing_transform(self.flip)
       let entity = self.body_entities.get_or_init(name, fn() {
         self.spawn_sprite_child()

@@ -5,7 +5,10 @@ fn init {
       _ => None
     }
   })
-  try! @res.configure_packs([("base", "assets/base")])
+  try! @res.configure_packs([
+    ("base", "assets/base"),
+    ("dlc-victoria", "assets/dlc-victoria"),
+  ])
 }
 
 ///|

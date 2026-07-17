@@ -1,0 +1,1 @@
+{"type":"tileset","name":"obj:houseDR/house3/basic","objectalignment":"bottomleft","tilewidth":448,"tileheight":288,"tilecount":1,"tiles":[{"id":0,"image":"obj_houseDR_house3_basic.atlas-0.png","imagewidth":450,"imageheight":290,"x":1,"y":1,"width":448,"height":288}]}

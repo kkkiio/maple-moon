@@ -180,7 +180,7 @@ test "mini map ui renders portal marker from real map 100030000" {
     mini_map_render_state(resource),
     content=(
       #|{
-      #|  canvas_path: "assets/base/Map/tiles/../images/30864.png",
+      #|  canvas_path: "assets/dlc-victoria/Map/tiles/../images/30864.png",
       #|  canvas_width: 243,
       #|  canvas_height: 155,
       #|  portals: [
@@ -198,7 +198,7 @@ test "mini map ui renders portal marker from real map 100030000" {
       #|    (-1861, -646, 999999999, SPAWN),
       #|    (-1105, 160, 120010000, REGULAR),
       #|    (-4428, -1286, 999999999, SCRIPTED),
-      #|    (-3368, -1463, 100030001, HIDDEN),
+      #|    (-3430, -1460, 100030001, HIDDEN),
       #|    (-1237, -870, 100030000, INVISIBLE),
       #|    (-2986, 273, 100030000, INVISIBLE),
       #|    (-991, -856, 100040000, REGULAR),

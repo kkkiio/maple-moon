@@ -19,11 +19,17 @@ priv enum ButtonId {
 
 ///|
 priv struct ButtonStateResource {
-  normal : @ms_animation.Animation
-  mouse_over : @ms_animation.Animation
-  pressed : @ms_animation.Animation
-  disabled : @ms_animation.Animation
-  normal_texture : @res.NxTexture
+  normal : @res.NxTexture
+  mouse_over : @res.NxTexture
+  pressed : @res.NxTexture
+  disabled : @res.NxTexture
+}
+
+///|
+priv struct AnimatedSpriteResource {
+  sprite_clip : @res.SpriteClip
+  graph : @selene_animation.AnimationGraphHandle
+  node : @selene_animation.AnimationNodeIndex
 }
 
 ///|
@@ -38,8 +44,8 @@ priv struct WorldMapUIResource {
 
 ///|
 priv struct WorldMapMarkerResource {
-  cur_pos : @ms_animation.Animation
-  npc_pos : Array[@ms_animation.Animation]
+  cur_pos : AnimatedSpriteResource
+  npc_pos : Array[AnimatedSpriteResource]
   map_images : Array[@res.NxTexture]
   map_image_sizes : Array[(Int, Int)]
 }
@@ -405,6 +411,9 @@ const TOOLTIP_WIDTH : Int = 251
 const TOOLTIP_HEIGHT : Int = 52
 
 ///|
+const WORLD_MAP_INPUT_OWNER : String = "world_map"
+
+///|
 fn truncate_text(text : String, max_len : Int) -> String {
   if text.length() <= max_len {
     return text
@@ -415,7 +424,7 @@ fn truncate_text(text : String, max_len : Int) -> String {
 ///|
 fn clear_entities(entities : Array[@entity.Entity]) -> Unit {
   for entity in entities {
-    @sprite.sprites().remove(entity) |> ignore
+    @graphics.clear_sprite_animation(entity)
     @transform2d.remove(entity) |> ignore
     entity.destroy()
   }
@@ -426,6 +435,7 @@ fn clear_entities(entities : Array[@entity.Entity]) -> Unit {
 fn clear_scene(reason_is_change_map : Bool) -> Unit {
   let state = state_ref.val
   @mini_map_ui.set_modal_suppressed("world_map", false)
+  @keymap.set_gameplay_input_suppressed(WORLD_MAP_INPUT_OWNER, false)
   clear_entities(state.render_entities)
   state.hovered_spot_index = None
   state.hovered_link_index = None
@@ -462,12 +472,17 @@ fn register_scene_cleanup_once() -> Unit {
 
 ///|
 fn make_button_state_resource(src : @ui.NxMapleButton) -> ButtonStateResource {
+  guard src.normal.frames is [normal, ..] &&
+    src.mouse_over.frames is [mouse_over, ..] &&
+    src.pressed.frames is [pressed, ..] &&
+    src.disabled.frames is [disabled, ..] else {
+    abort("world map button state must contain a texture frame")
+  }
   {
-    normal: @ms_animation.from_nx_animation(src.normal),
-    mouse_over: @ms_animation.from_nx_animation(src.mouse_over),
-    pressed: @ms_animation.from_nx_animation(src.pressed),
-    disabled: @ms_animation.from_nx_animation(src.disabled),
-    normal_texture: src.normal.frames[0].texture,
+    normal: normal.texture,
+    mouse_over: mouse_over.texture,
+    pressed: pressed.texture,
+    disabled: disabled.texture,
   }
 }
 
@@ -497,7 +512,6 @@ fn parse_world_map_ui_resource(json : Json) -> WorldMapUIResource raise {
     mouse_over: button_resources[ButtonId::SEARCH].mouse_over,
     pressed: button_resources[ButtonId::SEARCH].pressed,
     disabled: button_resources[ButtonId::SEARCH].disabled,
-    normal_texture: button_resources[ButtonId::SEARCH].normal_texture,
   }
   ignore(make_button_state_resource(src.bt_auto_fly))
   ignore(make_button_state_resource(src.bt_navi_register))
@@ -514,12 +528,20 @@ fn parse_world_map_ui_resource(json : Json) -> WorldMapUIResource raise {
 ///|
 fn parse_world_map_marker_resource(json : Json) -> WorldMapMarkerResource raise {
   let src : NxWorldMapMarker = @json.from_json(json)
-  let npc_pos = [
-    @ms_animation.from_nx_animation(src.npc_pos0, loop_=true),
-    @ms_animation.from_nx_animation(src.npc_pos1, loop_=true),
-    @ms_animation.from_nx_animation(src.npc_pos2, loop_=true),
-    @ms_animation.from_nx_animation(src.npc_pos3, loop_=true),
-  ]
+  let npc_pos : Array[AnimatedSpriteResource] = []
+  for index, source in [src.npc_pos0, src.npc_pos1, src.npc_pos2, src.npc_pos3] {
+    let sprite_clip = @res.compile_nx_animation(
+      source,
+      name="ui/world-map/npc-pos-\{index}",
+    )
+    let (graph, node) = @graphics.sprite_clip_graph(sprite_clip)
+    npc_pos.push({ sprite_clip, graph, node })
+  }
+  let cur_pos_clip = @res.compile_nx_animation(
+    src.cur_pos,
+    name="ui/world-map/current-position",
+  )
+  let (cur_pos_graph, cur_pos_node) = @graphics.sprite_clip_graph(cur_pos_clip)
   let map_textures = [
     src.map_image0,
     src.map_image1,
@@ -533,7 +555,11 @@ fn parse_world_map_marker_resource(json : Json) -> WorldMapMarkerResource raise 
     map_image_sizes.push((texture.w, texture.h))
   }
   {
-    cur_pos: @ms_animation.from_nx_animation(src.cur_pos, loop_=true),
+    cur_pos: {
+      sprite_clip: cur_pos_clip,
+      graph: cur_pos_graph,
+      node: cur_pos_node,
+    },
     npc_pos,
     map_images,
     map_image_sizes,
@@ -901,11 +927,11 @@ fn handle_click(
   let pos = @inputs.mouse.pos
   let search_button = button_hitbox(
     state,
-    resources.ui.button_resources[ButtonId::SEARCH].normal_texture,
+    resources.ui.button_resources[ButtonId::SEARCH].normal,
   )
   let all_search_button = button_hitbox(
     state,
-    resources.ui.button_resources[ButtonId::ALL_SEARCH].normal_texture,
+    resources.ui.button_resources[ButtonId::ALL_SEARCH].normal,
     extra_x=search_offset(resources.ui),
   )
   let close_hitbox = make_hitbox(
@@ -1025,42 +1051,52 @@ fn spawn_texture(
   y : Int,
   z : Int,
 ) -> Unit {
-  let animation = @ms_animation.Animation::single_frame_from_image(
-    @res.require_image(texture.i),
-    @selene_math.Vec2(texture.w.to_double(), texture.h.to_double()),
-    offset=@selene_math.Vec2(
-      texture.offset.x.to_double(),
-      texture.offset.y.to_double(),
-    ),
-    pivot=@selene_math.Vec2(
-      texture.origin.x.to_double(),
-      texture.origin.y.to_double(),
-    ),
-  )
-  spawn_sprite(
-    state,
-    @ms_animation.sprite_from_animation(animation, z),
-    x,
-    y,
-    z,
-  )
+  spawn_sprite(state, texture.require_sprite(), x, y, z)
 }
 
 ///|
 fn spawn_animation(
   state : State,
-  animation : @ms_animation.Animation,
+  animation : AnimatedSpriteResource,
   x : Int,
   y : Int,
   z : Int,
 ) -> Unit {
-  spawn_sprite(
-    state,
-    @ms_animation.sprite_from_animation(animation, z),
-    x,
-    y,
-    z,
+  let entity = @entity.Entity()
+  state.render_entities.push(entity)
+  @sprite.sprites().set(entity, animation.sprite_clip.sprite())
+  let world_position = @camera.viewport_to_world(
+    @selene_math.Vec2(x.to_double(), y.to_double()),
   )
+  @transform.transforms().set(
+    entity,
+    @transform.Transform::from_xyz(
+      world_position[@selene_math.X],
+      world_position[@selene_math.Y],
+      z.to_double(),
+    ),
+  )
+  match @camera.camera_entity() {
+    Some(camera_entity) => @transform.set_parent_in_place(entity, camera_entity)
+    None => ()
+  }
+  @selene_animation.animation_target_ids().set(
+    entity,
+    @selene_animation.AnimationTargetId("self"),
+  )
+  @selene_animation.animated_bys().set(
+    entity,
+    @selene_animation.AnimatedBy(entity),
+  )
+  @selene_animation.animation_graph_handles().set(entity, animation.graph)
+  let player = @selene_animation.AnimationPlayer()
+  ignore(
+    player.play(
+      animation.node,
+      repeat=@selene_animation.RepeatAnimation::Forever,
+    ),
+  )
+  @selene_animation.animation_players().set(entity, player)
 }
 
 ///|
@@ -1214,7 +1250,7 @@ fn render_world_map(state : State) -> Unit {
         search_button_resource.normal
       }
   }
-  spawn_animation(
+  spawn_texture(
     state,
     search_button_sprite,
     state.panel_x,
@@ -1239,7 +1275,7 @@ fn render_world_map(state : State) -> Unit {
       PAGE_Z + 1,
     )
     let all_search = resources.ui.button_resources[ButtonId::ALL_SEARCH]
-    spawn_animation(
+    spawn_texture(
       state,
       all_search.normal,
       state.panel_x + offset_x,
@@ -1347,6 +1383,7 @@ pub fn set_current_map(
 pub fn set_world_map_visible(visible : Bool) -> Unit {
   register_scene_cleanup_once()
   let state = state_ref.val
+  @keymap.set_gameplay_input_suppressed(WORLD_MAP_INPUT_OWNER, visible)
   if state.visible == visible {
     return
   }
@@ -1503,6 +1540,7 @@ pub fn handle_world_map_escape_for_test() -> Unit {
 /// Resets singleton state and injected resources for tests.
 pub fn reset_world_map_ui_for_test() -> Unit {
   @mini_map_ui.set_modal_suppressed("world_map", false)
+  @keymap.set_gameplay_input_suppressed(WORLD_MAP_INPUT_OWNER, false)
   let state = state_ref.val
   clear_entities(state.render_entities)
   state.visible = false
@@ -1535,7 +1573,10 @@ pub fn world_map_ui_system(_world : @ecs.World) -> Unit {
   register_scene_cleanup_once()
   let state = state_ref.val
   let mut dirty = state.dirty
-  if @inputs.is_just_pressed(@inputs.KeyW) {
+  if @keymap.is_just_pressed(
+      @keymap.Action::UI(@keymap.UiActionId::TOGGLE_WORLD_MAP),
+    ) &&
+    (state.visible || @keymap.gameplay_input_enabled()) {
     toggle_world_map()
     return
   }
@@ -1543,6 +1584,10 @@ pub fn world_map_ui_system(_world : @ecs.World) -> Unit {
     if state.render_entities.length() > 0 {
       clear_entities(state.render_entities)
     }
+    return
+  }
+  if @keymap.is_just_pressed(@keymap.Action::UI(@keymap.UiActionId::CANCEL)) {
+    handle_escape(state)
     return
   }
   if poll_ui_resources(state) {
@@ -1555,10 +1600,6 @@ pub fn world_map_ui_system(_world : @ecs.World) -> Unit {
     dirty = true
   }
   guard state.current_page is Some(page) else { return }
-  if @inputs.is_just_pressed(@inputs.Escape) {
-    handle_escape(state)
-    return
-  }
   let prev_hovered_spot = state.hovered_spot_index
   let prev_hovered_link = state.hovered_link_index
   if tooltip_json_for_test_ref.val is None ||

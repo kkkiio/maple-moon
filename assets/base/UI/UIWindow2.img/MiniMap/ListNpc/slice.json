@@ -1,0 +1,163 @@
+{
+  "frames": [
+    {
+      "filename": "slice",
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 129,
+        "h": 67
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 129,
+        "h": 67
+      },
+      "sourceSize": {
+        "w": 129,
+        "h": 67
+      },
+      "duration": 100
+    }
+  ],
+  "meta": {
+    "app": "nx-maple-res",
+    "version": "1.0",
+    "image": "slice.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 129,
+      "h": 67
+    },
+    "scale": "1",
+    "frameTags": [],
+    "custom": {
+      "patch_origins": [
+        {
+          "name": "nw",
+          "origin": {
+            "x": 0,
+            "y": 0
+          },
+          "pivot": {
+            "x": 0,
+            "y": 0
+          }
+        },
+        {
+          "name": "n",
+          "origin": {
+            "x": 0,
+            "y": 0
+          },
+          "pivot": {
+            "x": 0,
+            "y": 0
+          }
+        },
+        {
+          "name": "ne",
+          "origin": {
+            "x": 0,
+            "y": 0
+          },
+          "pivot": {
+            "x": 0,
+            "y": 0
+          }
+        },
+        {
+          "name": "w",
+          "origin": {
+            "x": 0,
+            "y": 0
+          },
+          "pivot": {
+            "x": 0,
+            "y": 0
+          }
+        },
+        {
+          "name": "c",
+          "origin": {
+            "x": 0,
+            "y": 0
+          },
+          "pivot": {
+            "x": 0,
+            "y": 0
+          }
+        },
+        {
+          "name": "e",
+          "origin": {
+            "x": 0,
+            "y": 0
+          },
+          "pivot": {
+            "x": 0,
+            "y": 0
+          }
+        },
+        {
+          "name": "sw",
+          "origin": {
+            "x": 0,
+            "y": 0
+          },
+          "pivot": {
+            "x": 0,
+            "y": 0
+          }
+        },
+        {
+          "name": "s",
+          "origin": {
+            "x": 0,
+            "y": 0
+          },
+          "pivot": {
+            "x": 0,
+            "y": 0
+          }
+        },
+        {
+          "name": "se",
+          "origin": {
+            "x": 0,
+            "y": 0
+          },
+          "pivot": {
+            "x": 0,
+            "y": 0
+          }
+        }
+      ]
+    },
+    "slices": [
+      {
+        "name": "nine_slice",
+        "keys": [
+          {
+            "frame": 0,
+            "bounds": {
+              "x": 0,
+              "y": 0,
+              "w": 129,
+              "h": 67
+            },
+            "center": {
+              "x": 64,
+              "y": 36,
+              "w": 1,
+              "h": 1
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

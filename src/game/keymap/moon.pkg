@@ -1,3 +1,7 @@
 import {
   "KKKIIO/selene/inputs",
+  "KKKIIO/selene/input_action",
+  "KKKIIO/selene/event",
+  "KKKIIO/selene/ecs",
+  "KKKIIO/selene/math" @selene_math,
 }

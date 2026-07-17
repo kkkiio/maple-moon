@@ -20,6 +20,9 @@
   - `MapPortals`
   - `Physics`（经 `from_tiled_foothold_tree`）
   - `MiniMapRuntimeResource`
+- `MapPortals` 承载传送、碰撞、隐藏门 proximity 显隐与 debug 查询语义。
+- portal visual 由 resource pack 作为 Tiled animated tile object 导出：普通门始终
+  可见，隐藏门由运行时控制 Tiled entity 的 `Visibility`，不创建第二套 sprite。
 
 ## 渲染路径
 
@@ -47,6 +50,11 @@
   - 导出为 `background_back_N` / `background_front_N` objectgroup 中的 tile object
   - frame 动画由 Selene/Tiled animated tileset 支持播放
   - 当前运行时不模拟 Maple moving background 的时间滚动，移动类型仍需要后续 objectgroup runtime 分支
+- Tiled animated portal：
+  - `portal` object layer 同时保存稳定的 `portal_id`、传送属性和 visual tile gid
+  - 普通门使用 `MapHelper.img/portal/game/pv`
+  - 隐藏门使用 `MapHelper.img/portal/game/ph/default/portalContinue`，玩家进入 portal bounds 时显示
+  - Sprite、atlas 与动画播放器由 Selene/Tiled 创建，`MapPortals` 只绑定实体并驱动显隐
 - `repeatx/repeaty` 可服务 Tiled 静态预览；Maple runtime branch 以 `type/cx/cy/rx/ry/ani/a0/a1` 为事实来源。
 - Maple runtime 背景：
   - `NxBackgroundType` 覆盖 `0..7`

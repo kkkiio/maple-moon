@@ -336,10 +336,7 @@ impl @json.FromJson for NxQuestPhaseChecks with fn from_json(json, path) {
         checks.push({ interval_minutes: interval_minutes.0 })
       }
       "infoex" => {
-        let info_ex : Array[InfoEx] = @res.parse_map_based_array(
-          value,
-          path~,
-        )
+        let info_ex : Array[InfoEx] = @res.parse_map_based_array(value, path~)
         checks.push({ info_ex, })
       }
       "quest" => {
@@ -355,25 +352,16 @@ impl @json.FromJson for NxQuestPhaseChecks with fn from_json(json, path) {
         })
       }
       "job" => {
-        let jobs : Array[@job.JobId] = @res.parse_map_based_array(
-          value,
-          path~,
-        )
+        let jobs : Array[@job.JobId] = @res.parse_map_based_array(value, path~)
         checks.push({ jobs, })
       }
       "mob" => {
-        let mob : Array[MonHuntCheck] = @res.parse_map_based_array(
-          value,
-          path~,
-        )
+        let mob : Array[MonHuntCheck] = @res.parse_map_based_array(value, path~)
         monster_hunts = mob
         checks.push({ monster_hunts, })
       }
       "item" => {
-        let items : Array[ItemCount] = @res.parse_map_based_array(
-          value,
-          path~,
-        )
+        let items : Array[ItemCount] = @res.parse_map_based_array(value, path~)
         checks.push({ items, })
       }
       _ => unknown_checks.push(key)

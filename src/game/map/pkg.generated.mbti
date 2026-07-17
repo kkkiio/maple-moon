@@ -3,11 +3,9 @@ package "KKKIIO/maple-moon/game/map"
 
 import {
   "KKKIIO/maple-moon/engine/res",
-  "KKKIIO/maple-moon/game/animation",
   "KKKIIO/maple-moon/game/physics",
   "KKKIIO/maple-moon/game/res_types",
   "KKKIIO/selene/ecs",
-  "KKKIIO/selene/entity",
   "KKKIIO/selene/tiled",
   "moonbitlang/core/debug",
   "moonbitlang/core/json",
@@ -18,7 +16,7 @@ pub fn clear_runtime_context() -> Unit
 
 pub fn clear_tiled_map(@ecs.World) -> Unit
 
-pub fn create_scene_map(MapRawResources, MapPortalAnimations) -> SceneMap raise
+pub fn create_scene_map(MapRawResources) -> SceneMap raise
 
 pub fn current_portals_json() -> Json
 
@@ -46,11 +44,11 @@ pub fn load_map_resources_by_id(Int) -> MapRawResources raise
 
 pub fn portal_system(@ecs.World) -> Unit
 
-pub fn set_portals(MapPortals, get_touch_pos? : () -> @res_types.Point[Int]?) -> Unit
+pub fn set_portals(MapPortals, get_player_position~ : () -> @res_types.Point[Int]?) -> Unit
 
 pub fn set_runtime_context(MapInfo, @physics.Physics) -> Unit
 
-pub fn set_tiled_map(@ecs.World, @tiled.TiledMap, background_animations? : Map[String, @res.SeleneClip]) -> Unit raise
+pub fn set_tiled_map(@ecs.World, @tiled.TiledMap, background_animations? : Map[String, @res.SpriteClip]) -> Unit raise
 
 pub fn tiled_background_motion_system(@ecs.World) -> Unit
 
@@ -99,21 +97,17 @@ pub fn MapInfo::get_full_name(Self) -> String
 pub fn MapInfo::get_walls(Self) -> @res_types.Range[Int]
 pub fn MapInfo::is_underwater(Self) -> Bool
 
-type MapPortalAnimations
-pub fn MapPortalAnimations::load() -> Self
-
 pub struct MapPortals {
-  map_portals_animations : MapPortalAnimations
   id_portal_map : Map[Int, Portal]
   name_portal_id_map : Map[String, Int]
   mut manual_cooldown : Int
   mut auto_cooldown : Int
 }
-pub fn MapPortals::MapPortals(Array[NxPortal], Int, MapPortalAnimations) -> Self
+pub fn MapPortals::MapPortals(Array[NxPortal], Int) -> Self
 pub fn MapPortals::find_auto_warp_at(Self, @res_types.Point[Int]) -> PortalWarpInfo?
 pub fn MapPortals::find_manual_warp_at(Self, @res_types.Point[Int]) -> PortalWarpInfo?
 pub fn MapPortals::find_warp_at(Self, @res_types.Point[Int]) -> PortalWarpInfo?
-pub fn MapPortals::from_tiled_map(@tiled.TiledMap, Int, MapPortalAnimations) -> Self raise
+pub fn MapPortals::from_tiled_map(@tiled.TiledMap, Int) -> Self raise
 pub fn MapPortals::get_portal_by_name(Self, String) -> @res_types.Point[Int]?
 pub fn MapPortals::get_portal_pos_by_id(Self, Int) -> @res_types.Point[Int]?
 
@@ -121,7 +115,7 @@ pub(all) struct MapRawResources {
   id : Int
   mx_map : MxMap
   tiled_map : @tiled.TiledMap
-  background_animations : Map[String, @res.SeleneClip]
+  background_animations : Map[String, @res.SpriteClip]
 }
 
 pub(all) struct MiniMapCanvas {
@@ -175,10 +169,6 @@ pub(all) struct MiniMapRuntimeResource {
 pub fn MiniMapRuntimeResource::from_tiled(MiniMapResource, MapPortals) -> Self
 pub fn MiniMapRuntimeResource::load(MiniMapResource, Array[MiniMapPortal]) -> Self
 
-type Module
-pub fn Module::get_portals_animations(Self) -> MapPortalAnimations
-pub fn Module::load() -> Self
-
 pub struct MxMap {
   tiled_path : String
 }
@@ -221,13 +211,12 @@ type NxSeat
 pub impl @json.FromJson for NxSeat
 
 type Portal
-pub fn Portal::Portal(@animation.Animation?, PortalType, String, Bool, @res_types.Point[Int], Int, String) -> Self
+pub fn Portal::Portal(PortalType, String, Bool, @res_types.Point[Int], Int, String) -> Self
 pub fn Portal::bounds(Self) -> @res_types.Rectangle[Int]
 pub fn Portal::get_name(Self) -> String
 pub fn Portal::get_position(Self) -> @res_types.Point[Int]
 pub fn Portal::get_type(Self) -> PortalType
 pub fn Portal::getwarpinfo(Self) -> PortalWarpInfo
-pub fn Portal::update_touched(Self, @entity.Entity, @res_types.Point[Int]?) -> Unit
 
 pub(all) enum PortalType {
   SPAWN
@@ -261,7 +250,7 @@ pub(all) struct PortalWarpInfo {
 pub(all) struct SceneMap {
   id : Int
   tiled_map : @tiled.TiledMap
-  background_animations : Map[String, @res.SeleneClip]
+  background_animations : Map[String, @res.SpriteClip]
   life_spawns : Array[NxLife]
   physics : @physics.Physics
   map_info : MapInfo

@@ -1,0 +1,1 @@
+{"type":"tileset","name":"obj:guide/miniD/portalEff","objectalignment":"bottomleft","tilewidth":131,"tileheight":166,"tilecount":1,"tiles":[{"id":0,"image":"obj_guide_miniD_portalEff.atlas-0.png","imagewidth":133,"imageheight":168,"x":1,"y":1,"width":131,"height":166}]}

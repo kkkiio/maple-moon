@@ -1,8 +1,51 @@
 ///|
+priv struct QuestIconVisual {
+  clip : @res.SpriteClip
+  graph : @selene_animation.AnimationGraphHandle
+  node : @selene_animation.AnimationNodeIndex
+  dimensions : @struct.Point[Int]
+}
+
+///|
+fn require_quest_icon_visual(
+  source : @res.NxAnimation,
+  name : String,
+) -> QuestIconVisual {
+  let clip = @res.compile_nx_animation(source, name~) catch {
+    error => abort("failed to compile quest icon \{name}: \{error}")
+  }
+  let (graph, node) = @graphics.sprite_clip_graph(clip)
+  { clip, graph, node, dimensions: clip.dimensions }
+}
+
+///|
+fn play_quest_icon_visual(
+  entity : @entity.Entity,
+  visual : QuestIconVisual,
+) -> Unit {
+  @sprite.sprites().set(entity, visual.clip.sprite())
+  @selene_animation.animation_target_ids().set(
+    entity,
+    @selene_animation.AnimationTargetId("self"),
+  )
+  @selene_animation.animated_bys().set(
+    entity,
+    @selene_animation.AnimatedBy(entity),
+  )
+  @selene_animation.animation_graph_handles().set(entity, visual.graph)
+  let player = @selene_animation.animation_players().get_or_init(entity, fn() {
+    @selene_animation.AnimationPlayer()
+  })
+  ignore(
+    player.start(visual.node, repeat=@selene_animation.RepeatAnimation::Forever),
+  )
+}
+
+///|
 priv struct QuestIconResources {
-  available : @res.NxAnimation
-  in_progress : @res.NxAnimation
-  completed : @res.NxAnimation
+  available : QuestIconVisual
+  in_progress : QuestIconVisual
+  completed : QuestIconVisual
 }
 
 ///|
@@ -45,9 +88,6 @@ priv struct CachedNpcIconQuery {
 let last_quest_log_revision : Ref[Int] = Ref(-1)
 
 ///|
-const QUEST_ICON_ZINDEX_OFFSET = 5000
-
-///|
 fn default_icon_offset() -> @struct.Point[Int] {
   Point(0, -96)
 }
@@ -59,7 +99,13 @@ pub fn set_resources_for_test(
   in_progress : @res.NxAnimation,
   completed : @res.NxAnimation,
 ) -> Unit {
-  quest_icon_resources.val = Some({ available, in_progress, completed })
+  quest_icon_resources.val = Some({
+    available: require_quest_icon_visual(available, "quest-icon/available"),
+    in_progress: require_quest_icon_visual(
+      in_progress, "quest-icon/in-progress",
+    ),
+    completed: require_quest_icon_visual(completed, "quest-icon/completed"),
+  })
   quest_icon_loading.val = None
 }
 
@@ -93,10 +139,8 @@ pub fn quest_icon_system(_world : @ecs.World) -> Unit {
   let anchors = @npc.list_npc_anchors()
   if !anchors.is_empty() {
     sync_runtimes(anchors, context, resources)
-    if get_demo_quest_selection() is None {
-      let npc_ids = anchors.map(fn(anchor) { anchor.npc_id })
-      ignore(select_demo_quest_by_npcs(npc_ids))
-    }
+    let npc_ids = anchors.map(fn(anchor) { anchor.npc_id })
+    ignore(select_demo_quest_by_npcs(npc_ids))
   }
   handle_pointer_clicks()
 }
@@ -118,7 +162,7 @@ pub fn upsert_npc(
     get_query_revision: quest_icon_query_revision,
   }
   upsert_runtime(
-    { oid, npc_id, entity: npc_entity, npc_object },
+    { oid, npc_id, entity: npc_entity, npc_object, ambient_states: [] },
     context,
     resources,
   )
@@ -162,22 +206,27 @@ fn poll_loading_result() -> Unit {
 
 ///|
 fn load_resources() -> QuestIconResources {
+  let available : @res.NxAnimation = @json.from_json(
+    @res.require_json_node("res://UI/UIWindow2.img/QuestIcon.json", ["0"]),
+  ) catch {
+    _ => abort("invalid available quest icon")
+  }
+  let in_progress : @res.NxAnimation = @json.from_json(
+    @res.require_json_node("res://UI/UIWindow2.img/QuestIcon.json", ["1"]),
+  ) catch {
+    _ => abort("invalid in-progress quest icon")
+  }
+  let completed : @res.NxAnimation = @json.from_json(
+    @res.require_json_node("res://UI/UIWindow2.img/QuestIcon.json", ["2"]),
+  ) catch {
+    _ => abort("invalid completed quest icon")
+  }
   {
-    available: @json.from_json(
-      @res.require_json_node("res://UI/UIWindow2.img/QuestIcon.json", ["0"]),
-    ) catch {
-      _ => abort("invalid available quest icon")
-    },
-    in_progress: @json.from_json(
-      @res.require_json_node("res://UI/UIWindow2.img/QuestIcon.json", ["1"]),
-    ) catch {
-      _ => abort("invalid in-progress quest icon")
-    },
-    completed: @json.from_json(
-      @res.require_json_node("res://UI/UIWindow2.img/QuestIcon.json", ["2"]),
-    ) catch {
-      _ => abort("invalid completed quest icon")
-    },
+    available: require_quest_icon_visual(available, "quest-icon/available"),
+    in_progress: require_quest_icon_visual(
+      in_progress, "quest-icon/in-progress",
+    ),
+    completed: require_quest_icon_visual(completed, "quest-icon/completed"),
   }
 }
 
@@ -228,7 +277,7 @@ fn upsert_runtime(
     let previous = runtime_by_oid.val.get(oid)
     remove_runtime(oid)
     let icon = state_to_icon(resources, desired.state)
-    let icon_size = nx_animation_dimensions(icon)
+    let icon_size = icon.dimensions
     let icon_entity = anchor.entity.spawn_child()
     @transform2d.set_xy(
       icon_entity,
@@ -237,14 +286,7 @@ fn upsert_runtime(
         default_icon_offset().y.to_double(),
       ),
     )
-    let icon_animation = @ms_animation.from_nx_animation(icon, loop_=true)
-    @sprite.sprites().set(
-      icon_entity,
-      @ms_animation.sprite_from_animation(
-        icon_animation,
-        @graphics.OBJECT_TILE_LAYER_ZINDEX + QUEST_ICON_ZINDEX_OFFSET,
-      ),
-    )
+    play_quest_icon_visual(icon_entity, icon)
     @physics2d.pickables().set(icon_entity, @physics2d.Pickable::{
       active: true,
     })
@@ -334,7 +376,7 @@ fn handle_pointer_clicks() -> Unit {
 fn state_to_icon(
   resources : QuestIconResources,
   state : QuestIconState,
-) -> @res.NxAnimation {
+) -> QuestIconVisual {
   match state {
     QuestIconState::AVAILABLE => resources.available
     QuestIconState::IN_PROGRESS => resources.in_progress
@@ -346,21 +388,10 @@ fn state_to_icon(
 fn destroy_icon_entity(icon_entity : @entity.Entity) -> Unit {
   @physics2d.pickables().remove(icon_entity)
   @physics2d.shapes().remove(icon_entity)
-  @sprite.sprites().remove(icon_entity)
-  icon_entity.destroy()
-}
-
-///|
-fn nx_animation_dimensions(
-  animation : @res.NxAnimation,
-) -> @struct.Point[Int] {
-  let mut width = 0
-  let mut height = 0
-  for frame in animation.frames {
-    width = @cmp.maximum(width, frame.texture.w)
-    height = @cmp.maximum(height, frame.texture.h)
+  @graphics.clear_sprite_animation(icon_entity)
+  if icon_entity.is_alive() {
+    icon_entity.destroy()
   }
-  Point(width, height)
 }
 
 ///|

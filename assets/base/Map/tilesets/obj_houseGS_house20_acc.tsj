@@ -1,1 +1,0 @@
-{"type":"tileset","name":"obj:houseGS/house20/acc","objectalignment":"bottomleft","tilewidth":72,"tileheight":151,"tilecount":3,"tiles":[{"id":0,"image":"../images/13819.png","imagewidth":72,"imageheight":151},{"id":1,"image":"../images/13820.png","imagewidth":36,"imageheight":59},{"id":2,"image":"../images/13821.png","imagewidth":31,"imageheight":57}]}

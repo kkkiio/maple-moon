@@ -1,0 +1,1 @@
+{"type":"tileset","name":"obj:signboard/market/back","objectalignment":"bottomleft","tilewidth":82,"tileheight":132,"tilecount":1,"tiles":[{"id":0,"image":"obj_signboard_market_back.atlas-0.png","imagewidth":84,"imageheight":134,"x":1,"y":1,"width":82,"height":132}]}

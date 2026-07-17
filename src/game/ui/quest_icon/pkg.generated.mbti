@@ -84,15 +84,7 @@ pub fn MapQuestsResource::load() -> Self
 type Module
 pub fn Module::query_npc_icon(Self, Int) -> QuestIconQueryResult?
 
-pub(all) struct NpcQuest {
-  npc_id : Int
-  icon_state : QuestIconState
-  icon : @res.NxAnimation
-  icon_offset : @res_types.Point[Int]
-  icon_size : @res_types.Point[Int]
-  quest_id : Int
-  in_progress_quest : (Int, Bool)?
-}
+type NpcQuest
 
 pub(all) struct QuestIconQueryResult {
   npc_id : Int

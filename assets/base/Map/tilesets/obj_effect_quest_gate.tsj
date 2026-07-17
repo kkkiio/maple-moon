@@ -1,1 +1,0 @@
-{"type":"tileset","name":"obj:effect/quest/gate","objectalignment":"bottomleft","tilewidth":234,"tileheight":216,"tilecount":3,"tiles":[{"id":0,"image":"../images/11078.png","imagewidth":146,"imageheight":154},{"id":1,"image":"../images/11086.png","imagewidth":218,"imageheight":216},{"id":2,"image":"../images/11087.png","imagewidth":234,"imageheight":216}]}

@@ -8,6 +8,8 @@
 - **`res://` address** — 与资源包物理目录解耦的公开资源地址.
 - **Graphics snapshot** — 由 native raylib backend 捕获并与 PNG baseline 逐像素比较的视觉回归结果.
 - **Playtest bot** — 通过 `game_debug` 和 `BotController` 执行场景脚本的自动化玩家.
+- **Dev Chrome** — 由 `just dev` 打开并运行 `game_debug` 的受控 Chrome 实例.
+- **Maple CLI** — 以原子命令观察和操作 Dev Chrome 中游戏运行时的 native command-line client.
 
 ## Policies & Mandatory Rules
 
@@ -130,7 +132,7 @@ MoonBit 允许 `test` 直接传播错误, 用 `fail` 函数抛出错误.
 │   │   ├── map/ map_object/ physics/ controller/ transform2d/
 │   │   ├── inventory/ equip/ item/ quest/ drop/
 │   │   ├── clothing/ weapon/ job/ res_types/
-│   │   ├── animation/ bgm/ camera/ cursor/ logic_fps/
+│   │   ├── bgm/ camera/ cursor/ logic_fps/
 │   │   ├── maple_stat/ markup_text/ server_proto/
 │   │   └── ui/                ← 游戏画面 (背包、商店、NPC 对话等)
 │   ├── graphics_test/         ← 图形快照测试 (视觉回归, 一个 package)
@@ -138,37 +140,41 @@ MoonBit 允许 `test` 直接传播错误, 用 `fail` 函数抛出错误.
 │       ├── maple/             ← native CLI (maple start / cmd / logs / bot ...)
 │       └── mapled/            ← native CDP daemon (Chrome 控制, 注入, 采集)
 ├── assets/                    ← 运行资源 (按 resource pack 组织)
-│   └── base/                  ← base pack (当前 Victoria Island 运行闭包)
+│   ├── base/                  ← 跨大陆必选公共资源
+│   └── dlc-victoria/          ← Victoria Island 区域资源闭包
 └── source_assets/             ← 编辑源文件 (.aseprite 等，不入 VFS，不分发)
-    └── base/                  ← 与 assets/base/ 镜像
+    ├── base/                  ← 与 assets/base/ 镜像
+    └── dlc-victoria/          ← 与 assets/dlc-victoria/ 镜像
 ```
 
 ### Assets Structure
 
-游戏代码使用 `res://` 地址访问资源，不写 `assets/` 物理路径。`assets/` 按 resource
-pack 组织，当前只有 `base` pack（Victoria Island 闭包）。`source_assets/` 镜像存放
-`.aseprite` 等编辑源文件，不入 VFS、不进入分发。
+游戏代码使用 `res://` 地址访问资源，不写 `assets/` 物理路径。`base` 保存跨大陆的
+必选公共资源，`dlc-victoria` 保存 Victoria Island 地图、怪物、NPC 和区域音效。
+`source_assets/` 镜像存放 `.aseprite` 等编辑源文件，不入 VFS、不进入分发。
 
 ```text
 assets/
-└── base/
+├── base/
     ├── Character/             ← 角色身体、发型、脸型、装备、afterimage
     ├── Data/                  ← 游戏数据表 (tsv/json)
     ├── Effect/                ← 特效数据
     ├── Etc/                   ← 杂项
     ├── Item/                  ← 道具数据与图片
-    ├── Map/                   ← Tiled TMJ/TSJ、tileset 与地图图片
-    ├── Mob/                   ← 怪物 mx.json 与 aseprite 动画闭包
-    ├── Npc/                   ← NPC mx.json 与 aseprite 动画闭包
     ├── Quest/                 ← 任务数据
     ├── Skill/                 ← 技能数据与动画
-    ├── Sound/                 ← BGM/SFX 音频
+    ├── Sound/                 ← 公共 SFX
     ├── String/                ← NX String JSON
     └── UI/                    ← UI 布局与素材
+└── dlc-victoria/
+    ├── Map/                   ← Victoria Tiled 地图与图片闭包
+    ├── Mob/                   ← Victoria 怪物动画闭包
+    ├── Npc/                   ← Victoria NPC 动画闭包
+    └── Sound/                 ← Victoria 区域 BGM
 
 source_assets/
-└── base/
-    └── (与 assets/base/ 镜像的 .aseprite 等源文件)
+├── base/                      ← 公共资源的可编辑源
+└── dlc-victoria/              ← Victoria 资源的可编辑源
 ```
 
 运行资源与编辑源文件分离的详细约定见 `docs/pipeline.md`，寻址与挂载见
@@ -369,5 +375,6 @@ test {
 local server 可以异步读取资源。客户端要保证先 preload，避免 `async` 污染游戏
 逻辑代码。
 
-提交资源时运行产物进 `assets/base/`，编辑源文件（`.aseprite` 等）进镜像的
-`source_assets/base/`。不提交引用图片缺失的半成品导出 JSON。
+提交资源时按 `resource_packs/<pack-id>.pack.json` 的归属把运行产物放进
+`assets/<pack-id>/`，把 `.aseprite` 放进镜像的 `source_assets/<pack-id>/`。
+不提交引用图片缺失的半成品导出 JSON。

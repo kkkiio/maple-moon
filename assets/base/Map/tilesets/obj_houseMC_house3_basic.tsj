@@ -1,1 +1,0 @@
-{"type":"tileset","name":"obj:houseMC/house3/basic","objectalignment":"bottomleft","tilewidth":632,"tileheight":484,"tilecount":3,"tiles":[{"id":0,"image":"../images/8065.png","imagewidth":632,"imageheight":484},{"id":1,"image":"../images/8066.png","imagewidth":43,"imageheight":92},{"id":2,"image":"../images/8067.png","imagewidth":43,"imageheight":126}]}

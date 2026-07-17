@@ -1,7 +1,7 @@
 ///|
 /// One animation metadata node declared in `mx.json.stance_nodes`.
 pub struct MxMobAnimNode {
-  /// Unique path key used to look up `mx_animations[path_key]`.
+  /// Animation tag in the Mob's tagged spritesheet.
   path_key : String
   /// Total animation duration in milliseconds.
   total_duration_ms : Int
@@ -16,7 +16,7 @@ pub struct MxMobAnimNode {
 ///|
 /// One effect node bound to attack/skill metadata.
 pub struct MxMobEffectNode {
-  /// Unique path key used to look up `mx_animations[path_key]`.
+  /// Effect animation tag in the Mob's tagged spritesheet.
   path_key : String
   /// Extra z offset applied on top of effect layer base z.
   z : Int
@@ -74,8 +74,8 @@ pub struct MxMob {
   attack_nodes : Map[Int, MxMobAttackNode]
   /// Skill nodes keyed by skill id.
   skill_nodes : Map[Int, MxMobSkillNode]
-  /// Animation path references keyed by `path_key`.
-  mx_animations : Map[String, String]
+  /// Tagged Aseprite JSON path relative to this `mx.json`.
+  animations_path : String
 }
 
 ///|
@@ -281,31 +281,6 @@ pub impl @json.FromJson for MxMobSkillNode with fn from_json(json, path) {
 }
 
 ///|
-fn parse_string_map(
-  json : Json,
-  path : @json.JsonPath,
-  key_name : String,
-) -> Map[String, String] raise @json.JsonDecodeError {
-  let out : Map[String, String] = Map([])
-  match json {
-    Object(obj) =>
-      for key, value in obj {
-        guard value is String(v) else {
-          raise @json.JsonDecodeError(
-            (path.add_key(key_name).add_key(key), "value should be string"),
-          )
-        }
-        out[key] = v
-      }
-    _ =>
-      raise @json.JsonDecodeError(
-        (path.add_key(key_name), "\{key_name} should be object"),
-      )
-  }
-  out
-}
-
-///|
 pub impl @json.FromJson for MxMob with fn from_json(json, path) {
   guard json is Object(root) else {
     raise @json.JsonDecodeError((path, "MxMob must be an object"))
@@ -378,11 +353,13 @@ pub impl @json.FromJson for MxMob with fn from_json(json, path) {
     None => ()
   }
 
-  let mx_animations = parse_string_map(
-    root.get("mx_animations").unwrap_or(Json::empty_object()),
-    path,
-    "mx_animations",
-  )
+  let animations_path = match root.get("animations_path") {
+    Some(String(value)) => value
+    _ =>
+      raise @json.JsonDecodeError(
+        (path.add_key("animations_path"), "missing animations_path"),
+      )
+  }
 
-  { info, stance_nodes, attack_nodes, skill_nodes, mx_animations }
+  { info, stance_nodes, attack_nodes, skill_nodes, animations_path }
 }

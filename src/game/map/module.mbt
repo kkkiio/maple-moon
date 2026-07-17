@@ -1,9 +1,4 @@
 ///|
-struct Module {
-  portals_animations : MapPortalAnimations
-}
-
-///|
 fn parse_int_arg(args : Array[String], index : Int, default : Int) -> Int {
   guard index >= 0 && index < args.length() else { return default }
   @string.parse_int(args[index]) catch {
@@ -21,15 +16,4 @@ fn init {
     )
     { "ok": true, "code": "OK", "message": "warp command sent", "args": args }
   })
-}
-
-///|
-pub fn Module::load() -> Module {
-  let portals_animations = MapPortalAnimations::load()
-  { portals_animations, }
-}
-
-///|
-pub fn Module::get_portals_animations(self : Module) -> MapPortalAnimations {
-  self.portals_animations
 }

@@ -1,6 +1,6 @@
 ///|
 priv struct BulletSpawn {
-  animation : @ms_animation.Animation
+  animation : @combat_proto.BulletAnimation
   origin : @struct.Point[Int]
   toleft : Bool
   target : @struct.Point[Int]
@@ -41,7 +41,7 @@ pub fn BulletSystem::BulletSystem() -> BulletSystem {
 pub fn BulletSystem::spawn(
   self : BulletSystem,
   delay : Int64,
-  animation : @ms_animation.Animation,
+  animation : @combat_proto.BulletAnimation,
   origin : @struct.Point[Int],
   toleft : Bool,
   target : @struct.Point[Int],
@@ -112,7 +112,7 @@ pub fn set_current_bullet_system(system : BulletSystem?) -> Unit {
 /// Panics if the runtime has not been initialized.
 pub fn spawn_bullet(
   delay : Int64,
-  animation : @ms_animation.Animation,
+  animation : @combat_proto.BulletAnimation,
   origin : @struct.Point[Int],
   toleft : Bool,
   target : @struct.Point[Int],
@@ -165,7 +165,7 @@ pub fn bullet_system(_world : @ecs.World) -> Unit {
 
 ///|
 fn clear_entity(entity : @entity.Entity) -> Unit {
-  @sprite.sprites().remove(entity)
+  @graphics.clear_sprite_animation(entity)
   @transform2d.remove(entity)
   if entity.is_alive() {
     entity.destroy()

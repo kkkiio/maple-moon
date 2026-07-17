@@ -1,0 +1,112 @@
+{
+  "info": {
+    "MADamage": 0,
+    "MDDamage": 350,
+    "PADamage": 150,
+    "PDDamage": 350,
+    "acc": 195,
+    "bodyAttack": 1,
+    "eva": 20,
+    "exp": 115,
+    "fs": 10,
+    "level": 45,
+    "maxHP": 2650,
+    "maxMP": 0,
+    "mobType": 0,
+    "pushed": 1700,
+    "speed": 20,
+    "summonType": 1,
+    "undead": 0
+  },
+  "stance_nodes": {
+    "die1": {
+      "path_key": "die1",
+      "total_duration_ms": 840,
+      "loop_": false,
+      "first_head": {
+        "x": -16,
+        "y": -52
+      },
+      "first_bounds": null
+    },
+    "hit1": {
+      "path_key": "hit1",
+      "total_duration_ms": 600,
+      "loop_": false,
+      "first_head": {
+        "x": -17,
+        "y": -62
+      },
+      "first_bounds": {
+        "lt": {
+          "x": -42,
+          "y": -66
+        },
+        "rb": {
+          "x": 31,
+          "y": 0
+        }
+      }
+    },
+    "jump": {
+      "path_key": "jump",
+      "total_duration_ms": 100,
+      "loop_": false,
+      "first_head": {
+        "x": -16,
+        "y": -56
+      },
+      "first_bounds": {
+        "lt": {
+          "x": -34,
+          "y": -61
+        },
+        "rb": {
+          "x": 33,
+          "y": 0
+        }
+      }
+    },
+    "move": {
+      "path_key": "move",
+      "total_duration_ms": 200,
+      "loop_": true,
+      "first_head": {
+        "x": -16,
+        "y": -57
+      },
+      "first_bounds": {
+        "lt": {
+          "x": -34,
+          "y": -62
+        },
+        "rb": {
+          "x": 33,
+          "y": 0
+        }
+      }
+    },
+    "stand": {
+      "path_key": "stand",
+      "total_duration_ms": 1160,
+      "loop_": true,
+      "first_head": {
+        "x": -16,
+        "y": -56
+      },
+      "first_bounds": {
+        "lt": {
+          "x": -34,
+          "y": -61
+        },
+        "rb": {
+          "x": 33,
+          "y": 0
+        }
+      }
+    }
+  },
+  "attack_nodes": {},
+  "skill_nodes": {},
+  "animations_path": "animation.json"
+}

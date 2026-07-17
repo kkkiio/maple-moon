@@ -2,7 +2,7 @@
 package "KKKIIO/maple-moon/game/bullet"
 
 import {
-  "KKKIIO/maple-moon/game/animation",
+  "KKKIIO/maple-moon/game/combat_proto",
   "KKKIIO/maple-moon/game/item",
   "KKKIIO/maple-moon/game/res_types",
   "KKKIIO/selene/ecs",
@@ -29,14 +29,14 @@ pub fn set_bullet_module(Module) -> Unit
 
 pub fn set_current_bullet_system(BulletSystem?) -> Unit
 
-pub fn spawn_bullet(Int64, @animation.Animation, @res_types.Point[Int], Bool, @res_types.Point[Int], () -> Unit, (@res_types.Point[Int]) -> @res_types.Point[Int]) -> Unit
+pub fn spawn_bullet(Int64, @combat_proto.BulletAnimation, @res_types.Point[Int], Bool, @res_types.Point[Int], () -> Unit, (@res_types.Point[Int]) -> @res_types.Point[Int]) -> Unit
 
 // Errors
 
 // Types and methods
 pub(all) struct BulletData {
   item_data : @item.ItemData
-  bullet : @animation.Animation
+  bullet : @combat_proto.BulletAnimation
   watk : Int
 }
 pub fn BulletData::load(String) -> Self raise
@@ -44,7 +44,7 @@ pub fn BulletData::load(String) -> Self raise
 type BulletSystem
 pub fn BulletSystem::BulletSystem() -> Self
 pub fn BulletSystem::clear(Self) -> Unit
-pub fn BulletSystem::spawn(Self, Int64, @animation.Animation, @res_types.Point[Int], Bool, @res_types.Point[Int], () -> Unit, (@res_types.Point[Int]) -> @res_types.Point[Int]) -> Unit
+pub fn BulletSystem::spawn(Self, Int64, @combat_proto.BulletAnimation, @res_types.Point[Int], Bool, @res_types.Point[Int], () -> Unit, (@res_types.Point[Int]) -> @res_types.Point[Int]) -> Unit
 pub fn BulletSystem::update(Self, timestep~ : Int64) -> Unit
 
 type Module

@@ -4,16 +4,12 @@ test "runtime facade forwards messages, handlers, and ticks" {
   @game_server.install(server)
   @game_server.send(@server_proto.CharacterListRequestMessage(()))
   assert_eq(
-    server.sent_count(
-      @server_proto.CharacterListRequestMessage::type_code(),
-    ),
+    server.sent_count(@server_proto.CharacterListRequestMessage::type_code()),
     1,
   )
   @game_server.init_server()
   assert_eq(
-    server.sent_count(
-      @server_proto.CharacterListRequestMessage::type_code(),
-    ),
+    server.sent_count(@server_proto.CharacterListRequestMessage::type_code()),
     0,
   )
   let received = Ref(false)
@@ -30,9 +26,7 @@ test "runtime facade forwards messages, handlers, and ticks" {
   )
   @game_server.send(@server_proto.CharacterListRequestMessage(()))
   let request_json = server
-    .latest_sent_json(
-      @server_proto.CharacterListRequestMessage::type_code(),
-    )
+    .latest_sent_json(@server_proto.CharacterListRequestMessage::type_code())
     .unwrap()
   let _ : @server_proto.CharacterListRequestMessage = @json.from_json(
     request_json,

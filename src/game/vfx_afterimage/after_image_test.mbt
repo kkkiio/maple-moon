@@ -10,8 +10,8 @@ fn init {
 
 ///|
 fn create_test_resource(first_frame : Int) -> NxAfterImage {
-  {
-    animation: @ms_animation.from_nx_animation(@res.NxAnimation::{
+  let clip = try! @res.compile_nx_animation(
+    @res.NxAnimation::{
       frames: [
         {
           texture: {
@@ -28,10 +28,10 @@ fn create_test_resource(first_frame : Int) -> NxAfterImage {
       ],
       blend: false,
       zigzag: false,
-    }),
-    range: @struct.Rectangle::from4(-50, 50, -50, 50),
-    first_frame,
-  }
+    },
+    name="test/afterimage",
+  )
+  NxAfterImage(clip, @struct.Rectangle::from4(-50, 50, -50, 50), first_frame)
 }
 
 ///|

@@ -2,24 +2,28 @@
 struct MapDrops {
   drops : Map[Int, &Drop]
   spawns : @queue.Queue[DropSpawn]
-  meso_icons : Map[MesoIcon, @res.NxAnimation]
+  meso_icons : Map[MesoIcon, MesoDropAnimation]
 }
 
 ///|
-fn MapDrops::MapDrops(src : Json) -> MapDrops raise @json.JsonDecodeError {
-  let meso_icons : Map[MesoIcon, @res.NxAnimation] = Map([])
-  meso_icons[MesoIcon::BRONZE] = nx_node_to_animation(
-    get_icon_raw(src, "09000000"),
-  )
-  meso_icons[MesoIcon::GOLD] = nx_node_to_animation(
-    get_icon_raw(src, "09000001"),
-  )
-  meso_icons[MesoIcon::BUNDLE] = nx_node_to_animation(
-    get_icon_raw(src, "09000002"),
-  )
-  meso_icons[MesoIcon::BAG] = nx_node_to_animation(
-    get_icon_raw(src, "09000003"),
-  )
+fn MapDrops::MapDrops(src : Json) -> MapDrops raise {
+  let meso_icons : Map[MesoIcon, MesoDropAnimation] = Map([])
+  let icon_entries : Array[(MesoIcon, String)] = [
+    (MesoIcon::BRONZE, "09000000"),
+    (MesoIcon::GOLD, "09000001"),
+    (MesoIcon::BUNDLE, "09000002"),
+    (MesoIcon::BAG, "09000003"),
+  ]
+  for entry in icon_entries {
+    let (icon_type, resource_id) = entry
+    let source = nx_node_to_animation(get_icon_raw(src, resource_id))
+    let clip = @res.compile_nx_animation(
+      source,
+      name="drop/meso/\{resource_id}",
+    )
+    let (graph, node) = @graphics.sprite_clip_graph(clip)
+    meso_icons[icon_type] = { clip, graph, node }
+  }
   { drops: Map([]), spawns: @queue.Queue([]), meso_icons }
 }
 
@@ -151,7 +155,7 @@ struct DropSpawn {
 ///|
 fn DropSpawn::instantiate_meso(
   self : DropSpawn,
-  icon : @res.NxAnimation,
+  animation : MesoDropAnimation,
 ) -> &Drop {
   MesoDrop(
     self.oid,
@@ -161,7 +165,7 @@ fn DropSpawn::instantiate_meso(
     self.drop_type,
     self.mode,
     self.player_drop,
-    icon,
+    animation,
   )
 }
 

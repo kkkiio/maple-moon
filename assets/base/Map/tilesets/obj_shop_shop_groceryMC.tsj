@@ -1,1 +1,0 @@
-{"type":"tileset","name":"obj:shop/shop/groceryMC","objectalignment":"bottomleft","tilewidth":800,"tileheight":647,"tilecount":3,"tiles":[{"id":0,"image":"../images/11729.png","imagewidth":800,"imageheight":480},{"id":1,"image":"../images/11730.png","imagewidth":239,"imageheight":231},{"id":2,"image":"../images/11731.png","imagewidth":800,"imageheight":647}]}

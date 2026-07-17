@@ -1,5 +1,4 @@
 import {
-  "KKKIIO/maple-moon/game/animation" @ms_animation,
   "moonbitlang/core/math",
   "moonbitlang/core/json",
   "moonbitlang/core/queue",
@@ -15,7 +14,9 @@ import {
   "KKKIIO/maple-moon/engine/io_service",
   "KKKIIO/maple-moon/game/transform2d",
   "KKKIIO/selene/entity",
+  "KKKIIO/selene/animation" @selene_animation,
   "KKKIIO/selene/sprite",
   "KKKIIO/selene/math" @selene_math,
+  "KKKIIO/selene/transform",
   "KKKIIO/selene/ecs",
 }

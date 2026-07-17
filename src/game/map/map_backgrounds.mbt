@@ -53,7 +53,7 @@ priv struct TiledBackgroundMotionState {
   tile_counts : (Int, Int)
   image_size : @selene_math.Vec2
   layer_z : Int
-  clip : @res.SeleneClip?
+  clip : @res.SpriteClip?
   sprite_template : @sprite.Sprite
   background_type : NxBackgroundType
   base_screen_offset : @selene_math.Vec2
@@ -430,7 +430,10 @@ fn background_sprite_for_frame(
 ) -> @sprite.Sprite {
   match state.clip {
     Some(clip) => {
-      let atlas = @sprite.TextureAtlas(clip.layout, index=frame_index)
+      let atlas = @sprite.TextureAtlas(
+        clip.layout,
+        index=clip.first_frame_index + frame_index,
+      )
       {
         ..state.sprite_template,
         image: Some(clip.image),
@@ -490,7 +493,7 @@ fn replace_aseprite_suffix(path : String) -> String? {
 fn create_background_motion_states(
   tile_map : @tiled.TiledMap,
   root : @entity.Entity,
-  clips_by_entity : Map[@entity.Entity, @res.SeleneClip],
+  clips_by_entity : Map[@entity.Entity, @res.SpriteClip],
 ) -> Map[@entity.Entity, TiledBackgroundMotionState] raise {
   let states : Map[@entity.Entity, TiledBackgroundMotionState] = Map([])
   let parallax_origin = @selene_math.Vec2(
@@ -601,9 +604,9 @@ fn create_background_motion_states(
 fn collect_background_animation_clips(
   image_layer_events : Array[@tiled.TiledImageLayerSpawnedEvent],
   root : @entity.Entity,
-  background_animations : Map[String, @res.SeleneClip],
-) -> Map[@entity.Entity, @res.SeleneClip] raise {
-  let clips_by_entity : Map[@entity.Entity, @res.SeleneClip] = Map([])
+  background_animations : Map[String, @res.SpriteClip],
+) -> Map[@entity.Entity, @res.SpriteClip] raise {
+  let clips_by_entity : Map[@entity.Entity, @res.SpriteClip] = Map([])
   for event in image_layer_events {
     if event.map_entity == root {
       if background_animations.get(event.layer.name) is Some(clip) {
@@ -625,7 +628,7 @@ fn set_tiled_backgrounds(
   map : @tiled.TiledMap,
   root : @entity.Entity,
   image_layer_events : Array[@tiled.TiledImageLayerSpawnedEvent],
-  background_animations : Map[String, @res.SeleneClip],
+  background_animations : Map[String, @res.SpriteClip],
 ) -> Unit raise {
   let clips_by_entity = collect_background_animation_clips(
     image_layer_events, root, background_animations,

@@ -1,54 +1,39 @@
 ///|
-using @res {type NxFrame, type NxAnimation}
-
-///|
 using @selene_math {type Vec2}
 
 ///|
-/// 类似于 Charset, 但是专门用于 DamageSkin, 存储 selene @ms_animation.Picture
+/// 类似于 Charset, 但是专门用于 DamageSkin, 存储数字的静态 NX 贴图.
 struct DamageSkin {
-  sprites : Map[Char, @ms_animation.Animation]
+  textures : Map[Char, @res.NxTexture]
 }
 
 ///|
 pub impl Default for DamageSkin with fn default() {
-  { sprites: Map([]) }
+  { textures: Map([]) }
 }
 
 ///|
 pub impl @json.FromJson for DamageSkin with fn from_json(json, path) {
-  let sprites = Map([])
-  guard json is Object(obj) else { return { sprites, } }
+  let textures = Map([])
+  guard json is Object(obj) else { return { textures, } }
   for name, sub in obj {
     guard sub is { "__i": String(_), .. } else { continue }
     guard name.length() == 1 else { continue }
     let c = name.to_array()[0]
     try {
-      let tex : @res.NxTexture = @json.from_json(
-        sub,
-        path=path.add_key(name),
-      )
-      // Wrap texture into an animation since single frames need to support offsets
-      let frame = NxFrame::{
-        texture: tex,
-        delay: None,
-        head: None,
-        bounds: None,
-      }
-      let anim = NxAnimation::{ frames: [frame], blend: false, zigzag: false }
-      let pic = @ms_animation.from_nx_animation(anim)
-      sprites.set(c, pic)
+      let tex : @res.NxTexture = @json.from_json(sub, path=path.add_key(name))
+      textures.set(c, tex)
     } catch {
       _ => ()
     }
   }
-  { sprites, }
+  { textures, }
 }
 
 ///|
 fn DamageSkin::get_width(self : DamageSkin, c : Char) -> Int {
-  match self.sprites.get(c) {
-    Some(anim) => @ms_animation.animation_dimensions(anim).0.to_int()
+  match self.textures.get(c) {
+    Some(texture) => texture.w
     None => 0
   }
 }
@@ -241,19 +226,15 @@ pub fn NumberSet::show_number(
   let start_offset = Point(0, -shift)
   let mut current_offset = start_offset
   fn spawn_sprite(skin : DamageSkin, c : Char, offset : @struct.Point[Int]) {
-    match skin.sprites.get(c) {
-      Some(anim) => {
+    match skin.textures.get(c) {
+      Some(texture) => {
         let offset_vec = @selene_math.Vec2(
           offset.x.to_double(),
           offset.y.to_double(),
         )
         let child = parent_entity.spawn_child()
         @transform2d.set_xy(child, offset_vec)
-        let sprite = @ms_animation.sprite_from_animation(
-          anim,
-          @graphics.DAMAGE_NUMBER_ZINDEX,
-        )
-        @sprite.sprites().set(child, sprite)
+        @sprite.sprites().set(child, texture.require_sprite())
       }
       None => ()
     }

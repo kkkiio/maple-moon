@@ -1,1 +1,0 @@
-{"type":"tileset","name":"obj:houseVPT/house_info/basic","objectalignment":"bottomleft","tilewidth":413,"tileheight":227,"tilecount":3,"tiles":[{"id":0,"image":"../images/15987.png","imagewidth":178,"imageheight":80},{"id":1,"image":"../images/15989.png","imagewidth":413,"imageheight":71},{"id":2,"image":"../images/15988.png","imagewidth":345,"imageheight":227}]}

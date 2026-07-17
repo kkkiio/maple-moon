@@ -49,11 +49,11 @@ priv struct PlayerDeps {
 /// Resources for `MapQuests`.
 struct MapQuestsResource {
   /// Icon shown when a quest is available from an NPC.
-  available_quest_icon : @res.NxAnimation
+  available_quest_icon : QuestIconVisual
   /// Icon shown when a quest is in progress with an NPC.
-  inprogress_quest_icon : @res.NxAnimation
+  inprogress_quest_icon : QuestIconVisual
   /// Icon shown when a quest can be completed with an NPC.
-  completed_quest_icon : @res.NxAnimation
+  completed_quest_icon : QuestIconVisual
 }
 
 ///|
@@ -63,29 +63,38 @@ pub fn MapQuestsResource::MapQuestsResource(
   inprogress_quest_icon : @res.NxAnimation,
   completed_quest_icon : @res.NxAnimation,
 ) -> MapQuestsResource {
-  { available_quest_icon, inprogress_quest_icon, completed_quest_icon }
+  {
+    available_quest_icon: require_quest_icon_visual(
+      available_quest_icon, "map-quests/available",
+    ),
+    inprogress_quest_icon: require_quest_icon_visual(
+      inprogress_quest_icon, "map-quests/in-progress",
+    ),
+    completed_quest_icon: require_quest_icon_visual(
+      completed_quest_icon, "map-quests/completed",
+    ),
+  }
 }
 
 ///|
 /// Loads the graphical resources for quest icons.
 pub fn MapQuestsResource::load() -> MapQuestsResource {
-  {
-    available_quest_icon: @json.from_json(
-      @res.require_json_node("res://UI/UIWindow2.img/QuestIcon.json", ["0"]),
-    ) catch {
-      _ => abort("invalid available quest icon")
-    },
-    inprogress_quest_icon: @json.from_json(
-      @res.require_json_node("res://UI/UIWindow2.img/QuestIcon.json", ["1"]),
-    ) catch {
-      _ => abort("invalid in-progress quest icon")
-    },
-    completed_quest_icon: @json.from_json(
-      @res.require_json_node("res://UI/UIWindow2.img/QuestIcon.json", ["2"]),
-    ) catch {
-      _ => abort("invalid completed quest icon")
-    },
+  let available : @res.NxAnimation = @json.from_json(
+    @res.require_json_node("res://UI/UIWindow2.img/QuestIcon.json", ["0"]),
+  ) catch {
+    _ => abort("invalid available quest icon")
   }
+  let in_progress : @res.NxAnimation = @json.from_json(
+    @res.require_json_node("res://UI/UIWindow2.img/QuestIcon.json", ["1"]),
+  ) catch {
+    _ => abort("invalid in-progress quest icon")
+  }
+  let completed : @res.NxAnimation = @json.from_json(
+    @res.require_json_node("res://UI/UIWindow2.img/QuestIcon.json", ["2"]),
+  ) catch {
+    _ => abort("invalid completed quest icon")
+  }
+  MapQuestsResource(available, in_progress, completed)
 }
 
 ///|
@@ -310,10 +319,10 @@ fn NpcQuestRuntime::inrange(
 
 ///|
 /// Represents one quest interaction entry for an NPC.
-pub(all) struct NpcQuest {
+struct NpcQuest {
   npc_id : Int
   icon_state : QuestIconState
-  icon : @res.NxAnimation
+  icon : QuestIconVisual
   icon_offset : @struct.Point[Int]
   icon_size : @struct.Point[Int]
   quest_id : Int
@@ -326,7 +335,7 @@ fn NpcQuest::NpcQuest(
   in_progress_quest : (Int, Bool)?,
   npc_id : Int,
   icon_state : QuestIconState,
-  icon : @res.NxAnimation,
+  icon : QuestIconVisual,
 ) -> NpcQuest {
   {
     quest_id,
@@ -335,7 +344,7 @@ fn NpcQuest::NpcQuest(
     icon_state,
     icon,
     icon_offset: Point(0, -96),
-    icon_size: nx_animation_dimensions(icon),
+    icon_size: icon.dimensions,
   }
 }
 
@@ -370,13 +379,6 @@ fn spawn_icon_runtime(
       quest.icon_offset.y.to_double(),
     ),
   )
-  let icon_animation = @ms_animation.from_nx_animation(quest.icon, loop_=true)
-  @sprite.sprites().set(
-    icon_entity,
-    @ms_animation.sprite_from_animation(
-      icon_animation,
-      @graphics.OBJECT_TILE_LAYER_ZINDEX + QUEST_ICON_ZINDEX_OFFSET,
-    ),
-  )
+  play_quest_icon_visual(icon_entity, quest.icon)
   { npc_entity, npc_object, icon_entity, quest }
 }

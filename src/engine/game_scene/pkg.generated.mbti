@@ -50,12 +50,11 @@ pub fn setup_game_server_handlers() -> Unit
 
 // Types and methods
 pub(all) struct Stage {
-  map_portals_animations : @map.MapPortalAnimations
   npcs : @npc.MapNpcs
   mobs : @monster.MapMobs
   map_change_listeners : Array[(@map.SceneMap) -> Bool]
 }
-pub fn Stage::Stage(@map.MapPortalAnimations, @npc.MapNpcs, @monster.MapMobs) -> Self
+pub fn Stage::Stage(@npc.MapNpcs, @monster.MapMobs) -> Self
 pub fn Stage::get_mobs(Self) -> @monster.MapMobs
 pub fn Stage::listen_map_change(Self, (@map.SceneMap) -> Bool) -> Unit
 

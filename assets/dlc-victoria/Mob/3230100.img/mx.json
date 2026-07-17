@@ -1,0 +1,113 @@
+{
+  "info": {
+    "MADamage": 0,
+    "MDDamage": 70,
+    "PADamage": 120,
+    "PDDamage": 45,
+    "acc": 60,
+    "bodyAttack": 1,
+    "elemAttr": "S2",
+    "eva": 10,
+    "exp": 70,
+    "fs": 10,
+    "level": 35,
+    "maxHP": 1250,
+    "maxMP": 65,
+    "mobType": 1,
+    "pushed": 1,
+    "speed": -15,
+    "summonType": 1,
+    "undead": 0
+  },
+  "stance_nodes": {
+    "die1": {
+      "path_key": "die1",
+      "total_duration_ms": 660,
+      "loop_": false,
+      "first_head": {
+        "x": -36,
+        "y": -35
+      },
+      "first_bounds": null
+    },
+    "hit1": {
+      "path_key": "hit1",
+      "total_duration_ms": 600,
+      "loop_": false,
+      "first_head": {
+        "x": -16,
+        "y": -56
+      },
+      "first_bounds": {
+        "lt": {
+          "x": -42,
+          "y": -57
+        },
+        "rb": {
+          "x": 43,
+          "y": 1
+        }
+      }
+    },
+    "jump": {
+      "path_key": "jump",
+      "total_duration_ms": 100,
+      "loop_": false,
+      "first_head": {
+        "x": -14,
+        "y": -51
+      },
+      "first_bounds": {
+        "lt": {
+          "x": -43,
+          "y": -58
+        },
+        "rb": {
+          "x": 44,
+          "y": 1
+        }
+      }
+    },
+    "move": {
+      "path_key": "move",
+      "total_duration_ms": 600,
+      "loop_": true,
+      "first_head": {
+        "x": 2,
+        "y": -48
+      },
+      "first_bounds": {
+        "lt": {
+          "x": -47,
+          "y": -52
+        },
+        "rb": {
+          "x": 47,
+          "y": 2
+        }
+      }
+    },
+    "stand": {
+      "path_key": "stand",
+      "total_duration_ms": 450,
+      "loop_": true,
+      "first_head": {
+        "x": -19,
+        "y": -49
+      },
+      "first_bounds": {
+        "lt": {
+          "x": -48,
+          "y": -49
+        },
+        "rb": {
+          "x": 49,
+          "y": 1
+        }
+      }
+    }
+  },
+  "attack_nodes": {},
+  "skill_nodes": {},
+  "animations_path": "animation.json"
+}

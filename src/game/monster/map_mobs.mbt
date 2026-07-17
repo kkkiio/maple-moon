@@ -51,19 +51,13 @@ pub fn clear_for_leave_world() -> Unit {
 ///|
 pub struct MapMobs {
   mobs : Map[Int, Mob]
-  loading_mobs : Array[@utils.Future[Result[Mob, Error]]]
   spawns : @queue.Queue[MobSpawn]
   randomizer : @random.Rand
 }
 
 ///|
 pub fn MapMobs::MapMobs() -> MapMobs {
-  {
-    mobs: Map([]),
-    spawns: @queue.Queue([]),
-    loading_mobs: Array::new(),
-    randomizer: @random.Rand::new(),
-  }
+  { mobs: Map([]), spawns: @queue.Queue([]), randomizer: @random.Rand::new() }
 }
 
 ///|
@@ -90,32 +84,23 @@ pub fn MapMobs::add_mob(self : MapMobs, mob : Mob) -> Unit {
 pub fn MapMobs::update(self : MapMobs, physics : @physics.Physics) -> Unit {
   for ;; {
     guard self.spawns.pop() is Some(spawn) else { break }
-    if !self.mobs.contains(spawn.oid) {
-      self.loading_mobs.push(
-        @io_service.submit_background_task(fn() raise {
-          spawn.instantiate(self.randomizer) catch {
-            error =>
-              fail(
-                "mob resource load failed: oid=\{spawn.oid}, mob_id=\{spawn.id}, error=\{error}",
-              )
-          }
-        }),
-      )
+    if self.mobs.contains(spawn.oid) {
+      continue
     }
-  }
-  self.loading_mobs.retain(fn(future) {
-    guard future.poll() is Some(rs) else { return true }
-    match rs {
-      Ok(mob) => self.mobs.set(mob.get_oid(), mob)
-      Err(error) => {
+    let mob = spawn.instantiate(self.randomizer) catch {
+      error => {
         @log.error("failed to load required mob resources", data={
+          "oid": spawn.oid,
+          "mob_id": spawn.id,
           "error": error,
         })
-        abort("failed to load required mob resources: \{error}")
+        abort(
+          "mob resource load failed: oid=\{spawn.oid}, mob_id=\{spawn.id}, error=\{error}",
+        )
       }
     }
-    false
-  })
+    self.mobs[spawn.oid] = mob
+  }
   let to_remove = Array::new()
   for oid, mob in self.mobs {
     let layer = mob.update(physics)
@@ -145,7 +130,6 @@ pub fn MapMobs::set_control(self : MapMobs, oid : Int, control : Bool) -> Unit {
 
 ///|
 pub fn MapMobs::clear(self : MapMobs) -> Unit {
-  self.loading_mobs.clear()
   while self.spawns.pop() is Some(_) {
 
   }
@@ -362,25 +346,45 @@ pub fn map_monsters_render_system(_world : @ecs.World) -> Unit {
     let entity = mob.entity
     guard mob.animations.get(mob.stance.t) is Some(anim) else { continue }
 
-    // Check for direction/animation change
-    if @sprite.sprites().get(entity) is None ||
-      mob.last_synced_stance != Some(mob.stance) {
-      // Create or Replace sprite
+    let sprite_missing = @sprite.sprites().get(entity) is None
+    let animation_changed = sprite_missing ||
+      (match mob.last_synced_stance {
+        Some(previous) => previous.t != mob.stance.t
+        None => true
+      })
+    if sprite_missing || mob.last_synced_stance != Some(mob.stance) {
       let flip = mob.stance.face_right && !mob.no_flip
-      let transform = if flip {
-        @selene_math.Transform::from_scale(-1.0, 1.0)
-      } else {
-        @selene_math.Transform()
-      }
       let layer = mob.get_layer()
       let y = mob.get_position().y
       let z = @graphics.map_mob_z(layer, y)
-      let sprite = @ms_animation.sprite_from_animation(
-        anim.selene,
-        z,
-        transform~,
-      )
-      @sprite.sprites().set(entity, sprite)
+      @sprite.sprites().set(entity, anim.clip.sprite(flip_x=flip))
+      if animation_changed {
+        @selene_animation.animation_target_ids().set(
+          entity,
+          @selene_animation.AnimationTargetId("self"),
+        )
+        @selene_animation.animated_bys().set(
+          entity,
+          @selene_animation.AnimatedBy(entity),
+        )
+        @selene_animation.animation_graph_handles().set(
+          entity,
+          mob.animation_graph,
+        )
+        let player = @selene_animation.animation_players().get_or_init(entity, fn() {
+          @selene_animation.AnimationPlayer()
+        })
+        let transitions = @selene_animation.animation_transitions().get_or_init(
+          entity,
+          fn() { @selene_animation.AnimationTransitions() },
+        )
+        let repeat = if anim.meta.loop_ {
+          @selene_animation.RepeatAnimation::Forever
+        } else {
+          @selene_animation.RepeatAnimation::Never
+        }
+        ignore(transitions.play(player, anim.node, 0.0, repeat~))
+      }
       let pos = mob.get_position()
       @transform.transforms().set(
         entity,

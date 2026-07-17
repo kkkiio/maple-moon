@@ -1,1 +1,0 @@
-{"type":"tileset","name":"obj:trap/moving/artificiality","objectalignment":"bottomleft","tilewidth":43,"tileheight":43,"tilecount":3,"tiles":[{"id":0,"image":"../images/7352.png","imagewidth":43,"imageheight":10},{"id":1,"image":"../images/7365.png","imagewidth":43,"imageheight":10},{"id":2,"image":"../images/7339.png","imagewidth":10,"imageheight":43}]}

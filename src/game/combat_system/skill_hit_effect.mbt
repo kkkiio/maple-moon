@@ -59,14 +59,7 @@ fn load_hit_effect(
   let clip = loaded.clip(tag) catch {
     error => fail("missing animation tag '\{tag}': \{resolved}, error=\{error}")
   }
-  {
-    effect: {
-      animation: @ms_animation.from_selene_clip(clip, loop_=false),
-      duration_ms: clip.duration_ms,
-    },
-    pos: src.pos,
-    z: src.z,
-  }
+  { effect: @graphics.EffectAnimation(clip), pos: src.pos, z: src.z }
 }
 
 ///|

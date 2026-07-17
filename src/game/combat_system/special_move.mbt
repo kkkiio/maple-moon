@@ -24,7 +24,7 @@ pub(all) struct CombatAction {
     @combat_proto.AttackType,
     Bool,
   ) -> @combat_proto.Attack
-  get_bullet : (@character.Character, Int) -> @ms_animation.Animation
+  get_bullet : (@character.Character, Int) -> @combat_proto.BulletAnimation
   can_use : (Int, @weapon.Type, @job.Job, Int, Int, Int) -> ForbidReason
   apply_hit_effects : (@combat_proto.AttackUser, @monster.Mob) -> Unit
   apply_hit_sfx : (@combat_proto.AttackUser, @monster.Mob) -> Unit
@@ -87,7 +87,7 @@ pub fn CombatAction::get_bullet(
   self : CombatAction,
   char : @character.Character,
   value : Int,
-) -> @ms_animation.Animation {
+) -> @combat_proto.BulletAnimation {
   (self.get_bullet)(char, value)
 }
 

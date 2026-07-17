@@ -1,0 +1,1 @@
+{"type":"tileset","name":"obj:trap/trap/artificiality","objectalignment":"bottomleft","tilewidth":89,"tileheight":62,"tilecount":1,"tiles":[{"id":0,"image":"obj_trap_trap_artificiality.atlas-0.png","imagewidth":91,"imageheight":64,"x":1,"y":1,"width":89,"height":62}]}

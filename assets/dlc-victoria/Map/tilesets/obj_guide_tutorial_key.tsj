@@ -1,0 +1,1 @@
+{"type":"tileset","name":"obj:guide/tutorial/key","objectalignment":"bottomleft","tilewidth":68,"tileheight":73,"tilecount":1,"tiles":[{"id":0,"image":"obj_guide_tutorial_key.atlas-0.png","imagewidth":70,"imageheight":75,"x":1,"y":1,"width":68,"height":73}]}

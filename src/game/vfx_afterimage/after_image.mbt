@@ -7,7 +7,7 @@ using @struct {type Rectangle}
 ///|
 /// 残影. 角色移动或攻击时，在身后留下的半透明或特效化的影子效果，用来表现速度感或技能的威力。
 pub struct AfterImage {
-  animation : @ms_animation.Animation
+  animation : AfterImageAnimation
   range : @struct.Rectangle[Int]
   first_frame : Int
   facing_right : Bool
@@ -16,13 +16,44 @@ pub struct AfterImage {
 }
 
 ///|
-pub(all) struct NxAfterImage {
-  animation : @ms_animation.Animation
+/// A decoded afterimage resource with compiled playback state and hit range.
+pub struct NxAfterImage {
+  animation : AfterImageAnimation
   range : @struct.Rectangle[Int]
   first_frame : Int
 }
 
 ///|
+/// Create an afterimage resource from an already compiled sprite clip.
+///
+/// # Example
+/// ```moonbit nocheck
+/// let resource = NxAfterImage(clip, Rectangle::from4(-20, 20, -10, 10), 0)
+/// ignore(resource)
+/// ```
+pub fn NxAfterImage::NxAfterImage(
+  clip : @res.SpriteClip,
+  range : @struct.Rectangle[Int],
+  first_frame : Int,
+) -> NxAfterImage {
+  { animation: AfterImageAnimation(clip), range, first_frame }
+}
+
+///|
+/// A compiled afterimage clip together with its reusable playback graph.
+pub struct AfterImageAnimation {
+  clip : @res.SpriteClip
+  graph : @animation.AnimationGraphHandle
+  node : @animation.AnimationNodeIndex
+}
+
+///|
+fn AfterImageAnimation::AfterImageAnimation(
+  clip : @res.SpriteClip,
+) -> AfterImageAnimation {
+  let (graph, node) = @graphics.sprite_clip_graph(clip)
+  { clip, graph, node }
+}
 
 ///|
 pub impl @json.FromJson for NxAfterImage with fn from_json(json, path) -> NxAfterImage raise @json.JsonDecodeError {
@@ -64,7 +95,16 @@ pub impl @json.FromJson for NxAfterImage with fn from_json(json, path) -> NxAfte
     animation_json,
     path=path.add_key(first_frame.to_string()),
   )
-  { animation: @ms_animation.from_nx_animation(animation), range, first_frame }
+  let clip = @res.compile_nx_animation(animation, name="nx/afterimage") catch {
+    error =>
+      raise @json.JsonDecodeError(
+        (
+          path.add_key(first_frame.to_string()),
+          "invalid afterimage animation: \{error}",
+        ),
+      )
+  }
+  NxAfterImage(clip, range, first_frame)
 }
 
 ///|
@@ -177,11 +217,7 @@ pub fn load_after_images(name : String) -> NxAfterImages raise {
             "missing afterimage animation tag '\{tag}' in \{mx_path}: \{error}",
           )
       }
-      stance_map[stance_key] = {
-        animation: @ms_animation.from_selene_clip(clip, loop_=false),
-        range,
-        first_frame,
-      }
+      stance_map[stance_key] = NxAfterImage(clip, range, first_frame)
     }
     level_map[level] = stance_map
   }
@@ -223,15 +259,20 @@ fn AfterImage::AfterImage(
 ///|
 pub fn AfterImage::attach(self : AfterImage, parent : @entity.Entity) -> Unit {
   if self.entity is None {
-    self.entity = Some(parent.spawn_child())
+    let entity = parent.spawn_child()
+    @transform.transforms().set(entity, @transform.Transform::identity())
+    self.entity = Some(entity)
   }
 }
 
 ///|
 pub fn AfterImage::dispose(self : AfterImage) -> Unit {
   if self.entity is Some(e) {
-    @sprite.sprites().remove(e)
-    e.destroy()
+    @graphics.clear_sprite_animation(e)
+    @transform.transforms().remove(e) |> ignore
+    if e.is_alive() {
+      e.destroy()
+    }
     self.entity = None
   }
 }
@@ -255,20 +296,24 @@ pub fn AfterImage::update(
   if !self.displayed && stframe >= self.first_frame {
     self.displayed = true
     if self.entity is Some(e) {
-      let transform = if self.facing_right {
-        @selene_math.Transform::from_scale(-1.0, 1.0)
-      } else {
-        @selene_math.Transform()
-      }
-      // Attach sprite and play
-      // Use CHAR_LOOK_ZINDEX to align with character rendering layer
-      let sprite = @ms_animation.sprite_from_animation(
-        self.animation,
-        @graphics.CHAR_LOOK_ZINDEX,
-        transform~,
+      @sprite.sprites().set(
+        e,
+        self.animation.clip.sprite(flip_x=self.facing_right),
       )
-      @sprite.sprites().set(e, sprite)
-      @ms_animation.play_animation(e, self.animation, loop_=false, transform~)
+      @animation.animation_target_ids().set(
+        e,
+        @animation.AnimationTargetId("self"),
+      )
+      @animation.animated_bys().set(e, @animation.AnimatedBy(e))
+      @animation.animation_graph_handles().set(e, self.animation.graph)
+      let player = @animation.AnimationPlayer()
+      @animation.animation_players().set(e, player)
+      ignore(
+        player.start(
+          self.animation.node,
+          repeat=@animation.RepeatAnimation::Never,
+        ),
+      )
     }
   }
 }

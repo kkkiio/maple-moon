@@ -1,1 +1,0 @@
-{"type":"tileset","name":"obj:shop/shop/hospitalGS","objectalignment":"bottomleft","tilewidth":810,"tileheight":600,"tilecount":3,"tiles":[{"id":0,"image":"../images/11754.png","imagewidth":810,"imageheight":600},{"id":1,"image":"../images/11755.png","imagewidth":800,"imageheight":120},{"id":2,"image":"../images/11756.png","imagewidth":163,"imageheight":214}]}

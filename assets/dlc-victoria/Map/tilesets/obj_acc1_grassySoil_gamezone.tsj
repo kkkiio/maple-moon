@@ -1,0 +1,1 @@
+{"type":"tileset","name":"obj:acc1/grassySoil/gamezone","objectalignment":"bottomleft","tilewidth":257,"tileheight":227,"tilecount":1,"tiles":[{"id":0,"image":"obj_acc1_grassySoil_gamezone.atlas-0.png","imagewidth":259,"imageheight":229,"x":1,"y":1,"width":257,"height":227}]}

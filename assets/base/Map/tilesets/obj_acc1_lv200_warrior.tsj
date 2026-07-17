@@ -1,1 +1,0 @@
-{"type":"tileset","name":"obj:acc1/lv200/warrior","objectalignment":"bottomleft","tilewidth":800,"tileheight":600,"tilecount":3,"tiles":[{"id":0,"image":"../images/21177.png","imagewidth":800,"imageheight":600},{"id":1,"image":"../images/21178.png","imagewidth":800,"imageheight":500},{"id":2,"image":"../images/21179.png","imagewidth":800,"imageheight":146}]}

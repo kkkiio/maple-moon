@@ -21,10 +21,10 @@ using @game_state {type GamePhase}
 struct SelectCharUI {
   characters : Array[SelectableCharacterUI]
   on_new_character : () -> Unit
-  // 以数组配置驱动三段光照动画，减少重复代码
-  // 每项：(entity, frame_counter_ref, segments)
-  // segment: (duration_frames, from_alpha, to_alpha)
-  animations : Array[(@entity.Entity, Ref[Int], Array[(Int, Double, Double)])]
+  // Each segment is (duration seconds, alpha from, alpha to).
+  animations : Array[
+    (@entity.Entity, Ref[Double], Array[(Double, Double, Double)]),
+  ]
   buttons : Array[SeleneButton]
   click_reader : @event.EventReader[@selene_ui.UiClickEvent]
   select_click_entity : @entity.Entity
@@ -34,10 +34,20 @@ struct SelectCharUI {
 
 ///|
 pub(all) struct SelectCharUIResource {
-  ani18 : @ms_animation.Animation
+  /// Animated left light overlay.
+  ani17 : @res.SpriteClip
+  /// Animated center light overlay.
+  ani18 : @res.SpriteClip
+  /// Animated right light overlay.
+  ani19 : @res.SpriteClip
+  /// New-character button state sprites.
   bt_new : @ui.MapleButtonResource
+  /// Select-character button state sprites.
   bt_select : @ui.MapleButtonResource
 }
+
+///|
+let select_char_ui_resource_cache : Ref[SelectCharUIResource?] = Ref(None)
 
 ///|
 struct SelectableCharacterUI {
@@ -52,6 +62,10 @@ priv struct SeleneButton {
 
 ///|
 pub fn SelectCharUIResource::load() -> SelectCharUIResource {
+  match select_char_ui_resource_cache.val {
+    Some(resources) => return resources
+    None => ()
+  }
   let ani18_res : Json = {
     "0": {
       "__h": 442,
@@ -164,11 +178,60 @@ pub fn SelectCharUIResource::load() -> SelectCharUIResource {
   let bt_select : @ui.NxMapleButton = @json.from_json(bt_select_res) catch {
     _ => abort("invalid select character select button")
   }
-  {
-    ani18: @ms_animation.from_nx_animation(ani18),
+  let ani17_texture = @res.NxTexture::{
+    i: "res://UI/Login.img/char_select/light17.png",
+    w: 242,
+    h: 505,
+    offset: { x: 0, y: 0 },
+    origin: { x: 121, y: 252 },
+  }
+  let ani19_frame0 = @res.NxTexture::{
+    i: "res://UI/Login.img/char_select/light19.png",
+    w: 312,
+    h: 355,
+    offset: { x: 0, y: 0 },
+    origin: { x: 156, y: 177 },
+  }
+  let ani19_frame1 = { ..ani19_frame0, offset: { x: 312, y: 0 } }
+  let ani17 = @res.compile_nx_animation(
+    {
+      frames: [
+        { texture: ani17_texture, delay: Some(3000), head: None, bounds: None },
+        { texture: ani17_texture, delay: Some(3000), head: None, bounds: None },
+      ],
+      blend: false,
+      zigzag: false,
+    },
+    name="ui/select-char/light-17",
+  ) catch {
+    error => abort("failed to compile select character light 17: \{error}")
+  }
+  let ani18 = @res.compile_nx_animation(ani18, name="ui/select-char/light-18") catch {
+    error => abort("failed to compile select character light 18: \{error}")
+  }
+  let ani19 = @res.compile_nx_animation(
+    {
+      frames: [
+        { texture: ani19_frame0, delay: Some(2300), head: None, bounds: None },
+        { texture: ani19_frame1, delay: Some(3300), head: None, bounds: None },
+        { texture: ani19_frame1, delay: Some(1000), head: None, bounds: None },
+      ],
+      blend: false,
+      zigzag: false,
+    },
+    name="ui/select-char/light-19",
+  ) catch {
+    error => abort("failed to compile select character light 19: \{error}")
+  }
+  let resources = {
+    ani17,
+    ani18,
+    ani19,
     bt_new: @ui.MapleButtonResource::from_nx(bt_new),
     bt_select: @ui.MapleButtonResource::from_nx(bt_select),
   }
+  select_char_ui_resource_cache.val = Some(resources)
+  resources
 }
 
 ///|
@@ -186,96 +249,90 @@ pub fn SelectCharUI::SelectCharUI(
   on_select_character? : (Int) -> Unit = fn(_slot) {  },
   on_new_character? : () -> Unit = fn() {  },
 ) -> SelectCharUI {
-  let back13 = @ms_animation.Animation::single_frame(
-    "res://UI/Login.img/char_select/back13.png",
-    @selene_math.Vec2(800, 600),
-    //   "origin": [392, 297]
-  )
-  let ani17 = Animation([
-    @ms_animation.AnimationFrame::{
-      image: @res.require_image("res://UI/Login.img/char_select/light17.png"),
-      size: @selene_math.Vec2(505, 242),
-      offset: @selene_math.Vec2(0, 0),
-      pivot: @selene_math.Vec2(121, 252), // origin
-      duration: 3.0,
-      //     "origin": [121, 252],
-      //     "a0": 255,
-      //     "a1": 50,
-      //     "delay": 3000,
-    },
-    @ms_animation.AnimationFrame::{
-      image: @res.require_image("res://UI/Login.img/char_select/light17.png"),
-      size: @selene_math.Vec2(505, 242),
-      offset: @selene_math.Vec2(0, 0),
-      pivot: @selene_math.Vec2(121, 252), // origin
-      duration: 3.0,
-      //     "origin": [121, 252],
-      //     "a0": 50,
-      //     "a1": 255,
-      //     "delay": 3000,
-    },
-  ])
-  let ani19 : @ms_animation.Animation = Animation([
-    @ms_animation.AnimationFrame::{
-      image: @res.require_image("res://UI/Login.img/char_select/light19.png"),
-      size: @selene_math.Vec2(355, 312),
-      offset: @selene_math.Vec2(0, 0),
-      pivot: @selene_math.Vec2(156, 177), // origin
-      duration: 2.3,
-      //     "origin": [156, 177],
-      //     "a0": 200,
-      //     "a1": 80,
-      //     "delay": 2300,
-      // "origin": [156, 177],
-    },
-    @ms_animation.AnimationFrame::{
-      image: @res.require_image("res://UI/Login.img/char_select/light19.png"),
-      offset: @selene_math.Vec2(312, 0),
-      size: @selene_math.Vec2(355, 312),
-      pivot: @selene_math.Vec2(156, 177), // origin
-      duration: 3.3,
-      // "a0": 80,
-      // "a1": 255,
-      // "delay": 3300,
-      // "origin": [156, 177],
-    },
-    @ms_animation.AnimationFrame::{
-      image: @res.require_image("res://UI/Login.img/char_select/light19.png"),
-      offset: @selene_math.Vec2(312, 0),
-      size: @selene_math.Vec2(355, 312),
-      pivot: @selene_math.Vec2(156, 177), // origin
-      duration: 1.0,
-      // "_inlink": "ani/19/1",
-      // "a0": 255,
-      // "a1": 200,
-      // "delay": 1000,
-      // "origin": [156, 177],
-    },
-  ])
-  let frame = @ms_animation.Animation::single_frame(
-    "res://UI/Login.img/char_select/frame.png",
-    @selene_math.Vec2(800, 600),
-    //   "origin": [400, 300]
-  )
-  let step2 = @ms_animation.Animation::single_frame(
-    "res://UI/Login.img/char_select/select_character_btn.png",
-    @selene_math.Vec2(127, 45),
-    //   "origin": [0, 0]
-  )
   let entities = []
+  let background_entity = @entity.Entity()
+  @transform2d.set_xy(background_entity, @selene_math.Vec2(0.0, 0.0))
+  @sprite.sprites().set(
+    background_entity,
+    @res.NxTexture::{
+      i: "res://UI/Login.img/char_select/back13.png",
+      w: 800,
+      h: 600,
+      offset: { x: 0, y: 0 },
+      origin: { x: 0, y: 0 },
+    }.require_sprite(),
+  )
+  entities.push(background_entity)
+  let animations : Array[
+    (@entity.Entity, Ref[Double], Array[(Double, Double, Double)]),
+  ] = []
   for
-    t in [
-      (back13, @selene_math.Vec2(0, 0)),
-      (ani17, @selene_math.Vec2(151 - 121, 283 - 252)), //   "origin": [121, 252],
-      (resources.ani18, @selene_math.Vec2(365 - 216, 252 - 221)), // "origin": [216, 221],
-      (ani19, @selene_math.Vec2(191 - 156, 208 - 177)), // "origin": [156, 177],
-      (frame, @selene_math.Vec2(0, 0)),
-      (step2, @selene_math.Vec2(40, 0)),
+    item in [
+      (
+        resources.ani17,
+        @selene_math.Vec2(151 - 121, 283 - 252),
+        [(3.0, 255.0, 50.0), (3.0, 50.0, 255.0)],
+      ),
+      (
+        resources.ani18,
+        @selene_math.Vec2(365 - 216, 252 - 221),
+        [(2.5, 100.0, 255.0), (2.5, 255.0, 100.0)],
+      ),
+      (
+        resources.ani19,
+        @selene_math.Vec2(191 - 156, 208 - 177),
+        [(2.3, 200.0, 80.0), (3.3, 80.0, 255.0), (1.0, 255.0, 200.0)],
+      ),
     ] {
-    let (s, pos) = t
+    let (clip, position, segments) = item
+    let entity = @entity.Entity()
+    @transform2d.set_xy(entity, position)
+    @sprite.sprites().set(entity, clip.sprite(alpha=segments[0].1 / 255.0))
+    @selene_animation.animation_target_ids().set(
+      entity,
+      @selene_animation.AnimationTargetId("self"),
+    )
+    @selene_animation.animated_bys().set(
+      entity,
+      @selene_animation.AnimatedBy(entity),
+    )
+    let (graph, node) = @graphics.sprite_clip_graph(clip)
+    @selene_animation.animation_graph_handles().set(entity, graph)
+    let player = @selene_animation.AnimationPlayer()
+    @selene_animation.animation_players().set(entity, player)
+    ignore(
+      player.start(node, repeat=@selene_animation.RepeatAnimation::Forever),
+    )
+    entities.push(entity)
+    animations.push((entity, Ref(0.0), segments))
+  }
+  for
+    item in [
+      (
+        @res.NxTexture::{
+          i: "res://UI/Login.img/char_select/frame.png",
+          w: 800,
+          h: 600,
+          offset: { x: 0, y: 0 },
+          origin: { x: 0, y: 0 },
+        },
+        @selene_math.Vec2(0, 0),
+      ),
+      (
+        @res.NxTexture::{
+          i: "res://UI/Login.img/char_select/select_character_btn.png",
+          w: 127,
+          h: 45,
+          offset: { x: 0, y: 0 },
+          origin: { x: 0, y: 0 },
+        },
+        @selene_math.Vec2(40, 0),
+      ),
+    ] {
+    let (texture, pos) = item
     let entity = @entity.Entity()
     @transform2d.set_xy(entity, pos)
-    @sprite.sprites().set(entity, @ms_animation.sprite_from_animation(s, 0))
+    @sprite.sprites().set(entity, texture.require_sprite())
     entities.push(entity)
   }
   let characters_entities = Array::makei(characters.length(), fn(_) {
@@ -300,10 +357,7 @@ pub fn SelectCharUI::SelectCharUI(
     entities.push(entity)
     @transform2d.set_xy(entity, @selene_math.Vec2(x.to_double(), y.to_double()))
     let button = MapleButton(res, pos=Point(x, y), on_click~)
-    @sprite.sprites().set(
-      entity,
-      @ms_animation.sprite_from_animation(button.current_selene_animation(), 10),
-    )
+    @sprite.sprites().set(entity, button.current_sprite())
     { button, entity }
   }
   let btn_select = spawn_button(entities, resources.bt_select, 601, 393, fn() {
@@ -332,10 +386,7 @@ pub fn SelectCharUI::SelectCharUI(
   @transform2d.set_xy(new_button_entity, @selene_math.Vec2(200.0, 495.0))
   @sprite.sprites().set(
     new_button_entity,
-    @ms_animation.sprite_from_animation(
-      resources.bt_new.selene_animations[@ui.ButtonState::NORMAL],
-      10,
-    ),
+    resources.bt_new.sprites[@ui.ButtonState::NORMAL],
   )
   let new_click_entity = @entity.Entity()
   entities.push(new_click_entity)
@@ -360,18 +411,7 @@ pub fn SelectCharUI::SelectCharUI(
     entities,
     on_new_character,
     characters: characters_ui,
-    animations: [
-      // ani17: 255->50 (3s=180f), 50->255 (3s=180f)
-      (entities[1], Ref(0), [(180, 255.0, 50.0), (180, 50.0, 255.0)]),
-      // ani18: 100->255 (2.5s=150f), 255->100 (2.5s=150f)
-      (entities[2], Ref(0), [(150, 100.0, 255.0), (150, 255.0, 100.0)]),
-      // ani19: 200->80 (2.3s=138f), 80->255 (3.3s=198f), 255->200 (1s=60f)
-      (
-        entities[3],
-        Ref(0),
-        [(138, 200.0, 80.0), (198, 80.0, 255.0), (60, 255.0, 200.0)],
-      ),
-    ],
+    animations,
   }
 }
 
@@ -453,7 +493,11 @@ fn SelectCharUI::destroy(self : SelectCharUI) -> Unit {
   @console.unregister_ui_entity(self.select_click_entity)
   @console.unregister_ui_entity(self.new_character_click_entity)
   for entity in self.entities {
-    entity.destroy()
+    @graphics.clear_sprite_animation(entity)
+    @transform2d.remove(entity) |> ignore
+    if entity.is_alive() {
+      entity.destroy()
+    }
   }
 }
 
@@ -619,45 +663,38 @@ pub fn select_char_ui_system(_world : @ecs.World) -> Unit {
       button.button.update_pointer(
         mouse_x, mouse_y, is_pressed, just_pressed, just_released,
       )
-      @sprite.sprites().set(
-        button.entity,
-        @ms_animation.sprite_from_animation(
-          button.button.current_selene_animation(),
-          10,
-        ),
-      )
+      @sprite.sprites().set(button.entity, button.button.current_sprite())
     }
     for item in ui.animations {
-      let (entity, counter, segments) = item
-      // 计算总帧数
-      let mut total = 0
+      let (entity, elapsed, segments) = item
+      let mut total = 0.0
       for seg in segments {
         total += seg.0
       }
-      // 推进计数
-      counter.val = (counter.val + 1) % total
-      let p = counter.val
-      // 定位当前段
-      let mut acc = 0
+      guard total > 0.0 else {
+        abort("select character light animation duration must be positive")
+      }
+      elapsed.val = (elapsed.val + @time.delta()) % total
+      let mut acc = 0.0
       let mut alpha_val = 255.0
       for seg in segments {
         let dur = seg.0
         let from = seg.1
         let to = seg.2
-        if p < acc + dur {
-          let t = (p - acc).to_double() / dur.to_double()
+        if elapsed.val < acc + dur {
+          let t = (elapsed.val - acc) / dur
           alpha_val = from + (to - from) * t
           break
         }
         acc += dur
       }
       let alpha_norm = alpha_val / 255.0
-      // if @sprite.sprites().get(entity) is Some(spr) {
-      //   @sprite.sprites().set(entity, { ..spr, alpha: alpha_norm })
-      // }
-      // TODO: modify upstream selene to support alpha
-      ignore(entity)
-      ignore(alpha_norm)
+      if @sprite.sprites().get(entity) is Some(sprite) {
+        @sprite.sprites().set(entity, {
+          ..sprite,
+          color: { ..sprite.color, a: alpha_norm },
+        })
+      }
     }
     let click_events = @selene_ui.click_event_bus.read(ui.click_reader)
     for event in click_events {
@@ -776,9 +813,6 @@ pub fn setup_game_server_handlers() -> Unit {
     },
   )
 }
-
-///|
-using @ms_animation {type Animation}
 
 ///|
 using @ui {type MapleButton}

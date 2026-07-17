@@ -1,0 +1,112 @@
+{
+  "info": {
+    "MADamage": 0,
+    "MDDamage": 30,
+    "PADamage": 90,
+    "PDDamage": 20,
+    "acc": 50,
+    "bodyAttack": 1,
+    "eva": 8,
+    "exp": 42,
+    "fs": 10,
+    "level": 25,
+    "maxHP": 550,
+    "maxMP": 55,
+    "mobType": 0,
+    "pushed": 1,
+    "speed": 0,
+    "summonType": 1,
+    "undead": 0
+  },
+  "stance_nodes": {
+    "die1": {
+      "path_key": "die1",
+      "total_duration_ms": 480,
+      "loop_": false,
+      "first_head": {
+        "x": -17,
+        "y": -30
+      },
+      "first_bounds": null
+    },
+    "hit1": {
+      "path_key": "hit1",
+      "total_duration_ms": 600,
+      "loop_": false,
+      "first_head": {
+        "x": -10,
+        "y": -46
+      },
+      "first_bounds": {
+        "lt": {
+          "x": -35,
+          "y": -50
+        },
+        "rb": {
+          "x": 36,
+          "y": 0
+        }
+      }
+    },
+    "jump": {
+      "path_key": "jump",
+      "total_duration_ms": 100,
+      "loop_": false,
+      "first_head": {
+        "x": -21,
+        "y": -44
+      },
+      "first_bounds": {
+        "lt": {
+          "x": -35,
+          "y": -48
+        },
+        "rb": {
+          "x": 36,
+          "y": 0
+        }
+      }
+    },
+    "move": {
+      "path_key": "move",
+      "total_duration_ms": 400,
+      "loop_": true,
+      "first_head": {
+        "x": -21,
+        "y": -44
+      },
+      "first_bounds": {
+        "lt": {
+          "x": -35,
+          "y": -48
+        },
+        "rb": {
+          "x": 36,
+          "y": 0
+        }
+      }
+    },
+    "stand": {
+      "path_key": "stand",
+      "total_duration_ms": 700,
+      "loop_": true,
+      "first_head": {
+        "x": -21,
+        "y": -44
+      },
+      "first_bounds": {
+        "lt": {
+          "x": -35,
+          "y": -47
+        },
+        "rb": {
+          "x": 36,
+          "y": 0
+        }
+      }
+    }
+  },
+  "attack_nodes": {},
+  "skill_nodes": {},
+  "animations_path": "animation.json"
+}

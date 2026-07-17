@@ -3,7 +3,7 @@ pub(all) struct MapRawResources {
   id : Int
   mx_map : MxMap
   tiled_map : @tiled.TiledMap
-  background_animations : Map[String, @res.SeleneClip]
+  background_animations : Map[String, @res.SpriteClip]
 }
 
 ///|
@@ -59,8 +59,8 @@ fn load_tiled_background_animations(
   tiled_path : String,
   tiled_map : @tiled.TiledMap,
   animation_loader : @res.AnimationLoader,
-) -> Map[String, @res.SeleneClip] raise {
-  let loaded : Map[String, @res.SeleneClip] = Map([])
+) -> Map[String, @res.SpriteClip] raise {
+  let loaded : Map[String, @res.SpriteClip] = Map([])
   for layer in tiled_map.layers {
     guard layer.kind is ImageLayer(image_layer) else { continue }
     guard image_layer.image is Some(image_path) else { continue }

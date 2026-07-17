@@ -1,0 +1,23 @@
+{
+  "schema": 2,
+  "id": "dlc-victoria",
+  "overrides": [],
+  "compatibility": {
+    "nx": [
+      {
+        "id": "victoria_maps",
+        "archive": "Map.nx",
+        "resolver": {
+          "type": "world_map",
+          "path": "Map/WorldMap/WorldMap010.img"
+        }
+      }
+    ],
+    "closure": [
+      {
+        "from": "victoria_maps",
+        "include": ["mob", "npc", "bgm"]
+      }
+    ]
+  }
+}

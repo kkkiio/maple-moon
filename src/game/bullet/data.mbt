@@ -1,7 +1,7 @@
 ///|
 pub(all) struct BulletData {
   item_data : @item.ItemData
-  bullet : @ms_animation.Animation
+  bullet : @combat_proto.BulletAnimation
   watk : Int
 }
 
@@ -43,7 +43,7 @@ fn read_mx_animation_ref(src : Json) -> String raise {
 fn load_bullet_native_animation(
   strid : String,
   bullet_src : Json,
-) -> @ms_animation.Animation raise {
+) -> @combat_proto.BulletAnimation raise {
   let prefix = strid[:4]
   let base_path = "res://Item/Consume/\{prefix}.img.json"
   let ref_path = read_mx_animation_ref(bullet_src) catch {
@@ -57,7 +57,7 @@ fn load_bullet_native_animation(
     error =>
       fail("missing main clip in bullet animation: \{strid}, error=\{error}")
   }
-  @ms_animation.from_selene_clip(clip, loop_=true)
+  @combat_proto.BulletAnimation(clip)
 }
 
 ///|

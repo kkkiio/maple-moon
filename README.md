@@ -58,7 +58,8 @@ just build-native
 
 Produces an executable with the `assets/` directory alongside it. Place both in the same folder and run the executable.
 
-The runtime directory must contain `assets/base/`. Optional DLC and patch packs
+The runtime directory must contain `assets/base/` and `assets/dlc-victoria/`.
+Optional DLC, skin, and patch packs
 are additional siblings under `assets/`; each pack uses the same internal
 layout. `source_assets/` contains editable project sources and is not part of a
 player distribution.

@@ -1,0 +1,1 @@
+{"type":"tileset","name":"obj:prop/grassySoil/win","objectalignment":"bottomleft","tilewidth":140,"tileheight":141,"tilecount":1,"tiles":[{"id":0,"image":"obj_prop_grassySoil_win.atlas-0.png","imagewidth":142,"imageheight":143,"x":1,"y":1,"width":140,"height":141}]}

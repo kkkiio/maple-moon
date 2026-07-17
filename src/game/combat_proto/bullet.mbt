@@ -4,25 +4,47 @@ struct Bullet {
 }
 
 ///|
+/// A projectile sprite clip together with its reusable playback graph.
+pub struct BulletAnimation {
+  clip : @res.SpriteClip
+  graph : @animation.AnimationGraphHandle
+  node : @animation.AnimationNodeIndex
+}
+
+///|
+/// Register a single-clip playback graph for a projectile.
+///
+/// # Example
+/// ```moonbit nocheck
+/// let animation = BulletAnimation(clip)
+/// ignore(animation)
+/// ```
+pub fn BulletAnimation::BulletAnimation(
+  clip : @res.SpriteClip,
+) -> BulletAnimation {
+  let (graph, node) = @graphics.sprite_clip_graph(clip)
+  { clip, graph, node }
+}
+
+///|
 pub fn Bullet::Bullet(
   entity : @entity.Entity,
-  animation : @ms_animation.Animation,
+  animation : BulletAnimation,
   origin : @struct.Point[Int],
   toleft : Bool,
 ) -> Bullet {
-  let sprite_animation = animation
-  let transform = if toleft {
-    @selene_math.Transform()
-  } else {
-    @selene_math.Transform::from_scale(-1.0, 1.0)
-  }
-  let sprite = @ms_animation.sprite_from_animation(
-    sprite_animation,
-    @graphics.CHAR_LOOK_ZINDEX + 100,
-    transform~,
+  @sprite.sprites().set(entity, animation.clip.sprite(flip_x=!toleft))
+  @animation.animation_target_ids().set(
+    entity,
+    @animation.AnimationTargetId("self"),
   )
-  @sprite.sprites().set(entity, sprite)
-  @ms_animation.play_animation(entity, sprite_animation, loop_=true, transform~)
+  @animation.animated_bys().set(entity, @animation.AnimatedBy(entity))
+  @animation.animation_graph_handles().set(entity, animation.graph)
+  let player = @animation.AnimationPlayer()
+  @animation.animation_players().set(entity, player)
+  ignore(
+    player.start(animation.node, repeat=@animation.RepeatAnimation::Forever),
+  )
 
   let move_obj = MovingObject(on_pos_change=fn(pos) {
     @transform2d.set_xy(entity, pos)

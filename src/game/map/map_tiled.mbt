@@ -150,7 +150,7 @@ fn set_entity_z(entity : @entity.Entity, z : Int) -> Unit {
 }
 
 ///|
-fn apply_map_object_z(event : @tiled.TiledObjectSpawnedEvent) -> Unit {
+fn apply_map_object_z(event : @tiled.TiledObjectSpawnedEvent) -> Unit raise {
   if parse_background_index(event.layer.name, "background_back_") is Some(index) {
     set_entity_z(event.object_entity, @graphics.BACKGROUND_ZINDEX + index)
     return
@@ -162,6 +162,7 @@ fn apply_map_object_z(event : @tiled.TiledObjectSpawnedEvent) -> Unit {
   }
   if event.layer.name == "portal" {
     set_entity_z(event.object_entity, @graphics.PORTAL_ZINDEX)
+    bind_tiled_portal_visual(event.object, event.object_entity)
     return
   }
   guard parse_map_layer_name(event.layer.name) is Some((layer_from_name, kind)) else {
@@ -202,7 +203,7 @@ fn apply_map_image_layer_z(event : @tiled.TiledImageLayerSpawnedEvent) -> Unit {
 pub fn set_tiled_map(
   world : @ecs.World,
   map : @tiled.TiledMap,
-  background_animations? : Map[String, @res.SeleneClip] = Map([]),
+  background_animations? : Map[String, @res.SpriteClip] = Map([]),
 ) -> Unit raise {
   let root = tiled_root_world_stores.get_or_init(world.id, fn() {
     @entity.Entity()

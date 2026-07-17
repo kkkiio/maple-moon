@@ -1,0 +1,4 @@
+interface:
+  display_name: "Debug Live Game"
+  short_description: "Debug Maple Moon through Dev Chrome and Maple CLI"
+  default_prompt: "Use $debug-live-game to inspect the current Dev Chrome issue and diagnose it with Maple CLI."

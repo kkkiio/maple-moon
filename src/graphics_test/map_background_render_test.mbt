@@ -17,6 +17,8 @@ fn setup_tiled_background_scene_101010102() -> @app.App raise {
     )
   @system.configure_display(800.0, 600.0, 1.0)
   let raw = @map.load_map_resources_by_id(101010102)
+  let portals = @map.MapPortals::from_tiled_map(raw.tiled_map, raw.id)
+  @map.set_portals(portals, get_player_position=fn() { None })
   @map.set_tiled_map(
     @ecs.require_current_world(),
     raw.tiled_map,
@@ -62,6 +64,7 @@ fn visible_sprite_count() -> Int {
 
 ///|
 test "map 101010102 tween lighting alpha background start" {
+  defer @map.clear_runtime_context()
   defer @map.clear_tiled_map(@ecs.require_current_world())
   defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
   defer @sprite.sprites().clear()
@@ -92,6 +95,7 @@ test "map 101010102 tween lighting alpha background start" {
 
 ///|
 test "map 101010102 tween lighting alpha background mid" {
+  defer @map.clear_runtime_context()
   defer @map.clear_tiled_map(@ecs.require_current_world())
   defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
   defer @sprite.sprites().clear()
@@ -139,6 +143,8 @@ fn setup_tiled_background_scene_100000000() -> @app.App raise {
     )
   @system.configure_display(1366.0, 768.0, 1.0)
   let raw = @map.load_map_resources_by_id(100000000)
+  let portals = @map.MapPortals::from_tiled_map(raw.tiled_map, raw.id)
+  @map.set_portals(portals, get_player_position=fn() { None })
   @map.set_tiled_map(
     @ecs.require_current_world(),
     raw.tiled_map,
@@ -157,6 +163,7 @@ fn setup_tiled_background_scene_100000000() -> @app.App raise {
 
 ///|
 test "map 100000000 background" {
+  defer @map.clear_runtime_context()
   defer @map.clear_tiled_map(@ecs.require_current_world())
   defer @entity.iter_entities().each(fn(entity) { entity.destroy() })
   defer @sprite.sprites().clear()

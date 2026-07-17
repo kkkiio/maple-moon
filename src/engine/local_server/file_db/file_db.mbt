@@ -85,12 +85,7 @@ fn ensure_dir_recursive(path : String) -> Unit {
 }
 
 ///|
-pub impl @local_server.DB for FileDB with fn save_json(
-  self,
-  store,
-  key,
-  data,
-) {
+pub impl @local_server.DB for FileDB with fn save_json(self, store, key, data) {
   let dir = self.store_dir(store)
   ensure_dir_recursive(dir)
   let path = self.data_file_path(store, key)

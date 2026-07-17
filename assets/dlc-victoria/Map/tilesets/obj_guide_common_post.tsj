@@ -1,0 +1,1 @@
+{"type":"tileset","name":"obj:guide/common/post","objectalignment":"bottomleft","tilewidth":182,"tileheight":111,"tilecount":1,"tiles":[{"id":0,"image":"obj_guide_common_post.atlas-0.png","imagewidth":184,"imageheight":113,"x":1,"y":1,"width":182,"height":111}]}

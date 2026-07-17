@@ -5,13 +5,12 @@ import {
   "KKKIIO/maple-moon/engine/graphics",
   "KKKIIO/maple-moon/engine/res",
   "KKKIIO/maple-moon/engine/utils",
-  "KKKIIO/maple-moon/game/animation",
   "KKKIIO/maple-moon/game/combat_proto",
   "KKKIIO/maple-moon/game/physics",
   "KKKIIO/maple-moon/game/res_types",
+  "KKKIIO/selene/animation",
   "KKKIIO/selene/ecs",
   "KKKIIO/selene/entity",
-  "moonbitlang/core/debug",
   "moonbitlang/core/json",
   "moonbitlang/core/queue",
   "moonbitlang/core/random",
@@ -61,7 +60,6 @@ pub enum FlyDirection {
 
 pub struct MapMobs {
   mobs : Map[Int, Mob]
-  loading_mobs : Array[@utils.Future[Result[Mob, Error]]]
   spawns : @queue.Queue[MobSpawn]
   randomizer : @random.Rand
 }
@@ -98,6 +96,7 @@ pub struct Mob {
   skill_stands : Map[Int, MobAnimation]
   attack_stands : Map[Int, MobAnimation]
   effect_animations : Map[String, MobAnimation]
+  animation_graph : @animation.AnimationGraphHandle
   buffs : Array[MobBuff]
   level : Int
   speed : Double
@@ -160,7 +159,8 @@ pub fn Mob::use_skill(Self, MobSkill) -> Unit
 
 pub(all) struct MobAnimation {
   meta : MobAnimationMeta
-  selene : @animation.Animation
+  clip : @res.SpriteClip
+  node : @animation.AnimationNodeIndex
 }
 
 pub(all) struct MobAnimationMeta {
@@ -169,15 +169,6 @@ pub(all) struct MobAnimationMeta {
   first_bounds : @res_types.Rectangle[Int]?
   loop_ : Bool
 }
-
-pub(all) struct MobAnimations {
-  fly : @res.NxAnimation?
-  stand : @res.NxAnimation?
-  move_ : @res.NxAnimation?
-  jump : @res.NxAnimation?
-  hit1 : @res.NxAnimation
-  die1 : @res.NxAnimation
-} derive(@debug.Debug, @json.FromJson)
 
 pub(all) struct MobBuff {
   time : Int
@@ -267,7 +258,7 @@ pub struct MxMob {
   stance_nodes : Map[String, MxMobAnimNode]
   attack_nodes : Map[Int, MxMobAttackNode]
   skill_nodes : Map[Int, MxMobSkillNode]
-  mx_animations : Map[String, String]
+  animations_path : String
 }
 pub impl @json.FromJson for MxMob
 
@@ -310,48 +301,6 @@ pub struct MxMobSkillNode {
   effects : Array[MxMobEffectNode]
 }
 pub impl @json.FromJson for MxMobSkillNode
-
-pub struct NxMob {
-  info : MobInfo
-  meta : NxMobMeta
-  skills : Map[Int, NxMobSkillEntry]
-  attacks : Map[Int, NxMobAttackEntry]
-  animations : Map[StanceType, MobAnimation]
-}
-pub impl @json.FromJson for NxMob
-
-pub struct NxMobAttackEntry {
-  id : Int
-  info : NxMobAttackInfo
-  animation : MobAnimation
-}
-
-pub struct NxMobAttackInfo {
-  range : @res_types.Rectangle[Int]?
-  type_ : Int
-  con_mp : Int
-  magic : Bool
-  effects : Array[NxMobEffect]
-}
-pub impl @json.FromJson for NxMobAttackInfo
-
-pub struct NxMobEffect {
-  animation : MobAnimation
-  z : Int
-  is_area_warning : Bool
-}
-
-pub struct NxMobMeta {
-  can_move : Bool
-  can_jump : Bool
-  can_fly : Bool
-} derive(ToJson)
-
-pub struct NxMobSkillEntry {
-  skill_id : Int
-  action : Int
-  animation : MobAnimation
-}
 
 pub(all) struct Stance {
   t : StanceType

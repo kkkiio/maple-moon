@@ -1,0 +1,1 @@
+{"type":"tileset","name":"obj:guide/common/tour","objectalignment":"bottomleft","tilewidth":212,"tileheight":194,"tilecount":1,"tiles":[{"id":0,"image":"obj_guide_common_tour.atlas-0.png","imagewidth":214,"imageheight":196,"x":1,"y":1,"width":212,"height":194}]}

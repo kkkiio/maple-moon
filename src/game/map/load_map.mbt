@@ -2,7 +2,7 @@
 pub(all) struct SceneMap {
   id : Int
   tiled_map : @tiled.TiledMap
-  background_animations : Map[String, @res.SeleneClip]
+  background_animations : Map[String, @res.SpriteClip]
   life_spawns : Array[NxLife]
   physics : @physics.Physics
   map_info : MapInfo
@@ -12,10 +12,7 @@ pub(all) struct SceneMap {
 
 ///|
 /// Creates a new scene map from the given raw map resources.
-pub fn create_scene_map(
-  raw : MapRawResources,
-  map_portals_animations : MapPortalAnimations,
-) -> SceneMap raise {
+pub fn create_scene_map(raw : MapRawResources) -> SceneMap raise {
   let tiled_map = raw.tiled_map
   let life_spawns = from_tiled_life_spawns(tiled_map)
   let physics = @physics.Physics::from_resource(
@@ -26,11 +23,7 @@ pub fn create_scene_map(
     physics.get_fht().get_walls(),
     physics.get_fht().get_borders(),
   )
-  let portals = MapPortals::from_tiled_map(
-    tiled_map,
-    raw.id,
-    map_portals_animations,
-  )
+  let portals = MapPortals::from_tiled_map(tiled_map, raw.id)
   let mini_map_resources = from_tiled_mini_map_resource(tiled_map).map(fn(
     mini,
   ) {

@@ -61,19 +61,20 @@ maple-moon/
 ```
 
 `assets/` 和 `source_assets/` 的直接子目录名是 pack ID。pack ID 用于安装、启用和
-诊断，不进入业务资源地址。当前游戏内容写入 `base`；新增 DLC 时增加新的同级
-目录，不改动 `base` 的物理资源树。
+诊断，不进入业务资源地址。`base` 保存跨大陆的必选公共资源，
+区域地图、怪物、NPC 和音效归属 `dlc-*` 内容包，纯外观覆盖归属 `skin-*`。
 
 每个运行 pack 根目录包含一个 `pack.json`，其中 `files` 是该 pack 提供的全部
 ResourceKey 精确列表：
 
 ```json
 {
-  "schema": 1,
+  "schema": 2,
   "id": "base",
+  "overrides": [],
   "files": [
-    "Map/Map1/100000000.img.mx.json",
-    "Mob/0100100.img/mx.json"
+    "Data/character_creation.tsv",
+    "UI/UIWindow2.img/Quest/quest_info.json"
   ]
 }
 ```
@@ -82,11 +83,11 @@ ResourceKey 精确列表：
 提交和分发；Git 已经负责版本差异，因此不增加 lock 文件。
 
 `@res` 挂载时读取所有 manifest，按从低到高的 pack 优先级合成 ResourceKey 索引。
-后挂载 pack 的同名 key 覆盖先挂载 pack。比如下面两个文件对应同一个 `res://`
-地址，DLC 中的会成为最终索引项：
+后挂载 pack 只能覆盖其 `overrides` 中显式列出的精确 `res://` 地址；其他同名 key
+直接拒绝挂载。
 
 ```text
-assets/base/Mob/0100100.img/mx.json
+assets/dlc-victoria/Mob/0100100.img/mx.json
 assets/dlc-elnath/Mob/0100100.img/mx.json   ← 优先级更高，命中
 → 物理路径: assets/dlc-elnath/Mob/0100100.img/mx.json
 ```
@@ -119,8 +120,8 @@ Maple Moon 不预读或改写 Tiled、LDtk 文件中的路径。`@res` 只把入
 
 ```text
 @res.load_tiled_map("res://Map/tiles/100000000.img.tmj")
-  → resolve to "assets/base/Map/tiles/100000000.img.tmj"
-  → @tiled.load_tiled_map("assets/base/Map/tiles/100000000.img.tmj")
+  → resolve to "assets/dlc-victoria/Map/tiles/100000000.img.tmj"
+  → @tiled.load_tiled_map("assets/dlc-victoria/Map/tiles/100000000.img.tmj")
 ```
 
 Selene 拿到物理路径后自己解析 TMJ、TSJ、LDtk project 和 external level，基于
@@ -166,9 +167,9 @@ Aseprite JSON 不走这个流程——Selene 没有 Aseprite loader，它的解�
 `source_assets/<pack-id>/`，保持与运行时 domain 相同的相对目录结构：
 
 ```text
-assets/base/Mob/1210102.img/animations/stand.json
-assets/base/Mob/1210102.img/animations/stand.png
-source_assets/base/Mob/1210102.img/animations/stand.aseprite
+assets/dlc-victoria/Mob/1210102.img/animation.json
+assets/dlc-victoria/Mob/1210102.img/animation.png
+source_assets/dlc-victoria/Mob/1210102.img/animation.aseprite
 ```
 
 `source_assets/<pack-id>/` 进入版本控制，但不挂载到 `res://`，也不进入玩家分发。
@@ -179,7 +180,7 @@ TMJ/TSJ 本身就是当前运行格式，因此继续保存在对应 `assets/<pa
 
 - 纯逻辑测试直接构造资源数据，例如用 `MobResource` 构造 `Mob`；
 - 普通 package 的 resolver/loader 测试用内存 reader 模拟挂载目录中的物理文件；
-- 图形快照测试挂载 `assets/base/` 和测试声明的扩展 pack，并使用 raylib platform
+- 图形快照测试挂载 `assets/base/`、`assets/dlc-victoria/` 和测试声明的扩展 pack，并使用 raylib platform
   overrides；
 - 所有资源测试都从 `res://` 地址进入 `@res`，不直接读取仓库路径。
 - resolver 测试使用与正式 pack 相同的 `pack.json`，未声明的物理文件不可见。

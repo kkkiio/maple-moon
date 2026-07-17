@@ -1,0 +1,1 @@
+{"type":"tileset","name":"obj:dungeon/blueCave/set3","objectalignment":"bottomleft","tilewidth":498,"tileheight":458,"tilecount":1,"tiles":[{"id":0,"image":"obj_dungeon_blueCave_set3.atlas-0.png","imagewidth":500,"imageheight":460,"x":1,"y":1,"width":498,"height":458}]}

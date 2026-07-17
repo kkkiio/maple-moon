@@ -1,5 +1,4 @@
 import {
-  "KKKIIO/maple-moon/game/animation" @ms_animation,
   "moonbitlang/core/json",
   "moonbitlang/core/strconv",
   "KKKIIO/maple-moon/engine/graphics",

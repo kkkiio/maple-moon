@@ -1,1 +1,0 @@
-{"type":"tileset","name":"obj:acc1/lv200/light","objectalignment":"bottomleft","tilewidth":435,"tileheight":600,"tilecount":2,"tiles":[{"id":0,"image":"../images/21190.png","imagewidth":435,"imageheight":600},{"id":1,"image":"../images/21192.png","imagewidth":316,"imageheight":325}]}

@@ -1,1 +1,0 @@
-{"type":"tileset","name":"obj:dungeon/blueCave/quest","objectalignment":"bottomleft","tilewidth":800,"tileheight":600,"tilecount":2,"tiles":[{"id":0,"image":"../images/9741.png","imagewidth":800,"imageheight":600},{"id":1,"image":"../images/9742.png","imagewidth":137,"imageheight":447}]}

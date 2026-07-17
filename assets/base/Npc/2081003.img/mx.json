@@ -1,9 +1,0 @@
-{
-  "info": {
-    "speak": {
-      "0": "s0",
-      "1": "s1"
-    }
-  },
-  "animations_path": "animation.json"
-}

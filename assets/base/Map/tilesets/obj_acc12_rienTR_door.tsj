@@ -1,1 +1,0 @@
-{"type":"tileset","name":"obj:acc12/rienTR/door","objectalignment":"bottomleft","tilewidth":950,"tileheight":225,"tilecount":3,"tiles":[{"id":0,"image":"../images/25124.png","imagewidth":315,"imageheight":125},{"id":1,"image":"../images/25125.png","imagewidth":408,"imageheight":75},{"id":2,"image":"../images/25126.png","imagewidth":950,"imageheight":225}]}

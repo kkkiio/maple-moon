@@ -1,1 +1,0 @@
-{"type":"tileset","name":"obj:trap/moving/animal","objectalignment":"bottomleft","tilewidth":49,"tileheight":54,"tilecount":3,"tiles":[{"id":0,"image":"../images/7254.png","imagewidth":49,"imageheight":54},{"id":1,"image":"../images/7272.png","imagewidth":49,"imageheight":54},{"id":2,"image":"../images/7290.png","imagewidth":49,"imageheight":54}]}

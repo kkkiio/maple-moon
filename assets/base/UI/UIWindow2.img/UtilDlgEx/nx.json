@@ -1,0 +1,1186 @@
+{
+  "BtAllLevel": {
+    "ToolTip": "Click to display quests of all levels.",
+    "disabled": {
+      "0": {
+        "__i": "bitmap/78470.png",
+        "__w": 85,
+        "__h": 16,
+        "_inlink": "Quest/list/BtAllLevel/disabled/0",
+        "origin": [
+          0,
+          0
+        ]
+      }
+    },
+    "mouseOver": {
+      "0": {
+        "__i": "bitmap/78471.png",
+        "__w": 85,
+        "__h": 16,
+        "_inlink": "Quest/list/BtAllLevel/mouseOver/0",
+        "origin": [
+          0,
+          0
+        ]
+      }
+    },
+    "normal": {
+      "0": {
+        "__i": "bitmap/78468.png",
+        "__w": 85,
+        "__h": 16,
+        "_inlink": "Quest/list/BtAllLevel/normal/0",
+        "origin": [
+          0,
+          0
+        ]
+      }
+    },
+    "pressed": {
+      "0": {
+        "__i": "bitmap/78469.png",
+        "__w": 85,
+        "__h": 16,
+        "_inlink": "Quest/list/BtAllLevel/pressed/0",
+        "origin": [
+          0,
+          0
+        ]
+      }
+    }
+  },
+  "BtClose": {
+    "disabled": {
+      "0": {
+        "__i": "bitmap/79038.png",
+        "__w": 91,
+        "__h": 16,
+        "_hash": "4b7c03ccc3725f287289b0f86f2463c377f73339bac4c7667fb4230e7a665503",
+        "origin": [
+          0,
+          0
+        ]
+      }
+    },
+    "keyFocused": {
+      "0": {
+        "__i": "bitmap/79040.png",
+        "__w": 97,
+        "__h": 22,
+        "_hash": "dcf6b1fbecc77fb64a59b6f857de017e8697521c667b2c720440f3bce829569a",
+        "origin": [
+          3,
+          3
+        ]
+      }
+    },
+    "mouseOver": {
+      "0": {
+        "__i": "bitmap/79039.png",
+        "__w": 91,
+        "__h": 16,
+        "_hash": "c9d34ac8589bdb968c1b205b8af48501460e10fefd75a1c917ccad6aeffa44c1",
+        "origin": [
+          0,
+          0
+        ]
+      }
+    },
+    "normal": {
+      "0": {
+        "__i": "bitmap/79036.png",
+        "__w": 91,
+        "__h": 16,
+        "_hash": "f7c7d619c9bbb36b8012844cc2c0e479516ccc3bfbd7e66da2d8a31c84c23e2c",
+        "origin": [
+          0,
+          0
+        ]
+      }
+    },
+    "pressed": {
+      "0": {
+        "__i": "bitmap/79037.png",
+        "__w": 91,
+        "__h": 16,
+        "_hash": "d2367a087b9564ad854afde7faea79883355999dc5ce79fc5e9752ad358e38af",
+        "origin": [
+          0,
+          0
+        ]
+      }
+    }
+  },
+  "BtMyLevel": {
+    "ToolTip": "Click to display quests for my level.",
+    "disabled": {
+      "0": {
+        "__i": "bitmap/78466.png",
+        "__w": 85,
+        "__h": 16,
+        "_inlink": "Quest/list/BtMyLevel/disabled/0",
+        "origin": [
+          0,
+          0
+        ]
+      }
+    },
+    "mouseOver": {
+      "0": {
+        "__i": "bitmap/78467.png",
+        "__w": 85,
+        "__h": 16,
+        "_inlink": "Quest/list/BtMyLevel/mouseOver/0",
+        "origin": [
+          0,
+          0
+        ]
+      }
+    },
+    "normal": {
+      "0": {
+        "__i": "bitmap/78464.png",
+        "__w": 85,
+        "__h": 16,
+        "_inlink": "Quest/list/BtMyLevel/normal/0",
+        "origin": [
+          0,
+          0
+        ]
+      }
+    },
+    "pressed": {
+      "0": {
+        "__i": "bitmap/78465.png",
+        "__w": 85,
+        "__h": 16,
+        "_inlink": "Quest/list/BtMyLevel/pressed/0",
+        "origin": [
+          0,
+          0
+        ]
+      }
+    }
+  },
+  "BtNext": {
+    "disabled": {
+      "0": {
+        "__i": "bitmap/79028.png",
+        "__w": 40,
+        "__h": 16,
+        "_hash": "6230688782b5fb504d3443d00c09058898d88eb7d9340f794b7f6cd03c986f8e",
+        "origin": [
+          0,
+          0
+        ]
+      }
+    },
+    "keyFocused": {
+      "0": {
+        "__i": "bitmap/79025.png",
+        "__w": 46,
+        "__h": 22,
+        "_inlink": "UtilDlgEx/BtPrev/keyFocused/0",
+        "origin": [
+          3,
+          3
+        ]
+      }
+    },
+    "mouseOver": {
+      "0": {
+        "__i": "bitmap/79029.png",
+        "__w": 40,
+        "__h": 16,
+        "_hash": "270f64988e74eda870f546988886133b480f66cc6d0cc0f0f1d7fd66f7531bb5",
+        "origin": [
+          0,
+          0
+        ]
+      }
+    },
+    "normal": {
+      "0": {
+        "__i": "bitmap/79026.png",
+        "__w": 40,
+        "__h": 16,
+        "_hash": "e1cadb1829359385dd6a5fc273abaa775dc7398716d9cdb0c2059f63d1d82e89",
+        "origin": [
+          0,
+          0
+        ]
+      }
+    },
+    "pressed": {
+      "0": {
+        "__i": "bitmap/79027.png",
+        "__w": 40,
+        "__h": 16,
+        "_hash": "10b5f92c5b8059c812111378b3f45cfc255ceb989b66bb9b37dc75bf7eefca2a",
+        "origin": [
+          0,
+          0
+        ]
+      }
+    }
+  },
+  "BtNo": {
+    "disabled": {
+      "0": {
+        "__i": "bitmap/78574.png",
+        "__w": 57,
+        "__h": 16,
+        "_inlink": "Quest/BtNo/disabled/0",
+        "origin": [
+          0,
+          0
+        ]
+      }
+    },
+    "keyFocused": {
+      "0": {
+        "__i": "bitmap/78571.png",
+        "__w": 62,
+        "__h": 22,
+        "_inlink": "Quest/BtOK/keyFocused/0",
+        "origin": [
+          3,
+          3
+        ]
+      }
+    },
+    "mouseOver": {
+      "0": {
+        "__i": "bitmap/78575.png",
+        "__w": 57,
+        "__h": 16,
+        "_inlink": "Quest/BtNo/mouseOver/0",
+        "origin": [
+          0,
+          0
+        ]
+      }
+    },
+    "normal": {
+      "0": {
+        "__i": "bitmap/78572.png",
+        "__w": 57,
+        "__h": 16,
+        "_inlink": "Quest/BtNo/normal/0",
+        "origin": [
+          0,
+          0
+        ]
+      }
+    },
+    "pressed": {
+      "0": {
+        "__i": "bitmap/78573.png",
+        "__w": 57,
+        "__h": 16,
+        "_inlink": "Quest/BtNo/pressed/0",
+        "origin": [
+          0,
+          0
+        ]
+      }
+    }
+  },
+  "BtOK": {
+    "disabled": {
+      "0": {
+        "__i": "bitmap/97700.png",
+        "__w": 40,
+        "__h": 16,
+        "_hash": "b8b254ec94d4bb6e734fa1c66c541ca94f5aca27121577287d88bbc9a36cfb09",
+        "_outlink": "UI/UIWindow.img/PartyReward/BtOK/disabled/0",
+        "origin": [
+          0,
+          0
+        ]
+      }
+    },
+    "keyFocused": {
+      "0": {
+        "__i": "bitmap/79025.png",
+        "__w": 46,
+        "__h": 22,
+        "_inlink": "UtilDlgEx/BtPrev/keyFocused/0",
+        "origin": [
+          3,
+          3
+        ]
+      }
+    },
+    "mouseOver": {
+      "0": {
+        "__i": "bitmap/97701.png",
+        "__w": 40,
+        "__h": 16,
+        "_hash": "fbe1c54f0a201d11931a75559d653f6a7b2a304f33c721a1eaf0a5a5728f5eb5",
+        "_outlink": "UI/UIWindow.img/PartyReward/BtOK/mouseOver/0",
+        "origin": [
+          0,
+          0
+        ]
+      }
+    },
+    "normal": {
+      "0": {
+        "__i": "bitmap/97698.png",
+        "__w": 40,
+        "__h": 16,
+        "_hash": "78c1b0065f2c2e0f0f589b0c56eb4748a481244111be460f6d9b061608a195cb",
+        "_outlink": "UI/UIWindow.img/PartyReward/BtOK/normal/0",
+        "origin": [
+          0,
+          0
+        ]
+      }
+    },
+    "pressed": {
+      "0": {
+        "__i": "bitmap/97699.png",
+        "__w": 40,
+        "__h": 16,
+        "_hash": "17e8f5d7bc91dc4c8bb13470d424caa866638f2793032c1bf7126ce65b9fb6e8",
+        "_outlink": "UI/UIWindow.img/PartyReward/BtOK/pressed/0",
+        "origin": [
+          0,
+          0
+        ]
+      }
+    }
+  },
+  "BtPrev": {
+    "disabled": {
+      "0": {
+        "__i": "bitmap/79023.png",
+        "__w": 40,
+        "__h": 16,
+        "_hash": "4f87817540aa0ee43a5535b0962dc9e4f7252a39c667cb3834a2c80750207bee",
+        "origin": [
+          0,
+          0
+        ]
+      }
+    },
+    "keyFocused": {
+      "0": {
+        "__i": "bitmap/79025.png",
+        "__w": 46,
+        "__h": 22,
+        "_hash": "5437fe1a7c83a766481b33ae5f63abd692104d83720cf620c2e6b99414e28a15",
+        "origin": [
+          3,
+          3
+        ]
+      }
+    },
+    "mouseOver": {
+      "0": {
+        "__i": "bitmap/79024.png",
+        "__w": 40,
+        "__h": 16,
+        "_hash": "9ff47f315e80e1f6aa99121c10d837f5649376ffa6580f421bd0efd3af27a929",
+        "origin": [
+          0,
+          0
+        ]
+      }
+    },
+    "normal": {
+      "0": {
+        "__i": "bitmap/79021.png",
+        "__w": 40,
+        "__h": 16,
+        "_hash": "2704b834aa6ca4329824601721dab4733ada1b6062f7a9d0ce35538b8d0caad7",
+        "origin": [
+          0,
+          0
+        ]
+      }
+    },
+    "pressed": {
+      "0": {
+        "__i": "bitmap/79022.png",
+        "__w": 40,
+        "__h": 16,
+        "_hash": "d2bdc954ada6474a67d42bba7c305cb54cdec2150418876aa3813e969db68e7d",
+        "origin": [
+          0,
+          0
+        ]
+      }
+    }
+  },
+  "BtQAfter": {
+    "disabled": {
+      "0": {
+        "__i": "bitmap/79073.png",
+        "__w": 68,
+        "__h": 16,
+        "_hash": "00a5e9e30e5631a9279509bda515fb930d133af9f2a6b9f6d8de9d482301dd72",
+        "origin": [
+          0,
+          0
+        ]
+      }
+    },
+    "keyFocused": {
+      "0": {
+        "__i": "bitmap/79075.png",
+        "__w": 74,
+        "__h": 22,
+        "_hash": "a98be83bdb8433b414396c822e4121bb418d818bb4e4d3e5fbcbffcdc9c05e5e",
+        "origin": [
+          3,
+          3
+        ]
+      }
+    },
+    "mouseOver": {
+      "0": {
+        "__i": "bitmap/79074.png",
+        "__w": 68,
+        "__h": 16,
+        "_hash": "162a28594cddc7da518502c1a23d0c8b34941e4dd16b62e7d4c2b0d75cf2bdcc",
+        "origin": [
+          0,
+          0
+        ]
+      }
+    },
+    "normal": {
+      "0": {
+        "__i": "bitmap/79071.png",
+        "__w": 68,
+        "__h": 16,
+        "_hash": "dc6c61d74fe84ed92f9c0c3c69b000460e65283a8014a0293308c324631d19f7",
+        "origin": [
+          0,
+          0
+        ]
+      }
+    },
+    "pressed": {
+      "0": {
+        "__i": "bitmap/79072.png",
+        "__w": 68,
+        "__h": 16,
+        "_hash": "38ec28e560dbab446e24910ada332633248c862cf3e5c3b29a22b5e5893f05a3",
+        "origin": [
+          0,
+          0
+        ]
+      }
+    }
+  },
+  "BtQCNo": {
+    "disabled": {
+      "0": {
+        "__i": "bitmap/79083.png",
+        "__w": 56,
+        "__h": 16,
+        "_hash": "05a7d5b13c2331e748c0fdc4cdb9c8a07cf36355e326c980c0818448390a4967",
+        "origin": [
+          0,
+          0
+        ]
+      }
+    },
+    "keyFocused": {
+      "0": {
+        "__i": "bitmap/78571.png",
+        "__w": 62,
+        "__h": 22,
+        "_inlink": "Quest/BtOK/keyFocused/0",
+        "origin": [
+          3,
+          3
+        ]
+      }
+    },
+    "mouseOver": {
+      "0": {
+        "__i": "bitmap/79084.png",
+        "__w": 56,
+        "__h": 16,
+        "_hash": "20b26bc407a9d80295e2ba11cd13ac7424a6345230e659d2a2ce509597908d04",
+        "origin": [
+          0,
+          0
+        ]
+      }
+    },
+    "normal": {
+      "0": {
+        "__i": "bitmap/79081.png",
+        "__w": 56,
+        "__h": 16,
+        "_hash": "a6c677d55604f6669c2a3a5c2df4331c4750b29f3a704cbe27442936ae95cbac",
+        "origin": [
+          0,
+          0
+        ]
+      }
+    },
+    "pressed": {
+      "0": {
+        "__i": "bitmap/79082.png",
+        "__w": 56,
+        "__h": 16,
+        "_hash": "ea665fc84e5ce5a5817c6c498d620a7ab1dec0872d9bcb146ef85c7bbdcca5d3",
+        "origin": [
+          0,
+          0
+        ]
+      }
+    }
+  },
+  "BtQCYes": {
+    "disabled": {
+      "0": {
+        "__i": "bitmap/79078.png",
+        "__w": 56,
+        "__h": 16,
+        "_hash": "eb43f759ebdee82aa9539a32f6f9e6b006668db9bbe7206bf60a5fc46c01a2e4",
+        "origin": [
+          0,
+          0
+        ]
+      }
+    },
+    "keyFocused": {
+      "0": {
+        "__i": "bitmap/78571.png",
+        "__w": 62,
+        "__h": 22,
+        "_inlink": "Quest/BtOK/keyFocused/0",
+        "origin": [
+          3,
+          3
+        ]
+      }
+    },
+    "mouseOver": {
+      "0": {
+        "__i": "bitmap/79079.png",
+        "__w": 56,
+        "__h": 16,
+        "_hash": "c00381b5600542796cf00e1a43a54c9bbd20a2ef75965d7d63b0854f56fbca00",
+        "origin": [
+          0,
+          0
+        ]
+      }
+    },
+    "normal": {
+      "0": {
+        "__i": "bitmap/79076.png",
+        "__w": 56,
+        "__h": 16,
+        "_hash": "d59c2bc0a960aca07c09cdaa76a063e54d6807cb98dcd896c6ecffa01b593626",
+        "origin": [
+          0,
+          0
+        ]
+      }
+    },
+    "pressed": {
+      "0": {
+        "__i": "bitmap/79077.png",
+        "__w": 56,
+        "__h": 16,
+        "_hash": "e9ba82346afd57eacd33f82a493ebac1e93962981e35da0fbb90878c6572de08",
+        "origin": [
+          0,
+          0
+        ]
+      }
+    }
+  },
+  "BtQGiveup": {
+    "disabled": {
+      "0": {
+        "__i": "bitmap/79063.png",
+        "__w": 57,
+        "__h": 16,
+        "_hash": "9e084f18ec437cdbabdd0eeeda7b740455315e8fb1afafa00a30b5e83776812e",
+        "origin": [
+          0,
+          0
+        ]
+      }
+    },
+    "keyFocused": {
+      "0": {
+        "__i": "bitmap/78571.png",
+        "__w": 62,
+        "__h": 22,
+        "_inlink": "Quest/BtOK/keyFocused/0",
+        "origin": [
+          3,
+          3
+        ]
+      }
+    },
+    "mouseOver": {
+      "0": {
+        "__i": "bitmap/79064.png",
+        "__w": 57,
+        "__h": 16,
+        "_hash": "af4b26700fbc159c194d308deb726823f24dfcd74b05b495e7afcb2c6a98ebe5",
+        "origin": [
+          0,
+          0
+        ]
+      }
+    },
+    "normal": {
+      "0": {
+        "__i": "bitmap/79061.png",
+        "__w": 57,
+        "__h": 16,
+        "_hash": "134e1e751f4ee6ba18f4fa7a5e092bd751339a88a6bf66dd304a38e5ab40e1b2",
+        "origin": [
+          0,
+          0
+        ]
+      }
+    },
+    "pressed": {
+      "0": {
+        "__i": "bitmap/79062.png",
+        "__w": 57,
+        "__h": 16,
+        "_hash": "a3a2654fa6625a7a33ee7723bda74f99fe59874f4bf45cc1b5c1f1fdf058eeb4",
+        "origin": [
+          0,
+          0
+        ]
+      }
+    }
+  },
+  "BtQNo": {
+    "disabled": {
+      "0": {
+        "__i": "bitmap/79058.png",
+        "__w": 57,
+        "__h": 16,
+        "_hash": "c07193d1df8a332c4268812773c761b497728e91f916c19656e00721876af510",
+        "origin": [
+          0,
+          0
+        ]
+      }
+    },
+    "keyFocused": {
+      "0": {
+        "__i": "bitmap/78571.png",
+        "__w": 62,
+        "__h": 22,
+        "_inlink": "Quest/BtOK/keyFocused/0",
+        "origin": [
+          3,
+          3
+        ]
+      }
+    },
+    "mouseOver": {
+      "0": {
+        "__i": "bitmap/79059.png",
+        "__w": 57,
+        "__h": 16,
+        "_hash": "93bb51465f565e4229319e6a724c88b29e1e9a0c89299781626d72f3629db235",
+        "origin": [
+          0,
+          0
+        ]
+      }
+    },
+    "normal": {
+      "0": {
+        "__i": "bitmap/79056.png",
+        "__w": 57,
+        "__h": 16,
+        "_hash": "b66ad33f4c145f2e275b0001ec6fafe1bbd0dd6f0281d62e0f9b08e2948e438a",
+        "origin": [
+          0,
+          0
+        ]
+      }
+    },
+    "pressed": {
+      "0": {
+        "__i": "bitmap/79057.png",
+        "__w": 57,
+        "__h": 16,
+        "_hash": "504079dad2a150c05df053fe92c3e3f28f14e586ee1e69f3db4abe4c0b922ff6",
+        "origin": [
+          0,
+          0
+        ]
+      }
+    }
+  },
+  "BtQStart": {
+    "disabled": {
+      "0": {
+        "__i": "bitmap/79068.png",
+        "__w": 58,
+        "__h": 16,
+        "_hash": "fc3e43fba6ddd44404a67d1816415247299f32013acc8a860bb7ccab8048a749",
+        "origin": [
+          0,
+          0
+        ]
+      }
+    },
+    "keyFocused": {
+      "0": {
+        "__i": "bitmap/99073.png",
+        "__w": 66,
+        "__h": 22,
+        "_outlink": "UI/UIWindowString.img/Scenario/quest_info/BtGiveup/keyFocused/0",
+        "origin": [
+          3,
+          3
+        ]
+      }
+    },
+    "mouseOver": {
+      "0": {
+        "__i": "bitmap/79069.png",
+        "__w": 58,
+        "__h": 16,
+        "_hash": "94a5d163a4372da5dacae7c74ef91d44e21a7b6eb98be6383f39fe71fd8a560c",
+        "origin": [
+          0,
+          0
+        ]
+      }
+    },
+    "normal": {
+      "0": {
+        "__i": "bitmap/79066.png",
+        "__w": 58,
+        "__h": 16,
+        "_hash": "a681f490c32f45b6eaf4211fdf0fc0f11c864f78bd86e9361fc6bc76a904953c",
+        "origin": [
+          0,
+          0
+        ]
+      }
+    },
+    "pressed": {
+      "0": {
+        "__i": "bitmap/79067.png",
+        "__w": 58,
+        "__h": 16,
+        "_hash": "c02c73c06c8164d7b59f56e1662f6304e69ffad31a878940c2c1260d784390d7",
+        "origin": [
+          0,
+          0
+        ]
+      }
+    }
+  },
+  "BtQYes": {
+    "disabled": {
+      "0": {
+        "__i": "bitmap/78569.png",
+        "__w": 57,
+        "__h": 16,
+        "_inlink": "Quest/BtOK/disabled/0",
+        "origin": [
+          0,
+          0
+        ]
+      }
+    },
+    "keyFocused": {
+      "0": {
+        "__i": "bitmap/78571.png",
+        "__w": 62,
+        "__h": 22,
+        "_inlink": "Quest/BtOK/keyFocused/0",
+        "origin": [
+          3,
+          3
+        ]
+      }
+    },
+    "mouseOver": {
+      "0": {
+        "__i": "bitmap/78570.png",
+        "__w": 57,
+        "__h": 16,
+        "_inlink": "Quest/BtOK/mouseOver/0",
+        "origin": [
+          0,
+          0
+        ]
+      }
+    },
+    "normal": {
+      "0": {
+        "__i": "bitmap/78567.png",
+        "__w": 57,
+        "__h": 16,
+        "_inlink": "Quest/BtOK/normal/0",
+        "origin": [
+          0,
+          0
+        ]
+      }
+    },
+    "pressed": {
+      "0": {
+        "__i": "bitmap/78568.png",
+        "__w": 57,
+        "__h": 16,
+        "_inlink": "Quest/BtOK/pressed/0",
+        "origin": [
+          0,
+          0
+        ]
+      }
+    }
+  },
+  "BtYes": {
+    "disabled": {
+      "0": {
+        "__i": "bitmap/79043.png",
+        "__w": 57,
+        "__h": 16,
+        "_hash": "9330e2ef7c4a1388678c2215c38687677e1b928f65e621cbd6b04b51e629f435",
+        "origin": [
+          0,
+          0
+        ]
+      }
+    },
+    "keyFocused": {
+      "0": {
+        "__i": "bitmap/78571.png",
+        "__w": 62,
+        "__h": 22,
+        "_inlink": "Quest/BtOK/keyFocused/0",
+        "origin": [
+          3,
+          3
+        ]
+      }
+    },
+    "mouseOver": {
+      "0": {
+        "__i": "bitmap/79044.png",
+        "__w": 57,
+        "__h": 16,
+        "_hash": "f43946030f7e34fd4e6b3ce1cb9bb6906246560a6b95d23c89ab05712a98890d",
+        "origin": [
+          0,
+          0
+        ]
+      }
+    },
+    "normal": {
+      "0": {
+        "__i": "bitmap/79041.png",
+        "__w": 57,
+        "__h": 16,
+        "_hash": "d841da49f44071b718c315b016a0e50113be027d264dac7ac8c156936667ef0c",
+        "origin": [
+          0,
+          0
+        ]
+      }
+    },
+    "pressed": {
+      "0": {
+        "__i": "bitmap/79042.png",
+        "__w": 57,
+        "__h": 16,
+        "_hash": "28848cba1a59487979e95433888c94fb14ef96d6a2ee10253a0963dad117ca9f",
+        "origin": [
+          0,
+          0
+        ]
+      }
+    }
+  },
+  "QDeliveryIcon": {
+    "0": {
+      "__i": "bitmap/79094.png",
+      "__w": 24,
+      "__h": 32,
+      "_hash": "ac2a13e6b405668a3741b01cd14c301e734b612f28a3c7e21e25ca2d2fea7008",
+      "delay": 150,
+      "origin": [
+        23,
+        31
+      ],
+      "z": 0
+    },
+    "1": {
+      "__i": "bitmap/79095.png",
+      "__w": 29,
+      "__h": 35,
+      "_hash": "670b6cb73dc02686f68e1fb31c81568cc006da2f6da355b1add7c88a571f2a39",
+      "delay": 150,
+      "origin": [
+        25,
+        34
+      ],
+      "z": 0
+    },
+    "2": {
+      "__i": "bitmap/79096.png",
+      "__w": 31,
+      "__h": 36,
+      "_hash": "9012ef7232d9ed33470e805686329fde9a4baab2c3e10206681c09921e8d74d4",
+      "delay": 150,
+      "origin": [
+        25,
+        35
+      ],
+      "z": 0
+    },
+    "3": {
+      "__i": "bitmap/79095.png",
+      "__w": 29,
+      "__h": 35,
+      "_inlink": "UtilDlgEx/QDeliveryIcon/1",
+      "delay": 150,
+      "origin": [
+        25,
+        34
+      ],
+      "z": 0
+    },
+    "4": {
+      "__i": "bitmap/79096.png",
+      "__w": 31,
+      "__h": 36,
+      "_inlink": "UtilDlgEx/QDeliveryIcon/2",
+      "delay": 150,
+      "origin": [
+        25,
+        35
+      ],
+      "z": 0
+    },
+    "5": {
+      "__i": "bitmap/79095.png",
+      "__w": 29,
+      "__h": 35,
+      "_inlink": "UtilDlgEx/QDeliveryIcon/1",
+      "delay": 150,
+      "origin": [
+        25,
+        34
+      ],
+      "z": 0
+    },
+    "6": {
+      "__i": "bitmap/79100.png",
+      "__w": 26,
+      "__h": 32,
+      "_hash": "ed585c4dec647010ceff06f873c76524e3d9ac77611ab84793aed06fca0b54d9",
+      "delay": 150,
+      "origin": [
+        25,
+        31
+      ],
+      "z": 0
+    }
+  },
+  "bar": {
+    "__i": "bitmap/79020.png",
+    "__w": 109,
+    "__h": 19,
+    "_hash": "3f15d1f7ca408f4f18c4ab6c48041bc43d9422cd3a549af827ec5d069eb3fefb",
+    "origin": [
+      0,
+      0
+    ]
+  },
+  "c": {
+    "__i": "bitmap/79012.png",
+    "__w": 519,
+    "__h": 13,
+    "_hash": "53e6a87ff43fbaec55a5e6753a55d886926b4b9aed860570cde437c10cea6b64",
+    "origin": [
+      0,
+      0
+    ]
+  },
+  "dot0": {
+    "__i": "bitmap/94340.png",
+    "__w": 6,
+    "__h": 7,
+    "_hash": "fd03dea3deedcef41bc5f2b45004f55a9a0088cd3fc033f692ebe1952066cfef",
+    "_outlink": "UI/UIWindow.img/UtilDlgEx/dot0",
+    "origin": [
+      0,
+      0
+    ]
+  },
+  "dot1": {
+    "__i": "bitmap/94341.png",
+    "__w": 6,
+    "__h": 7,
+    "_hash": "892fe982e92b8212279f30dcb8c46cedfb477b23b6f33c3e082a7e7137bb2127",
+    "_outlink": "UI/UIWindow.img/UtilDlgEx/dot1",
+    "origin": [
+      0,
+      0
+    ]
+  },
+  "ic": {
+    "__i": "bitmap/79015.png",
+    "__w": 519,
+    "__h": 13,
+    "_hash": "ba4d3fa84c5b9221ee0fb62973065de9025b1d16d4ef61f06e14e59573d9273e",
+    "origin": [
+      0,
+      0
+    ]
+  },
+  "is": {
+    "__i": "bitmap/79016.png",
+    "__w": 519,
+    "__h": 44,
+    "_hash": "765e9f20dac8ecbb1fbeda84bb5e76981e96156c3153c49ee832cce1d4cc7ec3",
+    "origin": [
+      0,
+      0
+    ]
+  },
+  "it": {
+    "__i": "bitmap/79014.png",
+    "__w": 519,
+    "__h": 28,
+    "_hash": "d22d4d358efb4a3d7111aa9db671188cf89d45a0e222ded6cf3ee4648f0985c8",
+    "origin": [
+      0,
+      0
+    ]
+  },
+  "line": {
+    "__i": "bitmap/94339.png",
+    "__w": 332,
+    "__h": 2,
+    "_hash": "f2a861def478e5c1b1246a0f5ae62416709568b52704090e4c96bde9202d5419",
+    "_outlink": "UI/UIWindow.img/UtilDlgEx/line",
+    "origin": [
+      0,
+      0
+    ]
+  },
+  "list0": {
+    "__i": "bitmap/79086.png",
+    "__w": 138,
+    "__h": 15,
+    "_hash": "26edeb5159fd87f1330d77d70d7b87ca0875a7e36a26758d2aea3591c61d06b9",
+    "origin": [
+      0,
+      0
+    ]
+  },
+  "list1": {
+    "__i": "bitmap/79087.png",
+    "__w": 120,
+    "__h": 17,
+    "_hash": "fa8e05f3cfe353f5691d184fec8a6211d3c82002a55d42f19383413431a42d05",
+    "origin": [
+      0,
+      0
+    ]
+  },
+  "list2": {
+    "__i": "bitmap/79088.png",
+    "__w": 50,
+    "__h": 15,
+    "_hash": "7754f77a9fd959267ead1c51120b35d3c0710ed496d5e429125349096f68be84",
+    "origin": [
+      0,
+      0
+    ]
+  },
+  "list3": {
+    "__i": "bitmap/79089.png",
+    "__w": 123,
+    "__h": 15,
+    "_hash": "76452f5fc4781e7b10df86f327d30ade4db73c4efeaf831106efcc3b976f3c00",
+    "origin": [
+      0,
+      0
+    ]
+  },
+  "list4": {
+    "__i": "bitmap/79090.png",
+    "__w": 124,
+    "__h": 17,
+    "_hash": "0c50568cf1dfafa415c351d11799c63e2b06cad9e4a0ab597d53db175db72a39",
+    "origin": [
+      0,
+      1
+    ],
+    "z": 0
+  },
+  "list5": {
+    "__i": "bitmap/79091.png",
+    "__w": 137,
+    "__h": 15,
+    "_hash": "3793812636d4680b0a2eb43f50fa30714a84b616b346e3b801c7d52499403117",
+    "origin": [
+      1,
+      -1
+    ],
+    "z": 0
+  },
+  "list6": {
+    "__i": "bitmap/79092.png",
+    "__w": 221,
+    "__h": 20,
+    "_hash": "4f382bbe756b27ad7a072608b8acb28c1b91847c2b27925be602631727223946",
+    "origin": [
+      -4,
+      2
+    ],
+    "z": 0
+  },
+  "notice": {
+    "__i": "bitmap/79093.png",
+    "__w": 305,
+    "__h": 157,
+    "_hash": "ce13b308e8585203386e3309cf371e0dab87e384134b2d1e6c4905e2907110cb",
+    "origin": [
+      0,
+      0
+    ]
+  },
+  "s": {
+    "__i": "bitmap/79013.png",
+    "__w": 519,
+    "__h": 44,
+    "_hash": "570fc7784767c7be966bcb8732b767302da96ccdcd1cafe95ade319a4ac9cee3",
+    "origin": [
+      0,
+      0
+    ]
+  },
+  "t": {
+    "__i": "bitmap/79011.png",
+    "__w": 519,
+    "__h": 28,
+    "_hash": "ec4e749a73f317a87903512ced76d409ecab845e9d1b6f2067b2a4004e12d685",
+    "origin": [
+      0,
+      0
+    ]
+  }
+}

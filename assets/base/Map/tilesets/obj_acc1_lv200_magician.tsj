@@ -1,1 +1,0 @@
-{"type":"tileset","name":"obj:acc1/lv200/magician","objectalignment":"bottomleft","tilewidth":800,"tileheight":600,"tilecount":3,"tiles":[{"id":0,"image":"../images/21180.png","imagewidth":800,"imageheight":600},{"id":1,"image":"../images/21181.png","imagewidth":800,"imageheight":600},{"id":2,"image":"../images/21182.png","imagewidth":800,"imageheight":295}]}

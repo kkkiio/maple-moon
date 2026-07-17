@@ -1,1 +1,0 @@
-{"type":"tileset","name":"obj:acc2/metroCity/nightMarket","objectalignment":"bottomleft","tilewidth":800,"tileheight":600,"tilecount":3,"tiles":[{"id":0,"image":"../images/9201.png","imagewidth":105,"imageheight":171},{"id":1,"image":"../images/9202.png","imagewidth":800,"imageheight":600},{"id":2,"image":"../images/9204.png","imagewidth":224,"imageheight":255}]}
